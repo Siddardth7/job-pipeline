@@ -1,21 +1,12 @@
-github/workflows/daily_scrape.yml
-# Runs JSearch + Apify scrapers daily at 8 AM EST, merges results.
-# Free tier: 2,000 minutes/month GitHub Actions (~5 min/day = ~150/month)
-#
-# QUOTA MATH (safe defaults in scripts):
-#   JSearch: 3 companies × 2 keywords = 6 calls/day = ~180/month (free tier: 200/month)
-#   Apify:   15 companies/day (Google Jobs fallback, uses Apify credits ~$0.01/run)
-#
-# REQUIRED SECRETS (Settings > Secrets and variables > Actions):
-#   JSEARCH_API_KEY  — from https://rapidapi.com/letscrape-6bRBa3QguO5/api/jsearch
-#   APIFY_TOKEN      — from https://console.apify.com/account/integrations
-
 name: Daily Job Scrape
 
 on:
   schedule:
-    - cron: '0 13 * * *'  # 8 AM EST = 1 PM UTC
-  workflow_dispatch:        # Manual trigger from Actions tab
+    - cron: '0 13 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 env:
   JSEARCH_API_KEY: ${{ secrets.JSEARCH_API_KEY }}
@@ -28,6 +19,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/setup-python@v5
         with:
@@ -37,8 +30,6 @@ jobs:
         run: pip install requests apify-client python-dotenv
 
       - name: Run JSearch scraper
-        # Scripts now exit 0 on quota/missing key and write empty output files
-        # continue-on-error here catches any unexpected crashes
         continue-on-error: true
         run: python jsearch_scraper.py
 
@@ -57,23 +48,12 @@ jobs:
           git diff --staged --quiet || git commit -m "Daily scrape $(date +%Y-%m-%d)"
           git push
 
-      - name: Print feed summary
+      - name: Check feed output
         if: always()
         run: |
           if [ -f output/jobs_latest.json ]; then
-            echo "=== Feed Summary ==="
-            python3 -c "
-import json
-with open('output/jobs_latest.json') as f:
-    d = json.load(f)
-s = d.get('summary', {})
-src = d.get('sources', {})
-print(f'Total jobs: {s.get(\"total\", 0)}')
-print(f'  GREEN:  {s.get(\"green\", 0)}')
-print(f'  YELLOW: {s.get(\"yellow\", 0)}')
-print(f'  RED:    {s.get(\"red_itar\", 0)}')
-print(f'Sources: jsearch={src.get(\"jsearch\", 0)}, apify={src.get(\"apify\", 0)}')
-"
+            echo "Feed generated successfully"
+            wc -c output/jobs_latest.json
           else
             echo "WARNING: jobs_latest.json not found"
           fi
