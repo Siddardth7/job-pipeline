@@ -1,0 +1,5141 @@
+{
+  "generated_utc": "2026-03-04T17:24:29.235441Z",
+  "total_companies": 303,
+  "ats_native_count": 140,
+  "search_verify_count": 147,
+  "site_crawl_count": 16,
+  "companies": [
+    {
+      "company_id": "C0001",
+      "company_name": "3D Systems Corporation",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.3dsystemscorporation.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "3dsystemscorporation.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0002",
+      "company_name": "ABL Space Systems",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.ablspacesystems.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "ablspacesystems.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0003",
+      "company_name": "Aciturri",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.aciturri.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "aciturri.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0004",
+      "company_name": "Aeravox Dynamics",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.aeravoxdynamics.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "aeravoxdynamics.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0005",
+      "company_name": "Aerojet Rocketdyne",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.aerojetrocketdyne.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "aerojetrocketdyne.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0006",
+      "company_name": "AeroVironment",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.aerovironment.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "aerovironment.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0007",
+      "company_name": "AerSale, Inc.",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.aersale.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "aersale.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0008",
+      "company_name": "AGCO Corporation",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.agcocorporation.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "agcocorporation.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0009",
+      "company_name": "Airbus",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://www.airbus.com/en/careers/job-search"
+      ],
+      "apify_allowed_domains": [
+        "airbus.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0010",
+      "company_name": "Airbus Aircraft",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.airbusaircraft.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "airbusaircraft.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0011",
+      "company_name": "Airbus Helicopters",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.airbushelicopters.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "airbushelicopters.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0012",
+      "company_name": "Albany Engineered Composites",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://albanyinternational.wd1.myworkdayjobs.com/Albany_ENG"
+      ],
+      "apify_allowed_domains": [
+        "aec-composites.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0013",
+      "company_name": "Allegheny Technologies (ATI)",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.alleghenytechnologies.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "alleghenytechnologies.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0014",
+      "company_name": "Amcor",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.amcor.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "amcor.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0015",
+      "company_name": "Ameron International",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.ameroninternational.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "ameroninternational.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0016",
+      "company_name": "AMPAC Fine Chemicals",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.ampacfinechemicals.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "ampacfinechemicals.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0017",
+      "company_name": "Andersen Corporation",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.andersencorporation.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "andersencorporation.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0018",
+      "company_name": "AOC Aliancys",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.aocaliancys.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "aocaliancys.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0019",
+      "company_name": "Applied Composites",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.appliedcomposites.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "appliedcomposites.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0020",
+      "company_name": "Archer Aviation",
+      "ats_platform": "Greenhouse",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://boards.greenhouse.io/archeravia tion"
+      ],
+      "apify_allowed_domains": [
+        "archer.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0021",
+      "company_name": "Arconic",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://arconic.wd5.myworkdayjobs.com/Arconic"
+      ],
+      "apify_allowed_domains": [
+        "arconic.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0022",
+      "company_name": "Arevo",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.arevo.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "arevo.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0023",
+      "company_name": "Argonne National Laboratory",
+      "ats_platform": "Taleo",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://careers.anl.gov"
+      ],
+      "apify_allowed_domains": [
+        "anl.gov"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "proxy"
+      ]
+    },
+    {
+      "company_id": "C0024",
+      "company_name": "Arkema",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.arkema.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "arkema.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0025",
+      "company_name": "Arris Composites",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.arriscomposites.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "arriscomposites.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0026",
+      "company_name": "ASC Process Systems",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.ascprocesssystems.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "ascprocesssystems.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0027",
+      "company_name": "Astrobotic Technology",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.astrobotictechnology.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "astrobotictechnology.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0028",
+      "company_name": "Astronics Corporation",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.astronicscorporation.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "astronicscorporation.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0029",
+      "company_name": "ATI",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.ati.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "ati.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0030",
+      "company_name": "Axiom Space",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.axiomspace.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "axiomspace.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0031",
+      "company_name": "B-O-F Corporation",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.bofcorporation.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "bofcorporation.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0032",
+      "company_name": "Barnes Group",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.barnes.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "barnes.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0033",
+      "company_name": "Barrday Composite Solutions",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.barrdaycompositesolutions.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "barrdaycompositesolutions.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0034",
+      "company_name": "Bell Textron",
+      "ats_platform": "iCIMS",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://textron.icims.com/jobs/search"
+      ],
+      "apify_allowed_domains": [
+        "bellflight.com"
+      ],
+      "apify_pagination_hint": "next button",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless"
+      ]
+    },
+    {
+      "company_id": "C0035",
+      "company_name": "Beta Technologies",
+      "ats_platform": "Greenhouse",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://boards.greenhouse.io/beta"
+      ],
+      "apify_allowed_domains": [
+        "beta.team"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0036",
+      "company_name": "Biofuran Materials (IT)",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.biofuranmaterials.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "biofuranmaterials.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0037",
+      "company_name": "Boeing",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://jobs.boeing.com"
+      ],
+      "apify_allowed_domains": [
+        "boeing.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0038",
+      "company_name": "Bombardier",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.bombardier.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "bombardier.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0039",
+      "company_name": "Boom Supersonic",
+      "ats_platform": "Lever",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://jobs.lever.co/boomsupersonic"
+      ],
+      "apify_allowed_domains": [
+        "boomsupersonic.com"
+      ],
+      "apify_pagination_hint": "infinite scroll",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0040",
+      "company_name": "Brooks Automation",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.brooksautomation.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "brooksautomation.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0041",
+      "company_name": "BWX Technologies",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.bwxtechnologies.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "bwxtechnologies.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0042",
+      "company_name": "Canoo",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.canoo.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "canoo.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0043",
+      "company_name": "Carpenter Technology",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.carpentertechnology.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "carpentertechnology.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0044",
+      "company_name": "Caterpillar",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://cat.wd5.myworkdayjobs.com/CaterpillarCareers"
+      ],
+      "apify_allowed_domains": [
+        "caterpillar.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0045",
+      "company_name": "Chomarat",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.chomarat.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "chomarat.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0046",
+      "company_name": "Cirrus",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.cirr.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "cirr.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0047",
+      "company_name": "Collins Aerospace",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://jobs.collinsaerospace.com"
+      ],
+      "apify_allowed_domains": [
+        "collinsaerospace.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0048",
+      "company_name": "Componous (GR)",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.compono.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "compono.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0049",
+      "company_name": "Composites One",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.compositesone.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "compositesone.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0050",
+      "company_name": "CONMED Corporation",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.conmedcorporation.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "conmedcorporation.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0051",
+      "company_name": "Continental Structural Plastics (Teijin)",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.continentalstructuralplastics.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "continentalstructuralplastics.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0052",
+      "company_name": "Continuous Composites",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.continuouscomposites.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "continuouscomposites.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0053",
+      "company_name": "Crane Composites",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.cranecomposites.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "cranecomposites.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0054",
+      "company_name": "Creation Technologies",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.creationtechnologies.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "creationtechnologies.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0055",
+      "company_name": "Creative Composites Group",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.creativecomposites.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "creativecomposites.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0056",
+      "company_name": "Cretex Companies, Inc.",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.cretexcompanies.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "cretexcompanies.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0057",
+      "company_name": "Cummins Filtration",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.cumminsfiltration.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "cumminsfiltration.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0058",
+      "company_name": "Curtiss-Wright Corporation",
+      "ats_platform": "iCIMS",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://www.curtisswright.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "curtisswright.com"
+      ],
+      "apify_pagination_hint": "next button",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless"
+      ]
+    },
+    {
+      "company_id": "C0059",
+      "company_name": "Cytec Industries (Solvay)",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.cytecindustries.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "cytecindustries.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0060",
+      "company_name": "Daher",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.daher.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "daher.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0061",
+      "company_name": "Dassault Aviation",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.dassaultaviation.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "dassaultaviation.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0062",
+      "company_name": "Divergent",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.divergent.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "divergent.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0063",
+      "company_name": "Divergent Technologies",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.divergenttechnologies.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "divergenttechnologies.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0064",
+      "company_name": "Dover Corporation",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://dover.wd1.myworkdayjobs.com/Dover"
+      ],
+      "apify_allowed_domains": [
+        "dovercorporation.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0065",
+      "company_name": "Ducommun",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://ducommun.wd1.myworkdayjobs.com/Ducommun_External"
+      ],
+      "apify_allowed_domains": [
+        "ducommun.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0066",
+      "company_name": "Ducommun Incorporated",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.ducommunincorporated.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "ducommunincorporated.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0067",
+      "company_name": "DuPont",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://dupont.wd1.myworkdayjobs.com/DuPont_External"
+      ],
+      "apify_allowed_domains": [
+        "dupont.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0068",
+      "company_name": "Eaton",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://eaton.eightfold.ai/careers"
+      ],
+      "apify_allowed_domains": [
+        "eaton.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0069",
+      "company_name": "Elbit Systems of America",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.elbitsystemsof.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "elbitsystemsof.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0070",
+      "company_name": "Electra.aero",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.electraaero.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "electraaero.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0071",
+      "company_name": "Electroimpact",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.electroimpact.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "electroimpact.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0072",
+      "company_name": "Element Materials Technology",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.elementmaterialstechnology.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "elementmaterialstechnology.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0073",
+      "company_name": "Embraer",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.embraer.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "embraer.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0074",
+      "company_name": "Embraer Aircraft",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.embraeraircraft.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "embraeraircraft.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0075",
+      "company_name": "ESAero",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.esaero.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "esaero.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0076",
+      "company_name": "Entegris",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.entegris.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "entegris.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0077",
+      "company_name": "Envision Energy",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.envisionenergy.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "envisionenergy.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0078",
+      "company_name": "Eve Air Mobility",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.eveairmobility.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "eveairmobility.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0079",
+      "company_name": "Exotic Automation & Supply",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.exoticautomationsupply.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "exoticautomationsupply.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0080",
+      "company_name": "FC Industries, Inc.",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.fcindustries.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "fcindustries.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0081",
+      "company_name": "Fisker Inc.",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.fisker.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "fisker.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0082",
+      "company_name": "Foresight Innovations",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.foresightinnovations.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "foresightinnovations.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0083",
+      "company_name": "Fortify",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.fortify.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "fortify.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0084",
+      "company_name": "GE Aerospace",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://jobs.gecareers.com/aviation"
+      ],
+      "apify_allowed_domains": [
+        "geaerospace.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0085",
+      "company_name": "General Atomics (Aero)",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.generalatomics.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "generalatomics.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0086",
+      "company_name": "General Motors",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://search-careers.gm.com"
+      ],
+      "apify_allowed_domains": [
+        "gm.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0087",
+      "company_name": "Gentex Corporation",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.gentexcorporation.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "gentexcorporation.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0088",
+      "company_name": "GKN Aerospace",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://gknaerospace.wd3.myworkdayjobs.com/GKN_External"
+      ],
+      "apify_allowed_domains": [
+        "gknaerospace.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0089",
+      "company_name": "Gulfstream Aerospace",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.gulfstreamaerospace.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "gulfstreamaerospace.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0090",
+      "company_name": "Gurit",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.gurit.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "gurit.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0091",
+      "company_name": "Hanwha Aerospace USA",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.hanwhaaerospace.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "hanwhaaerospace.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0092",
+      "company_name": "Haynes International",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.haynesinternational.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "haynesinternational.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0093",
+      "company_name": "Heatcraft Worldwide Refrigeration",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.heatcraftworldwiderefrigeration.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "heatcraftworldwiderefrigeration.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0094",
+      "company_name": "Heico Corporation",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://heico.wd1.myworkdayjobs.com/HEICO"
+      ],
+      "apify_allowed_domains": [
+        "heico.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0095",
+      "company_name": "Hexagon Composites",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://hexagoncomposites.wd3.myworkdayjobs.com"
+      ],
+      "apify_allowed_domains": [
+        "hexagoncomposites.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0096",
+      "company_name": "Hexcel Corporation",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://hexcel.wd5.myworkdayjobs.com/Hexcel"
+      ],
+      "apify_allowed_domains": [
+        "hexcel.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0097",
+      "company_name": "Hexion",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.hexion.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "hexion.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0098",
+      "company_name": "Honda Aircraft",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.hondaaircraft.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "hondaaircraft.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0099",
+      "company_name": "Honeywell Aerospace",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://careers.honeywell.com"
+      ],
+      "apify_allowed_domains": [
+        "honeywell.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0100",
+      "company_name": "Howmet Aerospace",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://howmet.wd5.myworkdayjobs.com/Howmet_External"
+      ],
+      "apify_allowed_domains": [
+        "howmet.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0101",
+      "company_name": "Huntsman Advanced Materials",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.huntsmanadvancedmaterials.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "huntsmanadvancedmaterials.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0102",
+      "company_name": "Huntsman Corporation",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.huntsmancorporation.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "huntsmancorporation.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0103",
+      "company_name": "iCOMAT",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.icomat.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "icomat.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0104",
+      "company_name": "IDEX Corporation",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.idexcorporation.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "idexcorporation.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0105",
+      "company_name": "IHI Corporation (US)",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.ihicorporation.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "ihicorporation.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0106",
+      "company_name": "Impossible Objects",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.impossibleobjects.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "impossibleobjects.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0107",
+      "company_name": "Impulse Space",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.impulsespace.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "impulsespace.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0108",
+      "company_name": "Ingersoll Machine Tools",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.ingersollmachinetools.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "ingersollmachinetools.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0109",
+      "company_name": "Insulet Corporation",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.insuletcorporation.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "insuletcorporation.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0110",
+      "company_name": "Integer Holdings Corporation",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.integerholdingscorporation.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "integerholdingscorporation.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0111",
+      "company_name": "Intuitive Machines",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.intuitivemachines.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "intuitivemachines.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0112",
+      "company_name": "Intuitive Surgical",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.intuitivesurgical.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "intuitivesurgical.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0113",
+      "company_name": "Janicki",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.janicki.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "janicki.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0114",
+      "company_name": "Janicki Industries",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.janickiindustries.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "janickiindustries.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0115",
+      "company_name": "Joby Aviation",
+      "ats_platform": "Greenhouse",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://boards.greenhouse.io/jobycareers"
+      ],
+      "apify_allowed_domains": [
+        "jobyaviation.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0116",
+      "company_name": "Kaman Aerospace",
+      "ats_platform": "iCIMS",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://kaman.icims.com/jobs/search"
+      ],
+      "apify_allowed_domains": [
+        "kaman.com"
+      ],
+      "apify_pagination_hint": "next button",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless"
+      ]
+    },
+    {
+      "company_id": "C0117",
+      "company_name": "Kaman Corporation",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.kamancorporation.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "kamancorporation.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0118",
+      "company_name": "Kymera International",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.kymerainternational.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "kymerainternational.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0119",
+      "company_name": "Lear Corporation",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.learcorporation.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "learcorporation.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0120",
+      "company_name": "Leonardo (Group)",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.leonardo.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "leonardo.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0121",
+      "company_name": "Lilium",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.lilium.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "lilium.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0122",
+      "company_name": "LMI Aerospace",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.lmiaerospace.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "lmiaerospace.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0123",
+      "company_name": "Lucid Motors",
+      "ats_platform": "Greenhouse",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://boards.greenhouse.io/lucidmotors"
+      ],
+      "apify_allowed_domains": [
+        "lucidmotors.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0124",
+      "company_name": "Magellan Aerospace",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.magellanaerospace.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "magellanaerospace.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0125",
+      "company_name": "Magna International",
+      "ats_platform": "Taleo",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://magnainternational.taleo.net/careersection/"
+      ],
+      "apify_allowed_domains": [
+        "magna.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "proxy"
+      ]
+    },
+    {
+      "company_id": "C0126",
+      "company_name": "Markforged",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.markforged.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "markforged.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0127",
+      "company_name": "Martinrea International",
+      "ats_platform": "Custom",
+      "apify_strategy": "company-site-crawl",
+      "apify_entrypoint_urls": [
+        "https://martinrea.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "martinrea.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [
+        "custom-code"
+      ],
+      "apify_workarounds": [
+        "headless"
+      ]
+    },
+    {
+      "company_id": "C0128",
+      "company_name": "Materion Corporation",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.materioncorporation.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "materioncorporation.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0129",
+      "company_name": "Maxar Technologies",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.maxartechnologies.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "maxartechnologies.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0130",
+      "company_name": "Meggitt (Parker Hannifin)",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.meggitt.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "meggitt.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0131",
+      "company_name": "Mitsubishi Chemical America",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.mitsubishichemical.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "mitsubishichemical.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0132",
+      "company_name": "Mitsubishi Chemical Carbon Fiber & Composites",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.mitsubishichemicalcarbonfibercomposites.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "mitsubishichemicalcarbonfibercomposites.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0133",
+      "company_name": "Moog Inc.",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://moog.wd1.myworkdayjobs.com/MoogCareers"
+      ],
+      "apify_allowed_domains": [
+        "moog.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0134",
+      "company_name": "MTU Aero Engines",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.mtuaeroengines.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "mtuaeroengines.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0135",
+      "company_name": "Multimatic",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.multimatic.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "multimatic.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0136",
+      "company_name": "NASA Marshall Space Flight Center",
+      "ats_platform": "USAJOBS",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.usajobs.gov/Search/Results?k=NASA+Marshall"
+      ],
+      "apify_allowed_domains": [
+        "nasa.gov"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0137",
+      "company_name": "NIAR (Wichita State)",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.niar.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "niar.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0138",
+      "company_name": "Nikola Corporation",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.nikolacorporation.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "nikolacorporation.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0139",
+      "company_name": "Nordam",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.nordam.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "nordam.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0140",
+      "company_name": "Nordex Group",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.nordex.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "nordex.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0141",
+      "company_name": "Oak Ridge National Laboratory",
+      "ats_platform": "iCIMS",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://jobs.ornl.gov"
+      ],
+      "apify_allowed_domains": [
+        "ornl.gov"
+      ],
+      "apify_pagination_hint": "next button",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless"
+      ]
+    },
+    {
+      "company_id": "C0142",
+      "company_name": "Oshkosh Corporation",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://oshkosh.wd5.myworkdayjobs.com/External"
+      ],
+      "apify_allowed_domains": [
+        "oshkoshcorp.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0143",
+      "company_name": "Owens Corning",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.owenscorning.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "owenscorning.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0144",
+      "company_name": "Park Aerospace",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.parkaerospace.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "parkaerospace.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0145",
+      "company_name": "Parker Hannifin",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://phcareers.wd5.myworkdayjobs.com/PH_External_Careers"
+      ],
+      "apify_allowed_domains": [
+        "parker.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0146",
+      "company_name": "PCC Aerostructures",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.pccaerostructures.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "pccaerostructures.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0147",
+      "company_name": "Plasan Carbon Composites",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.plasancarboncomposites.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "plasancarboncomposites.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0148",
+      "company_name": "Pratt & Whitney",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://jobs.rtx.com"
+      ],
+      "apify_allowed_domains": [
+        "prattwhitney.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0149",
+      "company_name": "Precision Castparts (Berkshire)",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://pcc.wd5.myworkdayjobs.com/PCC"
+      ],
+      "apify_allowed_domains": [
+        "precast.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0150",
+      "company_name": "Premium AEROTEC (Airbus)",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.premiumaerotec.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "premiumaerotec.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0151",
+      "company_name": "Purdue University (School of AAE)",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://careers.purdue.edu"
+      ],
+      "apify_allowed_domains": [
+        "purdue.edu"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0152",
+      "company_name": "Re:Build Manufacturing",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.rebuildmanufacturing.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "rebuildmanufacturing.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0153",
+      "company_name": "Relativity Space",
+      "ats_platform": "Greenhouse",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://boards.greenhouse.io/relativity"
+      ],
+      "apify_allowed_domains": [
+        "relativityspace.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0154",
+      "company_name": "Reliable Robotics",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.reliablerobotics.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "reliablerobotics.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0155",
+      "company_name": "Renegade Materials (Teijin)",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.renegadematerials.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "renegadematerials.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0156",
+      "company_name": "Rivian",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.rivian.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "rivian.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0157",
+      "company_name": "Rocket Lab",
+      "ats_platform": "Lever",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://jobs.lever.co/rocketlab"
+      ],
+      "apify_allowed_domains": [
+        "rocketlabusa.com"
+      ],
+      "apify_pagination_hint": "infinite scroll",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0158",
+      "company_name": "Rolls-Royce",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://careers.rolls-royce.com"
+      ],
+      "apify_allowed_domains": [
+        "rolls-royce.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0159",
+      "company_name": "Safran USA",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://safran.wd3.myworkdayjobs.com/safran"
+      ],
+      "apify_allowed_domains": [
+        "safran-group.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0160",
+      "company_name": "Sandia National Laboratories",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://sandia.jobs"
+      ],
+      "apify_allowed_domains": [
+        "sandia.gov"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0161",
+      "company_name": "Senior Aerospace",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.senioraerospace.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "senioraerospace.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0162",
+      "company_name": "SGL Carbon",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.sglcarbon.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "sglcarbon.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0163",
+      "company_name": "Siemens",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://jobs.siemens.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "siemens.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0164",
+      "company_name": "Sierra Space",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.sierraspace.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "sierraspace.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0165",
+      "company_name": "Solvay",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://solvay.wd3.myworkdayjobs.com/SolvayJobs"
+      ],
+      "apify_allowed_domains": [
+        "solvay.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0166",
+      "company_name": "SpaceX",
+      "ats_platform": "Custom",
+      "apify_strategy": "company-site-crawl",
+      "apify_entrypoint_urls": [
+        "https://www.spacex.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "spacex.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [
+        "custom-code"
+      ],
+      "apify_workarounds": [
+        "headless"
+      ]
+    },
+    {
+      "company_id": "C0167",
+      "company_name": "Spirit AeroSystems",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://spiritaero.wd5.myworkdayjobs.com/Spirit_External"
+      ],
+      "apify_allowed_domains": [
+        "spiritaero.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0168",
+      "company_name": "StandardAero",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.standardaero.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "standardaero.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0169",
+      "company_name": "Stoke Space",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.stokespace.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "stokespace.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0170",
+      "company_name": "Teijin Automotive Technologies",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.teijinautomotivetechnologies.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "teijinautomotivetechnologies.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0171",
+      "company_name": "Teledyne Technologies",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.teledynetechnologies.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "teledynetechnologies.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0172",
+      "company_name": "Terran Orbital",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.terranorbital.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "terranorbital.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0173",
+      "company_name": "Textron Aviation",
+      "ats_platform": "iCIMS",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://textron.icims.com/jobs/search"
+      ],
+      "apify_allowed_domains": [
+        "txtav.com"
+      ],
+      "apify_pagination_hint": "next button",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless"
+      ]
+    },
+    {
+      "company_id": "C0174",
+      "company_name": "Textron Systems",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.textronsystems.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "textronsystems.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0175",
+      "company_name": "Thales",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.thales.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "thales.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0176",
+      "company_name": "Thermwood",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.thermwood.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "thermwood.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0177",
+      "company_name": "Toray Advanced Composites",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.torayadvancedcomposites.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "torayadvancedcomposites.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0178",
+      "company_name": "Toray CMA",
+      "ats_platform": "iCIMS",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://toraycma.icims.com/jobs/search"
+      ],
+      "apify_allowed_domains": [
+        "toraycma.com"
+      ],
+      "apify_pagination_hint": "next button",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless"
+      ]
+    },
+    {
+      "company_id": "C0179",
+      "company_name": "Toray Composite Materials America",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.toraycompositematerials.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "toraycompositematerials.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0180",
+      "company_name": "TPI Composites",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://tpicomposites.wd1.myworkdayjobs.com/TPIComposites"
+      ],
+      "apify_allowed_domains": [
+        "tpicomposites.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0181",
+      "company_name": "TransDigm Group",
+      "ats_platform": "iCIMS",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://careers.transdigm.com"
+      ],
+      "apify_allowed_domains": [
+        "transdigm.com"
+      ],
+      "apify_pagination_hint": "next button",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless"
+      ]
+    },
+    {
+      "company_id": "C0182",
+      "company_name": "Triumph",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.triumph.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "triumph.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0183",
+      "company_name": "UIUC NCDMM/IACMI",
+      "ats_platform": "Custom",
+      "apify_strategy": "company-site-crawl",
+      "apify_entrypoint_urls": [
+        "https://iacmi.org/careers"
+      ],
+      "apify_allowed_domains": [
+        "iacmi.org"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [
+        "custom-code"
+      ],
+      "apify_workarounds": [
+        "headless"
+      ]
+    },
+    {
+      "company_id": "C0184",
+      "company_name": "University of Delaware CCM",
+      "ats_platform": "Custom",
+      "apify_strategy": "company-site-crawl",
+      "apify_entrypoint_urls": [
+        "https://www.udel.edu/faculty-staff/careers/"
+      ],
+      "apify_allowed_domains": [
+        "udel.edu"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [
+        "custom-code"
+      ],
+      "apify_workarounds": [
+        "headless"
+      ]
+    },
+    {
+      "company_id": "C0185",
+      "company_name": "University of Michigan (Aerospace)",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://careers.umich.edu"
+      ],
+      "apify_allowed_domains": [
+        "umich.edu"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0186",
+      "company_name": "Ursa Major",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.ursamajor.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "ursamajor.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0187",
+      "company_name": "Vast",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.vast.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "vast.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0188",
+      "company_name": "Virgin Galactic",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.virgingalactic.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "virgingalactic.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0189",
+      "company_name": "Web Industries",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.webindustries.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "webindustries.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0190",
+      "company_name": "Wisk Aero",
+      "ats_platform": "Greenhouse",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://boards.greenhouse.io/wisk"
+      ],
+      "apify_allowed_domains": [
+        "wisk.aero"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0191",
+      "company_name": "Woodward",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://woodward.wd5.myworkdayjobs.com/WWD_External"
+      ],
+      "apify_allowed_domains": [
+        "woodward.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0192",
+      "company_name": "Zipline International",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.ziplineinternational.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "ziplineinternational.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0193",
+      "company_name": "Zoltek",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.zoltek.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "zoltek.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0194",
+      "company_name": "AST SpaceMobile",
+      "ats_platform": "Greenhouse",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://boards.greenhouse.io/astspacemobile"
+      ],
+      "apify_allowed_domains": [
+        "ast-science.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0195",
+      "company_name": "Astra Space",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.astraspace.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "astraspace.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0196",
+      "company_name": "Aurora Flight Sciences",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://aurora.wd1.myworkdayjobs.com/Aurora"
+      ],
+      "apify_allowed_domains": [
+        "aurora.aero"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0197",
+      "company_name": "Blue Origin",
+      "ats_platform": "Custom",
+      "apify_strategy": "company-site-crawl",
+      "apify_entrypoint_urls": [
+        "https://www.blueorigin.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "blueorigin.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [
+        "custom-code"
+      ],
+      "apify_workarounds": [
+        "headless"
+      ]
+    },
+    {
+      "company_id": "C0198",
+      "company_name": "Capella Space",
+      "ats_platform": "Lever",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://jobs.lever.co/capellaspace"
+      ],
+      "apify_allowed_domains": [
+        "capellaspace.com"
+      ],
+      "apify_pagination_hint": "infinite scroll",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0199",
+      "company_name": "Firefly Aerospace",
+      "ats_platform": "Lever",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://jobs.lever.co/fireflyspace"
+      ],
+      "apify_allowed_domains": [
+        "fireflyrockets.com"
+      ],
+      "apify_pagination_hint": "infinite scroll",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0200",
+      "company_name": "Momentus",
+      "ats_platform": "Lever",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://jobs.lever.co/momentus-space"
+      ],
+      "apify_allowed_domains": [
+        "momentus.space"
+      ],
+      "apify_pagination_hint": "infinite scroll",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0201",
+      "company_name": "Overair",
+      "ats_platform": "Lever",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://jobs.lever.co/overair"
+      ],
+      "apify_allowed_domains": [
+        "overair.com"
+      ],
+      "apify_pagination_hint": "infinite scroll",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0202",
+      "company_name": "Phase Four",
+      "ats_platform": "Lever",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://jobs.lever.co/phasefour"
+      ],
+      "apify_allowed_domains": [
+        "phase4.io"
+      ],
+      "apify_pagination_hint": "infinite scroll",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0203",
+      "company_name": "Planet Labs",
+      "ats_platform": "Greenhouse",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://boards.greenhouse.io/planetlabs"
+      ],
+      "apify_allowed_domains": [
+        "planet.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0204",
+      "company_name": "Redwire Space",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://redwirespace.wd1.myworkdayjobs.com/Redwire"
+      ],
+      "apify_allowed_domains": [
+        "redwirespace.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0205",
+      "company_name": "Shield AI",
+      "ats_platform": "Lever",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://jobs.lever.co/shieldai"
+      ],
+      "apify_allowed_domains": [
+        "shield.ai"
+      ],
+      "apify_pagination_hint": "infinite scroll",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0206",
+      "company_name": "Skydio",
+      "ats_platform": "Greenhouse",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://boards.greenhouse.io/skydio"
+      ],
+      "apify_allowed_domains": [
+        "skydio.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0207",
+      "company_name": "SpinLaunch",
+      "ats_platform": "Lever",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://jobs.lever.co/spinlaunch"
+      ],
+      "apify_allowed_domains": [
+        "spinlaunch.com"
+      ],
+      "apify_pagination_hint": "infinite scroll",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0208",
+      "company_name": "Spire Global",
+      "ats_platform": "Lever",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://jobs.lever.co/spire"
+      ],
+      "apify_allowed_domains": [
+        "spire.com"
+      ],
+      "apify_pagination_hint": "infinite scroll",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0209",
+      "company_name": "Supernal",
+      "ats_platform": "Greenhouse",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://boards.greenhouse.io/supernal"
+      ],
+      "apify_allowed_domains": [
+        "supernal.aero"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0210",
+      "company_name": "Venturi Astrolab",
+      "ats_platform": "Lever",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://jobs.lever.co/astrolab"
+      ],
+      "apify_allowed_domains": [
+        "venturi-astrolab.com"
+      ],
+      "apify_pagination_hint": "infinite scroll",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0211",
+      "company_name": "Vertical Aerospace",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://vertricalaerospace.wd3.myworkdayjobs.com"
+      ],
+      "apify_allowed_domains": [
+        "vertical-aerospace.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0212",
+      "company_name": "Voyager Space",
+      "ats_platform": "Lever",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://jobs.lever.co/voyagerspace"
+      ],
+      "apify_allowed_domains": [
+        "voyagerspace.com"
+      ],
+      "apify_pagination_hint": "infinite scroll",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0213",
+      "company_name": "Xwing",
+      "ats_platform": "Lever",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://jobs.lever.co/xwing"
+      ],
+      "apify_allowed_domains": [
+        "xwing.com"
+      ],
+      "apify_pagination_hint": "infinite scroll",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0214",
+      "company_name": "York Space Systems",
+      "ats_platform": "Lever",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://jobs.lever.co/yorkspacesystems"
+      ],
+      "apify_allowed_domains": [
+        "yorkspacesystems.com"
+      ],
+      "apify_pagination_hint": "infinite scroll",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0215",
+      "company_name": "Aptera Motors",
+      "ats_platform": "Lever",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://jobs.lever.co/aptera"
+      ],
+      "apify_allowed_domains": [
+        "aptera.us"
+      ],
+      "apify_pagination_hint": "infinite scroll",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0216",
+      "company_name": "Aptiv",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://aptiv.wd1.myworkdayjobs.com/Aptiv"
+      ],
+      "apify_allowed_domains": [
+        "aptiv.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0217",
+      "company_name": "BorgWarner",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://borgwarner.wd5.myworkdayjobs.com/BorgWarner_External"
+      ],
+      "apify_allowed_domains": [
+        "borgwarner.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0218",
+      "company_name": "Bosch USA",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://bosch.wd3.myworkdayjobs.com/Bosch_Ext_US"
+      ],
+      "apify_allowed_domains": [
+        "bosch.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0219",
+      "company_name": "CaptiveAire Systems",
+      "ats_platform": "Custom",
+      "apify_strategy": "company-site-crawl",
+      "apify_entrypoint_urls": [
+        "https://www.captiveaire.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "captiveaire.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [
+        "custom-code"
+      ],
+      "apify_workarounds": [
+        "headless"
+      ]
+    },
+    {
+      "company_id": "C0220",
+      "company_name": "ChargePoint",
+      "ats_platform": "Greenhouse",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://boards.greenhouse.io/chargepoint"
+      ],
+      "apify_allowed_domains": [
+        "chargepoint.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0221",
+      "company_name": "Continental Automotive",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://jobs.continental.com/en/"
+      ],
+      "apify_allowed_domains": [
+        "continental.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0222",
+      "company_name": "Cummins",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://cummins.wd1.myworkdayjobs.com/CumminsExternal"
+      ],
+      "apify_allowed_domains": [
+        "cummins.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0223",
+      "company_name": "Dana Incorporated",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://dana.wd1.myworkdayjobs.com/Dana_Careers"
+      ],
+      "apify_allowed_domains": [
+        "dana.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0224",
+      "company_name": "Denso",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://densocareers.wd1.myworkdayjobs.com/denso_careers"
+      ],
+      "apify_allowed_domains": [
+        "densocorp.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0225",
+      "company_name": "Faraday Future",
+      "ats_platform": "Greenhouse",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://boards.greenhouse.io/faradayfuture"
+      ],
+      "apify_allowed_domains": [
+        "ff.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0226",
+      "company_name": "Flex-N-Gate",
+      "ats_platform": "Custom",
+      "apify_strategy": "company-site-crawl",
+      "apify_entrypoint_urls": [
+        "https://flexngate.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "flexngate.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [
+        "custom-code"
+      ],
+      "apify_workarounds": [
+        "headless"
+      ]
+    },
+    {
+      "company_id": "C0227",
+      "company_name": "Ford Motor Company",
+      "ats_platform": "Taleo",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://efds.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX"
+      ],
+      "apify_allowed_domains": [
+        "ford.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "proxy"
+      ]
+    },
+    {
+      "company_id": "C0228",
+      "company_name": "Honda Manufacturing",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://honda.wd5.myworkdayjobs.com/AHM_External"
+      ],
+      "apify_allowed_domains": [
+        "ohio.honda.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0229",
+      "company_name": "Hyundai (America TC)",
+      "ats_platform": "Custom",
+      "apify_strategy": "company-site-crawl",
+      "apify_entrypoint_urls": [
+        "https://www.hyundai.com/us/en/careers.html"
+      ],
+      "apify_allowed_domains": [
+        "hyundai.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [
+        "custom-code"
+      ],
+      "apify_workarounds": [
+        "headless"
+      ]
+    },
+    {
+      "company_id": "C0230",
+      "company_name": "Karma Automotive",
+      "ats_platform": "Custom",
+      "apify_strategy": "company-site-crawl",
+      "apify_entrypoint_urls": [
+        "https://www.karmaautomotive.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "karmaautomotive.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [
+        "custom-code"
+      ],
+      "apify_workarounds": [
+        "headless"
+      ]
+    },
+    {
+      "company_id": "C0231",
+      "company_name": "Nexteer Automotive",
+      "ats_platform": "Taleo",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://nexteer.taleo.net/careersection"
+      ],
+      "apify_allowed_domains": [
+        "nexteer.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "proxy"
+      ]
+    },
+    {
+      "company_id": "C0232",
+      "company_name": "NIO",
+      "ats_platform": "Greenhouse",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://nio.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "nio.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0233",
+      "company_name": "Nissan North America",
+      "ats_platform": "Taleo",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://nissannorthamerica.taleo.net/careersection"
+      ],
+      "apify_allowed_domains": [
+        "nissan-na.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "proxy"
+      ]
+    },
+    {
+      "company_id": "C0234",
+      "company_name": "NPROXX",
+      "ats_platform": "Custom",
+      "apify_strategy": "company-site-crawl",
+      "apify_entrypoint_urls": [
+        "https://www.nproxx.com/career"
+      ],
+      "apify_allowed_domains": [
+        "nproxx.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [
+        "custom-code"
+      ],
+      "apify_workarounds": [
+        "headless"
+      ]
+    },
+    {
+      "company_id": "C0235",
+      "company_name": "PACCAR",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://paccar.wd1.myworkdayjobs.com/PACCAR_External"
+      ],
+      "apify_allowed_domains": [
+        "paccar.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0236",
+      "company_name": "Rivian Automotive",
+      "ats_platform": "Greenhouse",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://boards.greenhouse.io/rivian"
+      ],
+      "apify_allowed_domains": [
+        "rivian.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0237",
+      "company_name": "Stellantis (FCA)",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://stellantis.wd12.myworkdayjobs.com/Stellantis"
+      ],
+      "apify_allowed_domains": [
+        "stellantis.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0238",
+      "company_name": "Subaru of Indiana Automotive",
+      "ats_platform": "Taleo",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://sia.taleo.net/careersection"
+      ],
+      "apify_allowed_domains": [
+        "subaru-sia.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "proxy"
+      ]
+    },
+    {
+      "company_id": "C0239",
+      "company_name": "Tesla",
+      "ats_platform": "Custom",
+      "apify_strategy": "company-site-crawl",
+      "apify_entrypoint_urls": [
+        "https://www.tesla.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "tesla.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [
+        "custom-code"
+      ],
+      "apify_workarounds": [
+        "headless"
+      ]
+    },
+    {
+      "company_id": "C0240",
+      "company_name": "Toyota Motor Manufacturing",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.toyotamotormanufacturing.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "toyotamotormanufacturing.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0241",
+      "company_name": "Valeo",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://valeo.wd3.myworkdayjobs.com/Valeo_External"
+      ],
+      "apify_allowed_domains": [
+        "valeo.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0242",
+      "company_name": "VinFast",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://vinfastcareers.com"
+      ],
+      "apify_allowed_domains": [
+        "vinfastauto.us"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0243",
+      "company_name": "Waymo (Alphabet)",
+      "ats_platform": "Greenhouse",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://waymo.com/joinus"
+      ],
+      "apify_allowed_domains": [
+        "waymo.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0244",
+      "company_name": "ZeroAvia",
+      "ats_platform": "Greenhouse",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://boards.greenhouse.io/zeroavia"
+      ],
+      "apify_allowed_domains": [
+        "zeroavia.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0245",
+      "company_name": "ZF Group",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://zf.wd3.myworkdayjobs.com/ZF"
+      ],
+      "apify_allowed_domains": [
+        "zf.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0246",
+      "company_name": "Baker Hughes",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://careers.bakerhughes.com"
+      ],
+      "apify_allowed_domains": [
+        "bakerhughes.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0247",
+      "company_name": "Bcomp",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.bcomp.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "bcomp.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0248",
+      "company_name": "Bloom Energy",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://bloomenergy.wd1.myworkdayjobs.com/bloom_energy"
+      ],
+      "apify_allowed_domains": [
+        "bloomenergy.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0249",
+      "company_name": "Corning Incorporated",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://corning.wd5.myworkdayjobs.com/en-US/corning_careers"
+      ],
+      "apify_allowed_domains": [
+        "corning.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0250",
+      "company_name": "Cyient",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://cyient.wd3.myworkdayjobs.com/cyient"
+      ],
+      "apify_allowed_domains": [
+        "cyient.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0251",
+      "company_name": "Dassault Syst\u00e8mes",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://www.3ds.com/careers/jobs"
+      ],
+      "apify_allowed_domains": [
+        "3ds.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0252",
+      "company_name": "Eos Energy",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.eosenergy.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "eosenergy.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0253",
+      "company_name": "FACC AG",
+      "ats_platform": "Custom",
+      "apify_strategy": "company-site-crawl",
+      "apify_entrypoint_urls": [
+        "https://www.facc.com/career"
+      ],
+      "apify_allowed_domains": [
+        "facc.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [
+        "custom-code"
+      ],
+      "apify_workarounds": [
+        "headless"
+      ]
+    },
+    {
+      "company_id": "C0254",
+      "company_name": "First Solar",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://firstsolar.wd1.myworkdayjobs.com/FirstSolar_External"
+      ],
+      "apify_allowed_domains": [
+        "firstsolar.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0255",
+      "company_name": "Form Energy",
+      "ats_platform": "Greenhouse",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://boards.greenhouse.io/formenergy"
+      ],
+      "apify_allowed_domains": [
+        "formenergy.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0256",
+      "company_name": "GE Vernova",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://gevernova.wd5.myworkdayjobs.com/GEVernova_External"
+      ],
+      "apify_allowed_domains": [
+        "gevernova.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0257",
+      "company_name": "Hexagon Manufacturing Intelligence",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://jobs.hexagon.com"
+      ],
+      "apify_allowed_domains": [
+        "hexagon.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0258",
+      "company_name": "Invenergy",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://invenergy.wd1.myworkdayjobs.com/Invenergy"
+      ],
+      "apify_allowed_domains": [
+        "invenergyllc.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0259",
+      "company_name": "ITW",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://itwjobs.com"
+      ],
+      "apify_allowed_domains": [
+        "itw.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0260",
+      "company_name": "John Deere",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://johndere.wd5.myworkdayjobs.com/deere_careers"
+      ],
+      "apify_allowed_domains": [
+        "deere.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0261",
+      "company_name": "Kennametal",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://kennametal.wd5.myworkdayjobs.com/KMT"
+      ],
+      "apify_allowed_domains": [
+        "kennametal.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0262",
+      "company_name": "LM Wind Power (GE Vernova)",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.lmwindpower.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "lmwindpower.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0263",
+      "company_name": "NOV Fiberglass Systems",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.novfiberglasssystems.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "novfiberglasssystems.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0264",
+      "company_name": "QuantumScape",
+      "ats_platform": "Greenhouse",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://boards.greenhouse.io/quantumscape"
+      ],
+      "apify_allowed_domains": [
+        "quantumscape.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0265",
+      "company_name": "QuEST Global",
+      "ats_platform": "iCIMS",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://careers.quest-global.com"
+      ],
+      "apify_allowed_domains": [
+        "quest-global.com"
+      ],
+      "apify_pagination_hint": "next button",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless"
+      ]
+    },
+    {
+      "company_id": "C0266",
+      "company_name": "Redwood Materials",
+      "ats_platform": "Greenhouse",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://boards.greenhouse.io/redwoodmaterials"
+      ],
+      "apify_allowed_domains": [
+        "redwoodmaterials.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0267",
+      "company_name": "Regal Rexnord",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://regalbeloit.wd1.myworkdayjobs.com/RegalRexnord"
+      ],
+      "apify_allowed_domains": [
+        "regalrexnord.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0268",
+      "company_name": "Saint-Gobain",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://saintgobain.wd3.myworkdayjobs.com/Saint-Gobain_Careers"
+      ],
+      "apify_allowed_domains": [
+        "saint-gobain.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0269",
+      "company_name": "Siemens Gamesa",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://jobs.siemensgamesa.com"
+      ],
+      "apify_allowed_domains": [
+        "siemensgamesa.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0270",
+      "company_name": "Vestas Americas",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://vestas.wd3.myworkdayjobs.com/Vestas"
+      ],
+      "apify_allowed_domains": [
+        "vestas.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0271",
+      "company_name": "Abbott Laboratories",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://abbott.wd5.myworkdayjobs.com/abbottcareers"
+      ],
+      "apify_allowed_domains": [
+        "abbott.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0272",
+      "company_name": "Argon Medical Devices",
+      "ats_platform": "iCIMS",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://argon.icims.com/jobs/search"
+      ],
+      "apify_allowed_domains": [
+        "argonmedical.com"
+      ],
+      "apify_pagination_hint": "next button",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless"
+      ]
+    },
+    {
+      "company_id": "C0273",
+      "company_name": "Boston Scientific",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://bostonscientific.wd1.myworkdayjobs.com/BSC_Careers"
+      ],
+      "apify_allowed_domains": [
+        "bostonscientific.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0274",
+      "company_name": "Cook Medical",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://cookmedical.wd5.myworkdayjobs.com/CookMedical"
+      ],
+      "apify_allowed_domains": [
+        "cookmedical.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0275",
+      "company_name": "DePuy Synthes",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://jnj.wd1.myworkdayjobs.com/jnjemea"
+      ],
+      "apify_allowed_domains": [
+        "depuysynthes.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0276",
+      "company_name": "Edwards Lifesciences",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https:// edwards.wd5.myworkdayjobs.com/ELC"
+      ],
+      "apify_allowed_domains": [
+        "edwards.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0277",
+      "company_name": "Enovis",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://enovis.wd1.myworkdayjobs.com/Enovis_Careers"
+      ],
+      "apify_allowed_domains": [
+        "enovis.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0278",
+      "company_name": "Globus Medical",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://careers.globusmedical.com"
+      ],
+      "apify_allowed_domains": [
+        "globusmedical.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0279",
+      "company_name": "Integra LifeSciences",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://integralife.wd1.myworkdayjobs.com/integra_careers"
+      ],
+      "apify_allowed_domains": [
+        "integralife.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0280",
+      "company_name": "Medline Industries",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://medline.wd1.myworkdayjobs.com/MedlineCareers"
+      ],
+      "apify_allowed_domains": [
+        "medline.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0281",
+      "company_name": "Medtronic",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://jobs.medtronic.com"
+      ],
+      "apify_allowed_domains": [
+        "medtronic.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0282",
+      "company_name": "NuVasive",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://nuvectra.wd1.myworkdayjobs.com/NuVasive"
+      ],
+      "apify_allowed_domains": [
+        "nuvasive.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0283",
+      "company_name": "Ottobock",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://ottobock.wd3.myworkdayjobs.com/OttobockCareers"
+      ],
+      "apify_allowed_domains": [
+        "ottobock.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0284",
+      "company_name": "Smith+Nephew",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://jobs.smith-nephew.com"
+      ],
+      "apify_allowed_domains": [
+        "smith-nephew.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0285",
+      "company_name": "Stryker",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://stryker.wd1.myworkdayjobs.com/StrykerCareers"
+      ],
+      "apify_allowed_domains": [
+        "stryker.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0286",
+      "company_name": "Zimmer Biomet",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://jobs.zimmerbiomet.com"
+      ],
+      "apify_allowed_domains": [
+        "zimmerbiomet.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0287",
+      "company_name": "Applied Materials",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://amat.wd1.myworkdayjobs.com/External"
+      ],
+      "apify_allowed_domains": [
+        "appliedmaterials.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0288",
+      "company_name": "BASF",
+      "ats_platform": "SuccessFactors",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://basf.erecruiting.eu/wd/plsql/wd_portal.show_job_board"
+      ],
+      "apify_allowed_domains": [
+        "basf.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy",
+        "Cloudflare"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "proxy"
+      ]
+    },
+    {
+      "company_id": "C0289",
+      "company_name": "Battelle",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://battelle.wd1.myworkdayjobs.com/BattelleExternal"
+      ],
+      "apify_allowed_domains": [
+        "battelle.org"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0290",
+      "company_name": "Covestro",
+      "ats_platform": "SuccessFactors",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://jobs.covestro.com"
+      ],
+      "apify_allowed_domains": [
+        "covestro.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy",
+        "Cloudflare"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "proxy"
+      ]
+    },
+    {
+      "company_id": "C0291",
+      "company_name": "Desktop Metal",
+      "ats_platform": "Unknown",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.desktopmetal.com/careers"
+      ],
+      "apify_allowed_domains": [
+        "desktopmetal.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0292",
+      "company_name": "Georgia Tech ASDL",
+      "ats_platform": "Custom",
+      "apify_strategy": "company-site-crawl",
+      "apify_entrypoint_urls": [
+        "https://www.aero.gatech.edu/about/employment"
+      ],
+      "apify_allowed_domains": [
+        "gatech.edu"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [
+        "custom-code"
+      ],
+      "apify_workarounds": [
+        "headless"
+      ]
+    },
+    {
+      "company_id": "C0293",
+      "company_name": "Henkel",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://henkel.wd3.myworkdayjobs.com/henkel_careers"
+      ],
+      "apify_allowed_domains": [
+        "henkel.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0294",
+      "company_name": "Intel",
+      "ats_platform": "Custom",
+      "apify_strategy": "company-site-crawl",
+      "apify_entrypoint_urls": [
+        "https://jobs.intel.com"
+      ],
+      "apify_allowed_domains": [
+        "intel.com"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [
+        "custom-code"
+      ],
+      "apify_workarounds": [
+        "headless"
+      ]
+    },
+    {
+      "company_id": "C0295",
+      "company_name": "Johns Hopkins APL",
+      "ats_platform": "Taleo",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://jhuapl.taleo.net/careersection/2/jobsearch.ftl"
+      ],
+      "apify_allowed_domains": [
+        "jhuapl.edu"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "proxy"
+      ]
+    },
+    {
+      "company_id": "C0296",
+      "company_name": "Lincoln Electric",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://lincolnelectric.wd1.myworkdayjobs.com/Lincoln_Electric"
+      ],
+      "apify_allowed_domains": [
+        "lincolnelectric.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0297",
+      "company_name": "MIT Lincoln Laboratory",
+      "ats_platform": "Custom",
+      "apify_strategy": "company-site-crawl",
+      "apify_entrypoint_urls": [
+        "https://www.ll.mit.edu/careers"
+      ],
+      "apify_allowed_domains": [
+        "ll.mit.edu"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [
+        "custom-code"
+      ],
+      "apify_workarounds": [
+        "headless"
+      ]
+    },
+    {
+      "company_id": "C0298",
+      "company_name": "NASA Langley Research Center",
+      "ats_platform": "USAJOBS",
+      "apify_strategy": "search-then-verify",
+      "apify_entrypoint_urls": [
+        "https://www.usajobs.gov/Search/Results?k=NASA+Langley"
+      ],
+      "apify_allowed_domains": [
+        "nasa.gov"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [],
+      "apify_workarounds": []
+    },
+    {
+      "company_id": "C0299",
+      "company_name": "PPG Aerospace",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://ppg.wd5.myworkdayjobs.com/PPG"
+      ],
+      "apify_allowed_domains": [
+        "ppg.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0300",
+      "company_name": "Sandvik",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://jobs.sandvik.com"
+      ],
+      "apify_allowed_domains": [
+        "sandvik.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0301",
+      "company_name": "Southwest Research Institute",
+      "ats_platform": "Custom",
+      "apify_strategy": "company-site-crawl",
+      "apify_entrypoint_urls": [
+        "https://www.swri.org/careers"
+      ],
+      "apify_allowed_domains": [
+        "swri.org"
+      ],
+      "apify_pagination_hint": "unknown",
+      "apify_blockers": [
+        "custom-code"
+      ],
+      "apify_workarounds": [
+        "headless"
+      ]
+    },
+    {
+      "company_id": "C0302",
+      "company_name": "TE Connectivity",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://te.wd10.myworkdayjobs.com/TECareers"
+      ],
+      "apify_allowed_domains": [
+        "te.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    },
+    {
+      "company_id": "C0303",
+      "company_name": "Trane Technologies",
+      "ats_platform": "Workday",
+      "apify_strategy": "ATS-native",
+      "apify_entrypoint_urls": [
+        "https://tranetechnologies.wd1.myworkdayjobs.com/Trane_Technologies"
+      ],
+      "apify_allowed_domains": [
+        "tranetechnologies.com"
+      ],
+      "apify_pagination_hint": "query params",
+      "apify_blockers": [
+        "JS-heavy"
+      ],
+      "apify_workarounds": [
+        "headless",
+        "waitFor:.WDAY-lookupField-formWidget"
+      ]
+    }
+  ]
+}

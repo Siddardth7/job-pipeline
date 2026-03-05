@@ -1,0 +1,4925 @@
+{
+  "generated_utc": "2026-03-04T17:24:29.235441Z",
+  "defaults": {
+    "title_keywords": [
+      "Manufacturing Engineer",
+      "Process Engineer",
+      "Composites Engineer",
+      "Materials Engineer",
+      "Quality Engineer",
+      "Manufacturing Process Engineer",
+      "Advanced Manufacturing Engineer",
+      "Composite Manufacturing",
+      "Structural Manufacturing",
+      "Propulsion Manufacturing",
+      "Production Engineer",
+      "Quality Systems Engineer",
+      "Manufacturing Technology Engineer",
+      "R&D Manufacturing"
+    ],
+    "location_filters": [
+      "California",
+      "Texas",
+      "Washington",
+      "Illinois",
+      "Michigan",
+      "Florida",
+      "Arizona",
+      "Colorado"
+    ],
+    "exclusion_keywords": [
+      "staffing",
+      "contract",
+      "temp",
+      "agency",
+      "contractor",
+      "C2C",
+      "corp-to-corp",
+      "third party",
+      "1099",
+      "no sponsorship",
+      "must be a US citizen",
+      "security clearance required",
+      "TS/SCI",
+      "must be authorized to work"
+    ],
+    "max_age_days": 3,
+    "verification_required": true,
+    "reject_aggregators": [
+      "indeed.com",
+      "glassdoor.com",
+      "ziprecruiter.com",
+      "simplyhired.com"
+    ]
+  },
+  "total_companies": 303,
+  "companies": [
+    {
+      "company_id": "C0001",
+      "company_name": "3D Systems Corporation",
+      "jsearch_company_query": [
+        "3D Systems Corporation"
+      ],
+      "jsearch_site_filters": [
+        "3dsystemscorporation.com"
+      ],
+      "company_domain": "3dsystemscorporation.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0002",
+      "company_name": "ABL Space Systems",
+      "jsearch_company_query": [
+        "ABL Space Systems"
+      ],
+      "jsearch_site_filters": [
+        "ablspacesystems.com"
+      ],
+      "company_domain": "ablspacesystems.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0003",
+      "company_name": "Aciturri",
+      "jsearch_company_query": [
+        "Aciturri"
+      ],
+      "jsearch_site_filters": [
+        "aciturri.com"
+      ],
+      "company_domain": "aciturri.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0004",
+      "company_name": "Aeravox Dynamics",
+      "jsearch_company_query": [
+        "Aeravox Dynamics"
+      ],
+      "jsearch_site_filters": [
+        "aeravoxdynamics.com"
+      ],
+      "company_domain": "aeravoxdynamics.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0005",
+      "company_name": "Aerojet Rocketdyne",
+      "jsearch_company_query": [
+        "Aerojet Rocketdyne"
+      ],
+      "jsearch_site_filters": [
+        "aerojetrocketdyne.com"
+      ],
+      "company_domain": "aerojetrocketdyne.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "YES",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0006",
+      "company_name": "AeroVironment",
+      "jsearch_company_query": [
+        "AeroVironment"
+      ],
+      "jsearch_site_filters": [
+        "aerovironment.com"
+      ],
+      "company_domain": "aerovironment.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0007",
+      "company_name": "AerSale, Inc.",
+      "jsearch_company_query": [
+        "AerSale, Inc."
+      ],
+      "jsearch_site_filters": [
+        "aersale.com"
+      ],
+      "company_domain": "aersale.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0008",
+      "company_name": "AGCO Corporation",
+      "jsearch_company_query": [
+        "AGCO Corporation"
+      ],
+      "jsearch_site_filters": [
+        "agcocorporation.com"
+      ],
+      "company_domain": "agcocorporation.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0009",
+      "company_name": "Airbus",
+      "jsearch_company_query": [
+        "Airbus"
+      ],
+      "jsearch_site_filters": [
+        "airbus.com"
+      ],
+      "company_domain": "airbus.com",
+      "ats_board_url": "https://www.airbus.com/en/careers/job-search",
+      "tier": "Tier 1",
+      "h1b": "YES",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0010",
+      "company_name": "Airbus Aircraft",
+      "jsearch_company_query": [
+        "Airbus Aircraft"
+      ],
+      "jsearch_site_filters": [
+        "airbusaircraft.com"
+      ],
+      "company_domain": "airbusaircraft.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0011",
+      "company_name": "Airbus Helicopters",
+      "jsearch_company_query": [
+        "Airbus Helicopters"
+      ],
+      "jsearch_site_filters": [
+        "airbushelicopters.com"
+      ],
+      "company_domain": "airbushelicopters.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "YES",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0012",
+      "company_name": "Albany Engineered Composites",
+      "jsearch_company_query": [
+        "Albany Engineered Composites"
+      ],
+      "jsearch_site_filters": [
+        "aec-composites.com"
+      ],
+      "company_domain": "aec-composites.com",
+      "ats_board_url": "https://albanyinternational.wd1.myworkdayjobs.com/Albany_ENG",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0013",
+      "company_name": "Allegheny Technologies (ATI)",
+      "jsearch_company_query": [
+        "Allegheny Technologies (ATI)",
+        "Allegheny Technologies"
+      ],
+      "jsearch_site_filters": [
+        "alleghenytechnologies.com"
+      ],
+      "company_domain": "alleghenytechnologies.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0014",
+      "company_name": "Amcor",
+      "jsearch_company_query": [
+        "Amcor"
+      ],
+      "jsearch_site_filters": [
+        "amcor.com"
+      ],
+      "company_domain": "amcor.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0015",
+      "company_name": "Ameron International",
+      "jsearch_company_query": [
+        "Ameron International"
+      ],
+      "jsearch_site_filters": [
+        "ameroninternational.com"
+      ],
+      "company_domain": "ameroninternational.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0016",
+      "company_name": "AMPAC Fine Chemicals",
+      "jsearch_company_query": [
+        "AMPAC Fine Chemicals"
+      ],
+      "jsearch_site_filters": [
+        "ampacfinechemicals.com"
+      ],
+      "company_domain": "ampacfinechemicals.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0017",
+      "company_name": "Andersen Corporation",
+      "jsearch_company_query": [
+        "Andersen Corporation"
+      ],
+      "jsearch_site_filters": [
+        "andersencorporation.com"
+      ],
+      "company_domain": "andersencorporation.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0018",
+      "company_name": "AOC Aliancys",
+      "jsearch_company_query": [
+        "AOC Aliancys"
+      ],
+      "jsearch_site_filters": [
+        "aocaliancys.com"
+      ],
+      "company_domain": "aocaliancys.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0019",
+      "company_name": "Applied Composites",
+      "jsearch_company_query": [
+        "Applied Composites"
+      ],
+      "jsearch_site_filters": [
+        "appliedcomposites.com"
+      ],
+      "company_domain": "appliedcomposites.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0020",
+      "company_name": "Archer Aviation",
+      "jsearch_company_query": [
+        "Archer Aviation"
+      ],
+      "jsearch_site_filters": [
+        "archer.com"
+      ],
+      "company_domain": "archer.com",
+      "ats_board_url": "https://boards.greenhouse.io/archeravia tion",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0021",
+      "company_name": "Arconic",
+      "jsearch_company_query": [
+        "Arconic"
+      ],
+      "jsearch_site_filters": [
+        "arconic.com"
+      ],
+      "company_domain": "arconic.com",
+      "ats_board_url": "https://arconic.wd5.myworkdayjobs.com/Arconic",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0022",
+      "company_name": "Arevo",
+      "jsearch_company_query": [
+        "Arevo"
+      ],
+      "jsearch_site_filters": [
+        "arevo.com"
+      ],
+      "company_domain": "arevo.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0023",
+      "company_name": "Argonne National Laboratory",
+      "jsearch_company_query": [
+        "Argonne National Laboratory"
+      ],
+      "jsearch_site_filters": [
+        "anl.gov"
+      ],
+      "company_domain": "anl.gov",
+      "ats_board_url": "https://careers.anl.gov",
+      "tier": "Tier 3",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0024",
+      "company_name": "Arkema",
+      "jsearch_company_query": [
+        "Arkema"
+      ],
+      "jsearch_site_filters": [
+        "arkema.com"
+      ],
+      "company_domain": "arkema.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0025",
+      "company_name": "Arris Composites",
+      "jsearch_company_query": [
+        "Arris Composites"
+      ],
+      "jsearch_site_filters": [
+        "arriscomposites.com"
+      ],
+      "company_domain": "arriscomposites.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0026",
+      "company_name": "ASC Process Systems",
+      "jsearch_company_query": [
+        "ASC Process Systems"
+      ],
+      "jsearch_site_filters": [
+        "ascprocesssystems.com"
+      ],
+      "company_domain": "ascprocesssystems.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0027",
+      "company_name": "Astrobotic Technology",
+      "jsearch_company_query": [
+        "Astrobotic Technology"
+      ],
+      "jsearch_site_filters": [
+        "astrobotictechnology.com"
+      ],
+      "company_domain": "astrobotictechnology.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0028",
+      "company_name": "Astronics Corporation",
+      "jsearch_company_query": [
+        "Astronics Corporation"
+      ],
+      "jsearch_site_filters": [
+        "astronicscorporation.com"
+      ],
+      "company_domain": "astronicscorporation.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0029",
+      "company_name": "ATI",
+      "jsearch_company_query": [
+        "ATI"
+      ],
+      "jsearch_site_filters": [
+        "ati.com"
+      ],
+      "company_domain": "ati.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0030",
+      "company_name": "Axiom Space",
+      "jsearch_company_query": [
+        "Axiom Space"
+      ],
+      "jsearch_site_filters": [
+        "axiomspace.com"
+      ],
+      "company_domain": "axiomspace.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0031",
+      "company_name": "B-O-F Corporation",
+      "jsearch_company_query": [
+        "B-O-F Corporation"
+      ],
+      "jsearch_site_filters": [
+        "bofcorporation.com"
+      ],
+      "company_domain": "bofcorporation.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0032",
+      "company_name": "Barnes Group",
+      "jsearch_company_query": [
+        "Barnes Group"
+      ],
+      "jsearch_site_filters": [
+        "barnes.com"
+      ],
+      "company_domain": "barnes.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0033",
+      "company_name": "Barrday Composite Solutions",
+      "jsearch_company_query": [
+        "Barrday Composite Solutions"
+      ],
+      "jsearch_site_filters": [
+        "barrdaycompositesolutions.com"
+      ],
+      "company_domain": "barrdaycompositesolutions.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0034",
+      "company_name": "Bell Textron",
+      "jsearch_company_query": [
+        "Bell Textron"
+      ],
+      "jsearch_site_filters": [
+        "bellflight.com"
+      ],
+      "company_domain": "bellflight.com",
+      "ats_board_url": "https://textron.icims.com/jobs/search",
+      "tier": "Tier 1",
+      "h1b": "YES",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0035",
+      "company_name": "Beta Technologies",
+      "jsearch_company_query": [
+        "Beta Technologies"
+      ],
+      "jsearch_site_filters": [
+        "beta.team"
+      ],
+      "company_domain": "beta.team",
+      "ats_board_url": "https://boards.greenhouse.io/beta",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0036",
+      "company_name": "Biofuran Materials (IT)",
+      "jsearch_company_query": [
+        "Biofuran Materials (IT)",
+        "Biofuran Materials"
+      ],
+      "jsearch_site_filters": [
+        "biofuranmaterials.com"
+      ],
+      "company_domain": "biofuranmaterials.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0037",
+      "company_name": "Boeing",
+      "jsearch_company_query": [
+        "Boeing"
+      ],
+      "jsearch_site_filters": [
+        "boeing.com"
+      ],
+      "company_domain": "boeing.com",
+      "ats_board_url": "https://jobs.boeing.com",
+      "tier": "Tier 1",
+      "h1b": "YES",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0038",
+      "company_name": "Bombardier",
+      "jsearch_company_query": [
+        "Bombardier"
+      ],
+      "jsearch_site_filters": [
+        "bombardier.com"
+      ],
+      "company_domain": "bombardier.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0039",
+      "company_name": "Boom Supersonic",
+      "jsearch_company_query": [
+        "Boom Supersonic"
+      ],
+      "jsearch_site_filters": [
+        "boomsupersonic.com"
+      ],
+      "company_domain": "boomsupersonic.com",
+      "ats_board_url": "https://jobs.lever.co/boomsupersonic",
+      "tier": "Tier 1",
+      "h1b": "YES",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0040",
+      "company_name": "Brooks Automation",
+      "jsearch_company_query": [
+        "Brooks Automation"
+      ],
+      "jsearch_site_filters": [
+        "brooksautomation.com"
+      ],
+      "company_domain": "brooksautomation.com",
+      "ats_board_url": null,
+      "tier": "Tier 3",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0041",
+      "company_name": "BWX Technologies",
+      "jsearch_company_query": [
+        "BWX Technologies"
+      ],
+      "jsearch_site_filters": [
+        "bwxtechnologies.com"
+      ],
+      "company_domain": "bwxtechnologies.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0042",
+      "company_name": "Canoo",
+      "jsearch_company_query": [
+        "Canoo"
+      ],
+      "jsearch_site_filters": [
+        "canoo.com"
+      ],
+      "company_domain": "canoo.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0043",
+      "company_name": "Carpenter Technology",
+      "jsearch_company_query": [
+        "Carpenter Technology"
+      ],
+      "jsearch_site_filters": [
+        "carpentertechnology.com"
+      ],
+      "company_domain": "carpentertechnology.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0044",
+      "company_name": "Caterpillar",
+      "jsearch_company_query": [
+        "Caterpillar"
+      ],
+      "jsearch_site_filters": [
+        "caterpillar.com"
+      ],
+      "company_domain": "caterpillar.com",
+      "ats_board_url": "https://cat.wd5.myworkdayjobs.com/CaterpillarCareers",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0045",
+      "company_name": "Chomarat",
+      "jsearch_company_query": [
+        "Chomarat"
+      ],
+      "jsearch_site_filters": [
+        "chomarat.com"
+      ],
+      "company_domain": "chomarat.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0046",
+      "company_name": "Cirrus",
+      "jsearch_company_query": [
+        "Cirrus"
+      ],
+      "jsearch_site_filters": [
+        "cirr.com"
+      ],
+      "company_domain": "cirr.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0047",
+      "company_name": "Collins Aerospace",
+      "jsearch_company_query": [
+        "Collins Aerospace"
+      ],
+      "jsearch_site_filters": [
+        "collinsaerospace.com"
+      ],
+      "company_domain": "collinsaerospace.com",
+      "ats_board_url": "https://jobs.collinsaerospace.com",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0048",
+      "company_name": "Componous (GR)",
+      "jsearch_company_query": [
+        "Componous",
+        "Componous (GR)"
+      ],
+      "jsearch_site_filters": [
+        "compono.com"
+      ],
+      "company_domain": "compono.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0049",
+      "company_name": "Composites One",
+      "jsearch_company_query": [
+        "Composites One"
+      ],
+      "jsearch_site_filters": [
+        "compositesone.com"
+      ],
+      "company_domain": "compositesone.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0050",
+      "company_name": "CONMED Corporation",
+      "jsearch_company_query": [
+        "CONMED Corporation"
+      ],
+      "jsearch_site_filters": [
+        "conmedcorporation.com"
+      ],
+      "company_domain": "conmedcorporation.com",
+      "ats_board_url": null,
+      "tier": "Tier 3",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0051",
+      "company_name": "Continental Structural Plastics (Teijin)",
+      "jsearch_company_query": [
+        "Continental Structural Plastics (Teijin)",
+        "Continental Structural Plastics"
+      ],
+      "jsearch_site_filters": [
+        "continentalstructuralplastics.com"
+      ],
+      "company_domain": "continentalstructuralplastics.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0052",
+      "company_name": "Continuous Composites",
+      "jsearch_company_query": [
+        "Continuous Composites"
+      ],
+      "jsearch_site_filters": [
+        "continuouscomposites.com"
+      ],
+      "company_domain": "continuouscomposites.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0053",
+      "company_name": "Crane Composites",
+      "jsearch_company_query": [
+        "Crane Composites"
+      ],
+      "jsearch_site_filters": [
+        "cranecomposites.com"
+      ],
+      "company_domain": "cranecomposites.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0054",
+      "company_name": "Creation Technologies",
+      "jsearch_company_query": [
+        "Creation Technologies"
+      ],
+      "jsearch_site_filters": [
+        "creationtechnologies.com"
+      ],
+      "company_domain": "creationtechnologies.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0055",
+      "company_name": "Creative Composites Group",
+      "jsearch_company_query": [
+        "Creative Composites Group"
+      ],
+      "jsearch_site_filters": [
+        "creativecomposites.com"
+      ],
+      "company_domain": "creativecomposites.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0056",
+      "company_name": "Cretex Companies, Inc.",
+      "jsearch_company_query": [
+        "Cretex Companies, Inc."
+      ],
+      "jsearch_site_filters": [
+        "cretexcompanies.com"
+      ],
+      "company_domain": "cretexcompanies.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0057",
+      "company_name": "Cummins Filtration",
+      "jsearch_company_query": [
+        "Cummins Filtration"
+      ],
+      "jsearch_site_filters": [
+        "cumminsfiltration.com"
+      ],
+      "company_domain": "cumminsfiltration.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0058",
+      "company_name": "Curtiss-Wright Corporation",
+      "jsearch_company_query": [
+        "Curtiss-Wright Corporation"
+      ],
+      "jsearch_site_filters": [
+        "curtisswright.com"
+      ],
+      "company_domain": "curtisswright.com",
+      "ats_board_url": "https://www.curtisswright.com/careers",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0059",
+      "company_name": "Cytec Industries (Solvay)",
+      "jsearch_company_query": [
+        "Cytec Industries",
+        "Cytec Industries (Solvay)"
+      ],
+      "jsearch_site_filters": [
+        "cytecindustries.com"
+      ],
+      "company_domain": "cytecindustries.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0060",
+      "company_name": "Daher",
+      "jsearch_company_query": [
+        "Daher"
+      ],
+      "jsearch_site_filters": [
+        "daher.com"
+      ],
+      "company_domain": "daher.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0061",
+      "company_name": "Dassault Aviation",
+      "jsearch_company_query": [
+        "Dassault Aviation"
+      ],
+      "jsearch_site_filters": [
+        "dassaultaviation.com"
+      ],
+      "company_domain": "dassaultaviation.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0062",
+      "company_name": "Divergent",
+      "jsearch_company_query": [
+        "Divergent"
+      ],
+      "jsearch_site_filters": [
+        "divergent.com"
+      ],
+      "company_domain": "divergent.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0063",
+      "company_name": "Divergent Technologies",
+      "jsearch_company_query": [
+        "Divergent Technologies"
+      ],
+      "jsearch_site_filters": [
+        "divergenttechnologies.com"
+      ],
+      "company_domain": "divergenttechnologies.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0064",
+      "company_name": "Dover Corporation",
+      "jsearch_company_query": [
+        "Dover Corporation"
+      ],
+      "jsearch_site_filters": [
+        "dovercorporation.com"
+      ],
+      "company_domain": "dovercorporation.com",
+      "ats_board_url": "https://dover.wd1.myworkdayjobs.com/Dover",
+      "tier": "Tier 2",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0065",
+      "company_name": "Ducommun",
+      "jsearch_company_query": [
+        "Ducommun"
+      ],
+      "jsearch_site_filters": [
+        "ducommun.com"
+      ],
+      "company_domain": "ducommun.com",
+      "ats_board_url": "https://ducommun.wd1.myworkdayjobs.com/Ducommun_External",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0066",
+      "company_name": "Ducommun Incorporated",
+      "jsearch_company_query": [
+        "Ducommun Incorporated"
+      ],
+      "jsearch_site_filters": [
+        "ducommunincorporated.com"
+      ],
+      "company_domain": "ducommunincorporated.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0067",
+      "company_name": "DuPont",
+      "jsearch_company_query": [
+        "DuPont"
+      ],
+      "jsearch_site_filters": [
+        "dupont.com"
+      ],
+      "company_domain": "dupont.com",
+      "ats_board_url": "https://dupont.wd1.myworkdayjobs.com/DuPont_External",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0068",
+      "company_name": "Eaton",
+      "jsearch_company_query": [
+        "Eaton"
+      ],
+      "jsearch_site_filters": [
+        "eaton.com"
+      ],
+      "company_domain": "eaton.com",
+      "ats_board_url": "https://eaton.eightfold.ai/careers",
+      "tier": "Tier 1",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0069",
+      "company_name": "Elbit Systems of America",
+      "jsearch_company_query": [
+        "Elbit Systems of America"
+      ],
+      "jsearch_site_filters": [
+        "elbitsystemsof.com"
+      ],
+      "company_domain": "elbitsystemsof.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0070",
+      "company_name": "Electra.aero",
+      "jsearch_company_query": [
+        "Electra.aero"
+      ],
+      "jsearch_site_filters": [
+        "electraaero.com"
+      ],
+      "company_domain": "electraaero.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0071",
+      "company_name": "Electroimpact",
+      "jsearch_company_query": [
+        "Electroimpact"
+      ],
+      "jsearch_site_filters": [
+        "electroimpact.com"
+      ],
+      "company_domain": "electroimpact.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0072",
+      "company_name": "Element Materials Technology",
+      "jsearch_company_query": [
+        "Element Materials Technology"
+      ],
+      "jsearch_site_filters": [
+        "elementmaterialstechnology.com"
+      ],
+      "company_domain": "elementmaterialstechnology.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0073",
+      "company_name": "Embraer",
+      "jsearch_company_query": [
+        "Embraer"
+      ],
+      "jsearch_site_filters": [
+        "embraer.com"
+      ],
+      "company_domain": "embraer.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "YES",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0074",
+      "company_name": "Embraer Aircraft",
+      "jsearch_company_query": [
+        "Embraer Aircraft"
+      ],
+      "jsearch_site_filters": [
+        "embraeraircraft.com"
+      ],
+      "company_domain": "embraeraircraft.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0075",
+      "company_name": "ESAero",
+      "jsearch_company_query": [
+        "ESAero"
+      ],
+      "jsearch_site_filters": [
+        "esaero.com"
+      ],
+      "company_domain": "esaero.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0076",
+      "company_name": "Entegris",
+      "jsearch_company_query": [
+        "Entegris"
+      ],
+      "jsearch_site_filters": [
+        "entegris.com"
+      ],
+      "company_domain": "entegris.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0077",
+      "company_name": "Envision Energy",
+      "jsearch_company_query": [
+        "Envision Energy"
+      ],
+      "jsearch_site_filters": [
+        "envisionenergy.com"
+      ],
+      "company_domain": "envisionenergy.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0078",
+      "company_name": "Eve Air Mobility",
+      "jsearch_company_query": [
+        "Eve Air Mobility"
+      ],
+      "jsearch_site_filters": [
+        "eveairmobility.com"
+      ],
+      "company_domain": "eveairmobility.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0079",
+      "company_name": "Exotic Automation & Supply",
+      "jsearch_company_query": [
+        "Exotic Automation & Supply"
+      ],
+      "jsearch_site_filters": [
+        "exoticautomationsupply.com"
+      ],
+      "company_domain": "exoticautomationsupply.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0080",
+      "company_name": "FC Industries, Inc.",
+      "jsearch_company_query": [
+        "FC Industries, Inc."
+      ],
+      "jsearch_site_filters": [
+        "fcindustries.com"
+      ],
+      "company_domain": "fcindustries.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0081",
+      "company_name": "Fisker Inc.",
+      "jsearch_company_query": [
+        "Fisker Inc."
+      ],
+      "jsearch_site_filters": [
+        "fisker.com"
+      ],
+      "company_domain": "fisker.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0082",
+      "company_name": "Foresight Innovations",
+      "jsearch_company_query": [
+        "Foresight Innovations"
+      ],
+      "jsearch_site_filters": [
+        "foresightinnovations.com"
+      ],
+      "company_domain": "foresightinnovations.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0083",
+      "company_name": "Fortify",
+      "jsearch_company_query": [
+        "Fortify"
+      ],
+      "jsearch_site_filters": [
+        "fortify.com"
+      ],
+      "company_domain": "fortify.com",
+      "ats_board_url": null,
+      "tier": "Tier 3",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0084",
+      "company_name": "GE Aerospace",
+      "jsearch_company_query": [
+        "GE Aerospace"
+      ],
+      "jsearch_site_filters": [
+        "geaerospace.com"
+      ],
+      "company_domain": "geaerospace.com",
+      "ats_board_url": "https://jobs.gecareers.com/aviation",
+      "tier": "Tier 1",
+      "h1b": "YES",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0085",
+      "company_name": "General Atomics (Aero)",
+      "jsearch_company_query": [
+        "General Atomics",
+        "General Atomics (Aero)"
+      ],
+      "jsearch_site_filters": [
+        "generalatomics.com"
+      ],
+      "company_domain": "generalatomics.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0086",
+      "company_name": "General Motors",
+      "jsearch_company_query": [
+        "General Motors"
+      ],
+      "jsearch_site_filters": [
+        "gm.com"
+      ],
+      "company_domain": "gm.com",
+      "ats_board_url": "https://search-careers.gm.com",
+      "tier": "Tier 2",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0087",
+      "company_name": "Gentex Corporation",
+      "jsearch_company_query": [
+        "Gentex Corporation"
+      ],
+      "jsearch_site_filters": [
+        "gentexcorporation.com"
+      ],
+      "company_domain": "gentexcorporation.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0088",
+      "company_name": "GKN Aerospace",
+      "jsearch_company_query": [
+        "GKN Aerospace"
+      ],
+      "jsearch_site_filters": [
+        "gknaerospace.com"
+      ],
+      "company_domain": "gknaerospace.com",
+      "ats_board_url": "https://gknaerospace.wd3.myworkdayjobs.com/GKN_External",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0089",
+      "company_name": "Gulfstream Aerospace",
+      "jsearch_company_query": [
+        "Gulfstream Aerospace"
+      ],
+      "jsearch_site_filters": [
+        "gulfstreamaerospace.com"
+      ],
+      "company_domain": "gulfstreamaerospace.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "YES",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0090",
+      "company_name": "Gurit",
+      "jsearch_company_query": [
+        "Gurit"
+      ],
+      "jsearch_site_filters": [
+        "gurit.com"
+      ],
+      "company_domain": "gurit.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0091",
+      "company_name": "Hanwha Aerospace USA",
+      "jsearch_company_query": [
+        "Hanwha Aerospace USA"
+      ],
+      "jsearch_site_filters": [
+        "hanwhaaerospace.com"
+      ],
+      "company_domain": "hanwhaaerospace.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "YES",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0092",
+      "company_name": "Haynes International",
+      "jsearch_company_query": [
+        "Haynes International"
+      ],
+      "jsearch_site_filters": [
+        "haynesinternational.com"
+      ],
+      "company_domain": "haynesinternational.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0093",
+      "company_name": "Heatcraft Worldwide Refrigeration",
+      "jsearch_company_query": [
+        "Heatcraft Worldwide Refrigeration"
+      ],
+      "jsearch_site_filters": [
+        "heatcraftworldwiderefrigeration.com"
+      ],
+      "company_domain": "heatcraftworldwiderefrigeration.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0094",
+      "company_name": "Heico Corporation",
+      "jsearch_company_query": [
+        "Heico Corporation"
+      ],
+      "jsearch_site_filters": [
+        "heico.com"
+      ],
+      "company_domain": "heico.com",
+      "ats_board_url": "https://heico.wd1.myworkdayjobs.com/HEICO",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0095",
+      "company_name": "Hexagon Composites",
+      "jsearch_company_query": [
+        "Hexagon Composites"
+      ],
+      "jsearch_site_filters": [
+        "hexagoncomposites.com"
+      ],
+      "company_domain": "hexagoncomposites.com",
+      "ats_board_url": "https://hexagoncomposites.wd3.myworkdayjobs.com",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0096",
+      "company_name": "Hexcel Corporation",
+      "jsearch_company_query": [
+        "Hexcel Corporation"
+      ],
+      "jsearch_site_filters": [
+        "hexcel.com"
+      ],
+      "company_domain": "hexcel.com",
+      "ats_board_url": "https://hexcel.wd5.myworkdayjobs.com/Hexcel",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0097",
+      "company_name": "Hexion",
+      "jsearch_company_query": [
+        "Hexion"
+      ],
+      "jsearch_site_filters": [
+        "hexion.com"
+      ],
+      "company_domain": "hexion.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0098",
+      "company_name": "Honda Aircraft",
+      "jsearch_company_query": [
+        "Honda Aircraft"
+      ],
+      "jsearch_site_filters": [
+        "hondaaircraft.com"
+      ],
+      "company_domain": "hondaaircraft.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "YES",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0099",
+      "company_name": "Honeywell Aerospace",
+      "jsearch_company_query": [
+        "Honeywell Aerospace"
+      ],
+      "jsearch_site_filters": [
+        "honeywell.com"
+      ],
+      "company_domain": "honeywell.com",
+      "ats_board_url": "https://careers.honeywell.com",
+      "tier": "Tier 2",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0100",
+      "company_name": "Howmet Aerospace",
+      "jsearch_company_query": [
+        "Howmet Aerospace"
+      ],
+      "jsearch_site_filters": [
+        "howmet.com"
+      ],
+      "company_domain": "howmet.com",
+      "ats_board_url": "https://howmet.wd5.myworkdayjobs.com/Howmet_External",
+      "tier": "Tier 1",
+      "h1b": "YES",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0101",
+      "company_name": "Huntsman Advanced Materials",
+      "jsearch_company_query": [
+        "Huntsman Advanced Materials"
+      ],
+      "jsearch_site_filters": [
+        "huntsmanadvancedmaterials.com"
+      ],
+      "company_domain": "huntsmanadvancedmaterials.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0102",
+      "company_name": "Huntsman Corporation",
+      "jsearch_company_query": [
+        "Huntsman Corporation"
+      ],
+      "jsearch_site_filters": [
+        "huntsmancorporation.com"
+      ],
+      "company_domain": "huntsmancorporation.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0103",
+      "company_name": "iCOMAT",
+      "jsearch_company_query": [
+        "iCOMAT"
+      ],
+      "jsearch_site_filters": [
+        "icomat.com"
+      ],
+      "company_domain": "icomat.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0104",
+      "company_name": "IDEX Corporation",
+      "jsearch_company_query": [
+        "IDEX Corporation"
+      ],
+      "jsearch_site_filters": [
+        "idexcorporation.com"
+      ],
+      "company_domain": "idexcorporation.com",
+      "ats_board_url": null,
+      "tier": "Tier 3",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0105",
+      "company_name": "IHI Corporation (US)",
+      "jsearch_company_query": [
+        "IHI Corporation",
+        "IHI Corporation (US)"
+      ],
+      "jsearch_site_filters": [
+        "ihicorporation.com"
+      ],
+      "company_domain": "ihicorporation.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "YES",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0106",
+      "company_name": "Impossible Objects",
+      "jsearch_company_query": [
+        "Impossible Objects"
+      ],
+      "jsearch_site_filters": [
+        "impossibleobjects.com"
+      ],
+      "company_domain": "impossibleobjects.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0107",
+      "company_name": "Impulse Space",
+      "jsearch_company_query": [
+        "Impulse Space"
+      ],
+      "jsearch_site_filters": [
+        "impulsespace.com"
+      ],
+      "company_domain": "impulsespace.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0108",
+      "company_name": "Ingersoll Machine Tools",
+      "jsearch_company_query": [
+        "Ingersoll Machine Tools"
+      ],
+      "jsearch_site_filters": [
+        "ingersollmachinetools.com"
+      ],
+      "company_domain": "ingersollmachinetools.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0109",
+      "company_name": "Insulet Corporation",
+      "jsearch_company_query": [
+        "Insulet Corporation"
+      ],
+      "jsearch_site_filters": [
+        "insuletcorporation.com"
+      ],
+      "company_domain": "insuletcorporation.com",
+      "ats_board_url": null,
+      "tier": "Tier 3",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0110",
+      "company_name": "Integer Holdings Corporation",
+      "jsearch_company_query": [
+        "Integer Holdings Corporation"
+      ],
+      "jsearch_site_filters": [
+        "integerholdingscorporation.com"
+      ],
+      "company_domain": "integerholdingscorporation.com",
+      "ats_board_url": null,
+      "tier": "Tier 3",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0111",
+      "company_name": "Intuitive Machines",
+      "jsearch_company_query": [
+        "Intuitive Machines"
+      ],
+      "jsearch_site_filters": [
+        "intuitivemachines.com"
+      ],
+      "company_domain": "intuitivemachines.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0112",
+      "company_name": "Intuitive Surgical",
+      "jsearch_company_query": [
+        "Intuitive Surgical"
+      ],
+      "jsearch_site_filters": [
+        "intuitivesurgical.com"
+      ],
+      "company_domain": "intuitivesurgical.com",
+      "ats_board_url": null,
+      "tier": "Tier 3",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0113",
+      "company_name": "Janicki",
+      "jsearch_company_query": [
+        "Janicki"
+      ],
+      "jsearch_site_filters": [
+        "janicki.com"
+      ],
+      "company_domain": "janicki.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0114",
+      "company_name": "Janicki Industries",
+      "jsearch_company_query": [
+        "Janicki Industries"
+      ],
+      "jsearch_site_filters": [
+        "janickiindustries.com"
+      ],
+      "company_domain": "janickiindustries.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0115",
+      "company_name": "Joby Aviation",
+      "jsearch_company_query": [
+        "Joby Aviation"
+      ],
+      "jsearch_site_filters": [
+        "jobyaviation.com"
+      ],
+      "company_domain": "jobyaviation.com",
+      "ats_board_url": "https://boards.greenhouse.io/jobycareers",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0116",
+      "company_name": "Kaman Aerospace",
+      "jsearch_company_query": [
+        "Kaman Aerospace"
+      ],
+      "jsearch_site_filters": [
+        "kaman.com"
+      ],
+      "company_domain": "kaman.com",
+      "ats_board_url": "https://kaman.icims.com/jobs/search",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0117",
+      "company_name": "Kaman Corporation",
+      "jsearch_company_query": [
+        "Kaman Corporation"
+      ],
+      "jsearch_site_filters": [
+        "kamancorporation.com"
+      ],
+      "company_domain": "kamancorporation.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0118",
+      "company_name": "Kymera International",
+      "jsearch_company_query": [
+        "Kymera International"
+      ],
+      "jsearch_site_filters": [
+        "kymerainternational.com"
+      ],
+      "company_domain": "kymerainternational.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0119",
+      "company_name": "Lear Corporation",
+      "jsearch_company_query": [
+        "Lear Corporation"
+      ],
+      "jsearch_site_filters": [
+        "learcorporation.com"
+      ],
+      "company_domain": "learcorporation.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0120",
+      "company_name": "Leonardo (Group)",
+      "jsearch_company_query": [
+        "Leonardo (Group)",
+        "Leonardo"
+      ],
+      "jsearch_site_filters": [
+        "leonardo.com"
+      ],
+      "company_domain": "leonardo.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "YES",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0121",
+      "company_name": "Lilium",
+      "jsearch_company_query": [
+        "Lilium"
+      ],
+      "jsearch_site_filters": [
+        "lilium.com"
+      ],
+      "company_domain": "lilium.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0122",
+      "company_name": "LMI Aerospace",
+      "jsearch_company_query": [
+        "LMI Aerospace"
+      ],
+      "jsearch_site_filters": [
+        "lmiaerospace.com"
+      ],
+      "company_domain": "lmiaerospace.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0123",
+      "company_name": "Lucid Motors",
+      "jsearch_company_query": [
+        "Lucid Motors"
+      ],
+      "jsearch_site_filters": [
+        "lucidmotors.com"
+      ],
+      "company_domain": "lucidmotors.com",
+      "ats_board_url": "https://boards.greenhouse.io/lucidmotors",
+      "tier": "Tier 2",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0124",
+      "company_name": "Magellan Aerospace",
+      "jsearch_company_query": [
+        "Magellan Aerospace"
+      ],
+      "jsearch_site_filters": [
+        "magellanaerospace.com"
+      ],
+      "company_domain": "magellanaerospace.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0125",
+      "company_name": "Magna International",
+      "jsearch_company_query": [
+        "Magna International"
+      ],
+      "jsearch_site_filters": [
+        "magna.com"
+      ],
+      "company_domain": "magna.com",
+      "ats_board_url": "https://magnainternational.taleo.net/careersection/",
+      "tier": "Tier 2",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0126",
+      "company_name": "Markforged",
+      "jsearch_company_query": [
+        "Markforged"
+      ],
+      "jsearch_site_filters": [
+        "markforged.com"
+      ],
+      "company_domain": "markforged.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0127",
+      "company_name": "Martinrea International",
+      "jsearch_company_query": [
+        "Martinrea International"
+      ],
+      "jsearch_site_filters": [
+        "martinrea.com"
+      ],
+      "company_domain": "martinrea.com",
+      "ats_board_url": "https://martinrea.com/careers",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0128",
+      "company_name": "Materion Corporation",
+      "jsearch_company_query": [
+        "Materion Corporation"
+      ],
+      "jsearch_site_filters": [
+        "materioncorporation.com"
+      ],
+      "company_domain": "materioncorporation.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0129",
+      "company_name": "Maxar Technologies",
+      "jsearch_company_query": [
+        "Maxar Technologies"
+      ],
+      "jsearch_site_filters": [
+        "maxartechnologies.com"
+      ],
+      "company_domain": "maxartechnologies.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0130",
+      "company_name": "Meggitt (Parker Hannifin)",
+      "jsearch_company_query": [
+        "Meggitt",
+        "Meggitt (Parker Hannifin)"
+      ],
+      "jsearch_site_filters": [
+        "meggitt.com"
+      ],
+      "company_domain": "meggitt.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0131",
+      "company_name": "Mitsubishi Chemical America",
+      "jsearch_company_query": [
+        "Mitsubishi Chemical America"
+      ],
+      "jsearch_site_filters": [
+        "mitsubishichemical.com"
+      ],
+      "company_domain": "mitsubishichemical.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0132",
+      "company_name": "Mitsubishi Chemical Carbon Fiber & Composites",
+      "jsearch_company_query": [
+        "Mitsubishi Chemical Carbon Fiber & Composites"
+      ],
+      "jsearch_site_filters": [
+        "mitsubishichemicalcarbonfibercomposites.com"
+      ],
+      "company_domain": "mitsubishichemicalcarbonfibercomposites.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0133",
+      "company_name": "Moog Inc.",
+      "jsearch_company_query": [
+        "Moog Inc."
+      ],
+      "jsearch_site_filters": [
+        "moog.com"
+      ],
+      "company_domain": "moog.com",
+      "ats_board_url": "https://moog.wd1.myworkdayjobs.com/MoogCareers",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0134",
+      "company_name": "MTU Aero Engines",
+      "jsearch_company_query": [
+        "MTU Aero Engines"
+      ],
+      "jsearch_site_filters": [
+        "mtuaeroengines.com"
+      ],
+      "company_domain": "mtuaeroengines.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0135",
+      "company_name": "Multimatic",
+      "jsearch_company_query": [
+        "Multimatic"
+      ],
+      "jsearch_site_filters": [
+        "multimatic.com"
+      ],
+      "company_domain": "multimatic.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0136",
+      "company_name": "NASA Marshall Space Flight Center",
+      "jsearch_company_query": [
+        "NASA Marshall Space Flight Center"
+      ],
+      "jsearch_site_filters": [
+        "nasa.gov"
+      ],
+      "company_domain": "nasa.gov",
+      "ats_board_url": "https://www.usajobs.gov/Search/Results?k=NASA+Marshall",
+      "tier": "Tier 3",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0137",
+      "company_name": "NIAR (Wichita State)",
+      "jsearch_company_query": [
+        "NIAR (Wichita State)",
+        "NIAR"
+      ],
+      "jsearch_site_filters": [
+        "niar.com"
+      ],
+      "company_domain": "niar.com",
+      "ats_board_url": null,
+      "tier": "Tier 3",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0138",
+      "company_name": "Nikola Corporation",
+      "jsearch_company_query": [
+        "Nikola Corporation"
+      ],
+      "jsearch_site_filters": [
+        "nikolacorporation.com"
+      ],
+      "company_domain": "nikolacorporation.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0139",
+      "company_name": "Nordam",
+      "jsearch_company_query": [
+        "Nordam"
+      ],
+      "jsearch_site_filters": [
+        "nordam.com"
+      ],
+      "company_domain": "nordam.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0140",
+      "company_name": "Nordex Group",
+      "jsearch_company_query": [
+        "Nordex Group"
+      ],
+      "jsearch_site_filters": [
+        "nordex.com"
+      ],
+      "company_domain": "nordex.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0141",
+      "company_name": "Oak Ridge National Laboratory",
+      "jsearch_company_query": [
+        "Oak Ridge National Laboratory"
+      ],
+      "jsearch_site_filters": [
+        "ornl.gov"
+      ],
+      "company_domain": "ornl.gov",
+      "ats_board_url": "https://jobs.ornl.gov",
+      "tier": "Tier 3",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0142",
+      "company_name": "Oshkosh Corporation",
+      "jsearch_company_query": [
+        "Oshkosh Corporation"
+      ],
+      "jsearch_site_filters": [
+        "oshkoshcorp.com"
+      ],
+      "company_domain": "oshkoshcorp.com",
+      "ats_board_url": "https://oshkosh.wd5.myworkdayjobs.com/External",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0143",
+      "company_name": "Owens Corning",
+      "jsearch_company_query": [
+        "Owens Corning"
+      ],
+      "jsearch_site_filters": [
+        "owenscorning.com"
+      ],
+      "company_domain": "owenscorning.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0144",
+      "company_name": "Park Aerospace",
+      "jsearch_company_query": [
+        "Park Aerospace"
+      ],
+      "jsearch_site_filters": [
+        "parkaerospace.com"
+      ],
+      "company_domain": "parkaerospace.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0145",
+      "company_name": "Parker Hannifin",
+      "jsearch_company_query": [
+        "Parker Hannifin"
+      ],
+      "jsearch_site_filters": [
+        "parker.com"
+      ],
+      "company_domain": "parker.com",
+      "ats_board_url": "https://phcareers.wd5.myworkdayjobs.com/PH_External_Careers",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0146",
+      "company_name": "PCC Aerostructures",
+      "jsearch_company_query": [
+        "PCC Aerostructures"
+      ],
+      "jsearch_site_filters": [
+        "pccaerostructures.com"
+      ],
+      "company_domain": "pccaerostructures.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0147",
+      "company_name": "Plasan Carbon Composites",
+      "jsearch_company_query": [
+        "Plasan Carbon Composites"
+      ],
+      "jsearch_site_filters": [
+        "plasancarboncomposites.com"
+      ],
+      "company_domain": "plasancarboncomposites.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0148",
+      "company_name": "Pratt & Whitney",
+      "jsearch_company_query": [
+        "Pratt & Whitney"
+      ],
+      "jsearch_site_filters": [
+        "prattwhitney.com"
+      ],
+      "company_domain": "prattwhitney.com",
+      "ats_board_url": "https://jobs.rtx.com",
+      "tier": "Tier 1",
+      "h1b": "YES",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0149",
+      "company_name": "Precision Castparts (Berkshire)",
+      "jsearch_company_query": [
+        "Precision Castparts",
+        "Precision Castparts (Berkshire)"
+      ],
+      "jsearch_site_filters": [
+        "precast.com"
+      ],
+      "company_domain": "precast.com",
+      "ats_board_url": "https://pcc.wd5.myworkdayjobs.com/PCC",
+      "tier": "Tier 1",
+      "h1b": "YES",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0150",
+      "company_name": "Premium AEROTEC (Airbus)",
+      "jsearch_company_query": [
+        "Premium AEROTEC (Airbus)",
+        "Premium AEROTEC"
+      ],
+      "jsearch_site_filters": [
+        "premiumaerotec.com"
+      ],
+      "company_domain": "premiumaerotec.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "YES",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0151",
+      "company_name": "Purdue University (School of AAE)",
+      "jsearch_company_query": [
+        "Purdue University (School of AAE)",
+        "Purdue University"
+      ],
+      "jsearch_site_filters": [
+        "purdue.edu"
+      ],
+      "company_domain": "purdue.edu",
+      "ats_board_url": "https://careers.purdue.edu",
+      "tier": "Tier 3",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0152",
+      "company_name": "Re:Build Manufacturing",
+      "jsearch_company_query": [
+        "Re:Build Manufacturing"
+      ],
+      "jsearch_site_filters": [
+        "rebuildmanufacturing.com"
+      ],
+      "company_domain": "rebuildmanufacturing.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0153",
+      "company_name": "Relativity Space",
+      "jsearch_company_query": [
+        "Relativity Space"
+      ],
+      "jsearch_site_filters": [
+        "relativityspace.com"
+      ],
+      "company_domain": "relativityspace.com",
+      "ats_board_url": "https://boards.greenhouse.io/relativity",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0154",
+      "company_name": "Reliable Robotics",
+      "jsearch_company_query": [
+        "Reliable Robotics"
+      ],
+      "jsearch_site_filters": [
+        "reliablerobotics.com"
+      ],
+      "company_domain": "reliablerobotics.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0155",
+      "company_name": "Renegade Materials (Teijin)",
+      "jsearch_company_query": [
+        "Renegade Materials",
+        "Renegade Materials (Teijin)"
+      ],
+      "jsearch_site_filters": [
+        "renegadematerials.com"
+      ],
+      "company_domain": "renegadematerials.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0156",
+      "company_name": "Rivian",
+      "jsearch_company_query": [
+        "Rivian"
+      ],
+      "jsearch_site_filters": [
+        "rivian.com"
+      ],
+      "company_domain": "rivian.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0157",
+      "company_name": "Rocket Lab",
+      "jsearch_company_query": [
+        "Rocket Lab"
+      ],
+      "jsearch_site_filters": [
+        "rocketlabusa.com"
+      ],
+      "company_domain": "rocketlabusa.com",
+      "ats_board_url": "https://jobs.lever.co/rocketlab",
+      "tier": "Tier 1",
+      "h1b": "YES",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0158",
+      "company_name": "Rolls-Royce",
+      "jsearch_company_query": [
+        "Rolls-Royce"
+      ],
+      "jsearch_site_filters": [
+        "rolls-royce.com"
+      ],
+      "company_domain": "rolls-royce.com",
+      "ats_board_url": "https://careers.rolls-royce.com",
+      "tier": "Tier 1",
+      "h1b": "YES",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0159",
+      "company_name": "Safran USA",
+      "jsearch_company_query": [
+        "Safran USA"
+      ],
+      "jsearch_site_filters": [
+        "safran-group.com"
+      ],
+      "company_domain": "safran-group.com",
+      "ats_board_url": "https://safran.wd3.myworkdayjobs.com/safran",
+      "tier": "Tier 1",
+      "h1b": "YES",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0160",
+      "company_name": "Sandia National Laboratories",
+      "jsearch_company_query": [
+        "Sandia National Laboratories"
+      ],
+      "jsearch_site_filters": [
+        "sandia.gov"
+      ],
+      "company_domain": "sandia.gov",
+      "ats_board_url": "https://sandia.jobs",
+      "tier": "Tier 3",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0161",
+      "company_name": "Senior Aerospace",
+      "jsearch_company_query": [
+        "Senior Aerospace"
+      ],
+      "jsearch_site_filters": [
+        "senioraerospace.com"
+      ],
+      "company_domain": "senioraerospace.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0162",
+      "company_name": "SGL Carbon",
+      "jsearch_company_query": [
+        "SGL Carbon"
+      ],
+      "jsearch_site_filters": [
+        "sglcarbon.com"
+      ],
+      "company_domain": "sglcarbon.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0163",
+      "company_name": "Siemens",
+      "jsearch_company_query": [
+        "Siemens"
+      ],
+      "jsearch_site_filters": [
+        "siemens.com"
+      ],
+      "company_domain": "siemens.com",
+      "ats_board_url": "https://jobs.siemens.com/careers",
+      "tier": "Tier 2",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0164",
+      "company_name": "Sierra Space",
+      "jsearch_company_query": [
+        "Sierra Space"
+      ],
+      "jsearch_site_filters": [
+        "sierraspace.com"
+      ],
+      "company_domain": "sierraspace.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "YES",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0165",
+      "company_name": "Solvay",
+      "jsearch_company_query": [
+        "Solvay"
+      ],
+      "jsearch_site_filters": [
+        "solvay.com"
+      ],
+      "company_domain": "solvay.com",
+      "ats_board_url": "https://solvay.wd3.myworkdayjobs.com/SolvayJobs",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0166",
+      "company_name": "SpaceX",
+      "jsearch_company_query": [
+        "SpaceX"
+      ],
+      "jsearch_site_filters": [
+        "spacex.com"
+      ],
+      "company_domain": "spacex.com",
+      "ats_board_url": "https://www.spacex.com/careers",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0167",
+      "company_name": "Spirit AeroSystems",
+      "jsearch_company_query": [
+        "Spirit AeroSystems"
+      ],
+      "jsearch_site_filters": [
+        "spiritaero.com"
+      ],
+      "company_domain": "spiritaero.com",
+      "ats_board_url": "https://spiritaero.wd5.myworkdayjobs.com/Spirit_External",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0168",
+      "company_name": "StandardAero",
+      "jsearch_company_query": [
+        "StandardAero"
+      ],
+      "jsearch_site_filters": [
+        "standardaero.com"
+      ],
+      "company_domain": "standardaero.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0169",
+      "company_name": "Stoke Space",
+      "jsearch_company_query": [
+        "Stoke Space"
+      ],
+      "jsearch_site_filters": [
+        "stokespace.com"
+      ],
+      "company_domain": "stokespace.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0170",
+      "company_name": "Teijin Automotive Technologies",
+      "jsearch_company_query": [
+        "Teijin Automotive Technologies"
+      ],
+      "jsearch_site_filters": [
+        "teijinautomotivetechnologies.com"
+      ],
+      "company_domain": "teijinautomotivetechnologies.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0171",
+      "company_name": "Teledyne Technologies",
+      "jsearch_company_query": [
+        "Teledyne Technologies"
+      ],
+      "jsearch_site_filters": [
+        "teledynetechnologies.com"
+      ],
+      "company_domain": "teledynetechnologies.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0172",
+      "company_name": "Terran Orbital",
+      "jsearch_company_query": [
+        "Terran Orbital"
+      ],
+      "jsearch_site_filters": [
+        "terranorbital.com"
+      ],
+      "company_domain": "terranorbital.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0173",
+      "company_name": "Textron Aviation",
+      "jsearch_company_query": [
+        "Textron Aviation"
+      ],
+      "jsearch_site_filters": [
+        "txtav.com"
+      ],
+      "company_domain": "txtav.com",
+      "ats_board_url": "https://textron.icims.com/jobs/search",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0174",
+      "company_name": "Textron Systems",
+      "jsearch_company_query": [
+        "Textron Systems"
+      ],
+      "jsearch_site_filters": [
+        "textronsystems.com"
+      ],
+      "company_domain": "textronsystems.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "YES",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0175",
+      "company_name": "Thales",
+      "jsearch_company_query": [
+        "Thales"
+      ],
+      "jsearch_site_filters": [
+        "thales.com"
+      ],
+      "company_domain": "thales.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0176",
+      "company_name": "Thermwood",
+      "jsearch_company_query": [
+        "Thermwood"
+      ],
+      "jsearch_site_filters": [
+        "thermwood.com"
+      ],
+      "company_domain": "thermwood.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0177",
+      "company_name": "Toray Advanced Composites",
+      "jsearch_company_query": [
+        "Toray Advanced Composites"
+      ],
+      "jsearch_site_filters": [
+        "torayadvancedcomposites.com"
+      ],
+      "company_domain": "torayadvancedcomposites.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0178",
+      "company_name": "Toray CMA",
+      "jsearch_company_query": [
+        "Toray CMA"
+      ],
+      "jsearch_site_filters": [
+        "toraycma.com"
+      ],
+      "company_domain": "toraycma.com",
+      "ats_board_url": "https://toraycma.icims.com/jobs/search",
+      "tier": "Tier 1",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0179",
+      "company_name": "Toray Composite Materials America",
+      "jsearch_company_query": [
+        "Toray Composite Materials America"
+      ],
+      "jsearch_site_filters": [
+        "toraycompositematerials.com"
+      ],
+      "company_domain": "toraycompositematerials.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0180",
+      "company_name": "TPI Composites",
+      "jsearch_company_query": [
+        "TPI Composites"
+      ],
+      "jsearch_site_filters": [
+        "tpicomposites.com"
+      ],
+      "company_domain": "tpicomposites.com",
+      "ats_board_url": "https://tpicomposites.wd1.myworkdayjobs.com/TPIComposites",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0181",
+      "company_name": "TransDigm Group",
+      "jsearch_company_query": [
+        "TransDigm Group"
+      ],
+      "jsearch_site_filters": [
+        "transdigm.com"
+      ],
+      "company_domain": "transdigm.com",
+      "ats_board_url": "https://careers.transdigm.com",
+      "tier": "Tier 1",
+      "h1b": "YES",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0182",
+      "company_name": "Triumph",
+      "jsearch_company_query": [
+        "Triumph"
+      ],
+      "jsearch_site_filters": [
+        "triumph.com"
+      ],
+      "company_domain": "triumph.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0183",
+      "company_name": "UIUC NCDMM/IACMI",
+      "jsearch_company_query": [
+        "UIUC NCDMM/IACMI"
+      ],
+      "jsearch_site_filters": [
+        "iacmi.org"
+      ],
+      "company_domain": "iacmi.org",
+      "ats_board_url": "https://iacmi.org/careers",
+      "tier": "Tier 3",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0184",
+      "company_name": "University of Delaware CCM",
+      "jsearch_company_query": [
+        "University of Delaware CCM"
+      ],
+      "jsearch_site_filters": [
+        "udel.edu"
+      ],
+      "company_domain": "udel.edu",
+      "ats_board_url": "https://www.udel.edu/faculty-staff/careers/",
+      "tier": "Tier 3",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0185",
+      "company_name": "University of Michigan (Aerospace)",
+      "jsearch_company_query": [
+        "University of Michigan",
+        "University of Michigan (Aerospace)"
+      ],
+      "jsearch_site_filters": [
+        "umich.edu"
+      ],
+      "company_domain": "umich.edu",
+      "ats_board_url": "https://careers.umich.edu",
+      "tier": "Tier 3",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0186",
+      "company_name": "Ursa Major",
+      "jsearch_company_query": [
+        "Ursa Major"
+      ],
+      "jsearch_site_filters": [
+        "ursamajor.com"
+      ],
+      "company_domain": "ursamajor.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0187",
+      "company_name": "Vast",
+      "jsearch_company_query": [
+        "Vast"
+      ],
+      "jsearch_site_filters": [
+        "vast.com"
+      ],
+      "company_domain": "vast.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0188",
+      "company_name": "Virgin Galactic",
+      "jsearch_company_query": [
+        "Virgin Galactic"
+      ],
+      "jsearch_site_filters": [
+        "virgingalactic.com"
+      ],
+      "company_domain": "virgingalactic.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "YES",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0189",
+      "company_name": "Web Industries",
+      "jsearch_company_query": [
+        "Web Industries"
+      ],
+      "jsearch_site_filters": [
+        "webindustries.com"
+      ],
+      "company_domain": "webindustries.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0190",
+      "company_name": "Wisk Aero",
+      "jsearch_company_query": [
+        "Wisk Aero"
+      ],
+      "jsearch_site_filters": [
+        "wisk.aero"
+      ],
+      "company_domain": "wisk.aero",
+      "ats_board_url": "https://boards.greenhouse.io/wisk",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0191",
+      "company_name": "Woodward",
+      "jsearch_company_query": [
+        "Woodward"
+      ],
+      "jsearch_site_filters": [
+        "woodward.com"
+      ],
+      "company_domain": "woodward.com",
+      "ats_board_url": "https://woodward.wd5.myworkdayjobs.com/WWD_External",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0192",
+      "company_name": "Zipline International",
+      "jsearch_company_query": [
+        "Zipline International"
+      ],
+      "jsearch_site_filters": [
+        "ziplineinternational.com"
+      ],
+      "company_domain": "ziplineinternational.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0193",
+      "company_name": "Zoltek",
+      "jsearch_company_query": [
+        "Zoltek"
+      ],
+      "jsearch_site_filters": [
+        "zoltek.com"
+      ],
+      "company_domain": "zoltek.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0194",
+      "company_name": "AST SpaceMobile",
+      "jsearch_company_query": [
+        "AST SpaceMobile"
+      ],
+      "jsearch_site_filters": [
+        "ast-science.com"
+      ],
+      "company_domain": "ast-science.com",
+      "ats_board_url": "https://boards.greenhouse.io/astspacemobile",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0195",
+      "company_name": "Astra Space",
+      "jsearch_company_query": [
+        "Astra Space"
+      ],
+      "jsearch_site_filters": [
+        "astraspace.com"
+      ],
+      "company_domain": "astraspace.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0196",
+      "company_name": "Aurora Flight Sciences",
+      "jsearch_company_query": [
+        "Aurora Flight Sciences"
+      ],
+      "jsearch_site_filters": [
+        "aurora.aero"
+      ],
+      "company_domain": "aurora.aero",
+      "ats_board_url": "https://aurora.wd1.myworkdayjobs.com/Aurora",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0197",
+      "company_name": "Blue Origin",
+      "jsearch_company_query": [
+        "Blue Origin"
+      ],
+      "jsearch_site_filters": [
+        "blueorigin.com"
+      ],
+      "company_domain": "blueorigin.com",
+      "ats_board_url": "https://www.blueorigin.com/careers",
+      "tier": "Tier 1",
+      "h1b": "YES",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0198",
+      "company_name": "Capella Space",
+      "jsearch_company_query": [
+        "Capella Space"
+      ],
+      "jsearch_site_filters": [
+        "capellaspace.com"
+      ],
+      "company_domain": "capellaspace.com",
+      "ats_board_url": "https://jobs.lever.co/capellaspace",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0199",
+      "company_name": "Firefly Aerospace",
+      "jsearch_company_query": [
+        "Firefly Aerospace"
+      ],
+      "jsearch_site_filters": [
+        "fireflyrockets.com"
+      ],
+      "company_domain": "fireflyrockets.com",
+      "ats_board_url": "https://jobs.lever.co/fireflyspace",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0200",
+      "company_name": "Momentus",
+      "jsearch_company_query": [
+        "Momentus"
+      ],
+      "jsearch_site_filters": [
+        "momentus.space"
+      ],
+      "company_domain": "momentus.space",
+      "ats_board_url": "https://jobs.lever.co/momentus-space",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0201",
+      "company_name": "Overair",
+      "jsearch_company_query": [
+        "Overair"
+      ],
+      "jsearch_site_filters": [
+        "overair.com"
+      ],
+      "company_domain": "overair.com",
+      "ats_board_url": "https://jobs.lever.co/overair",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0202",
+      "company_name": "Phase Four",
+      "jsearch_company_query": [
+        "Phase Four"
+      ],
+      "jsearch_site_filters": [
+        "phase4.io"
+      ],
+      "company_domain": "phase4.io",
+      "ats_board_url": "https://jobs.lever.co/phasefour",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0203",
+      "company_name": "Planet Labs",
+      "jsearch_company_query": [
+        "Planet Labs"
+      ],
+      "jsearch_site_filters": [
+        "planet.com"
+      ],
+      "company_domain": "planet.com",
+      "ats_board_url": "https://boards.greenhouse.io/planetlabs",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0204",
+      "company_name": "Redwire Space",
+      "jsearch_company_query": [
+        "Redwire Space"
+      ],
+      "jsearch_site_filters": [
+        "redwirespace.com"
+      ],
+      "company_domain": "redwirespace.com",
+      "ats_board_url": "https://redwirespace.wd1.myworkdayjobs.com/Redwire",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0205",
+      "company_name": "Shield AI",
+      "jsearch_company_query": [
+        "Shield AI"
+      ],
+      "jsearch_site_filters": [
+        "shield.ai"
+      ],
+      "company_domain": "shield.ai",
+      "ats_board_url": "https://jobs.lever.co/shieldai",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0206",
+      "company_name": "Skydio",
+      "jsearch_company_query": [
+        "Skydio"
+      ],
+      "jsearch_site_filters": [
+        "skydio.com"
+      ],
+      "company_domain": "skydio.com",
+      "ats_board_url": "https://boards.greenhouse.io/skydio",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0207",
+      "company_name": "SpinLaunch",
+      "jsearch_company_query": [
+        "SpinLaunch"
+      ],
+      "jsearch_site_filters": [
+        "spinlaunch.com"
+      ],
+      "company_domain": "spinlaunch.com",
+      "ats_board_url": "https://jobs.lever.co/spinlaunch",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0208",
+      "company_name": "Spire Global",
+      "jsearch_company_query": [
+        "Spire Global"
+      ],
+      "jsearch_site_filters": [
+        "spire.com"
+      ],
+      "company_domain": "spire.com",
+      "ats_board_url": "https://jobs.lever.co/spire",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0209",
+      "company_name": "Supernal",
+      "jsearch_company_query": [
+        "Supernal"
+      ],
+      "jsearch_site_filters": [
+        "supernal.aero"
+      ],
+      "company_domain": "supernal.aero",
+      "ats_board_url": "https://boards.greenhouse.io/supernal",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0210",
+      "company_name": "Venturi Astrolab",
+      "jsearch_company_query": [
+        "Venturi Astrolab"
+      ],
+      "jsearch_site_filters": [
+        "venturi-astrolab.com"
+      ],
+      "company_domain": "venturi-astrolab.com",
+      "ats_board_url": "https://jobs.lever.co/astrolab",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0211",
+      "company_name": "Vertical Aerospace",
+      "jsearch_company_query": [
+        "Vertical Aerospace"
+      ],
+      "jsearch_site_filters": [
+        "vertical-aerospace.com"
+      ],
+      "company_domain": "vertical-aerospace.com",
+      "ats_board_url": "https://vertricalaerospace.wd3.myworkdayjobs.com",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0212",
+      "company_name": "Voyager Space",
+      "jsearch_company_query": [
+        "Voyager Space"
+      ],
+      "jsearch_site_filters": [
+        "voyagerspace.com"
+      ],
+      "company_domain": "voyagerspace.com",
+      "ats_board_url": "https://jobs.lever.co/voyagerspace",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0213",
+      "company_name": "Xwing",
+      "jsearch_company_query": [
+        "Xwing"
+      ],
+      "jsearch_site_filters": [
+        "xwing.com"
+      ],
+      "company_domain": "xwing.com",
+      "ats_board_url": "https://jobs.lever.co/xwing",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0214",
+      "company_name": "York Space Systems",
+      "jsearch_company_query": [
+        "York Space Systems"
+      ],
+      "jsearch_site_filters": [
+        "yorkspacesystems.com"
+      ],
+      "company_domain": "yorkspacesystems.com",
+      "ats_board_url": "https://jobs.lever.co/yorkspacesystems",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0215",
+      "company_name": "Aptera Motors",
+      "jsearch_company_query": [
+        "Aptera Motors"
+      ],
+      "jsearch_site_filters": [
+        "aptera.us"
+      ],
+      "company_domain": "aptera.us",
+      "ats_board_url": "https://jobs.lever.co/aptera",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0216",
+      "company_name": "Aptiv",
+      "jsearch_company_query": [
+        "Aptiv"
+      ],
+      "jsearch_site_filters": [
+        "aptiv.com"
+      ],
+      "company_domain": "aptiv.com",
+      "ats_board_url": "https://aptiv.wd1.myworkdayjobs.com/Aptiv",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0217",
+      "company_name": "BorgWarner",
+      "jsearch_company_query": [
+        "BorgWarner"
+      ],
+      "jsearch_site_filters": [
+        "borgwarner.com"
+      ],
+      "company_domain": "borgwarner.com",
+      "ats_board_url": "https://borgwarner.wd5.myworkdayjobs.com/BorgWarner_External",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0218",
+      "company_name": "Bosch USA",
+      "jsearch_company_query": [
+        "Bosch USA"
+      ],
+      "jsearch_site_filters": [
+        "bosch.com"
+      ],
+      "company_domain": "bosch.com",
+      "ats_board_url": "https://bosch.wd3.myworkdayjobs.com/Bosch_Ext_US",
+      "tier": "Tier 2",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0219",
+      "company_name": "CaptiveAire Systems",
+      "jsearch_company_query": [
+        "CaptiveAire Systems"
+      ],
+      "jsearch_site_filters": [
+        "captiveaire.com"
+      ],
+      "company_domain": "captiveaire.com",
+      "ats_board_url": "https://www.captiveaire.com/careers",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0220",
+      "company_name": "ChargePoint",
+      "jsearch_company_query": [
+        "ChargePoint"
+      ],
+      "jsearch_site_filters": [
+        "chargepoint.com"
+      ],
+      "company_domain": "chargepoint.com",
+      "ats_board_url": "https://boards.greenhouse.io/chargepoint",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0221",
+      "company_name": "Continental Automotive",
+      "jsearch_company_query": [
+        "Continental Automotive"
+      ],
+      "jsearch_site_filters": [
+        "continental.com"
+      ],
+      "company_domain": "continental.com",
+      "ats_board_url": "https://jobs.continental.com/en/",
+      "tier": "Tier 2",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0222",
+      "company_name": "Cummins",
+      "jsearch_company_query": [
+        "Cummins"
+      ],
+      "jsearch_site_filters": [
+        "cummins.com"
+      ],
+      "company_domain": "cummins.com",
+      "ats_board_url": "https://cummins.wd1.myworkdayjobs.com/CumminsExternal",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0223",
+      "company_name": "Dana Incorporated",
+      "jsearch_company_query": [
+        "Dana Incorporated"
+      ],
+      "jsearch_site_filters": [
+        "dana.com"
+      ],
+      "company_domain": "dana.com",
+      "ats_board_url": "https://dana.wd1.myworkdayjobs.com/Dana_Careers",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0224",
+      "company_name": "Denso",
+      "jsearch_company_query": [
+        "Denso"
+      ],
+      "jsearch_site_filters": [
+        "densocorp.com"
+      ],
+      "company_domain": "densocorp.com",
+      "ats_board_url": "https://densocareers.wd1.myworkdayjobs.com/denso_careers",
+      "tier": "Tier 2",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0225",
+      "company_name": "Faraday Future",
+      "jsearch_company_query": [
+        "Faraday Future"
+      ],
+      "jsearch_site_filters": [
+        "ff.com"
+      ],
+      "company_domain": "ff.com",
+      "ats_board_url": "https://boards.greenhouse.io/faradayfuture",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0226",
+      "company_name": "Flex-N-Gate",
+      "jsearch_company_query": [
+        "Flex-N-Gate"
+      ],
+      "jsearch_site_filters": [
+        "flexngate.com"
+      ],
+      "company_domain": "flexngate.com",
+      "ats_board_url": "https://flexngate.com/careers",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0227",
+      "company_name": "Ford Motor Company",
+      "jsearch_company_query": [
+        "Ford Motor Company"
+      ],
+      "jsearch_site_filters": [
+        "ford.com"
+      ],
+      "company_domain": "ford.com",
+      "ats_board_url": "https://efds.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/sites/CX",
+      "tier": "Tier 2",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0228",
+      "company_name": "Honda Manufacturing",
+      "jsearch_company_query": [
+        "Honda Manufacturing"
+      ],
+      "jsearch_site_filters": [
+        "ohio.honda.com"
+      ],
+      "company_domain": "ohio.honda.com",
+      "ats_board_url": "https://honda.wd5.myworkdayjobs.com/AHM_External",
+      "tier": "Tier 2",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0229",
+      "company_name": "Hyundai (America TC)",
+      "jsearch_company_query": [
+        "Hyundai (America TC)",
+        "Hyundai"
+      ],
+      "jsearch_site_filters": [
+        "hyundai.com"
+      ],
+      "company_domain": "hyundai.com",
+      "ats_board_url": "https://www.hyundai.com/us/en/careers.html",
+      "tier": "Tier 2",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0230",
+      "company_name": "Karma Automotive",
+      "jsearch_company_query": [
+        "Karma Automotive"
+      ],
+      "jsearch_site_filters": [
+        "karmaautomotive.com"
+      ],
+      "company_domain": "karmaautomotive.com",
+      "ats_board_url": "https://www.karmaautomotive.com/careers",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0231",
+      "company_name": "Nexteer Automotive",
+      "jsearch_company_query": [
+        "Nexteer Automotive"
+      ],
+      "jsearch_site_filters": [
+        "nexteer.com"
+      ],
+      "company_domain": "nexteer.com",
+      "ats_board_url": "https://nexteer.taleo.net/careersection",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0232",
+      "company_name": "NIO",
+      "jsearch_company_query": [
+        "NIO"
+      ],
+      "jsearch_site_filters": [
+        "nio.com"
+      ],
+      "company_domain": "nio.com",
+      "ats_board_url": "https://nio.com/careers",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0233",
+      "company_name": "Nissan North America",
+      "jsearch_company_query": [
+        "Nissan North America"
+      ],
+      "jsearch_site_filters": [
+        "nissan-na.com"
+      ],
+      "company_domain": "nissan-na.com",
+      "ats_board_url": "https://nissannorthamerica.taleo.net/careersection",
+      "tier": "Tier 2",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0234",
+      "company_name": "NPROXX",
+      "jsearch_company_query": [
+        "NPROXX"
+      ],
+      "jsearch_site_filters": [
+        "nproxx.com"
+      ],
+      "company_domain": "nproxx.com",
+      "ats_board_url": "https://www.nproxx.com/career",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0235",
+      "company_name": "PACCAR",
+      "jsearch_company_query": [
+        "PACCAR"
+      ],
+      "jsearch_site_filters": [
+        "paccar.com"
+      ],
+      "company_domain": "paccar.com",
+      "ats_board_url": "https://paccar.wd1.myworkdayjobs.com/PACCAR_External",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0236",
+      "company_name": "Rivian Automotive",
+      "jsearch_company_query": [
+        "Rivian Automotive"
+      ],
+      "jsearch_site_filters": [
+        "rivian.com"
+      ],
+      "company_domain": "rivian.com",
+      "ats_board_url": "https://boards.greenhouse.io/rivian",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0237",
+      "company_name": "Stellantis (FCA)",
+      "jsearch_company_query": [
+        "Stellantis",
+        "Stellantis (FCA)"
+      ],
+      "jsearch_site_filters": [
+        "stellantis.com"
+      ],
+      "company_domain": "stellantis.com",
+      "ats_board_url": "https://stellantis.wd12.myworkdayjobs.com/Stellantis",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0238",
+      "company_name": "Subaru of Indiana Automotive",
+      "jsearch_company_query": [
+        "Subaru of Indiana Automotive"
+      ],
+      "jsearch_site_filters": [
+        "subaru-sia.com"
+      ],
+      "company_domain": "subaru-sia.com",
+      "ats_board_url": "https://sia.taleo.net/careersection",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0239",
+      "company_name": "Tesla",
+      "jsearch_company_query": [
+        "Tesla"
+      ],
+      "jsearch_site_filters": [
+        "tesla.com"
+      ],
+      "company_domain": "tesla.com",
+      "ats_board_url": "https://www.tesla.com/careers",
+      "tier": "Tier 2",
+      "h1b": "YES",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0240",
+      "company_name": "Toyota Motor Manufacturing",
+      "jsearch_company_query": [
+        "Toyota Motor Manufacturing"
+      ],
+      "jsearch_site_filters": [
+        "toyotamotormanufacturing.com"
+      ],
+      "company_domain": "toyotamotormanufacturing.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0241",
+      "company_name": "Valeo",
+      "jsearch_company_query": [
+        "Valeo"
+      ],
+      "jsearch_site_filters": [
+        "valeo.com"
+      ],
+      "company_domain": "valeo.com",
+      "ats_board_url": "https://valeo.wd3.myworkdayjobs.com/Valeo_External",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0242",
+      "company_name": "VinFast",
+      "jsearch_company_query": [
+        "VinFast"
+      ],
+      "jsearch_site_filters": [
+        "vinfastauto.us"
+      ],
+      "company_domain": "vinfastauto.us",
+      "ats_board_url": "https://vinfastcareers.com",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0243",
+      "company_name": "Waymo (Alphabet)",
+      "jsearch_company_query": [
+        "Waymo (Alphabet)",
+        "Waymo"
+      ],
+      "jsearch_site_filters": [
+        "waymo.com"
+      ],
+      "company_domain": "waymo.com",
+      "ats_board_url": "https://waymo.com/joinus",
+      "tier": "Tier 2",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0244",
+      "company_name": "ZeroAvia",
+      "jsearch_company_query": [
+        "ZeroAvia"
+      ],
+      "jsearch_site_filters": [
+        "zeroavia.com"
+      ],
+      "company_domain": "zeroavia.com",
+      "ats_board_url": "https://boards.greenhouse.io/zeroavia",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0245",
+      "company_name": "ZF Group",
+      "jsearch_company_query": [
+        "ZF Group"
+      ],
+      "jsearch_site_filters": [
+        "zf.com"
+      ],
+      "company_domain": "zf.com",
+      "ats_board_url": "https://zf.wd3.myworkdayjobs.com/ZF",
+      "tier": "Tier 2",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0246",
+      "company_name": "Baker Hughes",
+      "jsearch_company_query": [
+        "Baker Hughes"
+      ],
+      "jsearch_site_filters": [
+        "bakerhughes.com"
+      ],
+      "company_domain": "bakerhughes.com",
+      "ats_board_url": "https://careers.bakerhughes.com",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0247",
+      "company_name": "Bcomp",
+      "jsearch_company_query": [
+        "Bcomp"
+      ],
+      "jsearch_site_filters": [
+        "bcomp.com"
+      ],
+      "company_domain": "bcomp.com",
+      "ats_board_url": null,
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0248",
+      "company_name": "Bloom Energy",
+      "jsearch_company_query": [
+        "Bloom Energy"
+      ],
+      "jsearch_site_filters": [
+        "bloomenergy.com"
+      ],
+      "company_domain": "bloomenergy.com",
+      "ats_board_url": "https://bloomenergy.wd1.myworkdayjobs.com/bloom_energy",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0249",
+      "company_name": "Corning Incorporated",
+      "jsearch_company_query": [
+        "Corning Incorporated"
+      ],
+      "jsearch_site_filters": [
+        "corning.com"
+      ],
+      "company_domain": "corning.com",
+      "ats_board_url": "https://corning.wd5.myworkdayjobs.com/en-US/corning_careers",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0250",
+      "company_name": "Cyient",
+      "jsearch_company_query": [
+        "Cyient"
+      ],
+      "jsearch_site_filters": [
+        "cyient.com"
+      ],
+      "company_domain": "cyient.com",
+      "ats_board_url": "https://cyient.wd3.myworkdayjobs.com/cyient",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0251",
+      "company_name": "Dassault Syst\u00e8mes",
+      "jsearch_company_query": [
+        "Dassault Syst\u00e8mes"
+      ],
+      "jsearch_site_filters": [
+        "3ds.com"
+      ],
+      "company_domain": "3ds.com",
+      "ats_board_url": "https://www.3ds.com/careers/jobs",
+      "tier": "Tier 3",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0252",
+      "company_name": "Eos Energy",
+      "jsearch_company_query": [
+        "Eos Energy"
+      ],
+      "jsearch_site_filters": [
+        "eosenergy.com"
+      ],
+      "company_domain": "eosenergy.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0253",
+      "company_name": "FACC AG",
+      "jsearch_company_query": [
+        "FACC AG"
+      ],
+      "jsearch_site_filters": [
+        "facc.com"
+      ],
+      "company_domain": "facc.com",
+      "ats_board_url": "https://www.facc.com/career",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0254",
+      "company_name": "First Solar",
+      "jsearch_company_query": [
+        "First Solar"
+      ],
+      "jsearch_site_filters": [
+        "firstsolar.com"
+      ],
+      "company_domain": "firstsolar.com",
+      "ats_board_url": "https://firstsolar.wd1.myworkdayjobs.com/FirstSolar_External",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0255",
+      "company_name": "Form Energy",
+      "jsearch_company_query": [
+        "Form Energy"
+      ],
+      "jsearch_site_filters": [
+        "formenergy.com"
+      ],
+      "company_domain": "formenergy.com",
+      "ats_board_url": "https://boards.greenhouse.io/formenergy",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0256",
+      "company_name": "GE Vernova",
+      "jsearch_company_query": [
+        "GE Vernova"
+      ],
+      "jsearch_site_filters": [
+        "gevernova.com"
+      ],
+      "company_domain": "gevernova.com",
+      "ats_board_url": "https://gevernova.wd5.myworkdayjobs.com/GEVernova_External",
+      "tier": "Tier 2",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0257",
+      "company_name": "Hexagon Manufacturing Intelligence",
+      "jsearch_company_query": [
+        "Hexagon Manufacturing Intelligence"
+      ],
+      "jsearch_site_filters": [
+        "hexagon.com"
+      ],
+      "company_domain": "hexagon.com",
+      "ats_board_url": "https://jobs.hexagon.com",
+      "tier": "Tier 3",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0258",
+      "company_name": "Invenergy",
+      "jsearch_company_query": [
+        "Invenergy"
+      ],
+      "jsearch_site_filters": [
+        "invenergyllc.com"
+      ],
+      "company_domain": "invenergyllc.com",
+      "ats_board_url": "https://invenergy.wd1.myworkdayjobs.com/Invenergy",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0259",
+      "company_name": "ITW",
+      "jsearch_company_query": [
+        "ITW"
+      ],
+      "jsearch_site_filters": [
+        "itw.com"
+      ],
+      "company_domain": "itw.com",
+      "ats_board_url": "https://itwjobs.com",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0260",
+      "company_name": "John Deere",
+      "jsearch_company_query": [
+        "John Deere"
+      ],
+      "jsearch_site_filters": [
+        "deere.com"
+      ],
+      "company_domain": "deere.com",
+      "ats_board_url": "https://johndere.wd5.myworkdayjobs.com/deere_careers",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0261",
+      "company_name": "Kennametal",
+      "jsearch_company_query": [
+        "Kennametal"
+      ],
+      "jsearch_site_filters": [
+        "kennametal.com"
+      ],
+      "company_domain": "kennametal.com",
+      "ats_board_url": "https://kennametal.wd5.myworkdayjobs.com/KMT",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0262",
+      "company_name": "LM Wind Power (GE Vernova)",
+      "jsearch_company_query": [
+        "LM Wind Power",
+        "LM Wind Power (GE Vernova)"
+      ],
+      "jsearch_site_filters": [
+        "lmwindpower.com"
+      ],
+      "company_domain": "lmwindpower.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0263",
+      "company_name": "NOV Fiberglass Systems",
+      "jsearch_company_query": [
+        "NOV Fiberglass Systems"
+      ],
+      "jsearch_site_filters": [
+        "novfiberglasssystems.com"
+      ],
+      "company_domain": "novfiberglasssystems.com",
+      "ats_board_url": null,
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0264",
+      "company_name": "QuantumScape",
+      "jsearch_company_query": [
+        "QuantumScape"
+      ],
+      "jsearch_site_filters": [
+        "quantumscape.com"
+      ],
+      "company_domain": "quantumscape.com",
+      "ats_board_url": "https://boards.greenhouse.io/quantumscape",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0265",
+      "company_name": "QuEST Global",
+      "jsearch_company_query": [
+        "QuEST Global"
+      ],
+      "jsearch_site_filters": [
+        "quest-global.com"
+      ],
+      "company_domain": "quest-global.com",
+      "ats_board_url": "https://careers.quest-global.com",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0266",
+      "company_name": "Redwood Materials",
+      "jsearch_company_query": [
+        "Redwood Materials"
+      ],
+      "jsearch_site_filters": [
+        "redwoodmaterials.com"
+      ],
+      "company_domain": "redwoodmaterials.com",
+      "ats_board_url": "https://boards.greenhouse.io/redwoodmaterials",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0267",
+      "company_name": "Regal Rexnord",
+      "jsearch_company_query": [
+        "Regal Rexnord"
+      ],
+      "jsearch_site_filters": [
+        "regalrexnord.com"
+      ],
+      "company_domain": "regalrexnord.com",
+      "ats_board_url": "https://regalbeloit.wd1.myworkdayjobs.com/RegalRexnord",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0268",
+      "company_name": "Saint-Gobain",
+      "jsearch_company_query": [
+        "Saint-Gobain"
+      ],
+      "jsearch_site_filters": [
+        "saint-gobain.com"
+      ],
+      "company_domain": "saint-gobain.com",
+      "ats_board_url": "https://saintgobain.wd3.myworkdayjobs.com/Saint-Gobain_Careers",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0269",
+      "company_name": "Siemens Gamesa",
+      "jsearch_company_query": [
+        "Siemens Gamesa"
+      ],
+      "jsearch_site_filters": [
+        "siemensgamesa.com"
+      ],
+      "company_domain": "siemensgamesa.com",
+      "ats_board_url": "https://jobs.siemensgamesa.com",
+      "tier": "Tier 2",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0270",
+      "company_name": "Vestas Americas",
+      "jsearch_company_query": [
+        "Vestas Americas"
+      ],
+      "jsearch_site_filters": [
+        "vestas.com"
+      ],
+      "company_domain": "vestas.com",
+      "ats_board_url": "https://vestas.wd3.myworkdayjobs.com/Vestas",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0271",
+      "company_name": "Abbott Laboratories",
+      "jsearch_company_query": [
+        "Abbott Laboratories"
+      ],
+      "jsearch_site_filters": [
+        "abbott.com"
+      ],
+      "company_domain": "abbott.com",
+      "ats_board_url": "https://abbott.wd5.myworkdayjobs.com/abbottcareers",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0272",
+      "company_name": "Argon Medical Devices",
+      "jsearch_company_query": [
+        "Argon Medical Devices"
+      ],
+      "jsearch_site_filters": [
+        "argonmedical.com"
+      ],
+      "company_domain": "argonmedical.com",
+      "ats_board_url": "https://argon.icims.com/jobs/search",
+      "tier": "Tier 2",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0273",
+      "company_name": "Boston Scientific",
+      "jsearch_company_query": [
+        "Boston Scientific"
+      ],
+      "jsearch_site_filters": [
+        "bostonscientific.com"
+      ],
+      "company_domain": "bostonscientific.com",
+      "ats_board_url": "https://bostonscientific.wd1.myworkdayjobs.com/BSC_Careers",
+      "tier": "Tier 3",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0274",
+      "company_name": "Cook Medical",
+      "jsearch_company_query": [
+        "Cook Medical"
+      ],
+      "jsearch_site_filters": [
+        "cookmedical.com"
+      ],
+      "company_domain": "cookmedical.com",
+      "ats_board_url": "https://cookmedical.wd5.myworkdayjobs.com/CookMedical",
+      "tier": "Tier 3",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0275",
+      "company_name": "DePuy Synthes",
+      "jsearch_company_query": [
+        "DePuy Synthes"
+      ],
+      "jsearch_site_filters": [
+        "depuysynthes.com"
+      ],
+      "company_domain": "depuysynthes.com",
+      "ats_board_url": "https://jnj.wd1.myworkdayjobs.com/jnjemea",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0276",
+      "company_name": "Edwards Lifesciences",
+      "jsearch_company_query": [
+        "Edwards Lifesciences"
+      ],
+      "jsearch_site_filters": [
+        "edwards.com"
+      ],
+      "company_domain": "edwards.com",
+      "ats_board_url": "https:// edwards.wd5.myworkdayjobs.com/ELC",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0277",
+      "company_name": "Enovis",
+      "jsearch_company_query": [
+        "Enovis"
+      ],
+      "jsearch_site_filters": [
+        "enovis.com"
+      ],
+      "company_domain": "enovis.com",
+      "ats_board_url": "https://enovis.wd1.myworkdayjobs.com/Enovis_Careers",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0278",
+      "company_name": "Globus Medical",
+      "jsearch_company_query": [
+        "Globus Medical"
+      ],
+      "jsearch_site_filters": [
+        "globusmedical.com"
+      ],
+      "company_domain": "globusmedical.com",
+      "ats_board_url": "https://careers.globusmedical.com",
+      "tier": "Tier 3",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0279",
+      "company_name": "Integra LifeSciences",
+      "jsearch_company_query": [
+        "Integra LifeSciences"
+      ],
+      "jsearch_site_filters": [
+        "integralife.com"
+      ],
+      "company_domain": "integralife.com",
+      "ats_board_url": "https://integralife.wd1.myworkdayjobs.com/integra_careers",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0280",
+      "company_name": "Medline Industries",
+      "jsearch_company_query": [
+        "Medline Industries"
+      ],
+      "jsearch_site_filters": [
+        "medline.com"
+      ],
+      "company_domain": "medline.com",
+      "ats_board_url": "https://medline.wd1.myworkdayjobs.com/MedlineCareers",
+      "tier": "Tier 3",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0281",
+      "company_name": "Medtronic",
+      "jsearch_company_query": [
+        "Medtronic"
+      ],
+      "jsearch_site_filters": [
+        "medtronic.com"
+      ],
+      "company_domain": "medtronic.com",
+      "ats_board_url": "https://jobs.medtronic.com",
+      "tier": "Tier 3",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0282",
+      "company_name": "NuVasive",
+      "jsearch_company_query": [
+        "NuVasive"
+      ],
+      "jsearch_site_filters": [
+        "nuvasive.com"
+      ],
+      "company_domain": "nuvasive.com",
+      "ats_board_url": "https://nuvectra.wd1.myworkdayjobs.com/NuVasive",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0283",
+      "company_name": "Ottobock",
+      "jsearch_company_query": [
+        "Ottobock"
+      ],
+      "jsearch_site_filters": [
+        "ottobock.com"
+      ],
+      "company_domain": "ottobock.com",
+      "ats_board_url": "https://ottobock.wd3.myworkdayjobs.com/OttobockCareers",
+      "tier": "Tier 3",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0284",
+      "company_name": "Smith+Nephew",
+      "jsearch_company_query": [
+        "Smith+Nephew"
+      ],
+      "jsearch_site_filters": [
+        "smith-nephew.com"
+      ],
+      "company_domain": "smith-nephew.com",
+      "ats_board_url": "https://jobs.smith-nephew.com",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0285",
+      "company_name": "Stryker",
+      "jsearch_company_query": [
+        "Stryker"
+      ],
+      "jsearch_site_filters": [
+        "stryker.com"
+      ],
+      "company_domain": "stryker.com",
+      "ats_board_url": "https://stryker.wd1.myworkdayjobs.com/StrykerCareers",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0286",
+      "company_name": "Zimmer Biomet",
+      "jsearch_company_query": [
+        "Zimmer Biomet"
+      ],
+      "jsearch_site_filters": [
+        "zimmerbiomet.com"
+      ],
+      "company_domain": "zimmerbiomet.com",
+      "ats_board_url": "https://jobs.zimmerbiomet.com",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0287",
+      "company_name": "Applied Materials",
+      "jsearch_company_query": [
+        "Applied Materials"
+      ],
+      "jsearch_site_filters": [
+        "appliedmaterials.com"
+      ],
+      "company_domain": "appliedmaterials.com",
+      "ats_board_url": "https://amat.wd1.myworkdayjobs.com/External",
+      "tier": "Tier 3",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0288",
+      "company_name": "BASF",
+      "jsearch_company_query": [
+        "BASF"
+      ],
+      "jsearch_site_filters": [
+        "basf.com"
+      ],
+      "company_domain": "basf.com",
+      "ats_board_url": "https://basf.erecruiting.eu/wd/plsql/wd_portal.show_job_board",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0289",
+      "company_name": "Battelle",
+      "jsearch_company_query": [
+        "Battelle"
+      ],
+      "jsearch_site_filters": [
+        "battelle.org"
+      ],
+      "company_domain": "battelle.org",
+      "ats_board_url": "https://battelle.wd1.myworkdayjobs.com/BattelleExternal",
+      "tier": "Tier 3",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0290",
+      "company_name": "Covestro",
+      "jsearch_company_query": [
+        "Covestro"
+      ],
+      "jsearch_site_filters": [
+        "covestro.com"
+      ],
+      "company_domain": "covestro.com",
+      "ats_board_url": "https://jobs.covestro.com",
+      "tier": "Tier 1",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0291",
+      "company_name": "Desktop Metal",
+      "jsearch_company_query": [
+        "Desktop Metal"
+      ],
+      "jsearch_site_filters": [
+        "desktopmetal.com"
+      ],
+      "company_domain": "desktopmetal.com",
+      "ats_board_url": null,
+      "tier": "Tier 3",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0292",
+      "company_name": "Georgia Tech ASDL",
+      "jsearch_company_query": [
+        "Georgia Tech ASDL"
+      ],
+      "jsearch_site_filters": [
+        "gatech.edu"
+      ],
+      "company_domain": "gatech.edu",
+      "ats_board_url": "https://www.aero.gatech.edu/about/employment",
+      "tier": "Tier 3",
+      "h1b": "LIKELY",
+      "itar": "Partial",
+      "notes": ""
+    },
+    {
+      "company_id": "C0293",
+      "company_name": "Henkel",
+      "jsearch_company_query": [
+        "Henkel"
+      ],
+      "jsearch_site_filters": [
+        "henkel.com"
+      ],
+      "company_domain": "henkel.com",
+      "ats_board_url": "https://henkel.wd3.myworkdayjobs.com/henkel_careers",
+      "tier": "Tier 2",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0294",
+      "company_name": "Intel",
+      "jsearch_company_query": [
+        "Intel"
+      ],
+      "jsearch_site_filters": [
+        "intel.com"
+      ],
+      "company_domain": "intel.com",
+      "ats_board_url": "https://jobs.intel.com",
+      "tier": "Tier 3",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0295",
+      "company_name": "Johns Hopkins APL",
+      "jsearch_company_query": [
+        "Johns Hopkins APL"
+      ],
+      "jsearch_site_filters": [
+        "jhuapl.edu"
+      ],
+      "company_domain": "jhuapl.edu",
+      "ats_board_url": "https://jhuapl.taleo.net/careersection/2/jobsearch.ftl",
+      "tier": "Tier 3",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0296",
+      "company_name": "Lincoln Electric",
+      "jsearch_company_query": [
+        "Lincoln Electric"
+      ],
+      "jsearch_site_filters": [
+        "lincolnelectric.com"
+      ],
+      "company_domain": "lincolnelectric.com",
+      "ats_board_url": "https://lincolnelectric.wd1.myworkdayjobs.com/Lincoln_Electric",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0297",
+      "company_name": "MIT Lincoln Laboratory",
+      "jsearch_company_query": [
+        "MIT Lincoln Laboratory"
+      ],
+      "jsearch_site_filters": [
+        "ll.mit.edu"
+      ],
+      "company_domain": "ll.mit.edu",
+      "ats_board_url": "https://www.ll.mit.edu/careers",
+      "tier": "Tier 3",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0298",
+      "company_name": "NASA Langley Research Center",
+      "jsearch_company_query": [
+        "NASA Langley Research Center"
+      ],
+      "jsearch_site_filters": [
+        "nasa.gov"
+      ],
+      "company_domain": "nasa.gov",
+      "ats_board_url": "https://www.usajobs.gov/Search/Results?k=NASA+Langley",
+      "tier": "Tier 3",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0299",
+      "company_name": "PPG Aerospace",
+      "jsearch_company_query": [
+        "PPG Aerospace"
+      ],
+      "jsearch_site_filters": [
+        "ppg.com"
+      ],
+      "company_domain": "ppg.com",
+      "ats_board_url": "https://ppg.wd5.myworkdayjobs.com/PPG",
+      "tier": "Tier 2",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0300",
+      "company_name": "Sandvik",
+      "jsearch_company_query": [
+        "Sandvik"
+      ],
+      "jsearch_site_filters": [
+        "sandvik.com"
+      ],
+      "company_domain": "sandvik.com",
+      "ats_board_url": "https://jobs.sandvik.com",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0301",
+      "company_name": "Southwest Research Institute",
+      "jsearch_company_query": [
+        "Southwest Research Institute"
+      ],
+      "jsearch_site_filters": [
+        "swri.org"
+      ],
+      "company_domain": "swri.org",
+      "ats_board_url": "https://www.swri.org/careers",
+      "tier": "Tier 3",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0302",
+      "company_name": "TE Connectivity",
+      "jsearch_company_query": [
+        "TE Connectivity"
+      ],
+      "jsearch_site_filters": [
+        "te.com"
+      ],
+      "company_domain": "te.com",
+      "ats_board_url": "https://te.wd10.myworkdayjobs.com/TECareers",
+      "tier": "Tier 2",
+      "h1b": "YES",
+      "itar": "NO",
+      "notes": ""
+    },
+    {
+      "company_id": "C0303",
+      "company_name": "Trane Technologies",
+      "jsearch_company_query": [
+        "Trane Technologies"
+      ],
+      "jsearch_site_filters": [
+        "tranetechnologies.com"
+      ],
+      "company_domain": "tranetechnologies.com",
+      "ats_board_url": "https://tranetechnologies.wd1.myworkdayjobs.com/Trane_Technologies",
+      "tier": "Tier 2",
+      "h1b": "LIKELY",
+      "itar": "NO",
+      "notes": ""
+    }
+  ]
+}
