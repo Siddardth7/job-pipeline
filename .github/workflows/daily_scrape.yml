@@ -15,7 +15,7 @@ env:
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
 
     steps:
       - uses: actions/checkout@v4
@@ -29,31 +29,47 @@ jobs:
       - name: Install dependencies
         run: pip install requests apify-client python-dotenv
 
+      # STEP 1 - JSearch targeted + open search
       - name: Run JSearch scraper
         continue-on-error: true
         run: python jsearch_scraper.py
 
+      # STEP 2 - Apify targeted + open search
       - name: Run Apify scraper
         continue-on-error: true
         run: python apify_scraper.py --run
 
-      - name: Merge results
+      # STEP 3 - Merge all 4 sources into jobs_latest.json
+      - name: Merge all sources
         run: python merge_pipeline.py
 
+      # STEP 4 - Apply all Instruction Sheet hard filters
+      - name: Apply hard filters (post-merge gate)
+        run: python post_merge_filter.py
+
+      # STEP 5 - Commit everything
       - name: Commit and push results
         run: |
           git config user.name "Job Scraper Bot"
           git config user.email "bot@noreply.github.com"
           git add output/
-          git diff --staged --quiet || git commit -m "Daily scrape $(date +%Y-%m-%d)"
+          git diff --staged --quiet || git commit -m "Daily scrape + filter $(date +%Y-%m-%d)"
           git push
 
-      - name: Check feed output
+      # STEP 6 - Print final clean feed summary
+      - name: Show clean feed summary
         if: always()
         run: |
-          if [ -f output/jobs_latest.json ]; then
-            echo "Feed generated successfully"
-            wc -c output/jobs_latest.json
+          if [ -f output/jobs_clean_latest.json ]; then
+            python3 -c "
+          import json
+          d = json.load(open('output/jobs_clean_latest.json'))
+          s = d.get('summary', {})
+          r = d.get('filter_report', {})
+          print('=== CLEAN FEED READY ===')
+          print(f'Input: {r.get(chr(34)+\"total_in\"+chr(34),0)} | Passed: {r.get(chr(34)+\"passed\"+chr(34),0)} ({r.get(chr(34)+\"pass_rate\"+chr(34),\"?\")}) | Rejected: {r.get(chr(34)+\"rejected\"+chr(34),0)}')
+          print(f'GREEN:{s.get(chr(34)+\"green\"+chr(34),0)} YELLOW:{s.get(chr(34)+\"yellow\"+chr(34),0)} Tier1:{s.get(chr(34)+\"tier1\"+chr(34),0)} H1B-YES:{s.get(chr(34)+\"h1b_yes\"+chr(34),0)} Open-finds:{s.get(chr(34)+\"open_search\"+chr(34),0)}')
+          "
           else
-            echo "WARNING: jobs_latest.json not found"
+            echo "WARNING: jobs_clean_latest.json not found"
           fi
