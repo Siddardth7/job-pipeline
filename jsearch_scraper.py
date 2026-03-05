@@ -1,398 +1,496 @@
 #!/usr/bin/env python3
 """
-M628 JSearch Scraper — Queries RapidAPI JSearch API for job postings
-across all 303 cleaned companies. Outputs pipeline-ready JSON for JobAgent.
+M628 JSearch Scraper — Two modes in one script:
+
+  MODE 1 — TARGETED (default):
+    Queries "Manufacturing Engineer at Boeing" for each M628 company.
+    Batch-rotates through 303 companies to stay under the API rate limit.
+
+  MODE 2 — OPEN SEARCH:
+    Broad keyword + location queries with NO company filter.
+    e.g. "Composites Engineer California" — surfaces companies NOT in M628.
+    Shares the same daily API budget. Runs after targeted mode.
+
+  Both write separate output files. merge_pipeline.py combines all four
+  sources (jsearch_targeted, jsearch_open, apify_targeted, apify_open).
 
 SETUP:
-  1. Get free API key: https://rapidapi.com/letscrape-6bRBa3QguO5/api/jsearch
-     Free tier: 200 requests/month (enough for daily runs of ~60 companies)
-  2. pip install requests python-dotenv
-  3. Create .env file with: JSEARCH_API_KEY=your_key_here
-  4. Run: python jsearch_scraper.py
+  pip install requests python-dotenv
+  .env: JSEARCH_API_KEY=your_key_here
 
-OUTPUT: jobs_jsearch_YYYY-MM-DD.json (pipeline-ready)
-
-SCHEDULING (GitHub Actions / cron):
-  Run daily: 0 8 * * * cd /path/to/scraper && python jsearch_scraper.py
+FREE TIER MATH (200 req/month):
+  Targeted:    3 companies x 2 keywords = 6 calls/day  (~180/month)
+  Open search: 3 queries/day                            (~90/month)
+  TOTAL:       ~270/month  -- slightly over free tier.
+  FIX: Set OPEN_SEARCH_CALLS_PER_RUN=0 to stay free, or upgrade to
+  Basic plan ($10/mo = 1,500 req/month) to run both comfortably.
 """
 
-import os, sys, json, time, re, logging
-from datetime import datetime, timedelta
+import os, sys, json, time, logging
+from datetime import datetime
 from pathlib import Path
 
 try:
     import requests
 except ImportError:
-    print("Install requests: pip install requests --break-system-packages")
+    print("Install requests: pip install requests")
     sys.exit(1)
 
 try:
     from dotenv import load_dotenv
     load_dotenv()
 except ImportError:
-    pass  # .env optional if key is in environment
+    pass
 
 # ─── CONFIG ───────────────────────────────────────────────────────────────────
-JSEARCH_API_KEY = os.environ.get("JSEARCH_API_KEY", "")
-JSEARCH_HOST = "jsearch.p.rapidapi.com"
-JSEARCH_URL = "https://jsearch.p.rapidapi.com/search"
+JSEARCH_API_KEY  = os.environ.get("JSEARCH_API_KEY", "")
+JSEARCH_HOST     = "jsearch.p.rapidapi.com"
+JSEARCH_URL      = "https://jsearch.p.rapidapi.com/search"
 
-SCRIPT_DIR = Path(__file__).parent
+SCRIPT_DIR  = Path(__file__).parent
 CONFIG_PATH = SCRIPT_DIR / "M628_JSEARCH_CONFIG.json"
-OUTPUT_DIR = SCRIPT_DIR / "output"
+OUTPUT_DIR  = SCRIPT_DIR / "output"
 OUTPUT_DIR.mkdir(exist_ok=True)
 
-# Rate limiting
-REQUEST_DELAY = 1.5        # seconds between API calls
-# FREE TIER MATH: 200 requests/month ÷ 30 days = 6 req/day budget
-# 3 companies × 2 keywords = 6 calls/day = ~180/month (safe under 200)
-# Full 303-company cycle completes in ~101 days
-MAX_REQUESTS_PER_RUN = 6   # hard cap: 6/day × 30 = 180/month under free tier
-BATCH_SIZE = 3             # 3 companies × 2 keywords = 6 calls/day
-KEYWORDS_PER_COMPANY = 2   # use top 2 keywords only (was 4)
-MAX_RESULTS_PER_QUERY = 10
+# Rate limits
+REQUEST_DELAY             = 1.5
+MAX_REQUESTS_PER_RUN      = 9     # targeted + open combined
+TARGETED_CALLS_PER_RUN    = 6     # 3 companies x 2 keywords
+OPEN_SEARCH_CALLS_PER_RUN = 3     # set to 0 on free tier to be safe
+BATCH_SIZE                = 3
+KEYWORDS_PER_COMPANY      = 2
 
-# ITAR keywords to flag in job descriptions
+# BUG FIX 1: linkedin.com and other aggregators were missing
+REJECT_DOMAINS = [
+    "indeed.com", "glassdoor.com", "ziprecruiter.com", "simplyhired.com",
+    "monster.com", "careerbuilder.com", "linkedin.com", "bandana.com",
+    "talent.com", "salary.com", "jooble.org", "joblist.com",
+]
+
+# BUG FIX 2: title filter was missing entirely — caused 96% irrelevant jobs
+TARGET_TITLE_KW = [
+    "manufacturing engineer", "process engineer", "composites engineer",
+    "composite engineer", "materials engineer", "quality engineer",
+    "manufacturing process", "advanced manufacturing", "composite manufacturing",
+    "structural manufacturing", "propulsion manufacturing", "production engineer",
+    "quality systems engineer", "manufacturing technology", "r&d manufacturing",
+    "npi engineer", "new product introduction", "process development engineer",
+]
+
+# Roles to reject even if they superficially match above
+EXCLUDE_TITLE_KW = [
+    "software engineer", "electrical engineer", "firmware", "embedded",
+    "director", "vice president", "vp ", " vp,", "chief ", "head of",
+    "marketing", "business development", "accountant", "finance",
+    "hr ", "hrbp", "recruiter", "talent acquisition",
+    "technician", "operator", "inspector", "co-op", "internship", "intern ",
+    "data scientist", "machine learning", "cloud engineer", "devops",
+    "program manager", "product manager", "project manager",
+    "contracts manager", "legal", "attorney",
+]
+
 ITAR_KEYWORDS = [
     "security clearance", "us person", "itar", "export controlled",
     "classified", "us citizen or permanent resident",
     "must be authorized to work without sponsorship",
     "u.s. citizen", "u.s. national", "permanent resident only",
-    "lawfully admitted for permanent residence"
+    "lawfully admitted for permanent residence",
 ]
 
-# Aggregator domains to reject
-REJECT_DOMAINS = ["indeed.com", "glassdoor.com", "ziprecruiter.com",
-                  "simplyhired.com", "monster.com", "careerbuilder.com"]
+DESC_EXCLUSIONS = [
+    "no sponsorship", "must be a us citizen", "security clearance required",
+    "ts/sci", "must be authorized to work", "staffing", "c2c",
+    "corp-to-corp", "1099", "third party",
+]
+
+# Open search query pool — rotated daily (3 per day = full cycle ~7 days)
+OPEN_SEARCH_QUERIES = [
+    ("Composites Manufacturing Engineer",      "California"),
+    ("Composites Manufacturing Engineer",      "Washington"),
+    ("Composites Manufacturing Engineer",      "Texas"),
+    ("Composites Manufacturing Engineer",      "Michigan"),
+    ("Composites Manufacturing Engineer",      "Florida"),
+    ("Process Engineer composites aerospace",  "United States"),
+    ("Materials Process Engineer aerospace",   "United States"),
+    ("Manufacturing Engineer composites",      "United States"),
+    ("Advanced Manufacturing Engineer",        "California"),
+    ("Advanced Manufacturing Engineer",        "Washington"),
+    ("Advanced Manufacturing Engineer",        "Michigan"),
+    ("Quality Engineer aerospace composites",  "United States"),
+    ("Quality Systems Engineer manufacturing", "United States"),
+    ("NPI Engineer manufacturing",             "United States"),
+    ("Manufacturing Engineer eVTOL",           "United States"),
+    ("Manufacturing Engineer space launch",    "California"),
+    ("Composites Engineer space",              "California"),
+    ("Process Engineer aerospace",             "Arizona"),
+    ("Manufacturing Engineer defense",         "United States"),
+    ("Composites Manufacturing Engineer",      "Colorado"),
+]
 
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
     handlers=[
         logging.FileHandler(SCRIPT_DIR / "jsearch.log"),
-        logging.StreamHandler()
-    ]
+        logging.StreamHandler(),
+    ],
 )
 log = logging.getLogger("jsearch")
+
 
 class QuotaExceededError(Exception):
     pass
 
 
-# ─── LOAD CONFIG ──────────────────────────────────────────────────────────────
+# ─── HELPERS ──────────────────────────────────────────────────────────────────
 def load_config():
     with open(CONFIG_PATH) as f:
         return json.load(f)
 
 
-# ─── JSEARCH API CALL ─────────────────────────────────────────────────────────
-def search_jobs(query, page=1, num_pages=1, date_posted="3days"):
-    """Call JSearch API. Returns list of job objects or empty list on error."""
+def api_search(query, location=None, date_posted="3days"):
+    """Single JSearch API call. Raises QuotaExceededError on 403."""
     if not JSEARCH_API_KEY:
-        log.error("No JSEARCH_API_KEY set. Get one from RapidAPI.")
         return []
-
-    headers = {
-        "X-RapidAPI-Key": JSEARCH_API_KEY,
-        "X-RapidAPI-Host": JSEARCH_HOST
-    }
-    params = {
-        "query": query,
-        "page": str(page),
-        "num_pages": str(num_pages),
-        "date_posted": date_posted,       # "today", "3days", "week", "month"
-        "country": "us",
-        "language": "en",
-    }
-
+    full_q = f"{query} in {location}" if location else query
+    headers = {"X-RapidAPI-Key": JSEARCH_API_KEY, "X-RapidAPI-Host": JSEARCH_HOST}
+    params  = {"query": full_q, "page": "1", "num_pages": "1",
+               "date_posted": date_posted, "country": "us", "language": "en"}
     try:
         r = requests.get(JSEARCH_URL, headers=headers, params=params, timeout=15)
         if r.status_code == 429:
-            log.warning("Rate limited. Waiting 60s...")
+            log.warning("Rate limited — waiting 60s")
             time.sleep(60)
-            return search_jobs(query, page, num_pages, date_posted)
+            return api_search(query, location, date_posted)
         if r.status_code == 403:
-            log.error("API key invalid or monthly quota exceeded (200 req/month free tier).")
-            log.error("Check usage at: https://rapidapi.com/developer/dashboard")
-            raise QuotaExceededError("JSearch quota exceeded")
+            raise QuotaExceededError("403 — quota exceeded or invalid key")
         if r.status_code != 200:
-            log.warning(f"API returned {r.status_code} for query: {query}")
+            log.warning(f"HTTP {r.status_code} for: {full_q}")
             return []
-
-        data = r.json()
-        return data.get("data", [])
+        return r.json().get("data", [])
+    except QuotaExceededError:
+        raise
     except Exception as e:
-        log.error(f"Request failed for '{query}': {e}")
+        log.error(f"Request error '{full_q}': {e}")
         return []
 
 
-# ─── ITAR CHECK ───────────────────────────────────────────────────────────────
 def check_itar(text):
-    """Returns list of matched ITAR keywords found in text."""
     if not text:
         return []
     lower = text.lower()
     return [kw for kw in ITAR_KEYWORDS if kw in lower]
 
 
-# ─── URL VALIDATION ───────────────────────────────────────────────────────────
 def is_aggregator(url):
-    """Check if URL points to a job aggregator (reject these)."""
     if not url:
         return True
     lower = url.lower()
     return any(d in lower for d in REJECT_DOMAINS)
 
 
-def url_matches_domain(url, company_domain):
-    """Check if job URL matches the company's known domain."""
-    if not url or not company_domain:
+def passes_title_filter(title):
+    """BUG FIX: enforce target role whitelist + exclusion blacklist."""
+    if not title:
         return False
-    return company_domain.lower() in url.lower()
+    lower = title.lower()
+    if not any(kw in lower for kw in TARGET_TITLE_KW):
+        return False
+    if any(ex in lower for ex in EXCLUDE_TITLE_KW):
+        return False
+    return True
 
 
-# ─── PROCESS ONE COMPANY ─────────────────────────────────────────────────────
-def scrape_company(company, title_keywords, config):
-    """Query JSearch for a single company across all title keywords.
-    Returns list of cleaned, deduplicated job objects."""
+def build_job(raw, company_name, tier, h1b, itar_co, industry,
+              domain, reason, source_tag):
+    """Normalise a raw JSearch result. Returns job dict or None if filtered."""
+    title = raw.get("job_title", "Unknown")
 
-    company_name = company["company_name"]
+    # Title filter first (cheap)
+    if not passes_title_filter(title):
+        return None
+
+    apply_link = raw.get("job_apply_link", "")
+    if is_aggregator(apply_link):
+        apply_link = raw.get("job_google_link", apply_link)
+        if is_aggregator(apply_link):
+            return None
+
+    desc       = raw.get("job_description", "")
+    itar_flags = check_itar(desc)
+
+    desc_lower = (desc or "").lower()
+    if any(ex in desc_lower for ex in DESC_EXCLUSIONS):
+        return None
+
+    # Posted date
+    posted_str = ""
+    posted_ts  = raw.get("job_posted_at_datetime_utc", "")
+    if posted_ts:
+        try:
+            dt = datetime.fromisoformat(posted_ts.replace("Z", "+00:00"))
+            days_ago = (datetime.now(dt.tzinfo) - dt).days
+            posted_str = f"{days_ago}d ago" if days_ago > 0 else "today"
+        except Exception:
+            posted_str = posted_ts[:10]
+
+    city  = raw.get("job_city", "")
+    state = raw.get("job_state", "")
+    loc   = f"{city}, {state}" if city and state else (city or state or "Remote/Unknown")
+
+    emp_type = raw.get("job_employment_type", "FULLTIME")
+    job_type = {"FULLTIME": "Full-time", "PARTTIME": "Part-time",
+                "INTERN": "Internship", "CONTRACTOR": "Contract"}.get(emp_type, emp_type)
+
+    itar_hit = len(itar_flags) > 0
+    score    = 0 if itar_hit else (
+        90 if tier == "Tier 1" and h1b == "YES" else
+        85 if tier == "Tier 1"                  else
+        82 if tier == "Tier 2" and h1b == "YES" else
+        78 if tier == "Tier 2"                  else
+        72 if tier == "Tier 3"                  else 60
+    )
+    verdict = "RED" if itar_hit else ("GREEN" if tier == "Tier 1" else "YELLOW")
+
+    return {
+        "id":             f"{company_name.replace(' ','-')}-{hash(title+loc) % 99999}",
+        "role":           title,
+        "company":        company_name,
+        "location":       loc,
+        "type":           job_type,
+        "link":           apply_link,
+        "posted":         posted_str,
+        "itar_flag":      itar_hit,
+        "itar_detail":    ", ".join(itar_flags) if itar_flags else "",
+        "tier":           tier,
+        "h1b":            h1b,
+        "itar_company":   itar_co,
+        "industry":       industry,
+        "domain_verified": bool(domain and domain in (apply_link or "")),
+        "source":         source_tag,
+        "reason":         reason,
+        "match":          score,
+        "verdict":        verdict,
+    }
+
+
+# ─── MODE 1: TARGETED ─────────────────────────────────────────────────────────
+def scrape_company(company, title_keywords):
+    name   = company["company_name"]
     domain = company.get("company_domain", "")
-    tier = company.get("tier", "Tier 2")
-    h1b = company.get("h1b", "LIKELY")
-    itar = company.get("itar", "NO")
-    queries_used = company.get("jsearch_company_query", [company_name])
+    tier   = company.get("tier", "Tier 2")
+    h1b    = company.get("h1b", "LIKELY")
+    itar   = company.get("itar", "NO")
+    indust = company.get("primary_industry_category", "")
+    qnames = company.get("jsearch_company_query", [name])
 
-    all_jobs = []
+    jobs     = []
     seen_ids = set()
 
-    # Build queries: "Manufacturing Engineer at Boeing"
-    # Use top KEYWORDS_PER_COMPANY keywords to stay within rate limits
-    priority_keywords = title_keywords[:KEYWORDS_PER_COMPANY]
+    for kw in title_keywords[:KEYWORDS_PER_COMPANY]:
+        time.sleep(REQUEST_DELAY)
+        results = api_search(f"{kw} at {qnames[0]}", date_posted="3days")
+        for raw in results:
+            jid = raw.get("job_id", "")
+            if jid in seen_ids:
+                continue
+            seen_ids.add(jid)
+            job = build_job(raw, name, tier, h1b, itar, indust, domain,
+                            f"Targeted: '{kw}' at {name}", "jsearch_targeted")
+            if job:
+                jobs.append(job)
+    return jobs
 
-    for kw in priority_keywords:
-        for qname in queries_used[:1]:  # Use primary name only
-            query = f"{kw} at {qname}"
-            time.sleep(REQUEST_DELAY)
 
-            results = search_jobs(query, page=1, num_pages=1,
-                                  date_posted=f"{config['defaults']['max_age_days']}days"
-                                  if config['defaults']['max_age_days'] <= 3 else "week")
+# ─── MODE 2: OPEN SEARCH ──────────────────────────────────────────────────────
+def run_open_search(known_companies, calls_so_far):
+    if OPEN_SEARCH_CALLS_PER_RUN == 0:
+        log.info("Open search disabled (OPEN_SEARCH_CALLS_PER_RUN=0)")
+        return [], 0
 
-            for job in results:
-                job_id = job.get("job_id", "")
-                if job_id in seen_ids:
-                    continue
-                seen_ids.add(job_id)
+    day     = datetime.now().timetuple().tm_yday
+    total_q = len(OPEN_SEARCH_QUERIES)
+    start   = (day * OPEN_SEARCH_CALLS_PER_RUN) % total_q
+    queries = [OPEN_SEARCH_QUERIES[(start + i) % total_q]
+               for i in range(OPEN_SEARCH_CALLS_PER_RUN)]
 
-                apply_link = job.get("job_apply_link", "")
-                # Reject aggregator URLs
-                if is_aggregator(apply_link):
-                    # Try the Google redirect link as fallback
-                    apply_link = job.get("job_google_link", apply_link)
-                    if is_aggregator(apply_link):
-                        continue
+    log.info(f"Open search — {len(queries)} queries today:")
+    for q, loc in queries:
+        log.info(f"  '{q}' in {loc}")
 
-                # Extract description for ITAR check
-                desc = job.get("job_description", "")
-                itar_flags = check_itar(desc)
+    jobs       = []
+    calls_used = 0
+    seen_ids   = set()
 
-                # Check exclusion keywords
-                desc_lower = desc.lower() if desc else ""
-                title_lower = (job.get("job_title", "") or "").lower()
-                excluded = any(ex.lower() in desc_lower or ex.lower() in title_lower
-                               for ex in config["defaults"]["exclusion_keywords"])
-                if excluded:
-                    continue
+    for query_text, location in queries:
+        if calls_so_far + calls_used >= MAX_REQUESTS_PER_RUN:
+            log.warning("MAX_REQUESTS_PER_RUN reached — stopping open search")
+            break
 
-                # Parse posted date
-                posted_ts = job.get("job_posted_at_datetime_utc", "")
-                posted_str = ""
-                if posted_ts:
-                    try:
-                        dt = datetime.fromisoformat(posted_ts.replace("Z", "+00:00"))
-                        days_ago = (datetime.now(dt.tzinfo) - dt).days
-                        posted_str = f"{days_ago}d ago" if days_ago > 0 else "today"
-                    except:
-                        posted_str = posted_ts[:10]
+        time.sleep(REQUEST_DELAY)
+        results = api_search(query_text, location=location, date_posted="week")
+        calls_used += 1
 
-                # Determine location
-                city = job.get("job_city", "")
-                state = job.get("job_state", "")
-                location = f"{city}, {state}" if city and state else (city or state or "Remote/Unknown")
+        for raw in results:
+            jid = raw.get("job_id", "")
+            if jid in seen_ids:
+                continue
+            seen_ids.add(jid)
 
-                # Employment type
-                emp_type = job.get("job_employment_type", "FULLTIME")
-                type_map = {"FULLTIME": "Full-time", "PARTTIME": "Part-time",
-                            "INTERN": "Internship", "CONTRACTOR": "Contract"}
-                job_type = type_map.get(emp_type, emp_type)
+            raw_company = raw.get("employer_name", "Unknown Company")
 
-                # Domain match score
-                domain_match = url_matches_domain(apply_link, domain)
+            # Skip M628 companies — targeted mode already covers them
+            if raw_company.lower() in known_companies:
+                continue
 
-                all_jobs.append({
-                    "id": f"{company_name.replace(' ', '-')}-{len(all_jobs)}",
-                    "role": job.get("job_title", "Unknown"),
-                    "company": company_name,
-                    "location": location,
-                    "type": job_type,
-                    "link": apply_link,
-                    "posted": posted_str,
-                    "itar_flag": len(itar_flags) > 0,
-                    "itar_detail": ", ".join(itar_flags) if itar_flags else "",
-                    "tier": tier,
-                    "h1b": h1b,
-                    "itar_company": itar,
-                    "industry": company.get("primary_industry_category", ""),
-                    "domain_verified": domain_match,
-                    "source": "jsearch",
-                    "reason": f"Matched '{kw}' at {company_name}",
-                    # Scoring (same logic as JobAgent_v4)
-                    "match": 0 if len(itar_flags) > 0 else (
-                        90 if tier == "Tier 1" and h1b == "YES" else
-                        85 if tier == "Tier 1" else
-                        82 if tier == "Tier 2" and h1b == "YES" else
-                        78 if tier == "Tier 2" else
-                        72 if tier == "Tier 3" else 65
-                    ),
-                    "verdict": "RED" if len(itar_flags) > 0 else (
-                        "GREEN" if tier == "Tier 1" else "YELLOW"
-                    ),
-                })
+            job = build_job(
+                raw,
+                company_name = raw_company,
+                tier         = "Tier 2",    # conservative — unknown company
+                h1b          = "LIKELY",
+                itar_co      = "Unknown",
+                industry     = "",
+                domain       = "",
+                reason       = f"Open: '{query_text}' in {location}",
+                source_tag   = "jsearch_open",
+            )
+            if job:
+                # Cap score — needs manual vetting before applying
+                job["verdict"] = "YELLOW"
+                job["match"]   = min(job["match"], 70)
+                jobs.append(job)
+                log.info(f"    + {raw_company}: {job['role']} ({job['location']})")
 
-    return all_jobs
+    log.info(f"Open search: {len(jobs)} jobs in {calls_used} calls")
+    return jobs, calls_used
 
 
 # ─── BATCH ROTATION ───────────────────────────────────────────────────────────
-def get_today_batch(companies, batch_size):
-    """Rotate through companies daily. Day 1: companies 0-19, Day 2: 20-39, etc."""
-    day_of_year = datetime.now().timetuple().tm_yday
-    total = len(companies)
-    num_batches = (total + batch_size - 1) // batch_size
-    batch_idx = day_of_year % num_batches
-    start = batch_idx * batch_size
-    end = min(start + batch_size, total)
-    return companies[start:end], batch_idx, num_batches
+def get_today_batch(companies):
+    day       = datetime.now().timetuple().tm_yday
+    total     = len(companies)
+    n_batches = (total + BATCH_SIZE - 1) // BATCH_SIZE
+    idx       = day % n_batches
+    start     = idx * BATCH_SIZE
+    return companies[start: min(start + BATCH_SIZE, total)], idx, n_batches
 
 
-def _write_empty_output(reason=""):
-    """Write an empty-but-valid output file so merge_pipeline.py runs cleanly."""
+def write_output(jobs, label, extra=None):
     today = datetime.now().strftime("%Y-%m-%d")
-    output = {
-        "generated_utc": datetime.utcnow().isoformat() + "Z",
-        "scraper": "jsearch",
-        "error": reason,
-        "companies_searched": 0,
-        "api_calls_used": 0,
-        "total_jobs_found": 0,
-        "eligible_jobs": 0,
-        "itar_flagged": 0,
-        "jobs": [],
+    out = {
+        "generated_utc":   datetime.utcnow().isoformat() + "Z",
+        "scraper":         label,
+        "total_jobs_found": len(jobs),
+        "eligible_jobs":   len([j for j in jobs if not j["itar_flag"]]),
+        "itar_flagged":    len([j for j in jobs if j["itar_flag"]]),
+        "jobs":            jobs,
     }
-    for path in [OUTPUT_DIR / f"jobs_jsearch_{today}.json", OUTPUT_DIR / "jobs_jsearch_latest.json"]:
+    if extra:
+        out.update(extra)
+    for path in [OUTPUT_DIR / f"jobs_{label}_{today}.json",
+                 OUTPUT_DIR / f"jobs_{label}_latest.json"]:
         with open(path, "w") as f:
-            json.dump(output, f, indent=2)
-    log.warning(f"Wrote empty output. Reason: {reason}")
+            json.dump(out, f, indent=2)
+    log.info(f"  Saved {len(jobs)} jobs → jobs_{label}_{today}.json")
+
+
+def write_empty(label, reason):
+    out = {"generated_utc": datetime.utcnow().isoformat() + "Z",
+           "scraper": label, "error": reason,
+           "total_jobs_found": 0, "eligible_jobs": 0, "itar_flagged": 0, "jobs": []}
+    today = datetime.now().strftime("%Y-%m-%d")
+    for path in [OUTPUT_DIR / f"jobs_{label}_{today}.json",
+                 OUTPUT_DIR / f"jobs_{label}_latest.json"]:
+        with open(path, "w") as f:
+            json.dump(out, f, indent=2)
 
 
 # ─── MAIN ─────────────────────────────────────────────────────────────────────
 def main():
-    log.info("=" * 60)
-    log.info("M628 JSearch Scraper — Starting")
-    log.info("=" * 60)
+    log.info("=" * 65)
+    log.info("M628 JSearch Scraper  —  Targeted + Open Search")
+    log.info("=" * 65)
 
     if not JSEARCH_API_KEY:
-        log.error("JSEARCH_API_KEY not set. Create .env file or set environment variable.")
-        log.info("Get a free key at: https://rapidapi.com/letscrape-6bRBa3QguO5/api/jsearch")
-        _write_empty_output("No JSEARCH_API_KEY set")
-        sys.exit(0)  # exit 0 — workflow continues to Apify + merge
+        log.error("JSEARCH_API_KEY not set.")
+        write_empty("jsearch_targeted", "No API key")
+        write_empty("jsearch_open",     "No API key")
+        sys.exit(0)
 
-    config = load_config()
+    config        = load_config()
     all_companies = config["companies"]
-    title_keywords = config["defaults"]["title_keywords"]
+    keywords      = config["defaults"]["title_keywords"]
+    known_cos     = {c["company_name"].lower() for c in all_companies}
 
-    # Sort by tier priority (Tier 1 first)
+    # Tier 1 first
     all_companies.sort(key=lambda c: c.get("tier", "Tier 3"))
 
-    # Get today's batch
-    batch, batch_idx, num_batches = get_today_batch(all_companies, BATCH_SIZE)
-    log.info(f"Batch {batch_idx + 1}/{num_batches}: {len(batch)} companies "
-             f"(of {len(all_companies)} total)")
-    log.info(f"Keywords: {title_keywords[:KEYWORDS_PER_COMPANY]} (using top {KEYWORDS_PER_COMPANY})")
-    log.info(f"Max API calls this run: ~{len(batch) * KEYWORDS_PER_COMPANY}")
+    # ── MODE 1 ────────────────────────────────────────────────────────────────
+    batch, batch_idx, n_batches = get_today_batch(all_companies)
+    log.info(f"Targeted: batch {batch_idx+1}/{n_batches} "
+             f"({len(batch)} companies of {len(all_companies)})")
 
-    all_jobs = []
-    api_calls = 0
-    companies_searched = 0
+    targeted_jobs = []
+    api_calls     = 0
 
-    for i, company in enumerate(batch):
-        if api_calls >= MAX_REQUESTS_PER_RUN:
-            log.warning(f"Hit request limit ({MAX_REQUESTS_PER_RUN}). Stopping.")
+    for i, co in enumerate(batch):
+        if api_calls >= TARGETED_CALLS_PER_RUN:
             break
-
-        log.info(f"[{i+1}/{len(batch)}] Searching: {company['company_name']} "
-                 f"({company.get('tier', '?')}, H1B:{company.get('h1b', '?')})")
-
+        log.info(f"  [{i+1}/{len(batch)}] {co['company_name']} "
+                 f"({co.get('tier','?')}, H1B:{co.get('h1b','?')})")
         try:
-            jobs = scrape_company(company, title_keywords, config)
+            jobs = scrape_company(co, keywords)
         except QuotaExceededError:
-            log.error("Quota exceeded mid-run. Saving partial results and exiting cleanly.")
+            log.error("Quota exceeded — saving partial results")
+            write_empty("jsearch_open", "Quota exceeded before open search")
             break
         api_calls += KEYWORDS_PER_COMPANY
-        companies_searched += 1
+        targeted_jobs.extend(jobs)
+        log.info(f"    → {len(jobs)} relevant jobs")
 
-        if jobs:
-            all_jobs.extend(jobs)
-            log.info(f"  Found {len(jobs)} jobs "
-                     f"({sum(1 for j in jobs if j['itar_flag'])} ITAR-flagged)")
-        else:
-            log.info(f"  No matching jobs found")
+    # Dedup
+    seen, unique_t = set(), []
+    for j in targeted_jobs:
+        k = (j["company"], j["role"], j["location"])
+        if k not in seen:
+            seen.add(k)
+            unique_t.append(j)
+    unique_t.sort(key=lambda j: ({"GREEN":0,"YELLOW":1,"RED":2}.get(j["verdict"],9), -j["match"]))
 
-    # Deduplicate by (company, role, location)
-    seen = set()
-    unique_jobs = []
-    for job in all_jobs:
-        key = (job["company"], job["role"], job["location"])
-        if key not in seen:
-            seen.add(key)
-            unique_jobs.append(job)
+    write_output(unique_t, "jsearch_targeted", {
+        "batch": batch_idx + 1, "total_batches": n_batches,
+        "companies_searched": len(batch), "api_calls_used": api_calls,
+    })
 
-    # Sort: GREEN first, then YELLOW, then RED. Within each, by match score desc
-    verdict_order = {"GREEN": 0, "YELLOW": 1, "RED": 2}
-    unique_jobs.sort(key=lambda j: (verdict_order.get(j["verdict"], 9), -j["match"]))
+    # ── MODE 2 ────────────────────────────────────────────────────────────────
+    try:
+        open_jobs, open_calls = run_open_search(known_cos, api_calls)
+    except QuotaExceededError:
+        log.error("Quota exceeded during open search")
+        write_empty("jsearch_open", "Quota exceeded")
+        open_jobs, open_calls = [], 0
 
-    # Save output
-    today = datetime.now().strftime("%Y-%m-%d")
-    output_file = OUTPUT_DIR / f"jobs_jsearch_{today}.json"
+    # Dedup
+    seen2, unique_o = set(), []
+    for j in open_jobs:
+        k = (j["company"], j["role"], j["location"])
+        if k not in seen2:
+            seen2.add(k)
+            unique_o.append(j)
+    unique_o.sort(key=lambda j: ({"GREEN":0,"YELLOW":1,"RED":2}.get(j["verdict"],9), -j["match"]))
 
-    output = {
-        "generated_utc": datetime.utcnow().isoformat() + "Z",
-        "scraper": "jsearch",
-        "batch": batch_idx + 1,
-        "total_batches": num_batches,
-        "companies_searched": companies_searched,
-        "api_calls_used": api_calls,
-        "total_jobs_found": len(unique_jobs),
-        "eligible_jobs": len([j for j in unique_jobs if not j["itar_flag"]]),
-        "itar_flagged": len([j for j in unique_jobs if j["itar_flag"]]),
-        "jobs": unique_jobs,
-    }
+    write_output(unique_o, "jsearch_open", {
+        "api_calls_used": open_calls,
+        "note": "Open search — companies outside M628. Vet before applying.",
+    })
 
-    with open(output_file, "w") as f:
-        json.dump(output, f, indent=2)
-
-    # Also save latest symlink for pipeline consumption
-    latest = OUTPUT_DIR / "jobs_jsearch_latest.json"
-    with open(latest, "w") as f:
-        json.dump(output, f, indent=2)
-
-    log.info("=" * 60)
-    log.info(f"DONE. {len(unique_jobs)} unique jobs saved to {output_file}")
-    log.info(f"  GREEN: {sum(1 for j in unique_jobs if j['verdict']=='GREEN')}")
-    log.info(f"  YELLOW: {sum(1 for j in unique_jobs if j['verdict']=='YELLOW')}")
-    log.info(f"  RED (ITAR): {sum(1 for j in unique_jobs if j['verdict']=='RED')}")
-    log.info(f"  API calls used: {api_calls}")
-    log.info("=" * 60)
+    # ── SUMMARY ───────────────────────────────────────────────────────────────
+    total_calls = api_calls + open_calls
+    log.info("=" * 65)
+    log.info(f"DONE | Targeted: {len(unique_t)} jobs | "
+             f"Open: {len(unique_o)} jobs | "
+             f"API calls: {total_calls}/{MAX_REQUESTS_PER_RUN}")
+    log.info("=" * 65)
 
 
 if __name__ == "__main__":
