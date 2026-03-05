@@ -1,4 +1,4 @@
-# .github/workflows/daily_scrape.yml
+github/workflows/daily_scrape.yml
 # Runs JSearch + Apify scrapers daily at 8 AM EST, merges results.
 # Free tier: 2,000 minutes/month GitHub Actions (~5 min/day = ~150/month)
 #
