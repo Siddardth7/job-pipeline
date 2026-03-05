@@ -48,7 +48,7 @@ OUTPUT_DIR.mkdir(exist_ok=True)
 ACTORS = {
     "web_scraper":  "apify/web-scraper",
     "puppeteer":    "apify/puppeteer-scraper",
-    "google_jobs":  "jupyterx/google-jobs-scraper",   # BUG FIX: was stale community actor
+    "google_jobs":  "apify/google-jobs-scraper",   # BUG FIX: was stale community actor
 }
 
 BATCH_SIZE             = 15   # companies per targeted run
@@ -248,7 +248,7 @@ def google_jobs_config_for_company(company):
                ["Manufacturing Engineer", "Process Engineer", "Composites Engineer"][:2]]
     return {
         "actor": ACTORS["google_jobs"],
-        "input": {"queries": queries, "maxResults": 10, "country": "US", "language": "en"},
+        "input": {"queries": queries, "maxItems": 10, "countryCode": "us"},
     }
 
 
@@ -256,7 +256,7 @@ def google_jobs_config_open(queries):
     """Open search: broad keyword queries, no company filter."""
     return {
         "actor": ACTORS["google_jobs"],
-        "input": {"queries": queries, "maxResults": 15, "country": "US", "language": "en"},
+        "input": {"queries": queries, "maxItems": 15, "countryCode": "us"},
     }
 
 
@@ -296,12 +296,15 @@ def normalize_job(raw_job, company_name, tier, h1b, itar_co,
                   industry, source_actor, source_tag):
     """Convert raw actor output to pipeline schema. Returns None if filtered."""
     if source_actor == ACTORS["google_jobs"]:
-        title    = raw_job.get("title",    raw_job.get("job_title", ""))
-        location = raw_job.get("location", raw_job.get("job_location", ""))
-        link     = raw_job.get("link",     raw_job.get("job_apply_link",
-                               raw_job.get("url", "")))
-        desc     = raw_job.get("description", raw_job.get("job_description", ""))
-        posted   = raw_job.get("detected_extensions", {}).get("posted_at", "")
+        # apify/google-jobs-scraper official output fields
+        title    = (raw_job.get("title") or raw_job.get("job_title") or "")
+        location = (raw_job.get("location") or raw_job.get("job_location") or "")
+        link     = (raw_job.get("applyLink") or raw_job.get("jobUrl") or
+                    raw_job.get("link") or raw_job.get("job_apply_link") or
+                    raw_job.get("url") or "")
+        desc     = (raw_job.get("description") or raw_job.get("job_description") or "")
+        posted   = (raw_job.get("publishedAt") or raw_job.get("date") or
+                    raw_job.get("detected_extensions", {}).get("posted_at", "") or "")
     else:
         title    = raw_job.get("title", "")
         location = raw_job.get("location", "")
@@ -513,7 +516,7 @@ def main():
         for raw in results:
             items = raw if isinstance(raw, list) else [raw]
             for item in items:
-                raw_company = item.get("company", item.get("employer_name", "Unknown"))
+                raw_company = (item.get("companyName") or item.get("company") or item.get("employer_name") or "Unknown")
 
                 # Skip M628 companies — already covered by targeted
                 if raw_company.lower() in known_companies:
