@@ -306,7 +306,7 @@
       "ats_platform": "Greenhouse",
       "apify_strategy": "ATS-native",
       "apify_entrypoint_urls": [
-        "https://boards.greenhouse.io/archeravia tion"
+        "https://boards.greenhouse.io/archeraviation"
       ],
       "apify_allowed_domains": [
         "archer.com"
@@ -4595,7 +4595,7 @@
       "ats_platform": "Workday",
       "apify_strategy": "ATS-native",
       "apify_entrypoint_urls": [
-        "https:// edwards.wd5.myworkdayjobs.com/ELC"
+        "https://edwards.wd5.myworkdayjobs.com/ELC"
       ],
       "apify_allowed_domains": [
         "edwards.com"

@@ -44,8 +44,12 @@ OUTPUT_DIR.mkdir(exist_ok=True)
 
 # Rate limiting
 REQUEST_DELAY = 1.5        # seconds between API calls
-MAX_REQUESTS_PER_RUN = 180 # stay under 200/month free tier
-BATCH_SIZE = 20            # companies per run (rotate daily)
+# FREE TIER MATH: 200 requests/month ÷ 30 days = 6 req/day budget
+# 3 companies × 2 keywords = 6 calls/day = ~180/month (safe under 200)
+# Full 303-company cycle completes in ~101 days
+MAX_REQUESTS_PER_RUN = 6   # hard cap: 6/day × 30 = 180/month under free tier
+BATCH_SIZE = 3             # 3 companies × 2 keywords = 6 calls/day
+KEYWORDS_PER_COMPANY = 2   # use top 2 keywords only (was 4)
 MAX_RESULTS_PER_QUERY = 10
 
 # ITAR keywords to flag in job descriptions
@@ -70,6 +74,9 @@ logging.basicConfig(
     ]
 )
 log = logging.getLogger("jsearch")
+
+class QuotaExceededError(Exception):
+    pass
 
 
 # ─── LOAD CONFIG ──────────────────────────────────────────────────────────────
@@ -105,8 +112,9 @@ def search_jobs(query, page=1, num_pages=1, date_posted="3days"):
             time.sleep(60)
             return search_jobs(query, page, num_pages, date_posted)
         if r.status_code == 403:
-            log.error("API key invalid or quota exceeded.")
-            return []
+            log.error("API key invalid or monthly quota exceeded (200 req/month free tier).")
+            log.error("Check usage at: https://rapidapi.com/developer/dashboard")
+            raise QuotaExceededError("JSearch quota exceeded")
         if r.status_code != 200:
             log.warning(f"API returned {r.status_code} for query: {query}")
             return []
@@ -159,8 +167,8 @@ def scrape_company(company, title_keywords, config):
     seen_ids = set()
 
     # Build queries: "Manufacturing Engineer at Boeing"
-    # Use top 4 keywords to stay within rate limits
-    priority_keywords = title_keywords[:4]
+    # Use top KEYWORDS_PER_COMPANY keywords to stay within rate limits
+    priority_keywords = title_keywords[:KEYWORDS_PER_COMPANY]
 
     for kw in priority_keywords:
         for qname in queries_used[:1]:  # Use primary name only
@@ -267,6 +275,26 @@ def get_today_batch(companies, batch_size):
     return companies[start:end], batch_idx, num_batches
 
 
+def _write_empty_output(reason=""):
+    """Write an empty-but-valid output file so merge_pipeline.py runs cleanly."""
+    today = datetime.now().strftime("%Y-%m-%d")
+    output = {
+        "generated_utc": datetime.utcnow().isoformat() + "Z",
+        "scraper": "jsearch",
+        "error": reason,
+        "companies_searched": 0,
+        "api_calls_used": 0,
+        "total_jobs_found": 0,
+        "eligible_jobs": 0,
+        "itar_flagged": 0,
+        "jobs": [],
+    }
+    for path in [OUTPUT_DIR / f"jobs_jsearch_{today}.json", OUTPUT_DIR / "jobs_jsearch_latest.json"]:
+        with open(path, "w") as f:
+            json.dump(output, f, indent=2)
+    log.warning(f"Wrote empty output. Reason: {reason}")
+
+
 # ─── MAIN ─────────────────────────────────────────────────────────────────────
 def main():
     log.info("=" * 60)
@@ -276,7 +304,8 @@ def main():
     if not JSEARCH_API_KEY:
         log.error("JSEARCH_API_KEY not set. Create .env file or set environment variable.")
         log.info("Get a free key at: https://rapidapi.com/letscrape-6bRBa3QguO5/api/jsearch")
-        sys.exit(1)
+        _write_empty_output("No JSEARCH_API_KEY set")
+        sys.exit(0)  # exit 0 — workflow continues to Apify + merge
 
     config = load_config()
     all_companies = config["companies"]
@@ -289,8 +318,8 @@ def main():
     batch, batch_idx, num_batches = get_today_batch(all_companies, BATCH_SIZE)
     log.info(f"Batch {batch_idx + 1}/{num_batches}: {len(batch)} companies "
              f"(of {len(all_companies)} total)")
-    log.info(f"Keywords: {title_keywords[:4]} (using top 4)")
-    log.info(f"Max API calls this run: ~{len(batch) * 4}")
+    log.info(f"Keywords: {title_keywords[:KEYWORDS_PER_COMPANY]} (using top {KEYWORDS_PER_COMPANY})")
+    log.info(f"Max API calls this run: ~{len(batch) * KEYWORDS_PER_COMPANY}")
 
     all_jobs = []
     api_calls = 0
@@ -304,8 +333,12 @@ def main():
         log.info(f"[{i+1}/{len(batch)}] Searching: {company['company_name']} "
                  f"({company.get('tier', '?')}, H1B:{company.get('h1b', '?')})")
 
-        jobs = scrape_company(company, title_keywords, config)
-        api_calls += 4  # ~4 keyword queries per company
+        try:
+            jobs = scrape_company(company, title_keywords, config)
+        except QuotaExceededError:
+            log.error("Quota exceeded mid-run. Saving partial results and exiting cleanly.")
+            break
+        api_calls += KEYWORDS_PER_COMPANY
         companies_searched += 1
 
         if jobs:

@@ -76,6 +76,25 @@ logging.basicConfig(
 log = logging.getLogger("apify")
 
 
+def _write_empty_output(reason=""):
+    """Write an empty-but-valid output file so merge_pipeline.py runs cleanly."""
+    today = datetime.now().strftime("%Y-%m-%d")
+    output = {
+        "generated_utc": datetime.utcnow().isoformat() + "Z",
+        "scraper": "apify",
+        "error": reason,
+        "companies_searched": 0,
+        "total_jobs_found": 0,
+        "eligible_jobs": 0,
+        "itar_flagged": 0,
+        "jobs": [],
+    }
+    for path in [OUTPUT_DIR / f"jobs_apify_{today}.json", OUTPUT_DIR / "jobs_apify_latest.json"]:
+        with open(path, "w") as f:
+            json.dump(output, f, indent=2)
+    log.warning(f"Wrote empty Apify output. Reason: {reason}")
+
+
 # ─── LOAD CONFIG ──────────────────────────────────────────────────────────────
 def load_config():
     with open(CONFIG_PATH) as f:
@@ -361,11 +380,13 @@ def main():
 
     if not APIFY_TOKEN:
         log.error("APIFY_TOKEN not set. Create .env or set environment variable.")
-        sys.exit(1)
+        _write_empty_output("No APIFY_TOKEN set")
+        sys.exit(0)  # exit 0 so workflow continues to merge + git steps
 
     if ApifyClient is None:
         log.error("apify-client not installed. Run: pip install apify-client")
-        sys.exit(1)
+        _write_empty_output("apify-client not installed")
+        sys.exit(0)
 
     client = ApifyClient(APIFY_TOKEN)
     config = load_config()
