@@ -1,49 +1,78 @@
 {
   "green_jobs": [
     {
-      "job_title": "Process Engineer Entry Level",
-      "company_name": "Rivian",
-      "job_url": "https://rivian.com/careers/98765",
-      "location": "Normal, IL",
-      "posted_date": "2026-03-04",
-      "description": "Process development engineering for EV manufacturing, GD&T, SolidWorks, six sigma DMAIC.",
+      "job_title": "Manufacturing Engineer II, Composites",
+      "company_name": "Rocket Lab USA",
+      "job_url": "https://talents.vaia.com/companies/rocket-lab-usa/manufacturing-engineer-ii-composites-34166917/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+      "location": "Middle River, Maryland",
+      "posted_date": "",
+      "description": "Senior Manufacturing Engineer, Composites Rocket Lab is a global leader in launch and space systems. The rockets and satellites we build and launch enable some of the most ambitious and vital space missions globally, supporting scientific exploration, Earth observation and missions to combat climate change, national security, and exciting new technology demonstrations. Our Electron rocket has provided reliable access to orbit since 2018, becoming one of the most frequently launched rockets in th",
       "source": "jsearch",
-      "cluster": "process",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 77,
-      "boost_tags": [
-        "entry level"
-      ],
-      "verdict": "GREEN"
-    },
-    {
-      "job_title": "Manufacturing Engineer I",
-      "company_name": "SpaceX",
-      "job_url": "https://spacex.com/jobs/12345",
-      "location": "Hawthorne, CA",
-      "posted_date": "2026-03-05",
-      "description": "Entry level manufacturing engineer for composites fabrication and lean production.",
-      "source": "jsearch",
-      "cluster": "manufacturing",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 75,
+      "cluster": "composites",
+      "itar_flag": true,
+      "itar_detail": "itar, u.s. citizen",
+      "relevance_score": 59,
       "boost_tags": [
         "engineer i"
       ],
       "verdict": "GREEN"
+    },
+    {
+      "job_title": "Composites Manufacturing Engineer Sr",
+      "company_name": "Lockheed Martin",
+      "job_url": "https://www.lockheedmartinjobs.com/job/littleton/composites-manufacturing-engineer-sr/694/92430876400?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+      "location": "Littleton, Colorado",
+      "posted_date": "2026-03-04",
+      "description": "Description:Lockheed Martin is seeking a Composites Manufacturing Engineer for a position at the Mechanical Manufacturing Center (MMC), located on the Waterton Campus in Littleton, Colorado. The MMC Manufacturing Engineering team supports a variety of production areas, including additive manufacturing, traditional machining, mechanism assembly, composite fabrication, and structural assembly. The chosen candidate would join our collaborative team, supporting the composites fabrication area and pr",
+      "source": "jsearch",
+      "cluster": "composites",
+      "itar_flag": true,
+      "itar_detail": "security clearance",
+      "relevance_score": 50,
+      "boost_tags": [],
+      "verdict": "GREEN"
+    },
+    {
+      "job_title": "Composite Manufacturing Engineers",
+      "company_name": "Rocket Lab",
+      "job_url": "https://tallo.com/talent/job/engineering/manufacturing-engineer/md/middle-river/manufacturing-engineer-ii-co-0b1fb9b2?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+      "location": "Middle River, Maryland",
+      "posted_date": "",
+      "description": "Manufacturing Engineer II\n\u2022 Composites at Rocket Lab Manufacturing Engineer II\n\u2022 Composites at Rocket Lab in Middle River, Maryland Posted in 2 days ago. $90,000.00\n\u2022 $115,000.\n00 per year Job Description:\nABOUT ROCKET LAB\nRocket Lab is an end-to-end space company delivering responsive launch services, complete spacecraft design and manufacturing, payloads, satellite components, and more\n\u2022 all with the goal of opening access space.\nThe rockets and satellites we build, and launch enable some of t",
+      "source": "jsearch",
+      "cluster": "composites",
+      "itar_flag": true,
+      "itar_detail": "itar, u.s. citizen",
+      "relevance_score": 44,
+      "boost_tags": [],
+      "verdict": "GREEN"
     }
   ],
-  "yellow_jobs": [],
+  "yellow_jobs": [
+    {
+      "job_title": "Bridge Inspectors",
+      "company_name": "WSP USA",
+      "job_url": "https://tallo.com/talent/job/engineering/civil-engineer/dc/washington/senior-bridge-inspection-engin-809143b2?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+      "location": "Washington, District of Columbia",
+      "posted_date": "",
+      "description": "\u2022 This Opportunity\n\u2022 WSP is currently initiating a search for a\n\u2022 Sr. Bridge Inspection Engineer\n\u2022 for our\n\u2022 Virginia Bridge Inspection Group.\n\u2022 You can be based at any of our\n\u2022 Virginia Beach, Richmond, and Herndon, VA offices\n\u2022. You will assist the Mid-Atlantic District's bridge inspection TEC Lead on a full-time basis with business development and winning bridge inspection and repair work for VDOT and other transportation agencies. You will utilize your education, licensure, and relevant work",
+      "source": "jsearch",
+      "cluster": "tooling_inspection",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 52,
+      "boost_tags": [],
+      "verdict": "YELLOW"
+    }
+  ],
   "summary": {
     "run_date": "2026-03-06",
-    "generated_utc": "2026-03-06T21:44:54.693261Z",
-    "total_scraped": 3,
+    "generated_utc": "2026-03-06T22:56:13.165340Z",
+    "total_scraped": 5,
     "duplicates_removed": 0,
     "filtered_jobs": 1,
-    "green_jobs": 2,
-    "yellow_jobs": 0,
+    "green_jobs": 3,
+    "yellow_jobs": 1,
     "promoted_companies": []
   }
 }

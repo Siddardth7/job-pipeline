@@ -1,1 +1,25 @@
-[]
+[
+  {
+    "run_date": "2026-03-06",
+    "run_start_utc": "2026-03-06T22:53:46.852789Z",
+    "queries_generated": 15,
+    "scrapers": {
+      "jsearch": {
+        "status": "success",
+        "queries_used": 10,
+        "jobs_found": 30
+      },
+      "serpapi": {
+        "status": "success",
+        "queries_used": 10,
+        "jobs_found": 0
+      },
+      "apify": {
+        "status": "success",
+        "queries_used": 2,
+        "jobs_found": 0
+      }
+    },
+    "run_end_utc": "2026-03-06T22:56:13.007359Z"
+  }
+]
