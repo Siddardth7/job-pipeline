@@ -1,89 +1,102 @@
-name: Daily Job Scrape v3
+name: Daily Job Scrape — JobAgent v2
 
 on:
   schedule:
-    - cron: '0 13 * * *'   # 8 AM EST daily
-  workflow_dispatch:        # manual trigger from GitHub UI
-    inputs:
-      target_jobs:
-        description: 'Stop after N valid jobs'
-        required: false
-        default: '20'
-      target_green:
-        description: 'Stop after N GREEN jobs'
-        required: false
-        default: '10'
-      timeout:
-        description: 'Max runtime seconds'
-        required: false
-        default: '300'
+    - cron: '0 13 * * *'   # 13:00 UTC daily
+  workflow_dispatch:        # allow manual trigger
 
 permissions:
   contents: write
 
 env:
   JSEARCH_API_KEY: ${{ secrets.JSEARCH_API_KEY }}
+  SERPAPI_KEY:     ${{ secrets.SERPAPI_KEY }}
   APIFY_TOKEN:     ${{ secrets.APIFY_TOKEN }}
 
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    timeout-minutes: 15        # reduced from 30 — parallel run is faster
+    timeout-minutes: 45
 
     steps:
-      - uses: actions/checkout@v4
+      # ── 1. Checkout ────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: actions/setup-python@v5
+      # ── 2. Python setup ────────────────────────────────────────────────────
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
+      # ── 3. Install dependencies ────────────────────────────────────────────
       - name: Install dependencies
-        run: pip install requests apify-client python-dotenv
-
-      # Single step replaces 4 sequential steps — runs JSearch + Apify in parallel
-      - name: Run pipeline (parallel JSearch + Apify → merge → filter)
         run: |
-          python run_pipeline.py \
-            --target-jobs  ${{ github.event.inputs.target_jobs  || '20' }} \
-            --target-green ${{ github.event.inputs.target_green || '10' }} \
-            --timeout      ${{ github.event.inputs.timeout      || '300' }}
+          pip install --upgrade pip
+          pip install requests apify-client python-dotenv
 
-      # Commit all outputs including cache and state files
-      - name: Commit and push results
+      # ── 4. Ensure directories exist ────────────────────────────────────────
+      - name: Ensure output directories
         run: |
-          git config user.name  "Job Scraper Bot"
-          git config user.email "bot@noreply.github.com"
-          git add -f output/ cache/
-          git diff --staged --quiet || \
-            git commit -m "Daily scrape $(date +%Y-%m-%d) [parallel v3]"
-          git push
+          mkdir -p temp output data
+          # Seed empty data files if they don't exist yet
+          [ -f data/job_history.json ]  || echo '[]' > data/job_history.json
+          [ -f data/run_log.json ]      || echo '[]' > data/run_log.json
+          [ -f data/scraper_state.json ] || echo '{
+            "jsearch": {"queries_today": 0},
+            "serpapi": {"queries_today": 0},
+            "apify":   {"runs_today": 0},
+            "last_reset": ""
+          }' > data/scraper_state.json
 
-      # Summary from run_state.json
-      - name: Show pipeline summary
+      # ── 5. Scraper Orchestrator (Query Engine + all scrapers) ──────────────
+      - name: Run Scraper Orchestrator
+        continue-on-error: true
+        run: python -m engine.scraper_orchestrator
+
+      # ── 6. Merge & Filter Pipeline ─────────────────────────────────────────
+      - name: Run Merge Pipeline
+        run: python -m pipeline.merge_pipeline
+
+      # ── 7. Company Intelligence & Final Output ─────────────────────────────
+      - name: Run Company Intelligence
+        run: python -m pipeline.company_intelligence
+
+      # ── 8. Print Summary ───────────────────────────────────────────────────
+      - name: Print run summary
         if: always()
         run: |
-          if [ -f output/run_state.json ]; then
-            python3 - << 'PYEOF'
+          if [ -f output/jobs_clean_latest.json ]; then
+            python3 - <<'EOF'
           import json
-          rs = json.load(open("output/run_state.json"))
-          cs = rs.get("final_clean_stats", {})
-          print("=== PIPELINE SUMMARY ===")
-          print(f"Total runtime   : {rs['total_elapsed_s']}s")
-          print(f"Parallel scrape : {rs['parallel_elapsed_s']}s")
-          print(f"Stop reason     : {rs['stop_reason']}")
-          print(f"JSearch jobs    : {rs['jsearch_stats']['eligible']} eligible")
-          print(f"Apify jobs      : {rs['apify_stats']['eligible']} eligible")
-          print(f"Final clean     : {cs.get('eligible',0)} eligible ({cs.get('green',0)} GREEN)")
-          PYEOF
-          elif [ -f output/jobs_clean_latest.json ]; then
-            python3 -c "
-          import json; d=json.load(open('output/jobs_clean_latest.json'))
-          jobs=d.get('jobs',[])
-          print(f'Clean jobs: {len(jobs)} total, '
-                f\"{sum(1 for j in jobs if j.get('verdict')=='GREEN')} GREEN\")
-          "
+          d = json.load(open("output/jobs_clean_latest.json"))
+          s = d.get("summary", {})
+          print("=" * 50)
+          print("JobAgent v2 — Daily Run Summary")
+          print("=" * 50)
+          print(f"Run date:        {s.get('run_date', 'N/A')}")
+          print(f"Total scraped:   {s.get('total_scraped', 0)}")
+          print(f"Dupes removed:   {s.get('duplicates_removed', 0)}")
+          print(f"RED (dropped):   {s.get('filtered_jobs', 0)}")
+          print(f"GREEN jobs:      {s.get('green_jobs', 0)}")
+          print(f"YELLOW jobs:     {s.get('yellow_jobs', 0)}")
+          promoted = s.get("promoted_companies", [])
+          if promoted:
+              print(f"Promoted cos:    {', '.join(promoted)}")
+          print("=" * 50)
+          EOF
           else
-            echo "WARNING: no output files found"
+            echo "WARNING: output/jobs_clean_latest.json not found"
           fi
+
+      # ── 9. Commit results ──────────────────────────────────────────────────
+      - name: Commit and push results
+        run: |
+          git config user.name  "JobAgent Bot"
+          git config user.email "jobagent@noreply.github.com"
+          git add -f output/ data/job_history.json data/run_log.json data/scraper_state.json
+          git diff --staged --quiet \
+            || git commit -m "chore: daily scrape $(date +%Y-%m-%d) [skip ci]"
+          git push
