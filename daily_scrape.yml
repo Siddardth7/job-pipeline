@@ -1,0 +1,89 @@
+name: Daily Job Scrape v3
+
+on:
+  schedule:
+    - cron: '0 13 * * *'   # 8 AM EST daily
+  workflow_dispatch:        # manual trigger from GitHub UI
+    inputs:
+      target_jobs:
+        description: 'Stop after N valid jobs'
+        required: false
+        default: '20'
+      target_green:
+        description: 'Stop after N GREEN jobs'
+        required: false
+        default: '10'
+      timeout:
+        description: 'Max runtime seconds'
+        required: false
+        default: '300'
+
+permissions:
+  contents: write
+
+env:
+  JSEARCH_API_KEY: ${{ secrets.JSEARCH_API_KEY }}
+  APIFY_TOKEN:     ${{ secrets.APIFY_TOKEN }}
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15        # reduced from 30 — parallel run is faster
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests apify-client python-dotenv
+
+      # Single step replaces 4 sequential steps — runs JSearch + Apify in parallel
+      - name: Run pipeline (parallel JSearch + Apify → merge → filter)
+        run: |
+          python run_pipeline.py \
+            --target-jobs  ${{ github.event.inputs.target_jobs  || '20' }} \
+            --target-green ${{ github.event.inputs.target_green || '10' }} \
+            --timeout      ${{ github.event.inputs.timeout      || '300' }}
+
+      # Commit all outputs including cache and state files
+      - name: Commit and push results
+        run: |
+          git config user.name  "Job Scraper Bot"
+          git config user.email "bot@noreply.github.com"
+          git add -f output/ cache/
+          git diff --staged --quiet || \
+            git commit -m "Daily scrape $(date +%Y-%m-%d) [parallel v3]"
+          git push
+
+      # Summary from run_state.json
+      - name: Show pipeline summary
+        if: always()
+        run: |
+          if [ -f output/run_state.json ]; then
+            python3 - << 'PYEOF'
+          import json
+          rs = json.load(open("output/run_state.json"))
+          cs = rs.get("final_clean_stats", {})
+          print("=== PIPELINE SUMMARY ===")
+          print(f"Total runtime   : {rs['total_elapsed_s']}s")
+          print(f"Parallel scrape : {rs['parallel_elapsed_s']}s")
+          print(f"Stop reason     : {rs['stop_reason']}")
+          print(f"JSearch jobs    : {rs['jsearch_stats']['eligible']} eligible")
+          print(f"Apify jobs      : {rs['apify_stats']['eligible']} eligible")
+          print(f"Final clean     : {cs.get('eligible',0)} eligible ({cs.get('green',0)} GREEN)")
+          PYEOF
+          elif [ -f output/jobs_clean_latest.json ]; then
+            python3 -c "
+          import json; d=json.load(open('output/jobs_clean_latest.json'))
+          jobs=d.get('jobs',[])
+          print(f'Clean jobs: {len(jobs)} total, '
+                f\"{sum(1 for j in jobs if j.get('verdict')=='GREEN')} GREEN\")
+          "
+          else
+            echo "WARNING: no output files found"
+          fi

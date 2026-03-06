@@ -50,13 +50,17 @@ CACHE_DIR.mkdir(exist_ok=True)
 SEEN_KEYS_PATH   = CACHE_DIR / "seen_job_keys.json"
 COOLDOWN_PATH    = CACHE_DIR / "company_cooldown.json"
 
-# Rate / budget limits
-REQUEST_DELAY       = 1.5   # seconds between API calls
-MAX_REQUESTS_PER_RUN = 10   # hard cap per execution (≈5 companies × 2 queries)
-BATCH_SIZE          = 5     # companies per run (was 3; safe for free tier)
-KEYWORDS_PER_COMPANY = 2    # role-family queries per company
+# Rate / budget limits (all overridable via environment variables from run_pipeline.py)
+REQUEST_DELAY        = 1.5
+MAX_REQUESTS_PER_RUN = int(os.environ.get("MAX_REQUESTS_PER_RUN", "10"))
+BATCH_SIZE           = int(os.environ.get("MAX_COMPANIES_PER_RUN", "5"))
+KEYWORDS_PER_COMPANY = 2
 MAX_RESULTS_PER_QUERY = 10
-MAX_NEW_JOBS_TO_STOP  = 20  # stop early if we already found enough new jobs
+MAX_NEW_JOBS_TO_STOP  = int(os.environ.get("MAX_VALID_JOBS_TARGET", "20"))
+MAX_GREEN_JOBS_TO_STOP = int(os.environ.get("MAX_GREEN_JOBS_TARGET", "10"))
+
+# Sentinel file written by run_pipeline.py when global stop condition fires
+STOP_SENTINEL = OUTPUT_DIR / ".stop_signal"
 
 # Freshness window: 24–72 hours
 MAX_AGE_HOURS = 72
@@ -570,7 +574,18 @@ def main():
 
         # ── Early-exit if enough new jobs found ───────────────────────────────
         if len(all_new_jobs) >= MAX_NEW_JOBS_TO_STOP:
-            log.info(f"Found {len(all_new_jobs)} new jobs. Stopping early.")
+            log.info(f"MAX_VALID_JOBS_TARGET reached ({len(all_new_jobs)}). Stopping.")
+            break
+
+        # Stop if enough GREEN jobs found
+        green_count = sum(1 for j in all_new_jobs if j.get("verdict") == "GREEN")
+        if green_count >= MAX_GREEN_JOBS_TO_STOP:
+            log.info(f"MAX_GREEN_JOBS_TARGET reached ({green_count}). Stopping.")
+            break
+
+        # Check global stop signal from run_pipeline.py orchestrator
+        if STOP_SENTINEL.exists():
+            log.info(f"Stop signal: {STOP_SENTINEL.read_text().strip()}")
             break
 
         log.info(f"[{i+1}/{len(batch)}] {company['company_name']} "

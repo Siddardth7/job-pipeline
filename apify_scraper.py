@@ -46,7 +46,10 @@ CACHE_DIR.mkdir(exist_ok=True)
 SEEN_KEYS_PATH = CACHE_DIR / "seen_job_keys_apify.json"
 COOLDOWN_PATH  = CACHE_DIR / "company_cooldown_apify.json"
 
-BATCH_SIZE   = 15   # companies per run
+BATCH_SIZE            = int(os.environ.get('MAX_COMPANIES_PER_RUN', '15'))  # overridable
+MAX_NEW_JOBS_TO_STOP  = int(os.environ.get('MAX_VALID_JOBS_TARGET',  '20'))
+MAX_GREEN_JOBS_TO_STOP = int(os.environ.get('MAX_GREEN_JOBS_TARGET', '10'))
+STOP_SENTINEL         = OUTPUT_DIR / '.stop_signal'
 MAX_AGE_HOURS = 72  # freshness window
 
 # ── ACTOR IDs ─────────────────────────────────────────────────────────────────
@@ -799,6 +802,18 @@ def main():
             log.info(f"  — No new jobs (diagnosis: {stats['diagnosis']})")
 
         time.sleep(2)
+
+        # Stop if valid job targets met (checked after each company)
+        if len(all_new_jobs) >= MAX_NEW_JOBS_TO_STOP:
+            log.info(f"MAX_VALID_JOBS_TARGET reached ({len(all_new_jobs)}). Stopping.")
+            break
+        green_count = sum(1 for j in all_new_jobs if j.get("verdict") == "GREEN")
+        if green_count >= MAX_GREEN_JOBS_TO_STOP:
+            log.info(f"MAX_GREEN_JOBS_TARGET reached ({green_count}). Stopping.")
+            break
+        if STOP_SENTINEL.exists():
+            log.info(f"Stop signal: {STOP_SENTINEL.read_text().strip()}")
+            break
 
     # ── Save caches ───────────────────────────────────────────────────────────
     save_json_cache(SEEN_KEYS_PATH, seen_keys)
