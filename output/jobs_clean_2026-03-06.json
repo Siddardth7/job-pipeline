@@ -1,6 +1,17 @@
 {
-  "generated_utc": "2026-03-06T14:09:11.001477Z",
-  "sources": {
+  "generated_utc": "2026-03-06T14:09:11.049956Z",
+  "stage": "post_merge_filter",
+  "filter_report": {
+    "total_in": 9,
+    "passed": 6,
+    "rejected": 3,
+    "pass_rate": "66.7%",
+    "by_reason": {
+      "score_below_60:0": 2,
+      "blacklisted:raytheon": 1
+    }
+  },
+  "sources_in": {
     "jsearch_targeted": 5,
     "apify_targeted": 0,
     "jsearch_open": 4,
@@ -8,18 +19,19 @@
     "merged_unique": 9,
     "duplicates_removed": 0
   },
-  "errors": {},
   "summary": {
-    "total": 9,
-    "targeted": 5,
-    "open_search": 4,
-    "green": 0,
-    "yellow": 8,
-    "red_itar": 1,
+    "total": 6,
+    "green": 4,
+    "yellow": 2,
+    "red_itar": 0,
+    "track1": 6,
+    "track2": 0,
     "tier1": 0,
-    "tier2": 9,
-    "h1b_yes": 5,
-    "new_companies": 4
+    "tier2": 0,
+    "h1b_yes": 4,
+    "seniority_flagged": 2,
+    "age_unverified": 0,
+    "open_search": 2
   },
   "jobs": [
     {
@@ -40,27 +52,11 @@
       "source": "jsearch_targeted",
       "reason": "Targeted: 'Manufacturing Engineer' at Rivian",
       "match": 82,
-      "verdict": "YELLOW"
-    },
-    {
-      "id": "Rivian-80240",
-      "role": "Staff Manufacturing Engineer",
-      "company": "Rivian",
-      "location": "Social Circle, Georgia",
-      "type": "Full-time",
-      "link": "https://us.bebee.com/job/b8df1ef07915269c2cfbf2b2feb1c927?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
-      "posted": "3d ago",
-      "itar_flag": false,
-      "itar_detail": "",
-      "tier": "Tier 2",
-      "h1b": "YES",
-      "itar_company": "NO",
-      "industry": "",
-      "domain_verified": false,
-      "source": "jsearch_targeted",
-      "reason": "Targeted: 'Manufacturing Engineer' at Rivian",
-      "match": 82,
-      "verdict": "YELLOW"
+      "verdict": "GREEN",
+      "track": "Track1",
+      "seniority_flagged": false,
+      "age_flag": "",
+      "filter_note": ""
     },
     {
       "id": "Rivian-97323",
@@ -80,7 +76,35 @@
       "source": "jsearch_targeted",
       "reason": "Targeted: 'Manufacturing Engineer' at Rivian",
       "match": 82,
-      "verdict": "YELLOW"
+      "verdict": "GREEN",
+      "track": "Track1",
+      "seniority_flagged": false,
+      "age_flag": "",
+      "filter_note": ""
+    },
+    {
+      "id": "Rivian-80240",
+      "role": "Staff Manufacturing Engineer",
+      "company": "Rivian",
+      "location": "Social Circle, Georgia",
+      "type": "Full-time",
+      "link": "https://us.bebee.com/job/b8df1ef07915269c2cfbf2b2feb1c927?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+      "posted": "3d ago",
+      "itar_flag": false,
+      "itar_detail": "",
+      "tier": "Tier 2",
+      "h1b": "YES",
+      "itar_company": "NO",
+      "industry": "",
+      "domain_verified": false,
+      "source": "jsearch_targeted",
+      "reason": "Targeted: 'Manufacturing Engineer' at Rivian",
+      "match": 72,
+      "verdict": "YELLOW",
+      "track": "Track1",
+      "seniority_flagged": true,
+      "age_flag": "",
+      "filter_note": "Seniority flag \u2014 verify experience requirement"
     },
     {
       "id": "Siemens-21013",
@@ -99,28 +123,12 @@
       "domain_verified": false,
       "source": "jsearch_targeted",
       "reason": "Targeted: 'Manufacturing Engineer' at Siemens",
-      "match": 82,
-      "verdict": "YELLOW"
-    },
-    {
-      "id": "Siemens-96149",
-      "role": "Manufacturing Process Engineer",
-      "company": "Siemens",
-      "location": "Gibsonton, Florida",
-      "type": "Full-time",
-      "link": "https://us.bebee.com/job/606f76514a83634530127bdc1b3f4896?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
-      "posted": "today",
-      "itar_flag": true,
-      "itar_detail": "itar",
-      "tier": "Tier 2",
-      "h1b": "YES",
-      "itar_company": "NO",
-      "industry": "",
-      "domain_verified": false,
-      "source": "jsearch_targeted",
-      "reason": "Targeted: 'Process Engineer' at Siemens",
-      "match": 0,
-      "verdict": "RED"
+      "match": 72,
+      "verdict": "YELLOW",
+      "track": "Track1",
+      "seniority_flagged": true,
+      "age_flag": "",
+      "filter_note": "Seniority flag \u2014 verify experience requirement"
     },
     {
       "id": "SPACE-EXPLORATION-TECHNOLOGIES-CORP-84925",
@@ -139,8 +147,12 @@
       "domain_verified": false,
       "source": "jsearch_open",
       "reason": "Open: 'Manufacturing Engineer space launch' in California",
-      "match": 70,
-      "verdict": "YELLOW"
+      "match": 82,
+      "verdict": "GREEN",
+      "track": "Track1",
+      "seniority_flagged": false,
+      "age_flag": "",
+      "filter_note": ""
     },
     {
       "id": "Virtual-Vocations-Inc-93864",
@@ -159,48 +171,12 @@
       "domain_verified": false,
       "source": "jsearch_open",
       "reason": "Open: 'Manufacturing Engineer space launch' in California",
-      "match": 70,
-      "verdict": "YELLOW"
-    },
-    {
-      "id": "The-Boeing-Company-82341",
-      "role": "Senior ATLO Manufacturing Engineer \u2014 Space Systems",
-      "company": "The Boeing Company",
-      "location": "El Segundo, California",
-      "type": "Full-time",
-      "link": "https://www.jobleads.com/us/job/senior-atlo-manufacturing-engineer-space-systems--el-segundo--e57ca33804f508aaaa027ccfc0d7bee25?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
-      "posted": "5d ago",
-      "itar_flag": true,
-      "itar_detail": "security clearance, u.s. citizen",
-      "tier": "Tier 2",
-      "h1b": "LIKELY",
-      "itar_company": "Unknown",
-      "industry": "",
-      "domain_verified": false,
-      "source": "jsearch_open",
-      "reason": "Open: 'Manufacturing Engineer space launch' in California",
-      "match": 0,
-      "verdict": "YELLOW"
-    },
-    {
-      "id": "Raytheon-42748",
-      "role": "Senior Manufacturing Engineer",
-      "company": "Raytheon",
-      "location": "Santa Barbara, California",
-      "type": "Full-time",
-      "link": "https://www.google.com/search?q=jobs&gl=us&hl=en&udm=8#vhid=vt%3D20/docid%3Dl-fwOeaEB-KIhzF6AAAAAA%3D%3D&vssid=jobs-detail-viewer",
-      "posted": "7d ago",
-      "itar_flag": true,
-      "itar_detail": "security clearance, itar, u.s. citizen",
-      "tier": "Tier 2",
-      "h1b": "LIKELY",
-      "itar_company": "Unknown",
-      "industry": "",
-      "domain_verified": false,
-      "source": "jsearch_open",
-      "reason": "Open: 'Manufacturing Engineer space launch' in California",
-      "match": 0,
-      "verdict": "YELLOW"
+      "match": 82,
+      "verdict": "GREEN",
+      "track": "Track1",
+      "seniority_flagged": false,
+      "age_flag": "",
+      "filter_note": ""
     }
   ]
 }
