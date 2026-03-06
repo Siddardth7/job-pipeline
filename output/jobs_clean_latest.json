@@ -1,10 +1,49 @@
 {
-  "generated_utc": "2026-03-06T19:21:57.953059Z",
-  "filter_version": "v2",
-  "total_input": 0,
-  "total_kept": 0,
-  "rejected_stale": 0,
-  "rejected_senior": 0,
-  "rejected_bad_url": 0,
-  "jobs": []
+  "green_jobs": [
+    {
+      "job_title": "Process Engineer Entry Level",
+      "company_name": "Rivian",
+      "job_url": "https://rivian.com/careers/98765",
+      "location": "Normal, IL",
+      "posted_date": "2026-03-04",
+      "description": "Process development engineering for EV manufacturing, GD&T, SolidWorks, six sigma DMAIC.",
+      "source": "jsearch",
+      "cluster": "process",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 77,
+      "boost_tags": [
+        "entry level"
+      ],
+      "verdict": "GREEN"
+    },
+    {
+      "job_title": "Manufacturing Engineer I",
+      "company_name": "SpaceX",
+      "job_url": "https://spacex.com/jobs/12345",
+      "location": "Hawthorne, CA",
+      "posted_date": "2026-03-05",
+      "description": "Entry level manufacturing engineer for composites fabrication and lean production.",
+      "source": "jsearch",
+      "cluster": "manufacturing",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 75,
+      "boost_tags": [
+        "engineer i"
+      ],
+      "verdict": "GREEN"
+    }
+  ],
+  "yellow_jobs": [],
+  "summary": {
+    "run_date": "2026-03-06",
+    "generated_utc": "2026-03-06T21:44:54.693261Z",
+    "total_scraped": 3,
+    "duplicates_removed": 0,
+    "filtered_jobs": 1,
+    "green_jobs": 2,
+    "yellow_jobs": 0,
+    "promoted_companies": []
+  }
 }

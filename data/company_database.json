@@ -1,0 +1,237 @@
+{
+  "green": [
+    {
+      "name": "GE Aerospace",
+      "domain": "geaerospace.com",
+      "industry": "Aerospace"
+    },
+    {
+      "name": "SpaceX",
+      "domain": "spacex.com",
+      "industry": "Aerospace"
+    },
+    {
+      "name": "Boeing",
+      "domain": "boeing.com",
+      "industry": "Aerospace"
+    },
+    {
+      "name": "Lockheed Martin",
+      "domain": "lockheedmartin.com",
+      "industry": "Aerospace & Defense"
+    },
+    {
+      "name": "Northrop Grumman",
+      "domain": "northropgrumman.com",
+      "industry": "Aerospace & Defense"
+    },
+    {
+      "name": "RTX",
+      "domain": "rtx.com",
+      "industry": "Aerospace & Defense"
+    },
+    {
+      "name": "Honeywell Aerospace",
+      "domain": "honeywell.com",
+      "industry": "Aerospace"
+    },
+    {
+      "name": "Tesla",
+      "domain": "tesla.com",
+      "industry": "Automotive / EV"
+    },
+    {
+      "name": "Rivian",
+      "domain": "rivian.com",
+      "industry": "Automotive / EV"
+    },
+    {
+      "name": "Lucid Motors",
+      "domain": "lucidmotors.com",
+      "industry": "Automotive / EV"
+    },
+    {
+      "name": "General Motors",
+      "domain": "gm.com",
+      "industry": "Automotive"
+    },
+    {
+      "name": "Ford",
+      "domain": "ford.com",
+      "industry": "Automotive"
+    },
+    {
+      "name": "Cummins",
+      "domain": "cummins.com",
+      "industry": "Industrial Equipment"
+    },
+    {
+      "name": "John Deere",
+      "domain": "deere.com",
+      "industry": "Industrial Equipment"
+    },
+    {
+      "name": "Caterpillar",
+      "domain": "caterpillar.com",
+      "industry": "Industrial Equipment"
+    },
+    {
+      "name": "Raytheon",
+      "domain": "rtx.com",
+      "industry": "Aerospace & Defense"
+    },
+    {
+      "name": "L3Harris",
+      "domain": "l3harris.com",
+      "industry": "Aerospace & Defense"
+    },
+    {
+      "name": "BAE Systems",
+      "domain": "baesystems.com",
+      "industry": "Aerospace & Defense"
+    },
+    {
+      "name": "General Dynamics",
+      "domain": "gd.com",
+      "industry": "Aerospace & Defense"
+    },
+    {
+      "name": "Textron",
+      "domain": "textron.com",
+      "industry": "Aerospace"
+    },
+    {
+      "name": "Spirit AeroSystems",
+      "domain": "spiritaero.com",
+      "industry": "Aerospace"
+    },
+    {
+      "name": "Safran",
+      "domain": "safran-group.com",
+      "industry": "Aerospace"
+    },
+    {
+      "name": "Rolls-Royce",
+      "domain": "rolls-royce.com",
+      "industry": "Aerospace"
+    },
+    {
+      "name": "Parker Hannifin",
+      "domain": "parker.com",
+      "industry": "Industrial"
+    },
+    {
+      "name": "Eaton",
+      "domain": "eaton.com",
+      "industry": "Industrial"
+    },
+    {
+      "name": "3M",
+      "domain": "3m.com",
+      "industry": "Materials / Industrial"
+    },
+    {
+      "name": "Corning",
+      "domain": "corning.com",
+      "industry": "Materials"
+    },
+    {
+      "name": "Hexcel",
+      "domain": "hexcel.com",
+      "industry": "Composites / Materials"
+    },
+    {
+      "name": "Solvay",
+      "domain": "solvay.com",
+      "industry": "Composites / Materials"
+    },
+    {
+      "name": "Toray",
+      "domain": "toray.com",
+      "industry": "Composites / Materials"
+    },
+    {
+      "name": "Apple",
+      "domain": "apple.com",
+      "industry": "Consumer Electronics"
+    },
+    {
+      "name": "Amazon",
+      "domain": "amazon.com",
+      "industry": "Logistics / Manufacturing"
+    },
+    {
+      "name": "Joby Aviation",
+      "domain": "jobyaviation.com",
+      "industry": "Aerospace / eVTOL"
+    },
+    {
+      "name": "Archer Aviation",
+      "domain": "archer.com",
+      "industry": "Aerospace / eVTOL"
+    },
+    {
+      "name": "Wisk Aero",
+      "domain": "wisk.aero",
+      "industry": "Aerospace / eVTOL"
+    },
+    {
+      "name": "Relativity Space",
+      "domain": "relativityspace.com",
+      "industry": "Aerospace"
+    },
+    {
+      "name": "Rocket Lab",
+      "domain": "rocketlabusa.com",
+      "industry": "Aerospace"
+    },
+    {
+      "name": "Blue Origin",
+      "domain": "blueorigin.com",
+      "industry": "Aerospace"
+    },
+    {
+      "name": "Aerojet Rocketdyne",
+      "domain": "l3harris.com",
+      "industry": "Aerospace"
+    },
+    {
+      "name": "TransDigm",
+      "domain": "transdigm.com",
+      "industry": "Aerospace"
+    },
+    {
+      "name": "Ducommun",
+      "domain": "ducommun.com",
+      "industry": "Aerospace"
+    }
+  ],
+  "promotion_tracking": {},
+  "rejected_companies": [],
+  "industry_keywords": [
+    "Manufacturing",
+    "Aerospace",
+    "Energy",
+    "Automotive",
+    "Materials",
+    "Industrial Equipment",
+    "Medical Devices",
+    "Defense",
+    "Aviation",
+    "Composites",
+    "Electronics",
+    "Robotics",
+    "Space",
+    "Propulsion"
+  ],
+  "reject_keywords": [
+    "Staffing",
+    "Recruiting",
+    "Talent Solutions",
+    "Consulting Services",
+    "HR Solutions",
+    "Workforce Solutions",
+    "Placement",
+    "Headhunting"
+  ]
+}

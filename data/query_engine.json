@@ -1,0 +1,80 @@
+{
+  "clusters": {
+    "manufacturing": [
+      "Manufacturing Engineer",
+      "Manufacturing Engineer I",
+      "Manufacturing Engineer II",
+      "Manufacturing Process Engineer",
+      "Production Engineer",
+      "Advanced Manufacturing Engineer",
+      "Manufacturing Systems Engineer",
+      "Manufacturing Operations Engineer"
+    ],
+    "process": [
+      "Process Engineer",
+      "Manufacturing Process Engineer",
+      "Process Development Engineer",
+      "Manufacturing Development Engineer"
+    ],
+    "materials": [
+      "Materials Engineer",
+      "Materials & Processes Engineer",
+      "Materials and Process Engineer",
+      "M&P Engineer"
+    ],
+    "composites": [
+      "Composites Manufacturing Engineer",
+      "Composite Manufacturing Engineer",
+      "Composites Process Engineer",
+      "Manufacturing Engineer Composites"
+    ],
+    "quality": [
+      "Quality Engineer",
+      "Manufacturing Quality Engineer",
+      "Supplier Quality Engineer",
+      "Supplier Assurance Engineer",
+      "Supplier Development Engineer",
+      "MRB Engineer",
+      "Nonconformance Engineer"
+    ],
+    "industrial": [
+      "Industrial Engineer",
+      "Operations Engineer",
+      "Lean Manufacturing Engineer",
+      "Continuous Improvement Engineer",
+      "Value Stream Engineer"
+    ],
+    "tooling_inspection": [
+      "Tooling Engineer",
+      "Manufacturing Tooling Engineer",
+      "Metrology Engineer",
+      "Inspection Engineer"
+    ],
+    "startup_manufacturing": [
+      "Build Engineer",
+      "Manufacturing Prototype Engineer",
+      "Manufacturing NPI Engineer",
+      "Manufacturing Scale-Up Engineer"
+    ]
+  },
+  "entry_level_modifiers": [
+    "Engineer I",
+    "Engineer II",
+    "Associate",
+    "Entry Level",
+    "Early Career",
+    "New Grad"
+  ],
+  "exclusion_keywords": [
+    "Senior",
+    "Staff",
+    "Principal",
+    "Lead Engineer",
+    "Manager",
+    "Director",
+    "Software",
+    "Controls",
+    "Systems Engineer"
+  ],
+  "query_template": "({titles}) AND ({modifiers}) NOT ({exclusions})"
+}
