@@ -1,21 +1,31 @@
 #!/usr/bin/env python3
 """
-scrapers/apify_scraper.py — JobAgent v2 Apify Scraper
+scrapers/apify_scraper.py — JobAgent v4 Apify / LinkedIn Scraper
 
-Runs Apify LinkedIn Jobs Scraper actor via keyword queries.
-Requires Apify account with compute units available.
+Runs the Bebity LinkedIn Jobs Scraper actor (hKByXkMQaIasn7ATK) via the
+Apify API to discover LinkedIn job postings.
 
 Env vars required:
     APIFY_TOKEN  — from https://console.apify.com/account/integrations
+
+Bug fixes in this version vs the original:
+    FIXED-1  'keywords' input key → 'queries'  (actor ignores unknown keys silently)
+    FIXED-2  'Past 3 Days' datePosted → 'Past Week'  (only valid: Past 24 hours /
+             Past Week / Past Month)
+    FIXED-3  'maxItems' limit key → 'rows'  (per-query limit, not total cap)
+    FIXED-4  Actor run status now validated before reading dataset
+    FIXED-5  _parse_date: ts[:len(fmt)] sliced on format string length (wrong) →
+             now uses datetime.fromisoformat() which handles all ISO variants
+    FIXED-6  URL extraction expanded: applyUrl → jobUrl → url →
+             externalApplyLink → jobPostingUrl
 """
 
 import os
 import json
-import time
 import logging
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 try:
     from apify_client import ApifyClient
@@ -32,23 +42,24 @@ log = logging.getLogger("apify_scraper")
 
 APIFY_TOKEN = os.environ.get("APIFY_TOKEN", "")
 
-# LinkedIn Jobs Scraper actor ID
+# Bebity LinkedIn Jobs Scraper actor
+# https://apify.com/bebity/linkedin-jobs-scraper
 ACTOR_ID = "hKByXkMQaIasn7ATK"
 
-# Limit results per run to stay within compute budget
-MAX_ITEMS_PER_RUN = 100
-RUN_TIMEOUT_SECS = 300   # 5 minutes
+# FIXED-3: 'rows' is per-query item limit; 25 per query × up to 8 queries ≈ 200 max
+ROWS_PER_QUERY   = 25
+RUN_TIMEOUT_SECS = 300   # 5 minutes hard ceiling
 
 ITAR_KEYWORDS = [
     "security clearance", "us person", "itar", "export controlled",
     "classified", "us citizen or permanent resident",
     "must be authorized to work without sponsorship",
-    "u.s. citizen", "u.s. national", "permanent resident only"
+    "u.s. citizen", "u.s. national", "permanent resident only",
 ]
 
 
 class ApifyScraper:
-    """Runs Apify LinkedIn scraper for job discovery."""
+    """Runs the Apify LinkedIn Jobs Scraper actor for job discovery."""
 
     def run(self, queries: List[Dict]) -> List[Dict]:
         if not APIFY_TOKEN:
@@ -57,38 +68,64 @@ class ApifyScraper:
 
         client = ApifyClient(APIFY_TOKEN)
 
-        # Build keyword list from queries (extract first cluster title each)
-        keywords = self._extract_keywords(queries)
-        log.info(f"[apify] Running actor with {len(keywords)} keywords")
+        # Build search term list from query engine output
+        search_terms = self._extract_search_terms(queries)
+        log.info(f"[apify] Starting actor with {len(search_terms)} search terms: "
+                 f"{search_terms[:4]}{'...' if len(search_terms) > 4 else ''}")
 
+        # ── FIXED-1: 'queries' not 'keywords'
+        # ── FIXED-2: 'Past Week' not 'Past 3 Days'  (only valid LinkedIn values:
+        #             'Past 24 hours', 'Past Week', 'Past Month')
+        # ── FIXED-3: 'rows' not 'maxItems'
         run_input = {
-            "keywords": keywords,
-            "location": "United States",
-            "datePosted": "Past 3 Days",
-            "maxItems": MAX_ITEMS_PER_RUN,
+            "queries":    search_terms,          # FIXED-1
+            "datePosted": "Past Week",           # FIXED-2
+            "rows":       ROWS_PER_QUERY,        # FIXED-3
+            "location":   "United States",
         }
 
+        log.debug(f"[apify] run_input: {json.dumps(run_input)}")
+
+        # ── Start actor run ───────────────────────────────────────────────────
         try:
             run = client.actor(ACTOR_ID).call(
                 run_input=run_input,
-                timeout_secs=RUN_TIMEOUT_SECS
+                timeout_secs=RUN_TIMEOUT_SECS,
             )
         except Exception as e:
-            log.error(f"[apify] Actor run failed: {e}")
+            log.error(f"[apify] Actor failed to start: {e}")
             return []
 
-        # Fetch results from dataset
+        # ── FIXED-4: validate run status before reading dataset ───────────────
+        run_status = run.get("status", "UNKNOWN") if run else "NO_RESPONSE"
+        dataset_id = run.get("defaultDatasetId", "") if run else ""
+
+        if run_status not in ("SUCCEEDED", "READY"):
+            log.error(
+                f"[apify] Actor run ended with status '{run_status}'. "
+                f"Expected SUCCEEDED. No jobs will be returned."
+            )
+            return []
+
+        if not dataset_id:
+            log.error("[apify] Actor returned no defaultDatasetId.")
+            return []
+
+        log.info(f"[apify] Actor SUCCEEDED. Reading dataset {dataset_id}...")
+
+        # ── Fetch dataset items ───────────────────────────────────────────────
         all_jobs: List[Dict] = []
-        seen: set = set()
+        seen:     set        = set()
+        item_count = 0
 
         try:
-            for item in client.dataset(run["defaultDatasetId"]).iterate_items():
-                title = item.get("title", "") or ""
-                company = item.get("companyName", "") or ""
-                url = item.get("applyUrl", "") or item.get("jobUrl", "") or ""
-                location = item.get("location", "") or ""
-
-                key = (company.lower(), title.lower(), location.lower())
+            for item in client.dataset(dataset_id).iterate_items():
+                item_count += 1
+                key = (
+                    (item.get("companyName", "") or "").lower(),
+                    (item.get("title",       "") or "").lower(),
+                    (item.get("location",    "") or "").lower(),
+                )
                 if key in seen:
                     continue
                 seen.add(key)
@@ -98,79 +135,145 @@ class ApifyScraper:
                     all_jobs.append(normalized)
 
         except Exception as e:
-            log.error(f"[apify] Dataset fetch error: {e}")
+            log.error(f"[apify] Dataset read error: {e}")
 
-        log.info(f"[apify] Total unique jobs: {len(all_jobs)}")
+        log.info(
+            f"[apify] Dataset had {item_count} items → "
+            f"{len(all_jobs)} unique normalised jobs"
+        )
         return all_jobs
 
-    def _extract_keywords(self, queries: List[Dict]) -> List[str]:
+    # ── Query → search term conversion ───────────────────────────────────────
+
+    def _extract_search_terms(self, queries: List[Dict]) -> List[str]:
         """
-        Convert query dicts into keyword phrases suitable for LinkedIn search.
-        Uses cluster name to pick representative titles.
+        Map query engine cluster names to plain-English LinkedIn search terms.
+        LinkedIn search works best with simple keyword phrases, not boolean queries.
         """
-        CLUSTER_KEYWORDS = {
-            "manufacturing": "Manufacturing Engineer entry level",
-            "process": "Process Engineer entry level",
-            "materials": "Materials Engineer",
-            "composites": "Composites Manufacturing Engineer",
-            "quality": "Quality Engineer Associate",
-            "industrial": "Industrial Engineer entry level",
-            "tooling_inspection": "Tooling Engineer",
-            "startup_manufacturing": "Manufacturing Engineer NPI",
-            "manufacturing_open": "Manufacturing Engineer",
-            "quality_open": "Quality Engineer",
-            "composites_open": "Composites Engineer",
-            "materials_open": "Materials Engineer",
-            "process_open": "Process Engineer",
-            "startup_manufacturing_open": "NPI Engineer",
-            "industrial_open": "Industrial Engineer",
+        CLUSTER_TO_TERM = {
+            "manufacturing":             "Manufacturing Engineer entry level",
+            "process":                   "Process Engineer entry level",
+            "materials":                 "Materials Engineer",
+            "composites":                "Composites Manufacturing Engineer",
+            "quality":                   "Quality Engineer Associate",
+            "industrial":                "Industrial Engineer entry level",
+            "tooling_inspection":        "Tooling Engineer",
+            "startup_manufacturing":     "Manufacturing Engineer NPI",
+            # Open-sweep clusters
+            "manufacturing_open":        "Manufacturing Engineer",
+            "quality_open":              "Quality Engineer",
+            "composites_open":           "Composites Engineer",
+            "materials_open":            "Materials Engineer",
+            "process_open":              "Process Engineer",
+            "startup_manufacturing_open":"NPI Engineer",
+            "industrial_open":           "Industrial Engineer",
         }
-        keywords = []
-        seen_kws = set()
+        terms:    List[str] = []
+        seen_kws: set       = set()
+
         for q in queries:
             cluster = q.get("cluster", "")
-            kw = CLUSTER_KEYWORDS.get(cluster)
-            if kw and kw not in seen_kws:
-                keywords.append(kw)
-                seen_kws.add(kw)
-        return keywords or ["Manufacturing Engineer entry level"]
+            term    = CLUSTER_TO_TERM.get(cluster)
+            if term and term not in seen_kws:
+                terms.append(term)
+                seen_kws.add(term)
 
-    def _normalize(self, raw: Dict) -> Dict | None:
-        title = raw.get("title", "") or ""
+        return terms or ["Manufacturing Engineer entry level"]
+
+    # ── Normalise a raw dataset item ─────────────────────────────────────────
+
+    def _normalize(self, raw: Dict) -> Optional[Dict]:
+        title   = raw.get("title",       "") or ""
         company = raw.get("companyName", "") or ""
-        url = raw.get("applyUrl", "") or raw.get("jobUrl", "") or ""
-        location = raw.get("location", "") or ""
-        desc = raw.get("description", "") or ""
-        posted_raw = raw.get("postedDate", "") or raw.get("postedAt", "") or ""
+        location = raw.get("location",   "") or ""
+        desc    = raw.get("description", "") or ""
+        posted_raw = (
+            raw.get("postedDate",    "")
+            or raw.get("postedAt",   "")
+            or raw.get("publishedAt","")
+            or ""
+        )
 
+        # ── FIXED-6: expanded URL fallback chain ─────────────────────────────
+        url = (
+            raw.get("applyUrl",          "") or
+            raw.get("jobUrl",            "") or
+            raw.get("url",               "") or
+            raw.get("externalApplyLink", "") or
+            raw.get("jobPostingUrl",     "") or
+            ""
+        )
         if not url:
+            log.debug(
+                f"  [apify] No URL found for: {title!r} @ {company} — dropping. "
+                f"Available keys: {list(raw.keys())}"
+            )
             return None
 
+        # ── FIXED-5: robust ISO date parsing ─────────────────────────────────
         posted_date = self._parse_date(posted_raw)
+
         itar_flags = [kw for kw in ITAR_KEYWORDS if kw in desc.lower()]
 
         return {
-            "job_title": title,
+            "job_title":    title,
             "company_name": company,
-            "job_url": url,
-            "location": location,
-            "posted_date": posted_date,
-            "description": desc[:500],
-            "source": "apify",
-            "cluster": "linkedin",
-            "itar_flag": len(itar_flags) > 0,
-            "itar_detail": ", ".join(itar_flags),
-            "raw_id": str(raw.get("id", "")),
+            "job_url":      url,
+            "location":     location,
+            "posted_date":  posted_date,
+            "description":  desc[:500],
+            "source":       "apify",
+            "cluster":      "linkedin",
+            "itar_flag":    len(itar_flags) > 0,
+            "itar_detail":  ", ".join(itar_flags),
+            "raw_id":       str(raw.get("id", "") or ""),
         }
 
+    # ── Date parser ──────────────────────────────────────────────────────────
+
     def _parse_date(self, ts: str) -> str:
+        """
+        FIXED-5: original used ts[:len(fmt)] where len(fmt) counted % codes as
+        single characters — sliced too short, stripped trailing 'Z', strptime
+        always raised ValueError, every date fell back to today().
+
+        Now uses datetime.fromisoformat() which handles all ISO 8601 variants,
+        with a plain date-only fallback.
+        """
         if not ts:
             return datetime.utcnow().strftime("%Y-%m-%d")
-        for fmt in ("%Y-%m-%dT%H:%M:%S.%fZ", "%Y-%m-%dT%H:%M:%SZ", "%Y-%m-%d"):
-            try:
-                return datetime.strptime(ts[:len(fmt)], fmt).strftime("%Y-%m-%d")
-            except Exception:
-                pass
+
+        # ISO 8601: "2024-01-15T10:30:00.000Z", "2024-01-15T10:30:00Z", etc.
+        try:
+            return (
+                datetime.fromisoformat(ts.replace("Z", "+00:00"))
+                .strftime("%Y-%m-%d")
+            )
+        except Exception:
+            pass
+
+        # Plain date-only: "2024-01-15"
+        try:
+            return datetime.strptime(ts[:10], "%Y-%m-%d").strftime("%Y-%m-%d")
+        except Exception:
+            pass
+
+        # Relative text: "2 days ago", "3 hours ago" (some actor versions)
+        ts_l = ts.lower()
+        try:
+            now = datetime.utcnow()
+            if "hour" in ts_l or "minute" in ts_l:
+                return now.strftime("%Y-%m-%d")
+            if "day" in ts_l:
+                days = int("".join(c for c in ts_l if c.isdigit()) or "1")
+                return (now - timedelta(days=days)).strftime("%Y-%m-%d")
+            if "week" in ts_l:
+                return (now - timedelta(weeks=1)).strftime("%Y-%m-%d")
+        except Exception:
+            pass
+
+        # Last resort: treat as today (fresh)
+        log.debug(f"  [apify] Unparseable date {ts!r} — defaulting to today")
         return datetime.utcnow().strftime("%Y-%m-%d")
 
 
@@ -183,4 +286,6 @@ if __name__ == "__main__":
     queries = QueryEngine().generate_queries()[:5]
     scraper = ApifyScraper()
     jobs = scraper.run(queries)
-    print(json.dumps(jobs[:3], indent=2))
+    print(f"\n{len(jobs)} jobs found")
+    if jobs:
+        print(json.dumps(jobs[0], indent=2))

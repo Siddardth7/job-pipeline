@@ -34,10 +34,9 @@ JSEARCH_API_KEY = os.environ.get("JSEARCH_API_KEY", "")
 JSEARCH_HOST = "jsearch.p.rapidapi.com"
 JSEARCH_URL = "https://jsearch.p.rapidapi.com/search"
 
-REQUEST_DELAY = 1.5       # seconds between calls
-MAX_PAGES = 1
-RESULTS_PER_PAGE = 10
-DATE_POSTED = "3days"     # "today" | "3days" | "week" | "month"
+REQUEST_DELAY    = 1.5    # seconds between calls
+RESULTS_PER_PAGE = 10     # passed as num_results; JSearch free tier max is 10
+DATE_POSTED      = "3days" # "today" | "3days" | "week" | "month"
 
 REJECT_DOMAINS = [
     "indeed.com", "glassdoor.com", "ziprecruiter.com",
@@ -91,12 +90,11 @@ class JSearchScraper:
             "X-RapidAPI-Host": JSEARCH_HOST
         }
         params = {
-            "query": query,
-            "page": "1",
-            "num_pages": str(MAX_PAGES),
-            "date_posted": DATE_POSTED,
-            "country": "us",
-            "language": "en",
+            "query":        query,
+            "num_results":  str(RESULTS_PER_PAGE),  # explicit; free tier cap is 10
+            "date_posted":  DATE_POSTED,
+            "country":      "us",
+            "language":     "en",
         }
         for attempt in range(retries + 1):
             try:

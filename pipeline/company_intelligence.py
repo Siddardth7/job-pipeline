@@ -59,9 +59,28 @@ def run():
     log.info(f"Classifying {len(intermediate)} jobs...")
 
     green_jobs, yellow_jobs, dropped = [], [], 0
+    itar_guard_triggered = 0
 
     for job in intermediate:
-        company = job["company_name"]
+        company   = job["company_name"]
+        job_title = job["job_title"]
+
+        # ── ITAR guard — Company Intelligence must NEVER classify ITAR jobs ──
+        # F8 in merge_pipeline.py is the primary ITAR hard-drop.
+        # This guard is a belt-and-suspenders safety net. If a job reaches
+        # this stage with itar_flag=True it means the pipeline ordering was
+        # violated. We log an error and refuse to classify the job.
+        if job.get("itar_flag") is True:
+            itar_guard_triggered += 1
+            log.error(
+                f"  ITAR GUARD TRIGGERED: {job_title!r} @ {company} "
+                f"reached Company Intelligence with itar_flag=True. "
+                f"This job was NOT classified and will NOT appear in output. "
+                f"Check that F8 ran before this stage."
+            )
+            dropped += 1
+            continue  # refuse to classify — do not include in any output
+
         verdict = _classify(company, job.get("description", ""), db)
         job["verdict"] = verdict
 
@@ -71,7 +90,13 @@ def run():
             yellow_jobs.append(job)
         else:  # RED — drop
             dropped += 1
-            log.debug(f"  DROP [{verdict}]: {company} — {job['job_title']}")
+            log.debug(f"  DROP [{verdict}]: {company} — {job_title}")
+
+    if itar_guard_triggered > 0:
+        log.error(
+            f"  ⚠ PIPELINE INTEGRITY: {itar_guard_triggered} job(s) reached "
+            f"Company Intelligence with itar_flag=True. Fix the filter ordering."
+        )
 
     log.info(f"  GREEN:  {len(green_jobs)}")
     log.info(f"  YELLOW: {len(yellow_jobs)}")
@@ -118,6 +143,43 @@ def run():
                   history, db)
 
     log.info(f"Final output: {len(green_jobs)} GREEN + {len(yellow_jobs)} YELLOW jobs")
+
+    # ── Final output validation — absolute ITAR safety check ─────────────────
+    # Any ITAR job in the clean feed is a critical pipeline failure.
+    all_clean_jobs = green_jobs + yellow_jobs
+    itar_violations = [j for j in all_clean_jobs if j.get("itar_flag") is True]
+    if itar_violations:
+        log.error("=" * 60)
+        log.error("CRITICAL OUTPUT VALIDATION FAILURE")
+        log.error(
+            f"{len(itar_violations)} ITAR-flagged job(s) found in the clean "
+            f"output feed. These will be forcibly removed before writing."
+        )
+        for v in itar_violations:
+            log.error(
+                f"  VIOLATION: {v['job_title']!r} @ {v['company_name']} "
+                f"| itar_detail: {v.get('itar_detail', '')}"
+            )
+        log.error("=" * 60)
+        # Force-remove all ITAR violations from final output
+        green_jobs  = [j for j in green_jobs  if not j.get("itar_flag")]
+        yellow_jobs = [j for j in yellow_jobs if not j.get("itar_flag")]
+        # Rewrite the output file with the corrected lists
+        _write_output(green_jobs, yellow_jobs,
+                      {
+                          "total_input": len(intermediate),
+                          "dropped_red": dropped + len(itar_violations),
+                          "history_dupes": history_dupes,
+                          "promoted_companies": promoted,
+                      },
+                      history, db)
+        log.error(
+            f"Output rewritten. {len(itar_violations)} ITAR violation(s) removed. "
+            f"Final clean counts: {len(green_jobs)} GREEN + {len(yellow_jobs)} YELLOW."
+        )
+    else:
+        log.info("✓ Output validation passed: zero ITAR jobs in clean feed.")
+
     log.info("=" * 60)
     return green_jobs, yellow_jobs
 

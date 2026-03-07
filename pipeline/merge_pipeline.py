@@ -1,9 +1,23 @@
 #!/usr/bin/env python3
 """
-pipeline/merge_pipeline.py — JobAgent v2 Merge & Filtering Pipeline
+pipeline/merge_pipeline.py — JobAgent v4 Merge & Hard Filter Pipeline
 
-Reads all temp/jobs_*.json files, normalizes fields, removes duplicates,
-applies relevance filters, and scores jobs.
+Reads all temp/jobs_*.json files, normalises fields, then runs every
+job through the nine mandatory hard filters in strict order.
+
+Hard Filter Stack (all nine must pass before Company Intelligence):
+  F1  Schema Completeness     — job_title, company_name, job_url required
+  F2  URL Validity            — must be http/https with valid domain
+  F3  Aggregator Rejection    — rejects known aggregator domains
+  F4  Job Age                 — must be posted within 72 hours
+  F5  Deduplication           — URL-key + composite key (cross-scraper)
+  F6  Seniority Title         — rejects senior/staff/principal/manager etc.
+  F7  Role Relevance          — title must match a target role cluster
+  F8  ITAR / Export Control   — HARD DROP — any ITAR flag → reject immediately
+  F9  Blacklisted Companies   — named defence/weapons contractors → reject
+
+A job that fails ANY filter is permanently dropped and never reaches
+Company Intelligence.
 
 Outputs:
     temp/jobs_clean_intermediate.json
@@ -11,182 +25,263 @@ Outputs:
 
 import json
 import logging
+import re
 import sys
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from pathlib import Path
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Tuple
 from urllib.parse import urlparse
 
 ROOT = Path(__file__).parent.parent
-TEMP_DIR = ROOT / "temp"
+TEMP_DIR   = ROOT / "temp"
 OUTPUT_PATH = TEMP_DIR / "jobs_clean_intermediate.json"
 
 sys.path.insert(0, str(ROOT))
 
 log = logging.getLogger("merge_pipeline")
 
-# ── Config ────────────────────────────────────────────────────────────────────
+# ── Constants ─────────────────────────────────────────────────────────────────
 
 MAX_AGE_HOURS = 72
 
-REJECT_TITLE_TOKENS = [
-    "senior", "staff", "principal", "manager", "director",
-    "sr.", "sr ", "lead engineer", "vp ", "vice president",
-    "chief", "head of"
+# F3 — Aggregator domains (applied post-merge to catch all scrapers)
+AGGREGATOR_DOMAINS = [
+    "indeed.com", "glassdoor.com", "ziprecruiter.com",
+    "simplyhired.com", "monster.com", "careerbuilder.com",
+    "linkedin.com",
 ]
 
+# F6 — Seniority reject tokens
+# Tokens without regex syntax are word-boundary matched automatically.
+SENIORITY_REJECT_TOKENS = [
+    "senior", r"sr\.", r"sr\b", "staff", "principal",
+    r"\blead\b", "manager", "director",
+    r"\bvp\b", "vice president", "chief", "head of",
+]
+
+# F7 — Role relevance: title must contain at least one token
+ROLE_RELEVANCE_TOKENS = [
+    # Manufacturing
+    "manufacturing engineer", "production engineer",
+    "manufacturing process", "manufacturing systems",
+    "manufacturing operations",
+    # Process
+    "process engineer", "process development",
+    # Materials
+    "materials engineer", r"m&p engineer",
+    # Composites
+    "composites", "composite",
+    # Quality
+    "quality engineer", "supplier quality", "supplier assurance",
+    "mrb engineer", "nonconformance",
+    # Industrial
+    "industrial engineer", "operations engineer",
+    "lean manufacturing", "continuous improvement", "value stream",
+    # Tooling / Inspection
+    "tooling engineer", "metrology engineer", "inspection engineer",
+    # Startup / NPI
+    "build engineer", "npi engineer", "scale-up engineer",
+    "prototype engineer",
+    # Numbered engineer levels (entry-level signal in title)
+    r"engineer i\b", r"engineer ii\b", r"engineer 1\b", r"engineer 2\b",
+    # Explicit entry-level modifier in title
+    "associate engineer", "entry level engineer", "entry-level engineer",
+    "junior engineer", "early career engineer",
+]
+
+# F8 — ITAR / export control keywords (hard drop — no exceptions)
+ITAR_REJECT_KEYWORDS = [
+    "itar",
+    "us person",
+    "u.s. person",
+    "us citizenship required",
+    "u.s. citizenship required",
+    "export control",
+    "export controlled",
+    "security clearance",
+    "classified",
+    "us citizen or permanent resident",
+    "u.s. citizen",
+    "u.s. national",
+    "permanent resident only",
+    "must be authorized to work without sponsorship",
+    "active clearance",
+    "secret clearance",
+    "top secret",
+]
+
+# F9 — Blacklisted company names (substring match, case-insensitive)
+BLACKLISTED_COMPANIES = [
+    "lockheed martin",
+    "northrop grumman",
+    "general dynamics",
+    "raytheon",
+    "rtx",
+    "l3harris",
+    "bae systems",
+    "anduril",
+    "saronic",
+]
+
+# Scoring helpers (post-filter only — never used to bypass filters)
 BOOST_TITLE_TOKENS = [
-    "entry level", "associate", "engineer i", "engineer ii",
-    "early career", "new grad", "junior", "level i", "level ii"
+    "entry level", "entry-level", "associate", "engineer i", "engineer ii",
+    "engineer 1", "engineer 2", "early career", "new grad", "junior",
+    "level i", "level ii",
 ]
-
-REJECT_DESCRIPTION_TOKENS = [
-    "senior", "staff", "principal", "manager", "director",
-    "10+ years", "8+ years", "7+ years"
-]
-
 RELEVANCE_KEYWORDS = [
     "manufacturing", "process", "production", "quality", "composites",
     "materials", "industrial", "lean", "tooling", "inspection",
     "metrology", "aerospace", "automotive", "assembly", "fabrication",
     "cnc", "gd&t", "cad", "solidworks", "catia", "npi", "scale-up",
-    "six sigma", "kaizen", "dmaic", "fmea", "apqp", "ppap"
+    "six sigma", "kaizen", "dmaic", "fmea", "apqp", "ppap",
 ]
+
 
 # ── Entry point ───────────────────────────────────────────────────────────────
 
 def run():
     log.info("=" * 60)
-    log.info("Merge Pipeline — Starting")
+    log.info("Merge Pipeline + Hard Filter Stack — Starting")
     log.info("=" * 60)
 
-    # 1. Load all temp sources
-    raw_jobs = _load_all_sources()
-    log.info(f"Loaded {len(raw_jobs)} raw jobs from all sources")
+    # Step 1 — Load all scraper outputs
+    raw_jobs, scraper_counts = _load_all_sources()
+    _print_scraper_health(scraper_counts, raw_jobs)
+    total_raw = len(raw_jobs)
 
-    # 2. Normalize
+    # Step 2 — F1: Normalise + schema completeness check
     normalized = [_normalize(j) for j in raw_jobs]
     normalized = [j for j in normalized if j is not None]
-    log.info(f"Normalized: {len(normalized)} jobs")
+    schema_rejected = total_raw - len(normalized)
 
-    # 3. Deduplicate
-    deduped, dupe_count = _deduplicate(normalized)
-    log.info(f"Deduplication: removed {dupe_count}, kept {len(deduped)}")
+    # Steps 3-9 — Hard Filter Stack F2 through F9
+    # Filters run in strict sequence. Each returns (passed, rejected_count).
+    after_f3, f3_rejected = _filter_aggregators(normalized)     # F2 + F3
+    after_f4, f4_rejected = _filter_age(after_f3)              # F4
+    after_f5, f5_rejected = _filter_duplicates(after_f4)       # F5
+    after_f6, f6_rejected = _filter_seniority(after_f5)        # F6
+    after_f7, f7_rejected = _filter_role_relevance(after_f6)   # F7
+    after_f8, f8_rejected = _filter_itar(after_f7)             # F8 — HARD DROP
+    after_f9, f9_rejected = _filter_blacklist(after_f8)        # F9
 
-    # 4. Validate URLs
-    url_valid = [j for j in deduped if _valid_url(j.get("job_url", ""))]
-    log.info(f"URL validated: {len(url_valid)} passed")
-
-    # 5. Age filter
-    fresh = [j for j in url_valid if _is_fresh(j.get("posted_date", ""))]
-    log.info(f"Age filter (≤{MAX_AGE_HOURS}h): {len(fresh)} passed")
-
-    # 6. Title filter
-    title_passed = [j for j in fresh if not _reject_title(j.get("job_title", ""))]
-    log.info(f"Title filter: {len(title_passed)} passed "
-             f"({len(fresh) - len(title_passed)} rejected)")
-
-    # 7. Score
-    scored = [_score(j) for j in title_passed]
+    # Step 10 — Score surviving jobs
+    scored = [_score(j) for j in after_f9]
     scored.sort(key=lambda j: -j["relevance_score"])
 
-    # 8. Write output
+    # Step 11 — Print filter report
+    _print_filter_report(
+        total_raw=total_raw,
+        schema_rejected=schema_rejected,
+        f3_rejected=f3_rejected,
+        f4_rejected=f4_rejected,
+        f5_rejected=f5_rejected,
+        f6_rejected=f6_rejected,
+        f7_rejected=f7_rejected,
+        f8_rejected=f8_rejected,
+        f9_rejected=f9_rejected,
+        final_passed=len(scored),
+    )
+
+    # Step 12 — Write intermediate output
     OUTPUT_PATH.write_text(json.dumps({
         "generated_utc": datetime.utcnow().isoformat() + "Z",
         "stats": {
-            "total_raw": len(raw_jobs),
-            "after_normalize": len(normalized),
-            "duplicates_removed": dupe_count,
-            "url_invalid": len(deduped) - len(url_valid),
-            "age_filtered": len(url_valid) - len(fresh),
-            "title_filtered": len(fresh) - len(title_passed),
-            "final_count": len(scored),
+            "total_raw":       total_raw,
+            "schema_rejected": schema_rejected,
+            "f3_aggregator":   f3_rejected,
+            "f4_age":          f4_rejected,
+            "f5_duplicates":   f5_rejected,
+            "f6_seniority":    f6_rejected,
+            "f7_role":         f7_rejected,
+            "f8_itar":         f8_rejected,
+            "f9_blacklist":    f9_rejected,
+            "final_count":     len(scored),
         },
-        "jobs": scored
+        "jobs": scored,
     }, indent=2))
 
-    log.info(f"Output: {len(scored)} clean jobs → {OUTPUT_PATH}")
+    log.info(f"Output: {len(scored)} hard-filter-approved jobs → {OUTPUT_PATH}")
     log.info("=" * 60)
     return scored
 
 
-# ── Loaders ───────────────────────────────────────────────────────────────────
+# ── Source loader ─────────────────────────────────────────────────────────────
 
-def _load_all_sources() -> List[Dict]:
-    jobs = []
-    source_files = list(TEMP_DIR.glob("jobs_*.json"))
+def _load_all_sources() -> Tuple[List[Dict], Dict[str, int]]:
+    jobs: List[Dict] = []
+    scraper_counts: Dict[str, int] = {}
+    source_files = sorted(TEMP_DIR.glob("jobs_*.json"))
+
     if not source_files:
-        log.warning("No temp source files found.")
-        return jobs
+        log.warning("No temp source files found in temp/")
+        return jobs, scraper_counts
+
     for path in source_files:
         try:
             data = json.loads(path.read_text())
             batch = data.get("jobs", [])
-            log.info(f"  {path.name}: {len(batch)} jobs")
+            source_name = data.get("source", path.stem.replace("jobs_", ""))
+            scraper_counts[source_name] = len(batch)
+            log.info(f"  Loaded {path.name}: {len(batch)} jobs")
             jobs.extend(batch)
         except Exception as e:
             log.error(f"Failed to load {path.name}: {e}")
-    return jobs
+            source_name = path.stem.replace("jobs_", "")
+            scraper_counts[source_name] = 0
+
+    return jobs, scraper_counts
 
 
-# ── Normalize ─────────────────────────────────────────────────────────────────
+# ── Scraper health report ─────────────────────────────────────────────────────
+
+def _print_scraper_health(counts: Dict[str, int], all_jobs: List[Dict]):
+    log.info("")
+    log.info("SCRAPER HEALTH")
+    log.info("-" * 40)
+    for name, count in counts.items():
+        if count == 0:
+            log.warning(f"  {name:<12}: {count:>4} jobs  ⚠ WARNING: returned no jobs")
+        else:
+            log.info(f"  {name:<12}: {count:>4} jobs")
+    log.info(f"  {'TOTAL':<12}: {len(all_jobs):>4} jobs")
+    log.info("-" * 40)
+    silent = [n for n, c in counts.items() if c == 0]
+    if len(silent) >= 2:
+        log.warning(
+            f"  ⚠ WARNING: {len(silent)} scrapers returned no results "
+            f"({', '.join(silent)}). Check API keys and quotas."
+        )
+    log.info("")
+
+
+# ── F1 — Normalise (schema completeness) ─────────────────────────────────────
 
 def _normalize(job: Dict) -> Optional[Dict]:
-    """Coerce all jobs to standard schema."""
-    title = str(job.get("job_title", "") or "").strip()
+    title   = str(job.get("job_title",    "") or "").strip()
     company = str(job.get("company_name", "") or "").strip()
-    url = str(job.get("job_url", "") or "").strip()
-    location = str(job.get("location", "") or "").strip()
-    posted = str(job.get("posted_date", "") or "").strip()
-    desc = str(job.get("description", "") or "").strip()
-    source = str(job.get("source", "unknown") or "unknown")
-    cluster = str(job.get("cluster", "") or "")
-    itar_flag = bool(job.get("itar_flag", False))
-    itar_detail = str(job.get("itar_detail", "") or "")
+    url     = str(job.get("job_url",      "") or "").strip()
 
     if not title or not company or not url:
-        return None
+        return None  # F1 fail — drop
 
     return {
-        "job_title": title,
-        "company_name": company,
-        "job_url": url,
-        "location": location,
-        "posted_date": posted,
-        "description": desc,
-        "source": source,
-        "cluster": cluster,
-        "itar_flag": itar_flag,
-        "itar_detail": itar_detail,
+        "job_title":       title,
+        "company_name":    company,
+        "job_url":         url,
+        "location":        str(job.get("location",    "") or "").strip(),
+        "posted_date":     str(job.get("posted_date", "") or "").strip(),
+        "description":     str(job.get("description", "") or "").strip(),
+        "source":          str(job.get("source",      "unknown")),
+        "cluster":         str(job.get("cluster",     "")),
+        "itar_flag":       bool(job.get("itar_flag",  False)),
+        "itar_detail":     str(job.get("itar_detail", "") or ""),
         "relevance_score": 0,
-        "boost_tags": [],
+        "boost_tags":      [],
     }
 
 
-# ── Deduplication ─────────────────────────────────────────────────────────────
-
-def _deduplicate(jobs: List[Dict]):
-    seen_urls: set = set()
-    seen_composite: set = set()
-    out = []
-    dupes = 0
-    for j in jobs:
-        url = j["job_url"].lower().split("?")[0]  # strip query params
-        composite = (
-            j["company_name"].lower(),
-            j["job_title"].lower()[:40],
-            j["location"].lower()[:20]
-        )
-        if url in seen_urls or composite in seen_composite:
-            dupes += 1
-            continue
-        seen_urls.add(url)
-        seen_composite.add(composite)
-        out.append(j)
-    return out, dupes
-
-
-# ── Filters ───────────────────────────────────────────────────────────────────
+# ── F2 helper ─────────────────────────────────────────────────────────────────
 
 def _valid_url(url: str) -> bool:
     try:
@@ -196,56 +291,266 @@ def _valid_url(url: str) -> bool:
         return False
 
 
-def _is_fresh(posted_date: str) -> bool:
-    """Allow jobs posted within MAX_AGE_HOURS. Empty date → assume fresh."""
+# ── F2 + F3 — URL validity + aggregator rejection ────────────────────────────
+
+def _filter_aggregators(jobs: List[Dict]) -> Tuple[List[Dict], int]:
+    passed, rejected = [], 0
+    for j in jobs:
+        url_lower = j["job_url"].lower()
+        if not _valid_url(j["job_url"]):
+            rejected += 1
+            log.debug(f"  [F2 DROP] Invalid URL — {j['job_title']!r} @ {j['company_name']}")
+            continue
+        if any(d in url_lower for d in AGGREGATOR_DOMAINS):
+            rejected += 1
+            log.debug(f"  [F3 DROP] Aggregator — {j['job_url']} — {j['job_title']!r} @ {j['company_name']}")
+            continue
+        passed.append(j)
+    return passed, rejected
+
+
+# ── F4 — Job age ──────────────────────────────────────────────────────────────
+
+def _filter_age(jobs: List[Dict]) -> Tuple[List[Dict], int]:
+    passed, rejected = [], 0
+    cutoff = datetime.utcnow() - timedelta(hours=MAX_AGE_HOURS)
+    for j in jobs:
+        if _is_fresh(j.get("posted_date", ""), cutoff):
+            passed.append(j)
+        else:
+            rejected += 1
+            log.debug(f"  [F4 DROP] Age {j.get('posted_date')!r} — {j['job_title']!r} @ {j['company_name']}")
+    return passed, rejected
+
+
+def _is_fresh(posted_date: str, cutoff: datetime) -> bool:
     if not posted_date:
-        return True
+        return True  # unknown date → treat as fresh
     try:
         dt = datetime.strptime(posted_date[:10], "%Y-%m-%d")
-        cutoff = datetime.utcnow() - timedelta(hours=MAX_AGE_HOURS)
         return dt >= cutoff
     except Exception:
         return True
 
 
-def _reject_title(title: str) -> bool:
+# ── F5 — Deduplication ────────────────────────────────────────────────────────
+
+def _filter_duplicates(jobs: List[Dict]) -> Tuple[List[Dict], int]:
+    seen_urls:      set = set()
+    seen_composite: set = set()
+    passed, rejected = [], 0
+    for j in jobs:
+        url_key  = j["job_url"].lower().split("?")[0].rstrip("/")
+        comp_key = (
+            j["company_name"].lower(),
+            j["job_title"].lower()[:40],
+            j["location"].lower()[:20],
+        )
+        if url_key in seen_urls or comp_key in seen_composite:
+            rejected += 1
+            continue
+        seen_urls.add(url_key)
+        seen_composite.add(comp_key)
+        passed.append(j)
+    return passed, rejected
+
+
+# ── F6 — Seniority title filter ───────────────────────────────────────────────
+
+def _filter_seniority(jobs: List[Dict]) -> Tuple[List[Dict], int]:
+    passed, rejected = [], 0
+    for j in jobs:
+        if _is_senior_title(j["job_title"]):
+            rejected += 1
+            log.debug(f"  [F6 DROP] Seniority — {j['job_title']!r} @ {j['company_name']}")
+        else:
+            passed.append(j)
+    return passed, rejected
+
+
+def _is_senior_title(title: str) -> bool:
     lower = title.lower()
-    return any(tok in lower for tok in REJECT_TITLE_TOKENS)
+    for token in SENIORITY_REJECT_TOKENS:
+        # Tokens that are raw regex patterns (contain \) — use as-is
+        if "\\" in token:
+            if re.search(token, lower):
+                return True
+        else:
+            # Plain token — wrap in word boundaries
+            if re.search(r"\b" + re.escape(token) + r"\b", lower):
+                return True
+    return False
 
 
-# ── Scoring ───────────────────────────────────────────────────────────────────
+# ── F7 — Role relevance filter ────────────────────────────────────────────────
+
+def _filter_role_relevance(jobs: List[Dict]) -> Tuple[List[Dict], int]:
+    passed, rejected = [], 0
+    for j in jobs:
+        if _is_relevant_role(j["job_title"]):
+            passed.append(j)
+        else:
+            rejected += 1
+            log.debug(f"  [F7 DROP] Role mismatch — {j['job_title']!r} @ {j['company_name']}")
+    return passed, rejected
+
+
+def _is_relevant_role(title: str) -> bool:
+    lower = title.lower()
+    for token in ROLE_RELEVANCE_TOKENS:
+        if "\\" in token or "(" in token or "[" in token:
+            if re.search(token, lower):
+                return True
+        else:
+            if token in lower:
+                return True
+    return False
+
+
+# ── F8 — ITAR / Export Control — HARD DROP ───────────────────────────────────
+
+def _filter_itar(jobs: List[Dict]) -> Tuple[List[Dict], int]:
+    """
+    F8 — ABSOLUTE HARD DROP.
+
+    Rejects any job where:
+      • itar_flag == True  (set by scraper), OR
+      • itar_detail contains a known ITAR keyword, OR
+      • description contains a known ITAR keyword
+
+    These jobs are permanently rejected BEFORE Company Intelligence.
+    No GREEN classification, auto-promotion, or scoring can save a job
+    that fails this filter. Company Intelligence will also guard against
+    any job that somehow reaches it with itar_flag=True.
+    """
+    passed, rejected = [], 0
+    for j in jobs:
+        reason = _itar_reject_reason(j)
+        if reason:
+            rejected += 1
+            log.warning(
+                f"  [F8 DROP] ITAR — {j['job_title']!r} @ {j['company_name']} "
+                f"| reason: {reason}"
+            )
+        else:
+            # Explicitly clear flags on passing jobs (belt-and-suspenders)
+            j["itar_flag"]   = False
+            j["itar_detail"] = ""
+            passed.append(j)
+    return passed, rejected
+
+
+def _itar_reject_reason(job: Dict) -> Optional[str]:
+    # Check scraper-set flag first
+    if job.get("itar_flag") is True:
+        detail = (job.get("itar_detail") or "").strip()
+        return f"itar_flag=True" + (f" ({detail})" if detail else "")
+
+    # Belt-and-suspenders: re-scan itar_detail and full description
+    combined = " ".join([
+        job.get("itar_detail", "") or "",
+        job.get("description", "") or "",
+    ]).lower()
+
+    for kw in ITAR_REJECT_KEYWORDS:
+        if kw in combined:
+            return f"keyword: '{kw}'"
+
+    return None
+
+
+# ── F9 — Blacklisted companies ────────────────────────────────────────────────
+
+def _filter_blacklist(jobs: List[Dict]) -> Tuple[List[Dict], int]:
+    """
+    F9 — Reject named blacklisted defence / weapons contractors.
+    These companies must never appear in any output.
+    """
+    passed, rejected = [], 0
+    for j in jobs:
+        co = j["company_name"].lower()
+        if any(bl in co for bl in BLACKLISTED_COMPANIES):
+            rejected += 1
+            log.warning(
+                f"  [F9 DROP] Blacklisted — {j['company_name']!r} | {j['job_title']}"
+            )
+        else:
+            passed.append(j)
+    return passed, rejected
+
+
+# ── Scoring (post-filter — never used to bypass filters) ─────────────────────
 
 def _score(job: Dict) -> Dict:
-    score = 50  # baseline
-    boost_tags = []
+    """Score a job that has already cleared all nine hard filters."""
 
+    # Integrity check — should be impossible at this stage
+    if job.get("itar_flag"):
+        log.error(
+            f"PIPELINE INTEGRITY VIOLATION: ITAR job reached scoring — "
+            f"{job['job_title']!r} @ {job['company_name']}. "
+            f"This must be investigated immediately."
+        )
+        job["relevance_score"] = 0
+        job["boost_tags"]      = []
+        return job
+
+    score = 50
+    boost_tags: List[str] = []
     title_lower = job["job_title"].lower()
-    desc_lower = job["description"].lower()
+    desc_lower  = job["description"].lower()
 
-    # Boost for entry-level indicators in title
     for tok in BOOST_TITLE_TOKENS:
         if tok in title_lower:
             score += 15
             boost_tags.append(tok)
             break  # one boost per job
 
-    # Boost for relevant keywords in description
     kw_hits = sum(1 for kw in RELEVANCE_KEYWORDS if kw in desc_lower)
     score += min(kw_hits * 2, 20)
 
-    # Penalize if ITAR flagged
-    if job.get("itar_flag"):
-        score -= 10
-
     job["relevance_score"] = min(score, 100)
-    job["boost_tags"] = boost_tags
+    job["boost_tags"]      = boost_tags
     return job
+
+
+# ── Filter report ─────────────────────────────────────────────────────────────
+
+def _print_filter_report(**kw):
+    total_dropped = kw["total_raw"] - kw["final_passed"]
+    log.info("")
+    log.info("FILTER REPORT")
+    log.info("-" * 50)
+    log.info(f"  {'Total scraped':<32}: {kw['total_raw']:>5}")
+    log.info(f"  {'F1  Schema rejected':<32}: {kw['schema_rejected']:>5}")
+    log.info(f"  {'F2/F3 Aggregator rejected':<32}: {kw['f3_rejected']:>5}")
+    log.info(f"  {'F4  Age rejected (>72h)':<32}: {kw['f4_rejected']:>5}")
+    log.info(f"  {'F5  Duplicate rejected':<32}: {kw['f5_rejected']:>5}")
+    log.info(f"  {'F6  Seniority rejected':<32}: {kw['f6_rejected']:>5}")
+    log.info(f"  {'F7  Role mismatch rejected':<32}: {kw['f7_rejected']:>5}")
+    log.info(f"  {'F8  ITAR rejected (HARD DROP)':<32}: {kw['f8_rejected']:>5}")
+    log.info(f"  {'F9  Blacklist rejected':<32}: {kw['f9_rejected']:>5}")
+    log.info(f"  {'-'*38}")
+    log.info(f"  {'Total dropped':<32}: {total_dropped:>5}")
+    log.info(f"  {'Final passed to classifier':<32}: {kw['final_passed']:>5}")
+    log.info("-" * 50)
+    if kw["f8_rejected"] > 0:
+        log.warning(
+            f"  ⚠ {kw['f8_rejected']} ITAR-restricted job(s) were hard-dropped "
+            f"and will not appear in any output."
+        )
+    log.info("")
 
 
 # ── CLI ───────────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO,
-                        format="%(asctime)s [%(levelname)s] %(message)s")
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s [%(levelname)s] %(message)s",
+    )
     result = run()
-    print(f"\n✓ Merge pipeline complete. {len(result)} jobs ready for classification.")
+    print(
+        f"\n✓ Merge + filter complete. "
+        f"{len(result)} jobs passed all nine hard filters and are ready for classification."
+    )
