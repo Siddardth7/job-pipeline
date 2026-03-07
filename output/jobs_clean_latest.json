@@ -1,108 +1,14 @@
 {
-  "green_jobs": [
-    {
-      "job_title": "Composites Manufacturing Engineers",
-      "company_name": "Boeing",
-      "job_url": "https://www.jobzmall.com/boeing/job/composites-manufacturing-engineers?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
-      "location": "Berkeley, Missouri",
-      "posted_date": "",
-      "description": "Welcome to the exciting world of aerospace manufacturing at Boeing! As a Composites Manufacturing Engineer, you will play a critical role in the production of cutting-edge composite materials for our industry-leading aircraft. Your expertise and attention to detail will be key in ensuring the highest quality and efficiency in our manufacturing processes. To excel in this role, you should have a strong background in composites manufacturing and a passion for innovation and problem-solving. If you",
-      "source": "jsearch",
-      "cluster": "composites",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 64,
-      "boost_tags": [],
-      "verdict": "GREEN"
-    }
-  ],
-  "yellow_jobs": [
-    {
-      "job_title": "Manufacturing Engineer I",
-      "company_name": "Regal Rexnord",
-      "job_url": "https://careers.regalrexnord.com/en/jobs/r26_00861/manufacturing-engineer-i/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
-      "location": "Black River Falls, Wisconsin",
-      "posted_date": "2026-03-06",
-      "description": "Position Overview:\n\nThe Manufacturing Engineer will be responsible for designing, implementing and optimizing manufacturing processes to ensure efficient production and high-quality products.\n\nKey Responsibilities:\n\u2022 Evaluate and improve manufacturing processes to enhance efficiency and quality.\n\u2022 Design and implement new manufacturing systems and processes.\n\u2022 Conduct root cause analysis and implement corrective actions\n\u2022 Collaborate with cross-functional teams to identify areas for improvement.",
-      "source": "jsearch",
-      "cluster": "manufacturing",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 73,
-      "boost_tags": [
-        "engineer i"
-      ],
-      "verdict": "YELLOW"
-    },
-    {
-      "job_title": "Manufacturing Engineer - Composites",
-      "company_name": "AvL Technologies",
-      "job_url": "https://www.google.com/search?q=jobs&gl=us&hl=en&udm=8#vhid=vt%3D20/docid%3D_dJXNBKLBzYKen4WAAAAAA%3D%3D&vssid=jobs-detail-viewer",
-      "location": "Asheville, North Carolina",
-      "posted_date": "",
-      "description": "Summary\n\nWe are seeking a highly skilled manufacturing engineer to support in-house production of complex composite parts and assemblies. This role will interface heavily with both the product engineering group and the production floor, bringing new designs to fruition, improving manufacturing efficiency on current products, and supporting the day-to-day operations of a fast-paced manufacturing environment.\n\nEssential Duties & Responsibilities\n\u2022 Support the production of composite parts and asse",
-      "source": "jsearch",
-      "cluster": "composites",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 54,
-      "boost_tags": [],
-      "verdict": "YELLOW"
-    },
-    {
-      "job_title": "APTM Yield Defect Metrology Engineer",
-      "company_name": "Intel",
-      "job_url": "https://jobright.ai/jobs/info/69a8cd8779f3f4037f434eab?utm_source=1014&utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
-      "location": "Oregon",
-      "posted_date": "2026-03-05",
-      "description": "Intel is shaping the future of technology to help create a better future for the entire world. The Inline Defect Metrology Engineer will provide process development direction, perform statistical analysis, and develop methodologies to enhance yield through data analysis and collaboration across organizations.\n\nResponsibilities\n\u2022 Provides process development direction throughout the whole lifecycle of a technology node by identifying root cause yield limiters\n\u2022 Performs statistical analysis, deve",
-      "source": "serpapi",
-      "cluster": "tooling_inspection",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 54,
-      "boost_tags": [],
-      "verdict": "YELLOW"
-    },
-    {
-      "job_title": "Bridge Inspection Engineer Level 2",
-      "company_name": "Great Lakes Engineering Group",
-      "job_url": "https://us.bebee.com/job/4231b63d95cfe313b2fa0a4e776e4d76?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
-      "location": "Detroit, MI",
-      "posted_date": "2026-03-07",
-      "description": "BRIDGE INSPECTION ENGINEER II\nThis position assists with various inspections of in-service bridges and culverts for cities, counties, villages, and MDOT.\n\nInspections include but are not limited to routine safety inspections, in-depth inspections, detailed inspections, fracture critical inspections, fatigue sensitive inspections, scour inspections, etc.\n\nThe position requires a solid understanding of structural engineering concepts related to the operation of bridges and culverts of various mate",
-      "source": "serpapi",
-      "cluster": "tooling_inspection",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 52,
-      "boost_tags": [],
-      "verdict": "YELLOW"
-    },
-    {
-      "job_title": "Tooling Engineers",
-      "company_name": "Haier US Appliance Solutions, Inc.",
-      "job_url": "https://tallo.com/talent/job/engineering/mechanical-engineer/ky/louisville/senior-tooling-engineer-10296759?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
-      "location": "Louisville, Kentucky",
-      "posted_date": "",
-      "description": "At GE Appliances, a Haier company, we come together to make \"good things, for life.\" As the fastest-growing appliance company in the U.S., we're powered by creators, thinkers and makers who believe that anything is possible and that there's always a better way. We believe in the power of our people and in giving them the freedom to explore, discover and build good things, together. The GE Appliances philosophy, backed by three simple commitments defines the way we work, invent, create, do busine",
-      "source": "jsearch",
-      "cluster": "tooling_inspection",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 50,
-      "boost_tags": [],
-      "verdict": "YELLOW"
-    }
-  ],
+  "green_jobs": [],
+  "yellow_jobs": [],
   "summary": {
     "run_date": "2026-03-07",
-    "generated_utc": "2026-03-07T01:42:28.190855Z",
-    "total_scraped": 7,
+    "generated_utc": "2026-03-07T02:09:41.161914Z",
+    "total_scraped": 0,
     "duplicates_removed": 0,
-    "filtered_jobs": 1,
-    "green_jobs": 1,
-    "yellow_jobs": 5,
+    "filtered_jobs": 0,
+    "green_jobs": 0,
+    "yellow_jobs": 0,
     "promoted_companies": []
   }
 }

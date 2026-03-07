@@ -44,5 +44,28 @@
       }
     },
     "run_end_utc": "2026-03-07T01:42:28.029803Z"
+  },
+  {
+    "run_date": "2026-03-07",
+    "run_start_utc": "2026-03-07T02:09:41.018858Z",
+    "queries_generated": 15,
+    "scrapers": {
+      "jsearch": {
+        "status": "skipped",
+        "reason": "quota_exhausted",
+        "jobs_found": 0
+      },
+      "serpapi": {
+        "status": "skipped",
+        "reason": "quota_exhausted",
+        "jobs_found": 0
+      },
+      "apify": {
+        "status": "skipped",
+        "reason": "quota_exhausted",
+        "jobs_found": 0
+      }
+    },
+    "run_end_utc": "2026-03-07T02:09:41.020448Z"
   }
 ]
