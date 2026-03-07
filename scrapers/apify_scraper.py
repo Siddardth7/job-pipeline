@@ -2,22 +2,23 @@
 """
 scrapers/apify_scraper.py — JobAgent v4 Apify / LinkedIn Scraper
 
-Runs the Bebity LinkedIn Jobs Scraper actor (hKByXkMQaIasn7ATK) via the
-Apify API to discover LinkedIn job postings.
+Runs the Bebity LinkedIn Jobs Scraper actor via the Apify API.
 
 Env vars required:
-    APIFY_TOKEN  — from https://console.apify.com/account/integrations
+    APIFY_TOKEN     — from https://console.apify.com/account/integrations
+    APIFY_ACTOR_ID  — (optional) override the actor ID/slug if the default
+                      changes. Find it on https://apify.com/bebity/linkedin-jobs-scraper
+                      Default: bebity/linkedin-jobs-scraper
 
-Bug fixes in this version vs the original:
+Bug fixes vs original:
     FIXED-1  'keywords' input key → 'queries'  (actor ignores unknown keys silently)
-    FIXED-2  'Past 3 Days' datePosted → 'Past Week'  (only valid: Past 24 hours /
-             Past Week / Past Month)
-    FIXED-3  'maxItems' limit key → 'rows'  (per-query limit, not total cap)
-    FIXED-4  Actor run status now validated before reading dataset
-    FIXED-5  _parse_date: ts[:len(fmt)] sliced on format string length (wrong) →
-             now uses datetime.fromisoformat() which handles all ISO variants
-    FIXED-6  URL extraction expanded: applyUrl → jobUrl → url →
-             externalApplyLink → jobPostingUrl
+    FIXED-2  'Past 3 Days' datePosted → 'Past Week'
+    FIXED-3  'maxItems' limit key → 'rows'
+    FIXED-4  Actor run status validated before reading dataset
+    FIXED-5  _parse_date: broken ts[:len(fmt)] → fromisoformat()
+    FIXED-6  URL extraction expanded: 5-field fallback chain
+    FIXED-7  (run 2) Actor ID hKByXkMQaIasn7ATK not found → now reads from
+             APIFY_ACTOR_ID env var; default changed to slug 'bebity/linkedin-jobs-scraper'
 """
 
 import os
@@ -42,9 +43,13 @@ log = logging.getLogger("apify_scraper")
 
 APIFY_TOKEN = os.environ.get("APIFY_TOKEN", "")
 
-# Bebity LinkedIn Jobs Scraper actor
-# https://apify.com/bebity/linkedin-jobs-scraper
-ACTOR_ID = "hKByXkMQaIasn7ATK"
+# FIXED-7: The hardcoded actor ID hKByXkMQaIasn7ATK returned "Actor was not found"
+# in the 2026-03-07 run. Actor IDs can change when authors update/rename actors.
+# Now reads from APIFY_ACTOR_ID env var so you can update it without a code change.
+# Default is the username/actor-name slug which is more stable than a raw ID.
+# To find the current ID: https://apify.com/bebity/linkedin-jobs-scraper
+_DEFAULT_ACTOR = "bebity/linkedin-jobs-scraper"
+ACTOR_ID = os.environ.get("APIFY_ACTOR_ID", _DEFAULT_ACTOR) or _DEFAULT_ACTOR
 
 # FIXED-3: 'rows' is per-query item limit; 25 per query × up to 8 queries ≈ 200 max
 ROWS_PER_QUERY   = 25
@@ -70,8 +75,11 @@ class ApifyScraper:
 
         # Build search term list from query engine output
         search_terms = self._extract_search_terms(queries)
-        log.info(f"[apify] Starting actor with {len(search_terms)} search terms: "
-                 f"{search_terms[:4]}{'...' if len(search_terms) > 4 else ''}")
+        log.info(
+            f"[apify] Actor: {ACTOR_ID!r} | "
+            f"{len(search_terms)} search terms: "
+            f"{search_terms[:4]}{'...' if len(search_terms) > 4 else ''}"
+        )
 
         # ── FIXED-1: 'queries' not 'keywords'
         # ── FIXED-2: 'Past Week' not 'Past 3 Days'  (only valid LinkedIn values:
@@ -93,7 +101,18 @@ class ApifyScraper:
                 timeout_secs=RUN_TIMEOUT_SECS,
             )
         except Exception as e:
-            log.error(f"[apify] Actor failed to start: {e}")
+            err = str(e)
+            if "not found" in err.lower() or "404" in err:
+                log.error(
+                    f"[apify] Actor '{ACTOR_ID}' was not found on the Apify platform. "
+                    f"The actor may have been renamed or removed. To fix:\n"
+                    f"  1. Go to https://apify.com/bebity/linkedin-jobs-scraper\n"
+                    f"  2. Copy the actor ID from the URL or the 'API' tab\n"
+                    f"  3. Add GitHub Secret: APIFY_ACTOR_ID=<new-id>\n"
+                    f"  Raw error: {err}"
+                )
+            else:
+                log.error(f"[apify] Actor failed to start: {err}")
             return []
 
         # ── FIXED-4: validate run status before reading dataset ───────────────

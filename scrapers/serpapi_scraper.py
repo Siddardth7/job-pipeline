@@ -7,6 +7,7 @@ Free tier: 100 searches/month (~3/day).
 
 Env vars required:
     SERPAPI_KEY  — from https://serpapi.com/
+    (also accepts SERPAPI_API_KEY as a fallback)
 
 Bug fixes in this version:
     - chips param was "date_range:3" (invalid) → now "date_posted:3days" (valid)
@@ -14,6 +15,10 @@ Bug fixes in this version:
     - apply_link extraction now tries multiple fields before dropping
     - Pagination added: fetches page 2 when page 1 has results (within quota)
     - SerpAPI error field now checked and logged
+    - FIXED (run 2): JSearch boolean queries passed to Google Jobs → returned 0.
+      Google Jobs is a natural language engine — OR/AND syntax causes
+      "Google hasn't returned any results for this query." for most queries.
+      Now uses short keyword phrases per cluster (identical strategy to Apify).
 """
 
 import os
@@ -64,29 +69,69 @@ ITAR_KEYWORDS = [
 class SerpApiScraper:
     """Scrapes Google Jobs via SerpApi."""
 
+    # ── Cluster → short Google Jobs phrase ───────────────────────────────────
+    # Google Jobs is a NATURAL LANGUAGE search engine — it does NOT support
+    # boolean operators (OR / AND / quotes).  Sending JSearch-style boolean
+    # queries returns: "Google hasn't returned any results for this query."
+    # These short phrases are what Google Jobs is designed to receive.
+    CLUSTER_QUERIES = {
+        "manufacturing":              "Manufacturing Engineer entry level",
+        "process":                    "Process Engineer entry level",
+        "materials":                  "Materials Engineer entry level",
+        "composites":                 "Composites Manufacturing Engineer",
+        "quality":                    "Quality Engineer entry level",
+        "industrial":                 "Industrial Engineer entry level",
+        "tooling_inspection":         "Tooling Engineer manufacturing",
+        "startup_manufacturing":      "Manufacturing Engineer NPI startup",
+        # Open-sweep clusters
+        "manufacturing_open":         "Manufacturing Engineer",
+        "quality_open":               "Quality Engineer",
+        "composites_open":            "Composites Engineer",
+        "materials_open":             "Materials Engineer",
+        "process_open":               "Process Engineer",
+        "startup_manufacturing_open": "NPI Engineer",
+        "industrial_open":            "Industrial Engineer",
+    }
+
     def run(self, queries: List[Dict]) -> List[Dict]:
         if not SERPAPI_KEY:
             log.warning("SERPAPI_KEY not set — returning empty results")
             return []
 
-        all_jobs: List[Dict] = []
-        seen:     set = set()
+        all_jobs:    List[Dict] = []
+        seen:        set        = set()
+        seen_phrases: set       = set()
 
         for q_dict in queries:
-            query_str = q_dict["query"]
-            cluster   = q_dict.get("cluster", "unknown")
-            log.info(f"[serpapi] Query ({cluster}): {query_str[:80]}...")
+            cluster = q_dict.get("cluster", "unknown")
+
+            # Convert cluster name → short Google Jobs phrase.
+            # Fall back to first 6 words of the JSearch query if cluster unknown.
+            phrase = self.CLUSTER_QUERIES.get(cluster)
+            if not phrase:
+                raw_q = q_dict.get("query", "")
+                # Strip boolean syntax; take first real words
+                phrase = " ".join(
+                    w for w in raw_q.replace('"', '').replace('(', '').split()
+                    if w.upper() not in ("OR", "AND", "NOT")
+                )[:60].strip()
+
+            if not phrase or phrase in seen_phrases:
+                continue
+            seen_phrases.add(phrase)
+
+            log.info(f"[serpapi] Query ({cluster}): {phrase!r}")
             time.sleep(REQUEST_DELAY)
 
             # Page 1
-            results, has_next = self._api_call(query_str, start=0)
+            results, has_next = self._api_call(phrase, start=0)
             for raw in results:
                 self._add_if_new(raw, cluster, seen, all_jobs)
 
             # Page 2 (when page 1 had results — doubles coverage within quota budget)
             if has_next and results:
                 time.sleep(REQUEST_DELAY)
-                results2, _ = self._api_call(query_str, start=RESULTS_PER_REQ)
+                results2, _ = self._api_call(phrase, start=RESULTS_PER_REQ)
                 for raw in results2:
                     self._add_if_new(raw, cluster, seen, all_jobs)
 
