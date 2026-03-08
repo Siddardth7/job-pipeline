@@ -1,140 +1,14 @@
 {
-  "green_jobs": [
-    {
-      "job_title": "Build Quality Engineer II",
-      "company_name": "Relativity Space",
-      "job_url": "https://boards.greenhouse.io/relativity/jobs/8381951002?gh_jid=8381951002",
-      "location": "Long Beach, California",
-      "posted_date": "2026-03-06",
-      "description": "<div class=&quot;content-intro&quot;><p><span style=&quot;font-family: arial, helvetica, sans-serif; font-size: 10pt;&quot;>At Relativity Space, we\u2019re building rockets to serve today\u2019s needs and tomorrow\u2019s breakthroughs. Our&nbsp;Terran R vehicle will deliver customer payloads to orbit, meeting the growing demand for launch&nbsp;capacity. But that\u2019s just the start. Achieving commercial success with Terran R will unlock new&nbsp;opportunities to advance science, exploration, and innovation, pione",
-      "source": "ats_greenhouse",
-      "cluster": "quality",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 65,
-      "boost_tags": [
-        "engineer i"
-      ],
-      "verdict": "GREEN"
-    }
-  ],
-  "yellow_jobs": [
-    {
-      "job_title": "2026 Entry Level Engineering Direct Hire Opportunities",
-      "company_name": "Dupont",
-      "job_url": "https://careers.dupont.com/us/en/job/246492W/2026-Entry-Level-Engineering-Direct-Hire-Opportunities?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
-      "location": "Richmond, VA (+5 others)",
-      "posted_date": "2026-03-07",
-      "description": "Join DuPont and become a part of an industry leader with deep materials science expertise, best-in-class manufacturing, and industry-leading innovations that make next-generation technology a reality for our customers. We believe in nurturing entry level engineering talent by providing a solid foundation for growth and development. We offer an environment that encourages creativity, innovation, and collaboration, providing our employees with opportunities to advance their careers. We are current",
-      "source": "serpapi",
-      "cluster": "process",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 69,
-      "boost_tags": [
-        "entry level"
-      ],
-      "verdict": "YELLOW"
-    },
-    {
-      "job_title": "Composites Manufacturing Engineer",
-      "company_name": "iCOMAT",
-      "job_url": "https://jobs.8vc.com/companies/icomat-2/jobs/69422223-composites-manufacturing-engineer?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
-      "location": "Gloucester Point, VA",
-      "posted_date": "2026-03-06",
-      "description": "Composites Manufacture \u00b7 Gloucester, UK\nComposites Manufacturing Engineer\n\nJoin iCOMAT \u2013 Revolutionising the Future of Lightweight Manufacturing!\n\niCOMAT is an advanced manufacturing company that invented Rapid Tow Shearing (RTS) - the only proven technology for producing defect-free curved-fiber composite parts at industrial scale. We deliver the lightest structures possible for aerospace, automotive, defense, and space, at a rate and cost efficiency that far exceeds existing composite producti",
-      "source": "serpapi",
-      "cluster": "composites",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 60,
-      "boost_tags": [],
-      "verdict": "YELLOW"
-    },
-    {
-      "job_title": "Manufacturing / Physical Distribution Process Engineer - Mehoopany",
-      "company_name": "PGBPGNGLOBAL",
-      "job_url": "https://www.pgcareers.com/eu/en/job/R000142178/Manufacturing-Physical-Distribution-Process-Engineer-Mehoopany?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
-      "location": "Mehoopany, PA",
-      "posted_date": "2026-03-06",
-      "description": "Job Location\nMehoopany\n\nJob Description\n\nHow would you like to improve machinery and process systems? We want entry level engineers who can handle dynamic work environments and who know how to think outside of the box. We rely on our engineers in manufacturing and our physical distribution centers to make our products to the highest of standards. If you would like to be a part of this process, then we want you to apply!\n\nAre you ready for the challenge?\n\nMeaningful work on Day 1\n\nWe produce high",
-      "source": "serpapi",
-      "cluster": "process",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 54,
-      "boost_tags": [],
-      "verdict": "YELLOW"
-    },
-    {
-      "job_title": "Manufacturing Engineer(Composites)",
-      "company_name": "Ajulia Executive Search",
-      "job_url": "https://www.disabledperson.com/jobs/70649865-manufacturing-engineer-composites?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
-      "location": "Lyman, SC",
-      "posted_date": "2026-03-06",
-      "description": "Manufacturing Engineer(Composites)Are you looking to make a career change to a stable company? This exciting opportunity offers a competitive salary plus an excellent benefits package including medical insurance, dental insurance, vision insurance and paid PTO.Does this position match your future career goals? Then this opportunity could be the right fit for you.Why should you apply?Competitive SalaryGreat BenefitsJob Requirements and Qualifications:Bachelor's degree in Mechanical, Plastics, or",
-      "source": "serpapi",
-      "cluster": "composites",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 54,
-      "boost_tags": [],
-      "verdict": "YELLOW"
-    },
-    {
-      "job_title": "Advanced Manufacturing Engineer",
-      "company_name": "Divergent Technologies",
-      "job_url": "https://job-boards.greenhouse.io/divergent/jobs/5081611008",
-      "location": "Torrance, California, United States",
-      "posted_date": "2026-03-06",
-      "description": "<div class=&quot;content-intro&quot;><p>Divergent is a technology company that has architected, invented, built, and commercialized an end-to-end factory system called the Divergent Adaptive Production System (DAPS) that comprehensively uses machine learning to optimally engineer, additively manufacture, and flexibly assemble complex integrated vehicle structures and subsystems. Products created using DAPS are superior in performance, lower in cost, rapidly customizable to meet mission and custo",
-      "source": "ats_greenhouse",
-      "cluster": "manufacturing",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 52,
-      "boost_tags": [],
-      "verdict": "YELLOW"
-    },
-    {
-      "job_title": "Metrology Engineer",
-      "company_name": "Divergent Technologies",
-      "job_url": "https://job-boards.greenhouse.io/divergent/jobs/5031249008",
-      "location": "Torrance, California, United States",
-      "posted_date": "2026-03-06",
-      "description": "<div class=&quot;content-intro&quot;><p>Divergent is a technology company that has architected, invented, built, and commercialized an end-to-end factory system called the Divergent Adaptive Production System (DAPS) that comprehensively uses machine learning to optimally engineer, additively manufacture, and flexibly assemble complex integrated vehicle structures and subsystems. Products created using DAPS are superior in performance, lower in cost, rapidly customizable to meet mission and custo",
-      "source": "ats_greenhouse",
-      "cluster": "tooling_inspection",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 52,
-      "boost_tags": [],
-      "verdict": "YELLOW"
-    },
-    {
-      "job_title": "Chemical Process Engineer - Manufacturing",
-      "company_name": "PGBPGNGLOBAL",
-      "job_url": "https://www.pgcareers.com/global/en/job/R000126185/Chemical-Process-Engineer-Manufacturing?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
-      "location": "Sacramento, CA",
-      "posted_date": "2026-03-07",
-      "description": "Job Location\nSACRAMENTO PLANT\n\nJob Description\n\nIdentifies, prioritizes and eliminates process losses. Responsible for building the process capability and control. Responsible for defining equipment standards, leading process benchmarking and reapplication, and building capability to do technical troubleshooting and process improvement.\n\nJob Qualifications\n\nHow would you like to improve machinery and process systems? We want entry level engineers who can handle dynamic work environments and who",
-      "source": "serpapi",
-      "cluster": "process",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 52,
-      "boost_tags": [],
-      "verdict": "YELLOW"
-    }
-  ],
+  "green_jobs": [],
+  "yellow_jobs": [],
   "summary": {
     "run_date": "2026-03-08",
-    "generated_utc": "2026-03-08T02:36:25.243069Z",
-    "total_scraped": 11,
+    "generated_utc": "2026-03-08T13:39:54.417526Z",
+    "total_scraped": 3,
     "duplicates_removed": 3,
     "filtered_jobs": 0,
-    "green_jobs": 1,
-    "yellow_jobs": 7,
+    "green_jobs": 0,
+    "yellow_jobs": 0,
     "promoted_companies": []
   }
 }
