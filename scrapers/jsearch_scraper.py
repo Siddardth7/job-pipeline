@@ -1,21 +1,30 @@
 #!/usr/bin/env python3
 """
-scrapers/jsearch_scraper.py — JobAgent v2 JSearch Scraper
+scrapers/jsearch_scraper.py — JobAgent v4.1
+JSearch / RapidAPI Scraper
 
-Queries RapidAPI JSearch with generated boolean queries.
-Free tier: 200 requests/month (~6/day).
+Queries the JSearch API (RapidAPI) using boolean cluster queries generated
+by the QueryEngine. Covers Google Jobs, LinkedIn, Indeed and other boards.
 
-Env vars required:
-    JSEARCH_API_KEY  — from https://rapidapi.com/letscrape-6bRBa3QguO5/api/jsearch
+Free tier:  200 requests/month  (~6/day).
+Orchestrator budget: 10 queries/day (shared across all 15 clusters).
+
+Env vars:
+    JSEARCH_API_KEY  — RapidAPI key from:
+                       https://rapidapi.com/letscrape-6bRBa3QguO5/api/jsearch
+
+Standard output schema (all scrapers match this):
+    job_title, company_name, job_url, location, posted_date,
+    description (500-char), source, cluster, itar_flag, itar_detail, raw_id
 """
 
 import os
 import json
 import time
 import logging
-from datetime import datetime, timezone
+from datetime import datetime
 from pathlib import Path
-from typing import List, Dict
+from typing import List, Dict, Optional
 
 try:
     import requests
@@ -30,50 +39,51 @@ except ImportError:
 
 log = logging.getLogger("jsearch_scraper")
 
-JSEARCH_API_KEY = os.environ.get("JSEARCH_API_KEY", "")
-JSEARCH_HOST = "jsearch.p.rapidapi.com"
-JSEARCH_URL = "https://jsearch.p.rapidapi.com/search"
+JSEARCH_API_KEY  = os.environ.get("JSEARCH_API_KEY", "")
+JSEARCH_HOST     = "jsearch.p.rapidapi.com"
+JSEARCH_URL      = "https://jsearch.p.rapidapi.com/search"
 
-REQUEST_DELAY    = 1.5    # seconds between calls
-RESULTS_PER_PAGE = 10     # passed as num_results; JSearch free tier max is 10
-DATE_POSTED      = "3days" # "today" | "3days" | "week" | "month"
+REQUEST_DELAY    = 1.5   # seconds between API calls
+RESULTS_PER_PAGE = 10    # JSearch free tier hard cap per request
+DATE_POSTED      = "3days"  # "today" | "3days" | "week" | "month"
 
+# Aggregator domains — if apply link points here, try job_google_link fallback
 REJECT_DOMAINS = [
     "indeed.com", "glassdoor.com", "ziprecruiter.com",
     "simplyhired.com", "monster.com", "careerbuilder.com",
-    "linkedin.com"
+    "linkedin.com",
 ]
 
 ITAR_KEYWORDS = [
     "security clearance", "us person", "itar", "export controlled",
     "classified", "us citizen or permanent resident",
     "must be authorized to work without sponsorship",
-    "u.s. citizen", "u.s. national", "permanent resident only"
+    "u.s. citizen", "u.s. national", "permanent resident only",
 ]
 
 
 class JSearchScraper:
-    """Scrapes jobs via JSearch API using generated query strings."""
+    """Scrapes jobs via JSearch API using QueryEngine boolean queries."""
 
     def run(self, queries: List[Dict]) -> List[Dict]:
-        """Execute all queries and return deduplicated job list."""
         if not JSEARCH_API_KEY:
-            log.warning("JSEARCH_API_KEY not set — returning empty results")
+            log.warning("[jsearch] JSEARCH_API_KEY not set — skipping")
             return []
 
         all_jobs: List[Dict] = []
         seen_ids: set = set()
 
         for q_dict in queries:
-            query_str = q_dict["query"]
-            cluster = q_dict.get("cluster", "unknown")
+            query_str = q_dict.get("query", "")
+            cluster   = q_dict.get("cluster", "unknown")
             log.info(f"[jsearch] Query ({cluster}): {query_str[:80]}...")
-            time.sleep(REQUEST_DELAY)
 
+            time.sleep(REQUEST_DELAY)
             raw_jobs = self._api_call(query_str)
+
             for raw in raw_jobs:
                 job_id = raw.get("job_id", "")
-                if job_id in seen_ids:
+                if job_id and job_id in seen_ids:
                     continue
                 seen_ids.add(job_id)
 
@@ -84,17 +94,19 @@ class JSearchScraper:
         log.info(f"[jsearch] Total unique jobs: {len(all_jobs)}")
         return all_jobs
 
+    # ── API call ──────────────────────────────────────────────────────────────
+
     def _api_call(self, query: str, retries: int = 2) -> List[Dict]:
         headers = {
-            "X-RapidAPI-Key": JSEARCH_API_KEY,
-            "X-RapidAPI-Host": JSEARCH_HOST
+            "X-RapidAPI-Key":  JSEARCH_API_KEY,
+            "X-RapidAPI-Host": JSEARCH_HOST,
         }
         params = {
-            "query":        query,
-            "num_results":  str(RESULTS_PER_PAGE),  # explicit; free tier cap is 10
-            "date_posted":  DATE_POSTED,
-            "country":      "us",
-            "language":     "en",
+            "query":       query,
+            "num_results": str(RESULTS_PER_PAGE),
+            "date_posted": DATE_POSTED,
+            "country":     "us",
+            "language":    "en",
         }
         for attempt in range(retries + 1):
             try:
@@ -102,59 +114,69 @@ class JSearchScraper:
                                  params=params, timeout=15)
                 if r.status_code == 429:
                     wait = 60 * (attempt + 1)
-                    log.warning(f"Rate limited. Waiting {wait}s...")
+                    log.warning(f"[jsearch] Rate limited — waiting {wait}s ...")
                     time.sleep(wait)
                     continue
                 if r.status_code == 403:
-                    log.error("JSearch quota exceeded or invalid key.")
+                    log.error("[jsearch] 403 Forbidden — quota exceeded or invalid key.")
                     return []
                 if r.status_code != 200:
-                    log.warning(f"JSearch returned {r.status_code}")
+                    log.warning(f"[jsearch] HTTP {r.status_code} — skipping query")
                     return []
-                return r.json().get("data", [])
+                data = r.json()
+                if "error" in data:
+                    log.error(f"[jsearch] API error: {data['error']}")
+                    return []
+                return data.get("data", [])
             except Exception as e:
-                log.error(f"JSearch request error: {e}")
+                log.error(f"[jsearch] Request error (attempt {attempt+1}): {e}")
                 if attempt < retries:
                     time.sleep(5)
         return []
 
-    def _normalize(self, raw: Dict, cluster: str) -> Dict | None:
-        """Convert JSearch raw job to standard schema."""
+    # ── Normalise ─────────────────────────────────────────────────────────────
+
+    def _normalize(self, raw: Dict, cluster: str) -> Optional[Dict]:
         apply_link = raw.get("job_apply_link", "") or ""
 
-        # Reject aggregator links
+        # Try to avoid aggregator links; fall back to google canonical link
         if self._is_aggregator(apply_link):
-            apply_link = raw.get("job_google_link", apply_link) or apply_link
-            if self._is_aggregator(apply_link):
-                return None
+            fallback = raw.get("job_google_link", "") or ""
+            if not self._is_aggregator(fallback):
+                apply_link = fallback
+            else:
+                return None   # both links are aggregators — drop
 
-        title = raw.get("job_title", "") or ""
-        company = raw.get("employer_name", "") or ""
-        desc = raw.get("job_description", "") or ""
+        if not apply_link:
+            return None
 
-        city = raw.get("job_city", "") or ""
-        state = raw.get("job_state", "") or ""
-        location = f"{city}, {state}".strip(", ") or "Unknown"
+        title   = raw.get("job_title",      "") or ""
+        company = raw.get("employer_name",  "") or ""
+        desc    = raw.get("job_description","") or ""
 
-        # Parse posted date
-        posted_raw = raw.get("job_posted_at_datetime_utc", "")
-        posted_date = self._parse_date(posted_raw)
+        city    = raw.get("job_city",  "") or ""
+        state   = raw.get("job_state", "") or ""
+        location = f"{city}, {state}".strip(", ") or "United States"
+
+        posted_date = self._parse_date(raw.get("job_posted_at_datetime_utc", ""))
 
         itar_flags = [kw for kw in ITAR_KEYWORDS if kw in desc.lower()]
 
         return {
-            "job_title": title,
+            "job_title":    title,
             "company_name": company,
-            "job_url": apply_link,
-            "location": location,
-            "posted_date": posted_date,
-            "description": desc[:500],  # truncate for storage
-            "source": "jsearch",
-            "cluster": cluster,
-            "itar_flag": len(itar_flags) > 0,
-            "itar_detail": ", ".join(itar_flags),
-            "raw_id": raw.get("job_id", ""),
+            "job_url":      apply_link,
+            "location":     location,
+            "posted_date":  posted_date,
+            "description":  desc[:500],
+            "source":       "jsearch",
+            "cluster":      cluster,
+            "itar_flag":    bool(itar_flags),
+            "itar_detail":  ", ".join(itar_flags),
+            "raw_id":       raw.get("job_id", ""),
         }
+
+    # ── Helpers ───────────────────────────────────────────────────────────────
 
     def _is_aggregator(self, url: str) -> bool:
         if not url:
@@ -166,8 +188,10 @@ class JSearchScraper:
         if not ts:
             return ""
         try:
-            dt = datetime.fromisoformat(ts.replace("Z", "+00:00"))
-            return dt.strftime("%Y-%m-%d")
+            return (
+                datetime.fromisoformat(ts.replace("Z", "+00:00"))
+                .strftime("%Y-%m-%d")
+            )
         except Exception:
             return ts[:10] if len(ts) >= 10 else ts
 
@@ -181,4 +205,6 @@ if __name__ == "__main__":
     queries = QueryEngine().generate_queries()[:3]
     scraper = JSearchScraper()
     jobs = scraper.run(queries)
-    print(json.dumps(jobs[:3], indent=2))
+    print(f"\n{len(jobs)} jobs found")
+    if jobs:
+        print(json.dumps(jobs[0], indent=2))

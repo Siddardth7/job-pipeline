@@ -1,33 +1,33 @@
 #!/usr/bin/env python3
 """
-scrapers/serpapi_scraper.py — JobAgent v4 SerpApi Scraper
+scrapers/serpapi_scraper.py — JobAgent v4.1
+SerpAPI / Google Jobs Scraper
 
-Queries SerpApi Google Jobs endpoint with generated queries.
-Free tier: 100 searches/month (~3/day).
+Queries Google Jobs via SerpAPI using short natural-language phrases.
+Google Jobs does NOT support boolean operators — short keyword phrases only.
 
-Env vars required:
-    SERPAPI_KEY  — from https://serpapi.com/
-    (also accepts SERPAPI_API_KEY as a fallback)
+Quota management (free tier: 100 searches/month):
+    - Runs ONLY on odd calendar days (date.toordinal() % 2 == 1)
+      → ~15 active days/month × 5 queries/day = 75 searches/month
+      → Safely under the 100/month cap with 25 searches headroom
+    - Orchestrator hard cap: 5 queries per run
 
-Bug fixes in this version:
-    - chips param was "date_range:3" (invalid) → now "date_posted:3days" (valid)
-    - num param was missing → now set to 20 results per request
-    - apply_link extraction now tries multiple fields before dropping
-    - Pagination added: fetches page 2 when page 1 has results (within quota)
-    - SerpAPI error field now checked and logged
-    - FIXED (run 2): JSearch boolean queries passed to Google Jobs → returned 0.
-      Google Jobs is a natural language engine — OR/AND syntax causes
-      "Google hasn't returned any results for this query." for most queries.
-      Now uses short keyword phrases per cluster (identical strategy to Apify).
+To override the day-alternation for testing:
+    Set env var  SERPAPI_FORCE_RUN=1
+
+Env vars:
+    SERPAPI_KEY      — API key from https://serpapi.com
+    SERPAPI_API_KEY  — Accepted as fallback (SerpAPI's documented name)
+    SERPAPI_FORCE_RUN — Set to "1" to bypass day-alternation check
 """
 
 import os
 import json
 import time
 import logging
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from pathlib import Path
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Tuple
 
 try:
     import requests
@@ -42,16 +42,15 @@ except ImportError:
 
 log = logging.getLogger("serpapi_scraper")
 
-# Accept both SERPAPI_KEY and SERPAPI_API_KEY (SerpAPI's own documented name).
-# GitHub secret may be stored under either name depending on when it was added.
-SERPAPI_KEY = os.environ.get("SERPAPI_KEY", "") or os.environ.get("SERPAPI_API_KEY", "")
-SERPAPI_URL = "https://serpapi.com/search"
+SERPAPI_KEY  = (
+    os.environ.get("SERPAPI_KEY", "")
+    or os.environ.get("SERPAPI_API_KEY", "")
+)
+SERPAPI_URL  = "https://serpapi.com/search"
 
-REQUEST_DELAY   = 2.0   # seconds between calls (SerpAPI rate limit)
-RESULTS_PER_REQ = 20    # Google Jobs supports up to 30-40 per page
-# FIX: was "date_range:3" which is NOT a valid Google Jobs chips value.
-# Google Jobs chips for date: date_posted:today / date_posted:3days / date_posted:week
-CHIPS_FILTER    = "date_posted:3days"
+REQUEST_DELAY   = 2.0   # seconds between calls
+RESULTS_PER_REQ = 20    # Google Jobs: up to ~30 per page; 20 is safe
+CHIPS_FILTER    = "date_posted:3days"  # valid: today / 3days / week / month
 
 AGGREGATOR_DOMAINS = [
     "indeed.com", "glassdoor.com", "ziprecruiter.com",
@@ -62,18 +61,35 @@ ITAR_KEYWORDS = [
     "security clearance", "us person", "itar", "export controlled",
     "classified", "us citizen or permanent resident",
     "must be authorized to work without sponsorship",
-    "u.s. citizen", "u.s. national", "permanent resident only"
+    "u.s. citizen", "u.s. national", "permanent resident only",
 ]
 
 
-class SerpApiScraper:
-    """Scrapes Google Jobs via SerpApi."""
+def should_run_today() -> bool:
+    """
+    Day-alternation gate: SerpAPI only runs on ODD-ordinal days.
+    This halves the monthly query spend (~75/month vs 150/month).
+    Bypass by setting SERPAPI_FORCE_RUN=1 in environment.
+    """
+    if os.environ.get("SERPAPI_FORCE_RUN", "").strip() == "1":
+        log.info("[serpapi] SERPAPI_FORCE_RUN=1 — bypassing day-alternation check")
+        return True
+    today_ordinal = date.today().toordinal()
+    runs_today = (today_ordinal % 2 == 1)
+    if not runs_today:
+        log.info(
+            f"[serpapi] Even-ordinal day ({today_ordinal}) — scheduled OFF today. "
+            f"Runs on odd days to stay within 100 searches/month free tier. "
+            f"Set SERPAPI_FORCE_RUN=1 to override."
+        )
+    return runs_today
 
-    # ── Cluster → short Google Jobs phrase ───────────────────────────────────
-    # Google Jobs is a NATURAL LANGUAGE search engine — it does NOT support
-    # boolean operators (OR / AND / quotes).  Sending JSearch-style boolean
-    # queries returns: "Google hasn't returned any results for this query."
-    # These short phrases are what Google Jobs is designed to receive.
+
+class SerpApiScraper:
+    """Scrapes Google Jobs via SerpAPI using short cluster phrases."""
+
+    # Short natural-language phrases per cluster.
+    # IMPORTANT: Google Jobs rejects boolean OR/AND operators entirely.
     CLUSTER_QUERIES = {
         "manufacturing":              "Manufacturing Engineer entry level",
         "process":                    "Process Engineer entry level",
@@ -95,22 +111,24 @@ class SerpApiScraper:
 
     def run(self, queries: List[Dict]) -> List[Dict]:
         if not SERPAPI_KEY:
-            log.warning("SERPAPI_KEY not set — returning empty results")
+            log.warning("[serpapi] SERPAPI_KEY not set — skipping")
             return []
 
-        all_jobs:    List[Dict] = []
-        seen:        set        = set()
-        seen_phrases: set       = set()
+        # Day-alternation check
+        if not should_run_today():
+            return []
+
+        all_jobs:     List[Dict] = []
+        seen:         set        = set()
+        seen_phrases: set        = set()
 
         for q_dict in queries:
             cluster = q_dict.get("cluster", "unknown")
+            phrase  = self.CLUSTER_QUERIES.get(cluster)
 
-            # Convert cluster name → short Google Jobs phrase.
-            # Fall back to first 6 words of the JSearch query if cluster unknown.
-            phrase = self.CLUSTER_QUERIES.get(cluster)
             if not phrase:
+                # Strip boolean syntax from any unknown cluster query
                 raw_q = q_dict.get("query", "")
-                # Strip boolean syntax; take first real words
                 phrase = " ".join(
                     w for w in raw_q.replace('"', '').replace('(', '').split()
                     if w.upper() not in ("OR", "AND", "NOT")
@@ -128,7 +146,7 @@ class SerpApiScraper:
             for raw in results:
                 self._add_if_new(raw, cluster, seen, all_jobs)
 
-            # Page 2 (when page 1 had results — doubles coverage within quota budget)
+            # Page 2 — only when page 1 had results (doubles coverage, 1 extra credit)
             if has_next and results:
                 time.sleep(REQUEST_DELAY)
                 results2, _ = self._api_call(phrase, start=RESULTS_PER_REQ)
@@ -137,6 +155,8 @@ class SerpApiScraper:
 
         log.info(f"[serpapi] Total unique jobs: {len(all_jobs)}")
         return all_jobs
+
+    # ── Internal helpers ──────────────────────────────────────────────────────
 
     def _add_if_new(self, raw: Dict, cluster: str, seen: set, out: List):
         key = (
@@ -151,71 +171,62 @@ class SerpApiScraper:
         if normalized:
             out.append(normalized)
 
-    def _api_call(self, query: str, start: int = 0) -> tuple[List[Dict], bool]:
-        """
-        Returns (results, has_next_page).
-        Logs the SerpAPI 'error' field if present so failures are visible.
-        """
+    def _api_call(self, query: str, start: int = 0) -> Tuple[List[Dict], bool]:
+        """Returns (results, has_next_page). Logs API-level error field if set."""
         params = {
-            "engine":   "google_jobs",
-            "q":        query,
-            "hl":       "en",
-            "gl":       "us",
-            "chips":    CHIPS_FILTER,   # FIX: was "date_range:3"
-            "num":      RESULTS_PER_REQ, # FIX: was missing
-            "api_key":  SERPAPI_KEY,
+            "engine":  "google_jobs",
+            "q":       query,
+            "hl":      "en",
+            "gl":      "us",
+            "chips":   CHIPS_FILTER,
+            "num":     RESULTS_PER_REQ,
+            "api_key": SERPAPI_KEY,
         }
         if start > 0:
             params["start"] = start
-
         try:
             r = requests.get(SERPAPI_URL, params=params, timeout=20)
-
             if r.status_code == 401:
-                log.error("SerpApi: 401 Unauthorized — invalid API key.")
+                log.error("[serpapi] 401 Unauthorized — check SERPAPI_KEY")
                 return [], False
             if r.status_code == 429:
-                log.error("SerpApi: 429 Too Many Requests — quota exhausted.")
+                log.error("[serpapi] 429 Too Many Requests — quota exhausted")
                 return [], False
             if r.status_code != 200:
-                log.warning(f"SerpApi: HTTP {r.status_code}")
+                log.warning(f"[serpapi] HTTP {r.status_code}")
                 return [], False
 
             data = r.json()
-
-            # FIX: check for API-level error field
             if "error" in data:
-                log.error(f"SerpApi API error: {data['error']}")
+                log.error(f"[serpapi] API error: {data['error']}")
                 return [], False
 
-            results   = data.get("jobs_results", [])
-            has_next  = bool(data.get("serpapi_pagination", {}).get("next"))
+            results  = data.get("jobs_results", [])
+            has_next = bool(data.get("serpapi_pagination", {}).get("next"))
 
             if not results:
-                log.info(f"  [serpapi] No jobs returned for this query (chips={CHIPS_FILTER})")
+                log.info(f"  [serpapi] No results for this phrase (chips={CHIPS_FILTER})")
 
             return results, has_next
 
         except Exception as e:
-            log.error(f"SerpApi request error: {e}")
+            log.error(f"[serpapi] Request error: {e}")
             return [], False
 
     def _normalize(self, raw: Dict, cluster: str) -> Optional[Dict]:
-        title   = raw.get("title",        "") or ""
-        company = raw.get("company_name", "") or ""
-        location = raw.get("location",   "") or ""
-        desc    = raw.get("description",  "") or ""
+        title    = raw.get("title",        "") or ""
+        company  = raw.get("company_name", "") or ""
+        location = raw.get("location",     "") or ""
+        desc     = raw.get("description",  "") or ""
 
-        # FIX: try multiple URL sources before dropping
         apply_link = self._best_apply_link(raw)
         if not apply_link:
-            log.debug(f"  [serpapi] No usable URL for: {title!r} @ {company} — dropping")
+            log.debug(f"  [serpapi] No usable URL for {title!r} @ {company} — dropping")
             return None
 
         posted_date = self._parse_ago(
             raw.get("detected_extensions", {}).get("posted_at", "")
         )
-
         itar_flags = [kw for kw in ITAR_KEYWORDS if kw in desc.lower()]
 
         return {
@@ -227,38 +238,37 @@ class SerpApiScraper:
             "description":  desc[:500],
             "source":       "serpapi",
             "cluster":      cluster,
-            "itar_flag":    len(itar_flags) > 0,
+            "itar_flag":    bool(itar_flags),
             "itar_detail":  ", ".join(itar_flags),
             "raw_id":       "",
         }
 
     def _best_apply_link(self, raw: Dict) -> str:
-        """
-        FIX: Was only checking apply_options and discarding jobs with no direct link.
-        Now tries multiple sources in priority order.
-        """
-        apply_options = raw.get("apply_options", []) or []
+        options = raw.get("apply_options", []) or []
 
-        # Priority 1: direct company / non-aggregator apply link
-        for opt in apply_options:
+        # Priority 1 — direct company / non-aggregator link
+        for opt in options:
             link = opt.get("link", "") or ""
             if link and not self._is_aggregator(link) and "google.com" not in link:
                 return link
 
-        # Priority 2: any non-Google link (including aggregators — merge pipeline will filter)
-        for opt in apply_options:
+        # Priority 2 — any non-Google link (merge pipeline will re-filter aggregators)
+        for opt in options:
             link = opt.get("link", "") or ""
             if link and "google.com" not in link:
                 return link
 
-        # Priority 3: job_id-based Google Jobs link (stable canonical URL)
+        # Priority 3 — Google Jobs canonical URL from job_id
         job_id = raw.get("job_id", "") or ""
         if job_id:
-            return f"https://www.google.com/search?q=jobs&ibp=htl;jobs#htivrt=jobs&htidocid={job_id}"
+            return (
+                f"https://www.google.com/search?q=jobs&ibp=htl;jobs"
+                f"#htivrt=jobs&htidocid={job_id}"
+            )
 
-        # Priority 4: any apply link including google
-        if apply_options:
-            link = apply_options[0].get("link", "") or ""
+        # Priority 4 — anything at all
+        if options:
+            link = options[0].get("link", "") or ""
             if link:
                 return link
 
@@ -269,21 +279,21 @@ class SerpApiScraper:
         return any(d in lower for d in AGGREGATOR_DOMAINS)
 
     def _parse_ago(self, text: str) -> str:
-        """Convert '3 days ago', '2 hours ago' etc. → ISO date string."""
+        """Convert '3 days ago', '2 hours ago' → ISO date string."""
         if not text:
             return ""
-        text_l = text.lower()
+        t = text.lower()
         now = datetime.utcnow()
         try:
-            if "hour" in text_l or "minute" in text_l or "just" in text_l:
+            if "hour" in t or "minute" in t or "just" in t:
                 return now.strftime("%Y-%m-%d")
-            if "day" in text_l:
-                days = int("".join(c for c in text_l if c.isdigit()) or "1")
+            if "day" in t:
+                days = int("".join(c for c in t if c.isdigit()) or "1")
                 return (now - timedelta(days=days)).strftime("%Y-%m-%d")
-            if "week" in text_l:
-                weeks = int("".join(c for c in text_l if c.isdigit()) or "1")
+            if "week" in t:
+                weeks = int("".join(c for c in t if c.isdigit()) or "1")
                 return (now - timedelta(weeks=weeks)).strftime("%Y-%m-%d")
-            if "month" in text_l:
+            if "month" in t:
                 return (now - timedelta(days=30)).strftime("%Y-%m-%d")
         except Exception:
             pass
