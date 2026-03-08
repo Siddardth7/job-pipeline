@@ -15,7 +15,7 @@ Input schema (harvestapi/linkedin-job-search):
     jobTitles        list[str]   required — job title keyword phrases
     locations        list[str]   optional — LinkedIn location strings
     postedLimit      str         optional — "Past 24 hours" | "Past Week" | "Past Month"
-    experienceLevel  str         optional — "Entry Level" | "Mid Level" | "Senior Level"
+    experienceLevel  list[str]   optional — ["Entry Level"] | ["Mid Level"] | ["Senior Level"]  (MUST be array)
     sortBy           str         optional — "relevance" | "date"
     maxItems         int         optional — max results per job title query (0 = all pages)
 
@@ -106,7 +106,7 @@ class ApifyScraper:
             "jobTitles":       job_titles,
             "locations":       ["United States"],
             "postedLimit":     "Past Week",
-            "experienceLevel": "Entry Level",
+            "experienceLevel": ["Entry Level"],
             "sortBy":          "date",
             "maxItems":        MAX_ITEMS,
         }

@@ -74,11 +74,18 @@ jobs:
           if [ -f output/jobs_clean_latest.json ]; then
             python3 - <<'EOF'
           import json
-          jobs = json.load(open("output/jobs_clean_latest.json"))
-          green  = [j for j in jobs if j.get("classification") == "GREEN"]
-          yellow = [j for j in jobs if j.get("classification") == "YELLOW"]
-          # Source breakdown
           from collections import Counter
+          raw = json.load(open("output/jobs_clean_latest.json"))
+          # company_intelligence writes: {"green_jobs": [...], "yellow_jobs": [...], "summary": {...}}
+          # Handle both dict format (current) and flat list format (legacy)
+          if isinstance(raw, dict):
+              green  = raw.get("green_jobs",  [])
+              yellow = raw.get("yellow_jobs", [])
+              jobs   = green + yellow
+          else:
+              jobs   = raw
+              green  = [j for j in jobs if j.get("verdict") == "GREEN"]
+              yellow = [j for j in jobs if j.get("verdict") == "YELLOW"]
           sources = Counter(j.get("source","?") for j in jobs)
           print("=" * 55)
           print("JobAgent v4.1 — Daily Run Summary")

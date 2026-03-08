@@ -179,7 +179,7 @@ class SerpApiScraper:
             "hl":      "en",
             "gl":      "us",
             "chips":   CHIPS_FILTER,
-            "num":     RESULTS_PER_REQ,
+            # NOTE: "num" removed — not valid for google_jobs engine (HTTP 400)
             "api_key": SERPAPI_KEY,
         }
         if start > 0:
