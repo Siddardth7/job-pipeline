@@ -204,9 +204,52 @@
       "name": "Ducommun",
       "domain": "ducommun.com",
       "industry": "Aerospace"
+    },
+    {
+      "name": "Otto Aerospace",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Re:Build Manufacturing",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Redwood Materials",
+      "domain": "",
+      "industry": "Auto-promoted"
     }
   ],
-  "promotion_tracking": {},
+  "promotion_tracking": {
+    "Otto Aerospace": [
+      "2026-03-09",
+      "2026-03-09",
+      "2026-03-09",
+      "2026-03-09",
+      "2026-03-09",
+      "2026-03-09",
+      "2026-03-09",
+      "2026-03-09"
+    ],
+    "AST SpaceMobile": [
+      "2026-03-09"
+    ],
+    "Re:Build Manufacturing": [
+      "2026-03-09",
+      "2026-03-09",
+      "2026-03-09"
+    ],
+    "Divergent Technologies": [
+      "2026-03-09",
+      "2026-03-09"
+    ],
+    "Redwood Materials": [
+      "2026-03-09",
+      "2026-03-09",
+      "2026-03-09"
+    ]
+  },
   "rejected_companies": [],
   "industry_keywords": [
     "Manufacturing",
