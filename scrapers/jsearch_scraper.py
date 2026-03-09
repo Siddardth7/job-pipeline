@@ -38,8 +38,9 @@ JSEARCH_HOST = "jsearch.p.rapidapi.com"
 JSEARCH_URL = "https://jsearch.p.rapidapi.com/search"
 
 SCRIPT_DIR = Path(__file__).parent
-CONFIG_PATH = SCRIPT_DIR / "M628_JSEARCH_CONFIG.json"
-OUTPUT_DIR = SCRIPT_DIR / "output"
+ROOT_DIR = SCRIPT_DIR.parent  # repo root (one level up from scrapers/)
+CONFIG_PATH = ROOT_DIR / "data" / "M628_JSEARCH_CONFIG.json"
+OUTPUT_DIR = ROOT_DIR / "output"
 OUTPUT_DIR.mkdir(exist_ok=True)
 
 # Rate limiting
