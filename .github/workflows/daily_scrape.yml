@@ -31,96 +31,65 @@ jobs:
       - name: Install dependencies
         run: pip install requests apify-client python-dotenv
 
-      - name: Ensure output directories exist
-        run: mkdir -p output temp data
-
-      # STEP 1 - JSearch scraper
-      # Hard cap: 10 minutes. If JSearch times out (exit 2) or errors,
-      # the fallback TheirStack scraper runs automatically in STEP 1b.
-      - name: Run JSearch scraper
-        id: jsearch
-        continue-on-error: true
-        timeout-minutes: 10
+      # Ensure temp/ and output/ directories exist before any scraper runs
+      # Also create __init__.py files for Python package imports
+      - name: Create working directories
         run: |
-          python scrapers/jsearch_scraper.py
-          echo "jsearch_exit=$?" >> $GITHUB_OUTPUT
+          mkdir -p temp
+          mkdir -p output
+          mkdir -p data
+          touch engine/__init__.py
+          touch scrapers/__init__.py
+          touch pipeline/__init__.py
 
-      # STEP 1b - Fallback scraper (only runs if JSearch failed or timed out)
-      - name: Run fallback scraper (JSearch timed out)
-        if: steps.jsearch.outcome == 'failure' || steps.jsearch.outputs.jsearch_exit == '2'
-        continue-on-error: true
-        run: |
-          echo "[fallback] JSearch did not complete — running TheirStack backup scraper..."
-          python scrapers/theirstack_scraper.py
-
-      # STEP 2 - SerpAPI (Google Jobs)
-      - name: Run SerpAPI scraper
-        continue-on-error: true
-        run: python scrapers/serpapi_scraper.py
-
-      # STEP 3 - Apify (LinkedIn)
-      - name: Run Apify scraper
-        continue-on-error: true
-        run: python scrapers/apify_scraper.py --run
-
-      # STEP 4 - ATS direct scraper (Greenhouse + Lever)
-      - name: Run ATS scraper
-        continue-on-error: true
-        run: python scrapers/ats_scraper.py
-
-      # STEP 5 - Scraper Orchestrator (coordinates + deduplicates all scraper output)
-      - name: Run Scraper Orchestrator
-        continue-on-error: true
+      # STEP 1 — Run the scraper orchestrator
+      # The orchestrator coordinates all 5 scrapers in sequence:
+      #   1. ATS (Greenhouse + Lever — free, no quota)
+      #   2. JSearch (RapidAPI — 200 req/month)
+      #   3. Apify (LinkedIn — pay-per-compute)
+      #   4. SerpApi (Google Jobs — 100 req/month)
+      #   5. TheirStack (conditional fallback — 200 credits/month)
+      # It handles quota management, fallback logic, and writes all outputs
+      # to temp/jobs_*.json for the merge pipeline.
+      - name: Run scraper orchestrator
+        timeout-minutes: 20
         run: python -m engine.scraper_orchestrator
 
-      # STEP 6 - Merge all sources into jobs_latest.json
-      - name: Merge all sources
-        run: python pipeline/merge_pipeline.py
+      # STEP 2 — Merge all sources + apply hard filter stack (F1–F9)
+      # Reads temp/jobs_*.json, normalises, deduplicates, and filters.
+      # Outputs temp/jobs_clean_intermediate.json
+      - name: Merge and filter all sources
+        run: python -m pipeline.merge_pipeline
 
-      # STEP 7 - Company intelligence (GREEN/YELLOW/RED classification)
-      - name: Run Company Intelligence
-        run: python pipeline/company_intelligence.py
+      # STEP 3 — Company intelligence classification (GREEN / YELLOW / RED)
+      # Promotes YELLOW → GREEN after ≥3 sightings in 30 days.
+      # Outputs output/jobs_clean_latest.json (final feed for JobAgent UI)
+      - name: Run company intelligence
+        run: python -m pipeline.company_intelligence
 
-      # STEP 8 - Commit everything
+      # STEP 4 — Commit everything
       - name: Commit and push results
         run: |
           git config user.name "Job Scraper Bot"
           git config user.email "bot@noreply.github.com"
-          git add -f output/
+          git add -f output/ data/
           git diff --staged --quiet || git commit -m "Daily scrape $(date +%Y-%m-%d)"
           git push
 
-      # STEP 9 - Print final summary
+      # STEP 5 — Print final clean feed summary
       - name: Show clean feed summary
         if: always()
         run: |
           if [ -f output/jobs_clean_latest.json ]; then
-            python3 - <<'EOF'
+            python3 -c "
           import json
-          from collections import Counter
-          raw = json.load(open("output/jobs_clean_latest.json"))
-          if isinstance(raw, dict):
-              green  = raw.get("green_jobs",  [])
-              yellow = raw.get("yellow_jobs", [])
-              jobs   = green + yellow
-          else:
-              jobs   = raw
-              green  = [j for j in jobs if j.get("verdict") == "GREEN"]
-              yellow = [j for j in jobs if j.get("verdict") == "YELLOW"]
-          sources = Counter(j.get("source","?") for j in jobs)
-          print("=" * 55)
-          print("JobAgent — Daily Run Summary")
-          print("=" * 55)
-          print(f"GREEN  jobs : {len(green)}")
-          print(f"YELLOW jobs : {len(yellow)}")
-          print(f"TOTAL  jobs : {len(jobs)}")
-          print(f"\nBy source:  {dict(sources)}")
-          if green:
-              print("\nGREEN companies:")
-              for j in green:
-                  print(f"  • {j.get('company_name','?')} — {j.get('job_title','?')}")
-          print("=" * 55)
-          EOF
+          d = json.load(open('output/jobs_clean_latest.json'))
+          s = d.get('summary', {})
+          r = d.get('filter_report', {})
+          print('=== CLEAN FEED READY ===')
+          print(f'Input: {r.get(chr(34)+\"total_in\"+chr(34),0)} | Passed: {r.get(chr(34)+\"passed\"+chr(34),0)} ({r.get(chr(34)+\"pass_rate\"+chr(34),\"?\")}) | Rejected: {r.get(chr(34)+\"rejected\"+chr(34),0)}')
+          print(f'GREEN:{s.get(chr(34)+\"green\"+chr(34),0)} YELLOW:{s.get(chr(34)+\"yellow\"+chr(34),0)} Tier1:{s.get(chr(34)+\"tier1\"+chr(34),0)} H1B-YES:{s.get(chr(34)+\"h1b_yes\"+chr(34),0)} Open-finds:{s.get(chr(34)+\"open_search\"+chr(34),0)}')
+          "
           else
-            echo "WARNING: output/jobs_clean_latest.json not found"
+            echo "WARNING: jobs_clean_latest.json not found"
           fi
