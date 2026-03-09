@@ -219,6 +219,11 @@
       "name": "Redwood Materials",
       "domain": "",
       "industry": "Auto-promoted"
+    },
+    {
+      "name": "Divergent Technologies",
+      "domain": "",
+      "industry": "Auto-promoted"
     }
   ],
   "promotion_tracking": {
@@ -233,6 +238,7 @@
       "2026-03-09"
     ],
     "AST SpaceMobile": [
+      "2026-03-09",
       "2026-03-09"
     ],
     "Re:Build Manufacturing": [
@@ -241,6 +247,8 @@
       "2026-03-09"
     ],
     "Divergent Technologies": [
+      "2026-03-09",
+      "2026-03-09",
       "2026-03-09",
       "2026-03-09"
     ],
