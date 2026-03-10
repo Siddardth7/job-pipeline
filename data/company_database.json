@@ -224,6 +224,11 @@
       "name": "Divergent Technologies",
       "domain": "",
       "industry": "Auto-promoted"
+    },
+    {
+      "name": "AST SpaceMobile",
+      "domain": "",
+      "industry": "Auto-promoted"
     }
   ],
   "promotion_tracking": {
@@ -239,7 +244,8 @@
     ],
     "AST SpaceMobile": [
       "2026-03-09",
-      "2026-03-09"
+      "2026-03-09",
+      "2026-03-10"
     ],
     "Re:Build Manufacturing": [
       "2026-03-09",
@@ -256,6 +262,21 @@
       "2026-03-09",
       "2026-03-09",
       "2026-03-09"
+    ],
+    "Progress Rail": [
+      "2026-03-10"
+    ],
+    "Dupont": [
+      "2026-03-10"
+    ],
+    "Zachry Group": [
+      "2026-03-10"
+    ],
+    "LanceSoft": [
+      "2026-03-10"
+    ],
+    "The Goodyear Tire & Rubber Company": [
+      "2026-03-10"
     ]
   },
   "rejected_companies": [],
