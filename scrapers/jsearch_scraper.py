@@ -39,7 +39,12 @@ JSEARCH_URL = "https://jsearch.p.rapidapi.com/search"
 
 SCRIPT_DIR = Path(__file__).parent
 ROOT_DIR = SCRIPT_DIR.parent  # repo root (one level up from scrapers/)
-CONFIG_PATH = ROOT_DIR / "data" / "M628_JSEARCH_CONFIG.json"
+
+# Config file location: check data/ first, then repo root (GitHub Actions layout)
+_config_in_data = ROOT_DIR / "data" / "M628_JSEARCH_CONFIG.json"
+_config_in_root = ROOT_DIR / "M628_JSEARCH_CONFIG.json"
+CONFIG_PATH = _config_in_data if _config_in_data.exists() else _config_in_root
+
 OUTPUT_DIR = ROOT_DIR / "output"
 OUTPUT_DIR.mkdir(exist_ok=True)
 

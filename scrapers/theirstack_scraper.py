@@ -59,15 +59,11 @@ log = logging.getLogger("theirstack_scraper")
 THEIRSTACK_API_KEY = os.environ.get("THEIRSTACK_API_KEY", "")
 THEIRSTACK_URL     = "https://api.theirstack.com/v1/jobs/search"
 
-# ── Activation threshold ──────────────────────────────────────────────────────
-# Orchestrator passes total_primary_jobs when calling this scraper.
-# If total_primary_jobs >= FALLBACK_THRESHOLD, this scraper returns [] immediately.
-FALLBACK_THRESHOLD = 20  # activate if primary scrapers yield fewer than 20 jobs
-
 # ── Credit conservation ───────────────────────────────────────────────────────
 # 1 credit = 1 job returned. Free tier = 200 credits/month.
-# At MAX_JOBS_PER_RUN=25, we can activate up to 8 times/month within free tier.
-MAX_JOBS_PER_RUN = 25
+# 200 ÷ 30 days = 6.6 jobs/day → budget 6 jobs per run to stay safely under cap.
+# TheirStack now runs EVERY DAY (no longer conditional on primary scraper yield).
+MAX_JOBS_PER_RUN = 6
 
 ITAR_KEYWORDS = [
     "security clearance", "us person", "itar", "export controlled",
@@ -110,24 +106,16 @@ class TheirStackScraper:
         """
         Args:
             queries:            QueryEngine output (used for cluster labels only)
-            total_primary_jobs: Total jobs already found by primary scrapers.
-                                If >= FALLBACK_THRESHOLD, this scraper skips.
+            total_primary_jobs: Total jobs already found by primary scrapers (informational only).
         """
         if not THEIRSTACK_API_KEY:
             log.warning("[theirstack] THEIRSTACK_API_KEY not set — skipping")
             return []
 
-        if total_primary_jobs >= FALLBACK_THRESHOLD:
-            log.info(
-                f"[theirstack] Primary scrapers yielded {total_primary_jobs} jobs "
-                f"(>= threshold {FALLBACK_THRESHOLD}) — backup not needed today"
-            )
-            return []
-
-        log.warning(
-            f"[theirstack] PRIMARY SCRAPERS LOW: {total_primary_jobs} jobs found "
-            f"(threshold: {FALLBACK_THRESHOLD}). Activating TheirStack backup. "
-            f"Will consume up to {MAX_JOBS_PER_RUN} credits from 200/month free tier."
+        log.info(
+            f"[theirstack] Running daily (budget: {MAX_JOBS_PER_RUN} jobs/day, "
+            f"~{MAX_JOBS_PER_RUN * 30}/month from 200 credit free tier). "
+            f"Primary scrapers found {total_primary_jobs} jobs today."
         )
 
         raw_jobs = self._fetch_jobs()

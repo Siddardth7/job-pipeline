@@ -14,8 +14,7 @@ Scraper stack (in execution order):
     5. theirstack_scraper— TheirStack backup (200 credits/month, CONDITIONAL only)
 
 TheirStack activation:
-    Only runs if total raw jobs from scrapers 1–4 < THEIRSTACK_THRESHOLD (20).
-    This conserves the 200-credit monthly free tier for genuine low-yield days.
+    Runs daily with a 6 jobs/day budget (200 credits/month free tier ÷ 30 days).
 
 Changes from v4.0:
     - Added ats_scraper (scraper 1 — always runs first, no quota)
@@ -58,16 +57,15 @@ DATA_DIR.mkdir(exist_ok=True)
 # apify:      2 actor runs/day (each run queries 8 titles × 25 jobs = 200 jobs max).
 # serpapi:    100 searches/month. Budget 5/day; scraper internally alternates days
 #             → effectively 75 searches/month.
-# theirstack: 200 credits/month (1 credit/job). Triggered conditionally by
-#             THEIRSTACK_THRESHOLD logic, not quota counter.
+# theirstack: 200 credits/month (1 credit/job). Runs daily at 6 jobs/day budget.
+#             No longer conditional — always runs for additional coverage.
 QUOTAS = {
     "jsearch":    10,
     "serpapi":     5,   # reduced from 10; scraper also alternates days internally
     "apify":       2,
 }
 
-# TheirStack activates only when total raw jobs from other scrapers < this number
-THEIRSTACK_THRESHOLD = 20
+# TheirStack now runs daily — no threshold gating
 
 logging.basicConfig(
     level=logging.INFO,
@@ -226,10 +224,9 @@ def run():
                 "status": "error", "error": str(exc), "jobs_found": 0
             }
 
-    # ── Step 5: TheirStack — conditional fallback ──────────────────────────────
+    # ── Step 5: TheirStack — runs daily (6 jobs/day budget) ──────────────────
     log.info(
-        f"[theirstack] Primary scrapers total: {total_primary_jobs} jobs "
-        f"(threshold: {THEIRSTACK_THRESHOLD})"
+        f"[theirstack] Running daily. Primary scrapers found {total_primary_jobs} jobs."
     )
     theirstack_output = TEMP_DIR / "jobs_theirstack.json"
     try:
@@ -246,21 +243,16 @@ def run():
             state["theirstack"]["activations_today"] = (
                 state["theirstack"].get("activations_today", 0) + 1
             )
-            log.info(f"[theirstack] ✓ {ts_count} backup jobs added")
+            total_primary_jobs += ts_count
+            log.info(f"[theirstack] ✓ {ts_count} jobs added")
             run_record["scrapers"]["theirstack"] = {
-                "status":    "activated",
-                "triggered": total_primary_jobs < THEIRSTACK_THRESHOLD,
+                "status":    "success",
                 "jobs_found": ts_count,
             }
         else:
-            if total_primary_jobs >= THEIRSTACK_THRESHOLD:
-                run_record["scrapers"]["theirstack"] = {
-                    "status": "skipped", "reason": "threshold_not_met", "jobs_found": 0
-                }
-            else:
-                run_record["scrapers"]["theirstack"] = {
-                    "status": "zero_results", "jobs_found": 0
-                }
+            run_record["scrapers"]["theirstack"] = {
+                "status": "zero_results", "jobs_found": 0
+            }
 
     except Exception as exc:
         log.error(f"[theirstack] Scraper raised an exception: {exc}")
