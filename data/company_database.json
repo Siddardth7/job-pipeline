@@ -249,6 +249,21 @@
       "name": "Hermeus",
       "domain": "",
       "industry": "Auto-promoted"
+    },
+    {
+      "name": "Dupont",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Loft Orbital",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Dawn Aerospace",
+      "domain": "",
+      "industry": "Auto-promoted"
     }
   ],
   "promotion_tracking": {
@@ -288,6 +303,7 @@
     ],
     "Dupont": [
       "2026-03-10",
+      "2026-03-11",
       "2026-03-11"
     ],
     "Zachry Group": [
@@ -316,6 +332,7 @@
       "2026-03-11"
     ],
     "WestRock Company": [
+      "2026-03-11",
       "2026-03-11"
     ],
     "INDEPENDENT CAN COMPANY": [
@@ -337,12 +354,16 @@
       "2026-03-11"
     ],
     "Entegee": [
+      "2026-03-11",
       "2026-03-11"
     ],
     "Crane Company": [
+      "2026-03-11",
       "2026-03-11"
     ],
     "Loft Orbital": [
+      "2026-03-11",
+      "2026-03-11",
       "2026-03-11",
       "2026-03-11"
     ],
@@ -359,6 +380,8 @@
       "2026-03-11"
     ],
     "Dawn Aerospace": [
+      "2026-03-11",
+      "2026-03-11",
       "2026-03-11",
       "2026-03-11"
     ],
@@ -403,6 +426,51 @@
       "2026-03-11"
     ],
     "Honda Dev. and Mfg. of Am.,LLC": [
+      "2026-03-11"
+    ],
+    "Boeing Co": [
+      "2026-03-11"
+    ],
+    "DuPont": [
+      "2026-03-11"
+    ],
+    "DC Fabricators": [
+      "2026-03-11"
+    ],
+    "ATR International": [
+      "2026-03-11"
+    ],
+    "Terex Corporation": [
+      "2026-03-11"
+    ],
+    "Detroit Thermal Systems, LLC - Tier 1 Automotive Supplier": [
+      "2026-03-11"
+    ],
+    "AirBurners": [
+      "2026-03-11"
+    ],
+    "Thermo Fisher Scientific": [
+      "2026-03-11"
+    ],
+    "Procter & Gamble": [
+      "2026-03-11"
+    ],
+    "Envista": [
+      "2026-03-11"
+    ],
+    "PRL Industries, Inc.": [
+      "2026-03-11"
+    ],
+    "Avery Dennison": [
+      "2026-03-11"
+    ],
+    "The Hershey Company": [
+      "2026-03-11"
+    ],
+    "VirtualVocations": [
+      "2026-03-11"
+    ],
+    "TD Bank": [
       "2026-03-11"
     ]
   },
