@@ -229,6 +229,26 @@
       "name": "AST SpaceMobile",
       "domain": "",
       "industry": "Auto-promoted"
+    },
+    {
+      "name": "Otto Aviation",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "The Pivot Group Network",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Beta Technologies",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Hermeus",
+      "domain": "",
+      "industry": "Auto-promoted"
     }
   ],
   "promotion_tracking": {
@@ -267,7 +287,8 @@
       "2026-03-10"
     ],
     "Dupont": [
-      "2026-03-10"
+      "2026-03-10",
+      "2026-03-11"
     ],
     "Zachry Group": [
       "2026-03-10"
@@ -277,6 +298,112 @@
     ],
     "The Goodyear Tire & Rubber Company": [
       "2026-03-10"
+    ],
+    "Corbus": [
+      "2026-03-11"
+    ],
+    "Otto Aviation": [
+      "2026-03-11",
+      "2026-03-11",
+      "2026-03-11",
+      "2026-03-11",
+      "2026-03-11",
+      "2026-03-11",
+      "2026-03-11",
+      "2026-03-11"
+    ],
+    "PCB Piezotronics, Inc.": [
+      "2026-03-11"
+    ],
+    "WestRock Company": [
+      "2026-03-11"
+    ],
+    "INDEPENDENT CAN COMPANY": [
+      "2026-03-11"
+    ],
+    "Actalent": [
+      "2026-03-11"
+    ],
+    "Florida International University": [
+      "2026-03-11"
+    ],
+    "Airbus": [
+      "2026-03-11"
+    ],
+    "3205 St. Jude Medical, Cardiology Division, I": [
+      "2026-03-11"
+    ],
+    "Abbott Laboratories": [
+      "2026-03-11"
+    ],
+    "Entegee": [
+      "2026-03-11"
+    ],
+    "Crane Company": [
+      "2026-03-11"
+    ],
+    "Loft Orbital": [
+      "2026-03-11",
+      "2026-03-11"
+    ],
+    "Acara Solutions, An Aleron Company": [
+      "2026-03-11"
+    ],
+    "Global Connect Technologies": [
+      "2026-03-11"
+    ],
+    "W3Global Inc.": [
+      "2026-03-11"
+    ],
+    "Stellantis": [
+      "2026-03-11"
+    ],
+    "Dawn Aerospace": [
+      "2026-03-11",
+      "2026-03-11"
+    ],
+    "The Pivot Group Network": [
+      "2026-03-11",
+      "2026-03-11",
+      "2026-03-11",
+      "2026-03-11"
+    ],
+    "Schluter Systems L.P": [
+      "2026-03-11"
+    ],
+    "Aegis Manufacturing & Engineering": [
+      "2026-03-11"
+    ],
+    "Beta Technologies": [
+      "2026-03-11",
+      "2026-03-11",
+      "2026-03-11"
+    ],
+    "Meta": [
+      "2026-03-11"
+    ],
+    "Hired by Matrix": [
+      "2026-03-11"
+    ],
+    "JABIL CIRCUIT, INC": [
+      "2026-03-11"
+    ],
+    "Hermeus": [
+      "2026-03-11",
+      "2026-03-11",
+      "2026-03-11"
+    ],
+    "Computer Task Group, Inc": [
+      "2026-03-11"
+    ],
+    "Apetan Consulting LLC": [
+      "2026-03-11"
+    ],
+    "NAVAIRWARCENAC DIV": [
+      "2026-03-11"
+    ],
+    "Honda Dev. and Mfg. of Am.,LLC": [
+      "2026-03-11"
     ]
   },
   "rejected_companies": [],
