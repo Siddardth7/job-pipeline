@@ -25,10 +25,10 @@ API reference:
     Docs:      https://theirstack.com/en/docs/api-reference/jobs/search_jobs_v1
 
 Key filter parameters used:
-    job_title_pattern_or      list[str]   regex patterns for title matching
-    posted_at_max_age_days    int         max age of job postings in days
-    company_country_code_or   list[str]   ISO country codes (["US"])  ← correct field name
-    limit                     int         max results per response (max 25 on free tier)
+    job_title_pattern_or   list[str]   regex patterns for title matching
+    posted_at_max_age_days int         max age of job postings in days
+    job_country_code_or    list[str]   ISO country codes (["US"])  ← correct field per API spec
+    limit                  int         max results per response (max 25 on free tier)
     page                   int         0-based page number
     order_by               list[dict]  [{field, desc}]
 
@@ -147,20 +147,21 @@ class TheirStackScraper:
             "Accept":        "application/json",
         }
         payload = {
-            "job_title_pattern_or":       TITLE_PATTERNS,
-            "posted_at_max_age_days":     7,
-            "company_country_code_or":    ["US"],
-            "limit":                      MAX_JOBS_PER_RUN,
-            "page":                  0,
+            "job_title_pattern_or":   TITLE_PATTERNS,
+            "posted_at_max_age_days": 7,
+            "job_country_code_or":    ["US"],   # correct field per TheirStack v1 API spec
+            "limit":                  MAX_JOBS_PER_RUN,
+            "page":                   0,
             "order_by": [
                 {"field": "date_posted", "desc": True}
             ],
-            # Prefer direct ATS source URLs over aggregators
-            "job_url_domain_or": [
-                "greenhouse.io", "lever.co", "ashbyhq.com",
-                "workday.com", "icims.com", "taleo.net",
-                "myworkdayjobs.com", "careers-page.com",
+            # Exclude senior titles at API level to save credits
+            "job_title_pattern_not": [
+                r"(?i)\bsenior\b", r"(?i)\bsr\.\b", r"(?i)\bstaff\b",
+                r"(?i)\bprincipal\b", r"(?i)\bdirector\b", r"(?i)\bmanager\b",
+                r"(?i)\bvp\b", r"(?i)\blead\s+engineer\b",
             ],
+            # NOTE: job_url_domain_or does NOT exist in the API — removed (was causing 422)
         }
         log.debug(f"[theirstack] POST {THEIRSTACK_URL} payload={json.dumps(payload)[:200]}")
         try:
