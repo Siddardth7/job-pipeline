@@ -25,10 +25,10 @@ API reference:
     Docs:      https://theirstack.com/en/docs/api-reference/jobs/search_jobs_v1
 
 Key filter parameters used:
-    job_title_pattern_or   list[str]   regex patterns for title matching
-    posted_at_max_age_days int         max age of job postings in days
-    country_code_or        list[str]   ISO country codes (["US"])
-    limit                  int         max results per response (max 25 on free tier)
+    job_title_pattern_or      list[str]   regex patterns for title matching
+    posted_at_max_age_days    int         max age of job postings in days
+    company_country_code_or   list[str]   ISO country codes (["US"])  ← correct field name
+    limit                     int         max results per response (max 25 on free tier)
     page                   int         0-based page number
     order_by               list[dict]  [{field, desc}]
 
@@ -147,10 +147,10 @@ class TheirStackScraper:
             "Accept":        "application/json",
         }
         payload = {
-            "job_title_pattern_or":  TITLE_PATTERNS,
-            "posted_at_max_age_days": 7,
-            "country_code_or":       ["US"],
-            "limit":                 MAX_JOBS_PER_RUN,
+            "job_title_pattern_or":       TITLE_PATTERNS,
+            "posted_at_max_age_days":     7,
+            "company_country_code_or":    ["US"],
+            "limit":                      MAX_JOBS_PER_RUN,
             "page":                  0,
             "order_by": [
                 {"field": "date_posted", "desc": True}

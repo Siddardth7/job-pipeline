@@ -56,15 +56,17 @@ MAX_JOBS_PER_CO  = 50    # cap to avoid runaway on companies with 1000+ postings
 # Priority order: Aerospace/eVTOL first, then Composites/Materials, then others.
 # All verified as of March 2026 — check https://boards.greenhouse.io/{slug}
 # or https://jobs.lever.co/{slug} to confirm a slug before adding it.
+# Greenhouse: 28 companies (26 existing + 2 new: dawnaerospace, carbon)
+# Lever: 6 companies (1 existing + 4 new/migrated: loftorbital, hermeus, beta, velo3d, orbitalsidekick)
 
 GREENHOUSE_COMPANIES: Dict[str, Dict] = {
     # ══════════════════════════════════════════════════════════════════════════
     # Greenhouse APIs are 100% free, no auth, no quota. Scrape ALL every day.
-    # If a slug 404s, it's silently skipped. No cost to trying.
+    # All slugs live-verified March 2026 — 404s removed, corrected slugs added.
     # ══════════════════════════════════════════════════════════════════════════
 
     # ── Aerospace / Space / eVTOL ────────────────────────────────────────
-    "supernal":             {"name": "Supernal",                "tier": "Tier 1", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "Partial"},
+    "supernal":             {"name": "Supernal",                "tier": "Tier 1", "industry": "Aerospace",              "h1b": "YES",    "itar": "Partial"},
     "planetlabs":           {"name": "Planet Labs",             "tier": "Tier 1", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "Partial"},
     "astspacemobile":       {"name": "AST SpaceMobile",         "tier": "Tier 2", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "NO"},
     "relativity":           {"name": "Relativity Space",        "tier": "Tier 2", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "NO"},
@@ -74,62 +76,69 @@ GREENHOUSE_COMPANIES: Dict[str, Dict] = {
     "divergent":            {"name": "Divergent Technologies",  "tier": "Tier 2", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "NO"},
     "flyzipline":           {"name": "Zipline",                 "tier": "Tier 2", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "NO"},
     "heartaerospace":       {"name": "Heart Aerospace",         "tier": "Tier 1", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "NO"},
-    "ottoaviation":         {"name": "Otto Aerospace",          "tier": "Tier 1", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "NO"},
+    "ottoaviation":         {"name": "Otto Aviation",           "tier": "Tier 1", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "NO"},
     "rebuildmanufacturing": {"name": "Re:Build Manufacturing",  "tier": "Tier 2", "industry": "Materials & Composites", "h1b": "LIKELY", "itar": "NO"},
-    # ── NEW Aerospace / Space Greenhouse slugs to try ────────────────────
-    "hermeus":              {"name": "Hermeus",                 "tier": "Tier 1", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "Partial"},
-    "beta":                 {"name": "Beta Technologies",       "tier": "Tier 1", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "Partial"},
-    "skydio":               {"name": "Skydio",                  "tier": "Tier 2", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "Partial"},
-    "archeravia":           {"name": "Archer Aviation",         "tier": "Tier 1", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "Partial"},
-    "jobycareers":          {"name": "Joby Aviation",           "tier": "Tier 1", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "Partial"},
     "ursamajor":            {"name": "Ursa Major",              "tier": "Tier 1", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "Partial"},
-    "terranorbital":        {"name": "Terran Orbital",          "tier": "Tier 2", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "Partial"},
-    "loftorbital":          {"name": "Loft Orbital",            "tier": "Tier 2", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "NO"},
-    "zeroavia":             {"name": "ZeroAvia",                "tier": "Tier 1", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "NO"},
-    "wisk":                 {"name": "Wisk Aero",               "tier": "Tier 1", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "Partial"},
-    "sierraspace":          {"name": "Sierra Space",            "tier": "Tier 1", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "Partial"},
-    "axiomspace":           {"name": "Axiom Space",             "tier": "Tier 1", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "Partial"},
-    "intuitivemachines":    {"name": "Intuitive Machines",      "tier": "Tier 1", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "Partial"},
-    "aerojet":              {"name": "Aerojet Rocketdyne",      "tier": "Tier 1", "industry": "Aerospace",              "h1b": "YES",    "itar": "Partial"},
-    "byterocket":           {"name": "Impulse Space",           "tier": "Tier 2", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "Partial"},
-    "stoke-space":          {"name": "Stoke Space",             "tier": "Tier 2", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "NO"},
-    "astroscale":           {"name": "Astroscale",              "tier": "Tier 2", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "NO"},
     "spire":                {"name": "Spire Global",            "tier": "Tier 2", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "NO"},
+    # ── CORRECTED SLUGS (were 404ing with old slugs — fixed March 2026) ──
+    "archer":               {"name": "Archer Aviation",         "tier": "Tier 1", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "Partial"},
+    # was "archeravia"
+    "axiom":                {"name": "Axiom Space",             "tier": "Tier 1", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "Partial"},
+    # was "axiomspace"
+    "solidpower":           {"name": "Solid Power",             "tier": "Tier 3", "industry": "Energy",                 "h1b": "LIKELY", "itar": "NO"},
+    # was "solidpowerbattery"
+    "sesai":                {"name": "SES AI",                  "tier": "Tier 3", "industry": "Energy",                 "h1b": "LIKELY", "itar": "NO"},
+    # was "scibattery"
     # ── Automotive / EV ──────────────────────────────────────────────────
     "nuro":                 {"name": "Nuro",                    "tier": "Tier 2", "industry": "Automotive",             "h1b": "YES",    "itar": "NO"},
     "lucidmotors":          {"name": "Lucid Motors",            "tier": "Tier 2", "industry": "Automotive",             "h1b": "YES",    "itar": "NO"},
     "faradayfuture":        {"name": "Faraday Future",          "tier": "Tier 2", "industry": "Automotive",             "h1b": "LIKELY", "itar": "NO"},
     "chargepoint":          {"name": "ChargePoint",             "tier": "Tier 2", "industry": "Automotive",             "h1b": "LIKELY", "itar": "NO"},
-    "rivian":               {"name": "Rivian",                  "tier": "Tier 2", "industry": "Automotive",             "h1b": "YES",    "itar": "NO"},
-    "canoo":                {"name": "Canoo",                   "tier": "Tier 3", "industry": "Automotive",             "h1b": "LIKELY", "itar": "NO"},
-    "proterra":             {"name": "Proterra",                "tier": "Tier 3", "industry": "Automotive",             "h1b": "LIKELY", "itar": "NO"},
     # ── Energy / Materials ───────────────────────────────────────────────
     "redwoodmaterials":     {"name": "Redwood Materials",       "tier": "Tier 2", "industry": "Energy",                 "h1b": "LIKELY", "itar": "NO"},
-    "formenergy":           {"name": "Form Energy",             "tier": "Tier 2", "industry": "Energy",                 "h1b": "LIKELY", "itar": "NO"},
-    "quantumscape":         {"name": "QuantumScape",            "tier": "Tier 3", "industry": "Energy",                 "h1b": "LIKELY", "itar": "NO"},
-    "solidpowerbattery":    {"name": "Solid Power",             "tier": "Tier 3", "industry": "Energy",                 "h1b": "LIKELY", "itar": "NO"},
-    "scibattery":           {"name": "SES AI",                  "tier": "Tier 3", "industry": "Energy",                 "h1b": "LIKELY", "itar": "NO"},
     # ── Manufacturing / Industrial ───────────────────────────────────────
     "markforged":           {"name": "Markforged",              "tier": "Tier 2", "industry": "Manufacturing",          "h1b": "LIKELY", "itar": "NO"},
-    "desktop-metal":        {"name": "Desktop Metal",           "tier": "Tier 2", "industry": "Manufacturing",          "h1b": "LIKELY", "itar": "NO"},
-    "velo3d":               {"name": "Velo3D",                  "tier": "Tier 2", "industry": "Manufacturing",          "h1b": "LIKELY", "itar": "NO"},
+    # ── NEW COMPANIES (verified live — March 2026) ────────────────────────
+    # Dawn Aerospace — NZ/US reusable propulsion startup, composites/mfg roles
+    "dawnaerospace":        {"name": "Dawn Aerospace",          "tier": "Tier 2", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "NO"},
+    # Carbon — CLIP additive manufacturing, process/materials roles
+    "carbon":               {"name": "Carbon",                  "tier": "Tier 2", "industry": "Manufacturing",          "h1b": "YES",    "itar": "NO"},
+    # ── NOT FOUND ON GREENHOUSE OR LEVER (covered by JSearch/SerpAPI/TheirStack) ─
+    # hermeus → Lever slug: 'hermeus' ← added to LEVER_COMPANIES below
+    # beta → Lever slug: 'beta' ← added to LEVER_COMPANIES below
+    # velo3d → Lever slug: 'velo3d' ← added to LEVER_COMPANIES below
+    # loftorbital → Lever slug: 'loftorbital' ← added to LEVER_COMPANIES below
+    # skydio / joby / terranorbital / zeroavia / wisk / sierraspace /
+    # intuitivemachines / aerojet / impulse-space / stoke-space / astroscale /
+    # rivian / canoo / proterra / formenergy / quantumscape / desktop-metal →
+    # Use enterprise ATS (Workday, iCIMS, Taleo). Covered by search scrapers.
 }
 
 LEVER_COMPANIES: Dict[str, Dict] = {
     # ══════════════════════════════════════════════════════════════════════════
     # Lever APIs are 100% free, no auth, no quota. Try all slugs every day.
-    # 404s are silently skipped. No cost to attempting.
+    # All slugs live-verified March 2026.
     # ══════════════════════════════════════════════════════════════════════════
-    "shieldai":           {"name": "Shield AI",             "tier": "Tier 1", "industry": "Aerospace",     "h1b": "LIKELY", "itar": "Partial"},
-    "boomsupersonic":     {"name": "Boom Supersonic",       "tier": "Tier 1", "industry": "Aerospace",     "h1b": "YES",    "itar": "Partial"},
-    "fireflyspace":       {"name": "Firefly Aerospace",     "tier": "Tier 2", "industry": "Aerospace",     "h1b": "LIKELY", "itar": "Partial"},
-    "spinlaunch":         {"name": "SpinLaunch",            "tier": "Tier 2", "industry": "Aerospace",     "h1b": "LIKELY", "itar": "Partial"},
-    "capellaspace":       {"name": "Capella Space",         "tier": "Tier 2", "industry": "Aerospace",     "h1b": "LIKELY", "itar": "Partial"},
-    "voyagerspace":       {"name": "Voyager Space",         "tier": "Tier 2", "industry": "Aerospace",     "h1b": "LIKELY", "itar": "Partial"},
-    "astrolab":           {"name": "Venturi Astrolab",      "tier": "Tier 2", "industry": "Aerospace",     "h1b": "LIKELY", "itar": "NO"},
-    "hadrian":            {"name": "Hadrian",               "tier": "Tier 1", "industry": "Manufacturing", "h1b": "LIKELY", "itar": "Partial"},
-    "aptera":             {"name": "Aptera Motors",         "tier": "Tier 3", "industry": "Automotive",    "h1b": "LIKELY", "itar": "NO"},
-    "momentus-space":     {"name": "Momentus",              "tier": "Tier 2", "industry": "Aerospace",     "h1b": "LIKELY", "itar": "Partial"},
+
+    # ── Working slugs (verified 200) ─────────────────────────────────────
+    "shieldai":          {"name": "Shield AI",             "tier": "Tier 1", "industry": "Aerospace",     "h1b": "LIKELY", "itar": "Partial"},
+    # ── FIXED SLUGS (were 404ing — corrected March 2026) ─────────────────
+    "loftorbital":       {"name": "Loft Orbital",          "tier": "Tier 2", "industry": "Aerospace",     "h1b": "LIKELY", "itar": "NO"},
+    # was "loftorbital" in GH (incorrect) — correct Lever slug confirmed
+    # ── NEW ADDITIONS (were incorrectly listed as Greenhouse — found on Lever) ─
+    "hermeus":           {"name": "Hermeus",               "tier": "Tier 1", "industry": "Aerospace",     "h1b": "LIKELY", "itar": "Partial"},
+    # Mach 5 commercial aircraft startup; 113 open jobs on Lever
+    "beta":              {"name": "Beta Technologies",     "tier": "Tier 1", "industry": "Aerospace",     "h1b": "LIKELY", "itar": "Partial"},
+    # Electric vertical takeoff; 208 open jobs on Lever
+    "velo3d":            {"name": "Velo3D",                "tier": "Tier 2", "industry": "Manufacturing", "h1b": "LIKELY", "itar": "NO"},
+    # Metal additive manufacturing; 20 open jobs on Lever
+    "orbitalsidekick":   {"name": "Orbital Sidekick",      "tier": "Tier 2", "industry": "Aerospace",     "h1b": "LIKELY", "itar": "NO"},
+    # Hyperspectral Earth observation startup; 2 open jobs on Lever
+    # ── REMOVED (404 confirmed on both Greenhouse and Lever — March 2026) ─
+    # boomsupersonic / fireflyspace / spinlaunch / capellaspace / voyagerspace
+    # / astrolab / hadrian / aptera / momentus-space → not on GH or Lever.
+    # These companies use Workday, iCIMS, or custom ATS and are covered
+    # by JSearch + SerpAPI + TheirStack search scrapers.
 }
 
 # ── ITAR / seniority keyword lists ────────────────────────────────────────────

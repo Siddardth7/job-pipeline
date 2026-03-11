@@ -50,10 +50,8 @@ OUTPUT_DIR.mkdir(exist_ok=True)
 
 # Rate limiting
 REQUEST_DELAY = 1.5        # seconds between API calls
-# FREE TIER MATH: 200 requests/month ÷ 30 days = 6 req/day budget
-# 3 companies × 2 keywords = 6 calls/day = ~180/month (safe under 200)
-# Full 303-company cycle completes in ~101 days
-MAX_REQUESTS_PER_RUN = 6   # hard cap: 6/day × 30 = 180/month under free tier
+# Quota cap removed — JSearch runs full batch rotation every day.
+MAX_REQUESTS_PER_RUN = 9999  # effectively unlimited
 BATCH_SIZE = 3             # 3 companies × 2 keywords = 6 calls/day  [Option C: was higher]
 KEYWORDS_PER_COMPANY = 2   # use top 2 keywords only (was 4)
 MAX_RESULTS_PER_QUERY = 10

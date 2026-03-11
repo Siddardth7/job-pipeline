@@ -7,18 +7,16 @@ Queries Google Jobs via SerpAPI using short natural-language phrases.
 Google Jobs does NOT support boolean operators — short keyword phrases only.
 
 Quota management (free tier: 100 searches/month):
-    - Runs ONLY on odd calendar days (date.toordinal() % 2 == 1)
-      → ~15 active days/month × 5 queries/day = 75 searches/month
-      → Safely under the 100/month cap with 25 searches headroom
-    - Orchestrator hard cap: 5 queries per run
+    - Runs EVERY day (day-alternation removed — running unrestricted for monitoring).
+    - Orchestrator hard cap removed — all queries run per execution.
 
-To override the day-alternation for testing:
-    Set env var  SERPAPI_FORCE_RUN=1
+To force a test run:
+    Set env var  SERPAPI_FORCE_RUN=1  (kept for backwards compatibility, now a no-op)
 
 Env vars:
     SERPAPI_KEY      — API key from https://serpapi.com
     SERPAPI_API_KEY  — Accepted as fallback (SerpAPI's documented name)
-    SERPAPI_FORCE_RUN — Set to "1" to bypass day-alternation check
+    SERPAPI_FORCE_RUN — Legacy override (now always runs regardless)
 """
 
 import os
@@ -67,22 +65,11 @@ ITAR_KEYWORDS = [
 
 def should_run_today() -> bool:
     """
-    Day-alternation gate: SerpAPI only runs on ODD-ordinal days.
-    This halves the monthly query spend (~75/month vs 150/month).
-    Bypass by setting SERPAPI_FORCE_RUN=1 in environment.
+    Always returns True — day-alternation removed.
+    SerpAPI now runs every day for full monitoring coverage.
+    SERPAPI_FORCE_RUN kept for backwards compatibility but has no effect.
     """
-    if os.environ.get("SERPAPI_FORCE_RUN", "").strip() == "1":
-        log.info("[serpapi] SERPAPI_FORCE_RUN=1 — bypassing day-alternation check")
-        return True
-    today_ordinal = date.today().toordinal()
-    runs_today = (today_ordinal % 2 == 1)
-    if not runs_today:
-        log.info(
-            f"[serpapi] Even-ordinal day ({today_ordinal}) — scheduled OFF today. "
-            f"Runs on odd days to stay within 100 searches/month free tier. "
-            f"Set SERPAPI_FORCE_RUN=1 to override."
-        )
-    return runs_today
+    return True
 
 
 class SerpApiScraper:
