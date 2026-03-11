@@ -1,42 +1,22 @@
 {
-  "generated_utc": "2026-03-11T14:06:16.319354Z",
+  "generated_utc": "2026-03-11T17:09:35.868453Z",
   "summary": {
     "run_date": "2026-03-11",
     "total_scraped": 21,
-    "green": 1,
+    "green": 0,
     "yellow": 0,
     "tier1": 0,
     "h1b_yes": 0,
     "open_search": 0,
-    "duplicates_removed": 20,
+    "duplicates_removed": 21,
     "filtered_jobs": 0,
     "promoted_companies": []
   },
   "filter_report": {
     "total_in": 21,
-    "passed": 1,
-    "rejected": 20,
-    "pass_rate": "5%"
+    "passed": 0,
+    "rejected": 21,
+    "pass_rate": "0%"
   },
-  "jobs": [
-    {
-      "id": "Redwood-Materials-0",
-      "role": "Field Quality Engineer, Energy Storage",
-      "company": "Redwood Materials",
-      "location": "San Francisco, California, United States",
-      "type": "Full-time",
-      "link": "https://boards.greenhouse.io/redwoodmaterials/jobs/5823614004?gh_jid=5823614004",
-      "posted": "2026-03-11",
-      "itar_flag": false,
-      "itar_detail": "",
-      "tier": "",
-      "h1b": "LIKELY",
-      "industry": "",
-      "source": "ats_greenhouse",
-      "reason": "Scraped (ats_greenhouse)",
-      "match": 52,
-      "verdict": "GREEN",
-      "domain_verified": false
-    }
-  ]
+  "jobs": []
 }
