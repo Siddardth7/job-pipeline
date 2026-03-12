@@ -264,6 +264,11 @@
       "name": "Dawn Aerospace",
       "domain": "",
       "industry": "Auto-promoted"
+    },
+    {
+      "name": "Crane Company",
+      "domain": "",
+      "industry": "Auto-promoted"
     }
   ],
   "promotion_tracking": {
@@ -339,7 +344,8 @@
       "2026-03-11"
     ],
     "Actalent": [
-      "2026-03-11"
+      "2026-03-11",
+      "2026-03-12"
     ],
     "Florida International University": [
       "2026-03-11"
@@ -351,7 +357,8 @@
       "2026-03-11"
     ],
     "Abbott Laboratories": [
-      "2026-03-11"
+      "2026-03-11",
+      "2026-03-12"
     ],
     "Entegee": [
       "2026-03-11",
@@ -359,7 +366,8 @@
     ],
     "Crane Company": [
       "2026-03-11",
-      "2026-03-11"
+      "2026-03-11",
+      "2026-03-12"
     ],
     "Loft Orbital": [
       "2026-03-11",
@@ -368,7 +376,8 @@
       "2026-03-11"
     ],
     "Acara Solutions, An Aleron Company": [
-      "2026-03-11"
+      "2026-03-11",
+      "2026-03-12"
     ],
     "Global Connect Technologies": [
       "2026-03-11"
@@ -472,6 +481,42 @@
     ],
     "TD Bank": [
       "2026-03-11"
+    ],
+    "Freudenberg Group": [
+      "2026-03-12"
+    ],
+    "Independent Can Company": [
+      "2026-03-12"
+    ],
+    "Indium Corporation": [
+      "2026-03-12"
+    ],
+    "Medium": [
+      "2026-03-12"
+    ],
+    "Michael Page International Inc.": [
+      "2026-03-12"
+    ],
+    "Renewyx": [
+      "2026-03-12"
+    ],
+    "PrideStaff": [
+      "2026-03-12"
+    ],
+    "Moog, Inc.": [
+      "2026-03-12"
+    ],
+    "Nammo Defense Systems, Inc": [
+      "2026-03-12"
+    ],
+    "Super Radiator Coils": [
+      "2026-03-12"
+    ],
+    "Qcells": [
+      "2026-03-12"
+    ],
+    "Myrias Optics": [
+      "2026-03-12"
     ]
   },
   "rejected_companies": [],
