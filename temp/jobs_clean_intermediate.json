@@ -1,15 +1,15 @@
 {
-  "generated_utc": "2026-03-12T16:54:06.465676Z",
+  "generated_utc": "2026-03-12T17:06:17.861254Z",
   "stats": {
-    "total_raw": 167,
+    "total_raw": 149,
     "schema_rejected": 0,
-    "f3_aggregator": 9,
-    "f4_age": 121,
-    "f5_duplicates": 0,
-    "f6_seniority": 3,
+    "f3_aggregator": 5,
+    "f4_age": 90,
+    "f5_duplicates": 20,
+    "f6_seniority": 1,
     "f7_role": 6,
     "f8_itar": 4,
-    "f9_blacklist": 1,
+    "f9_blacklist": 0,
     "final_count": 23
   },
   "jobs": [

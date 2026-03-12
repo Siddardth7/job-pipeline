@@ -269,6 +269,21 @@
       "name": "Crane Company",
       "domain": "",
       "industry": "Auto-promoted"
+    },
+    {
+      "name": "Aegis Manufacturing & Engineering",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Procter & Gamble",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Freudenberg Group",
+      "domain": "",
+      "industry": "Auto-promoted"
     }
   ],
   "promotion_tracking": {
@@ -405,6 +420,7 @@
     ],
     "Aegis Manufacturing & Engineering": [
       "2026-03-11",
+      "2026-03-12",
       "2026-03-12"
     ],
     "Beta Technologies": [
@@ -464,6 +480,7 @@
     ],
     "Procter & Gamble": [
       "2026-03-11",
+      "2026-03-12",
       "2026-03-12"
     ],
     "Envista": [
@@ -485,6 +502,7 @@
       "2026-03-11"
     ],
     "Freudenberg Group": [
+      "2026-03-12",
       "2026-03-12",
       "2026-03-12"
     ],
@@ -522,36 +540,47 @@
       "2026-03-12"
     ],
     "Beyond Gravity": [
+      "2026-03-12",
       "2026-03-12"
     ],
     "Nobel Biocare": [
+      "2026-03-12",
       "2026-03-12"
     ],
     "Legrand, North America": [
+      "2026-03-12",
       "2026-03-12"
     ],
     "Figure": [
+      "2026-03-12",
       "2026-03-12"
     ],
     "Excelitas Technologies Corp.": [
+      "2026-03-12",
       "2026-03-12"
     ],
     "ASML": [
+      "2026-03-12",
       "2026-03-12"
     ],
     "Capgemini": [
+      "2026-03-12",
       "2026-03-12"
     ],
     "Lakeside Manufacturing, Inc": [
+      "2026-03-12",
       "2026-03-12"
     ],
     "Hikma": [
+      "2026-03-12",
       "2026-03-12"
     ],
     "Atlantic Union Bank": [
+      "2026-03-12",
       "2026-03-12"
     ],
     "Placer.ai": [
+      "2026-03-12",
       "2026-03-12"
     ]
   },
