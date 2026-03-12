@@ -156,10 +156,16 @@ class ApifyScraper:
         try:
             for item in client.dataset(dataset_id).iterate_items():
                 item_count += 1
+                # HarvestAPI returns location (and sometimes other fields) as dicts
+                # — coerce everything to str before .lower() to avoid AttributeError
+                def _str(v):
+                    if isinstance(v, dict):
+                        return v.get("city", "") or v.get("name", "") or str(v)
+                    return str(v or "")
                 key = (
-                    (item.get("company") or {}).get("name", "").lower(),
-                    (item.get("title", "") or "").lower(),
-                    (item.get("location", "") or "").lower(),
+                    _str((item.get("company") or {}).get("name", "")),
+                    _str(item.get("title", "")).lower(),
+                    _str(item.get("location", "")).lower(),
                 )
                 if key in seen:
                     continue
@@ -198,9 +204,19 @@ class ApifyScraper:
         harvestapi fields: title, linkedinUrl, postedDate, descriptionText,
                            company.name, location, jobState
         """
-        title    = raw.get("title", "") or ""
-        company  = (raw.get("company") or {}).get("name", "") or ""
-        location = raw.get("location", "") or ""
+        title    = str(raw.get("title", "") or "")
+        _co_raw  = raw.get("company") or {}
+        company  = str(_co_raw.get("name", "") if isinstance(_co_raw, dict) else _co_raw or "")
+        # HarvestAPI returns location as either a string or a dict {city, country, ...}
+        _loc_raw = raw.get("location", "") or ""
+        if isinstance(_loc_raw, dict):
+            location = ", ".join(filter(None, [
+                _loc_raw.get("city", ""),
+                _loc_raw.get("state", ""),
+                _loc_raw.get("country", ""),
+            ]))
+        else:
+            location = str(_loc_raw)
         desc     = raw.get("descriptionText", "") or raw.get("description", "") or ""
         # Prefer direct ATS URL (Workday, Greenhouse) over LinkedIn redirect
         apply_method = raw.get("applyMethod") or {}

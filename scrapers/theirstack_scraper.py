@@ -124,11 +124,17 @@ class TheirStackScraper:
             )
             return []
 
-        log.warning(
-            f"[theirstack] PRIMARY SCRAPERS LOW: {total_primary_jobs} jobs found "
-            f"(threshold: {FALLBACK_THRESHOLD}). Activating TheirStack backup. "
-            f"Will consume up to {MAX_JOBS_PER_RUN} credits from 200/month free tier."
-        )
+        # total_primary_jobs=0 means orchestrator is forcing daily run (always-on mode)
+        if total_primary_jobs == 0:
+            log.info(
+                f"[theirstack] Daily fixed-budget run — consuming up to {MAX_JOBS_PER_RUN} credits "
+                f"(budget: 200 credits/month @ {MAX_JOBS_PER_RUN}/day)"
+            )
+        else:
+            log.warning(
+                f"[theirstack] PRIMARY SCRAPERS LOW: {total_primary_jobs} jobs found "
+                f"(threshold: {FALLBACK_THRESHOLD}). Activating backup."
+            )
 
         raw_jobs = self._fetch_jobs()
         if not raw_jobs:
