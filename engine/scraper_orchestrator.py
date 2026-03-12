@@ -14,12 +14,12 @@ Scraper stack (in execution order):
     5. theirstack_scraper— TheirStack backup (200 credits/month, CONDITIONAL only)
 
 TheirStack activation:
-    Runs daily with a 6 jobs/day budget (200 credits/month free tier ÷ 30 days).
+    Runs every day. Internal MAX_JOBS_PER_RUN=6 manages the budget.
 
 Changes from v4.0:
     - Added ats_scraper (scraper 1 — always runs first, no quota)
     - Added theirstack_scraper (scraper 5 — conditional fallback)
-    - serpapi now runs every day (day-alternation removed)
+    - serpapi quota reduced: 10 → 5 queries/day (in sync with day-alternation logic)
     - State tracking expanded for ats and theirstack
     - Health summary updated for all 5 scrapers
     - Version bumped to v4.1
@@ -33,34 +33,40 @@ from datetime import date, datetime
 from pathlib import Path
 from typing import List, Dict
 
-ROOT = Path(__file__).parent.parent
+ROOT = Path(__file__).parent  # flat repo — all files at root level
 sys.path.insert(0, str(ROOT))
 
-from engine.query_engine              import QueryEngine
-from scrapers.ats_scraper             import AtsScraper
-from scrapers.jsearch_scraper         import JSearchScraper
-from scrapers.apify_scraper           import ApifyScraper
-from scrapers.serpapi_scraper         import SerpApiScraper
-from scrapers.theirstack_scraper      import TheirStackScraper
+from query_engine                     import QueryEngine
+from ats_scraper                      import AtsScraper
+from jsearch_scraper                  import JSearchScraper
+from apify_scraper                    import ApifyScraper
+from serpapi_scraper                  import SerpApiScraper
+from theirstack_scraper               import TheirStackScraper
 
-DATA_DIR     = ROOT / "data"
+DATA_DIR     = ROOT  # scraper_state.json and run_log.json live at repo root
 TEMP_DIR     = ROOT / "temp"
 STATE_PATH   = DATA_DIR / "scraper_state.json"
 RUN_LOG_PATH = DATA_DIR / "run_log.json"
 
-TEMP_DIR.mkdir(exist_ok=True)
-DATA_DIR.mkdir(exist_ok=True)
+TEMP_DIR.mkdir(exist_ok=True)  # create temp/ if not present
+# DATA_DIR is ROOT itself — no mkdir needed
 
 # ── Daily query/run budgets ───────────────────────────────────────────────────
-# Quotas removed — all scrapers run unrestricted for full monitoring coverage.
 # ats:        No quota — direct free APIs, unlimited.
-# jsearch:    No daily cap — runs full batch rotation every day.
-# apify:      No daily cap — runs every day.
-# serpapi:    No daily cap — runs every day (day-alternation also removed in scraper).
-# theirstack: 200 credits/month (1 credit/job). Runs daily at 6 jobs/day budget.
-QUOTAS: dict = {}  # Empty — quota checks disabled; all scrapers always run
+# jsearch:    200 req/month → ~6/day. Budget 10 to allow flex.
+# apify:      2 actor runs/day (each run queries 8 titles × 25 jobs = 200 jobs max).
+# serpapi:    100 searches/month. Budget 5/day; scraper internally alternates days
+#             → effectively 75 searches/month.
+# theirstack: 200 credits/month (1 credit/job). Triggered conditionally by
+#             internal budget — runs daily.
+QUOTAS = {
+    "jsearch":    10,
+    "serpapi":     5,   # reduced from 10; scraper also alternates days internally
+    "apify":       2,
+}
 
-# TheirStack now runs daily — no threshold gating
+# TheirStack activates only when total raw jobs from other scrapers < this number
+# TheirStack runs daily on fixed budget — no threshold gate
 
 logging.basicConfig(
     level=logging.INFO,
@@ -110,13 +116,16 @@ def log_run(run_record: Dict):
 # ── Quota helpers ─────────────────────────────────────────────────────────────
 
 def available_queries(name: str, state: Dict) -> int:
-    """Always returns a large number — quotas have been removed."""
-    return 9999
+    key  = "runs_today" if name == "apify" else "queries_today"
+    used = state.get(name, {}).get(key, 0)
+    return max(0, QUOTAS[name] - used)
 
 
 def deduct(name: str, count: int, state: Dict):
-    """No-op — quota tracking disabled."""
-    pass
+    key = "runs_today" if name == "apify" else "queries_today"
+    if name not in state:
+        state[name] = {}
+    state[name][key] = state[name].get(key, 0) + count
 
 
 # ── Main orchestration ────────────────────────────────────────────────────────
@@ -173,13 +182,25 @@ def run():
 
     for name, ScraperClass, output_path in quota_scrapers:
         quota = available_queries(name, state)
+        log.info(f"[{name}] Quota remaining today: {quota}")
+
+        if quota <= 0:
+            log.warning(f"[{name}] Daily quota exhausted — skipping")
+            _write_empty(output_path, name, "quota_exhausted")
+            run_record["scrapers"][name] = {
+                "status": "skipped", "reason": "quota_exhausted", "jobs_found": 0
+            }
+            continue
+
+        batch = all_queries[:quota]
 
         try:
             scraper    = ScraperClass()
-            jobs       = scraper.run(all_queries)
+            jobs       = scraper.run(batch)
             jobs_found = len(jobs)
 
             _write_output(output_path, name, jobs)
+            deduct(name, len(batch), state)
             total_primary_jobs += jobs_found
 
             if jobs_found == 0:
@@ -188,12 +209,12 @@ def run():
                     f"Check API key, quota, and input parameters."
                 )
                 run_record["scrapers"][name] = {
-                    "status": "zero_results", "queries_used": len(all_queries), "jobs_found": 0
+                    "status": "zero_results", "queries_used": len(batch), "jobs_found": 0
                 }
             else:
-                log.info(f"[{name}] ✓ {jobs_found} jobs from {len(all_queries)} queries")
+                log.info(f"[{name}] ✓ {jobs_found} jobs from {len(batch)} queries")
                 run_record["scrapers"][name] = {
-                    "status": "success", "queries_used": len(all_queries), "jobs_found": jobs_found
+                    "status": "success", "queries_used": len(batch), "jobs_found": jobs_found
                 }
 
         except Exception as exc:
@@ -204,16 +225,14 @@ def run():
                 "status": "error", "error": str(exc), "jobs_found": 0
             }
 
-    # ── Step 5: TheirStack — runs daily (6 jobs/day budget) ──────────────────
-    log.info(
-        f"[theirstack] Running daily. Primary scrapers found {total_primary_jobs} jobs."
-    )
+    # ── Step 5: TheirStack — conditional fallback ──────────────────────────────
+    log.info(f"[theirstack] Running daily. Primary scrapers found {total_primary_jobs} jobs.")
     theirstack_output = TEMP_DIR / "jobs_theirstack.json"
     try:
         ts_scraper = TheirStackScraper()
         ts_jobs    = ts_scraper.run(
             queries=all_queries,
-            total_primary_jobs=total_primary_jobs,
+            total_primary_jobs=0,  # always run daily — scraper manages its own budget
         )
         ts_count = len(ts_jobs)
         _write_output(theirstack_output, "theirstack", ts_jobs)
@@ -223,10 +242,10 @@ def run():
             state["theirstack"]["activations_today"] = (
                 state["theirstack"].get("activations_today", 0) + 1
             )
-            total_primary_jobs += ts_count
-            log.info(f"[theirstack] ✓ {ts_count} jobs added")
+            log.info(f"[theirstack] ✓ {ts_count} backup jobs added")
             run_record["scrapers"]["theirstack"] = {
-                "status":    "success",
+                "status":    "activated",
+                "triggered": True,
                 "jobs_found": ts_count,
             }
         else:
@@ -281,9 +300,6 @@ def _print_health_summary(scrapers: Dict):
         elif status == "skipped":
             reason = info.get("reason", "")
             log.info(f"  {'['+name+']':<16}    —        SKIPPED ({reason})")
-            # Only flag as warning if skipped for a non-quota reason
-            if reason not in ("quota_exhausted",):
-                any_warning = True
         elif status == "error":
             log.error(f"  {'['+name+']':<16} ✗   —        ERROR ({info.get('error','')[:50]})")
             any_warning = True
@@ -293,17 +309,10 @@ def _print_health_summary(scrapers: Dict):
     log.info("-" * 48)
 
     if any_warning:
-        # Only mention the scrapers that actually had issues (not quota-skipped ones)
-        problem_scrapers = [
-            name for name in display_order
-            if scrapers.get(name, {}).get("status") in ("zero_results", "error")
-        ]
-        if problem_scrapers:
-            log.warning(
-                f"  ⚠ One or more scrapers had issues ({', '.join(problem_scrapers)}). "
-                f"Check GitHub Secrets:\n"
-                f"    JSEARCH_API_KEY, SERPAPI_KEY, APIFY_TOKEN, THEIRSTACK_API_KEY"
-            )
+        log.warning(
+            "  ⚠ One or more scrapers had issues. Check GitHub Secrets:\n"
+            "    JSEARCH_API_KEY, SERPAPI_KEY, APIFY_TOKEN, THEIRSTACK_API_KEY"
+        )
     log.info("")
 
 

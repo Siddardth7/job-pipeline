@@ -18,8 +18,8 @@ from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Dict, List, Tuple
 
-ROOT = Path(__file__).parent.parent
-DATA_DIR = ROOT / "data"
+ROOT = Path(__file__).parent  # flat repo — all files at root level
+DATA_DIR = ROOT  # company_database.json and job_history.json live at repo root
 TEMP_DIR = ROOT / "temp"
 OUTPUT_DIR = ROOT / "output"
 
@@ -335,59 +335,25 @@ def _write_output(
     stats: Dict, history: List[Dict], db: Dict
 ):
     total_scraped = stats.get("total_input", 0)
-
-    def _to_artifact_format(job: Dict, idx: int) -> Dict:
-        """Map pipeline field names to the artifact's expected schema."""
-        company = job.get("company_name", "Unknown")
-        return {
-            "id":              job.get("id", f"{company.replace(' ','-')}-{idx}"),
-            "role":            job.get("job_title", "Unknown"),
-            "company":         company,
-            "location":        job.get("location", ""),
-            "type":            "Full-time",
-            "link":            job.get("job_url", ""),
-            "posted":          job.get("posted_date", ""),
-            "itar_flag":       job.get("itar_flag", False),
-            "itar_detail":     job.get("itar_detail", ""),
-            "tier":            job.get("ats_tier", ""),
-            "h1b":             job.get("h1b", "LIKELY"),
-            "industry":        "",
-            "source":          job.get("source", "pipeline"),
-            "reason":          f"Scraped ({job.get('source', 'pipeline')})",
-            "match":           job.get("relevance_score", 0) or (
-                                   0 if job.get("itar_flag") else 75
-                               ),
-            "verdict":         job.get("verdict", "YELLOW"),
-            "domain_verified": False,
-        }
-
-    all_jobs = [_to_artifact_format(j, i) for i, j in enumerate(green + yellow)]
+    summary = {
+        "run_date": str(date.today()),
+        "generated_utc": datetime.utcnow().isoformat() + "Z",
+        "total_scraped": total_scraped,
+        "duplicates_removed": stats.get("history_dupes", 0),
+        "filtered_jobs": stats.get("dropped_red", 0),
+        "green_jobs": len(green),
+        "yellow_jobs": len(yellow),
+        "promoted_companies": stats.get("promoted_companies", []),
+    }
 
     payload = {
-        "generated_utc": datetime.utcnow().isoformat() + "Z",
-        "summary": {
-            "run_date":            str(date.today()),
-            "total_scraped":       total_scraped,
-            "green":               len(green),
-            "yellow":              len(yellow),
-            "tier1":               sum(1 for j in green + yellow if "1" in str(j.get("ats_tier", ""))),
-            "h1b_yes":             sum(1 for j in green + yellow if j.get("h1b") == "YES"),
-            "open_search":         sum(1 for j in green + yellow if "_open" in j.get("cluster", "")),
-            "duplicates_removed":  stats.get("history_dupes", 0),
-            "filtered_jobs":       stats.get("dropped_red", 0),
-            "promoted_companies":  stats.get("promoted_companies", []),
-        },
-        "filter_report": {
-            "total_in":  total_scraped,
-            "passed":    len(all_jobs),
-            "rejected":  total_scraped - len(all_jobs),
-            "pass_rate": f"{len(all_jobs)/max(total_scraped,1)*100:.0f}%",
-        },
-        "jobs": all_jobs,
+        "green_jobs": green,
+        "yellow_jobs": yellow,
+        "summary": summary,
     }
 
     FINAL_OUTPUT_PATH.write_text(json.dumps(payload, indent=2))
-    log.info(f"Wrote final output → {FINAL_OUTPUT_PATH} ({len(all_jobs)} jobs)")
+    log.info(f"Wrote final output → {FINAL_OUTPUT_PATH}")
 
 
 # ── CLI ───────────────────────────────────────────────────────────────────────

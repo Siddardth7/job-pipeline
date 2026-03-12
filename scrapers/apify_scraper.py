@@ -14,8 +14,8 @@ Docs:    https://apify.com/harvestapi/linkedin-job-search
 Input schema (harvestapi/linkedin-job-search):
     jobTitles        list[str]   required — job title keyword phrases
     locations        list[str]   optional — LinkedIn location strings
-    postedLimit      str         optional — "Past 24 hours" | "Past Week" | "Past Month"
-    experienceLevel  list[str]   optional — ["Entry Level"] | ["Associate"] | ["Mid-Senior Level"] (MUST be array, title case)
+    postedLimit      str         optional — "week" | "month" | "24h"  (lowercase required by actor)
+    experienceLevel  list[str]   optional — ["entry"] | ["associate"] | ["mid-senior"] etc.  (lowercase required)
     sortBy           str         optional — "relevance" | "date"
     maxItems         int         optional — max results per job title query (0 = all pages)
 
@@ -52,7 +52,7 @@ APIFY_TOKEN = os.environ.get("APIFY_TOKEN", "")
 # This actor is bookmarked in your Apify account (15 successful runs as of 2026-02-06)
 ACTOR_SLUG      = "harvestapi/linkedin-job-search"
 MAX_ITEMS       = 25    # per job title; 25 × 8 = 200 max raw jobs per run
-RUN_TIMEOUT     = 480   # 8 minutes — LinkedIn scraping needs more time
+RUN_TIMEOUT     = 480   # 8 minutes — LinkedIn scraping needs more headroom
 
 ITAR_KEYWORDS = [
     "security clearance", "us person", "itar", "export controlled",
@@ -105,8 +105,8 @@ class ApifyScraper:
         run_input = {
             "jobTitles":       job_titles,
             "locations":       ["United States"],
-            "postedLimit":     "Past Week",          # correct enum value for this actor
-            "experienceLevel": ["Entry Level"],       # correct enum value (title case)
+            "postedLimit":     "week",           # actor requires lowercase: week|month|24h
+            "experienceLevel": ["entry", "associate"],  # actor rejects title-case values
             "sortBy":          "date",
             "maxItems":        MAX_ITEMS,
         }
@@ -135,17 +135,15 @@ class ApifyScraper:
         run_status = run.get("status", "UNKNOWN") if run else "NO_RESPONSE"
         dataset_id = run.get("defaultDatasetId", "") if run else ""
 
-        log.info(f"[apify] Run status: {run_status!r} | dataset_id: {dataset_id!r}")
-
         if run_status not in ("SUCCEEDED", "READY"):
             log.error(
-                f"[apify] Actor run ended with status {run_status!r}. "
-                f"Expected SUCCEEDED. Full run object keys: {list(run.keys()) if run else 'None'}"
+                f"[apify] Actor run ended with status '{run_status}'. "
+                f"Expected SUCCEEDED. No jobs returned."
             )
             return []
 
         if not dataset_id:
-            log.error("[apify] No defaultDatasetId returned — actor may have produced no output.")
+            log.error("[apify] No defaultDatasetId returned.")
             return []
 
         log.info(f"[apify] Actor SUCCEEDED — reading dataset {dataset_id} ...")
@@ -204,7 +202,11 @@ class ApifyScraper:
         company  = (raw.get("company") or {}).get("name", "") or ""
         location = raw.get("location", "") or ""
         desc     = raw.get("descriptionText", "") or raw.get("description", "") or ""
-        url      = raw.get("linkedinUrl", "") or raw.get("jobUrl", "") or ""
+        # Prefer direct ATS URL (Workday, Greenhouse) over LinkedIn redirect
+        apply_method = raw.get("applyMethod") or {}
+        direct_url   = apply_method.get("companyApplyUrl") or ""
+        linkedin_url = raw.get("linkedinUrl") or raw.get("jobUrl") or ""
+        url = direct_url or linkedin_url
 
         if not url:
             log.debug(

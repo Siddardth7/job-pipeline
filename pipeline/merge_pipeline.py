@@ -32,7 +32,7 @@ from pathlib import Path
 from typing import List, Dict, Optional, Tuple
 from urllib.parse import urlparse
 
-ROOT = Path(__file__).parent.parent
+ROOT = Path(__file__).parent  # flat repo — all files at root level
 TEMP_DIR   = ROOT / "temp"
 OUTPUT_PATH = TEMP_DIR / "jobs_clean_intermediate.json"
 
@@ -43,7 +43,6 @@ log = logging.getLogger("merge_pipeline")
 # ── Constants ─────────────────────────────────────────────────────────────────
 
 MAX_AGE_HOURS = 72
-MAX_AGE_HOURS_ATS = 720  # 30 days for ATS-sourced jobs (direct career page listings are active reqs)
 
 # F3 — Aggregator domains (applied post-merge to catch all scrapers)
 AGGREGATOR_DOMAINS = [
@@ -314,13 +313,8 @@ def _filter_aggregators(jobs: List[Dict]) -> Tuple[List[Dict], int]:
 
 def _filter_age(jobs: List[Dict]) -> Tuple[List[Dict], int]:
     passed, rejected = [], 0
-    cutoff_default = datetime.utcnow() - timedelta(hours=MAX_AGE_HOURS)
-    cutoff_ats     = datetime.utcnow() - timedelta(hours=MAX_AGE_HOURS_ATS)
+    cutoff = datetime.utcnow() - timedelta(hours=MAX_AGE_HOURS)
     for j in jobs:
-        # ATS jobs come direct from company career pages — they are active
-        # open requisitions. Use a wider 30-day window instead of 72 hours.
-        source = j.get("source", "")
-        cutoff = cutoff_ats if source.startswith("ats") else cutoff_default
         if _is_fresh(j.get("posted_date", ""), cutoff):
             passed.append(j)
         else:

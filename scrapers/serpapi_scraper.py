@@ -7,16 +7,18 @@ Queries Google Jobs via SerpAPI using short natural-language phrases.
 Google Jobs does NOT support boolean operators — short keyword phrases only.
 
 Quota management (free tier: 100 searches/month):
-    - Runs EVERY day (day-alternation removed — running unrestricted for monitoring).
-    - Orchestrator hard cap removed — all queries run per execution.
+    - Runs ONLY on odd calendar days (date.toordinal() % 2 == 1)
+      → ~15 active days/month × 5 queries/day = 75 searches/month
+      → Safely under the 100/month cap with 25 searches headroom
+    - Orchestrator hard cap: 5 queries per run
 
-To force a test run:
-    Set env var  SERPAPI_FORCE_RUN=1  (kept for backwards compatibility, now a no-op)
+To override the day-alternation for testing:
+    Set env var  SERPAPI_FORCE_RUN=1
 
 Env vars:
     SERPAPI_KEY      — API key from https://serpapi.com
     SERPAPI_API_KEY  — Accepted as fallback (SerpAPI's documented name)
-    SERPAPI_FORCE_RUN — Legacy override (now always runs regardless)
+    SERPAPI_FORCE_RUN — Set to "1" to bypass day-alternation check
 """
 
 import os
@@ -48,7 +50,7 @@ SERPAPI_URL  = "https://serpapi.com/search"
 
 REQUEST_DELAY   = 2.0   # seconds between calls
 RESULTS_PER_REQ = 20    # Google Jobs: up to ~30 per page; 20 is safe
-CHIPS_FILTER    = "date_posted:3days"  # valid: today / 3days / week / month
+CHIPS_FILTER    = "date_posted:week"   # broader window — fewer empty-result 400s
 
 AGGREGATOR_DOMAINS = [
     "indeed.com", "glassdoor.com", "ziprecruiter.com",
@@ -65,11 +67,22 @@ ITAR_KEYWORDS = [
 
 def should_run_today() -> bool:
     """
-    Always returns True — day-alternation removed.
-    SerpAPI now runs every day for full monitoring coverage.
-    SERPAPI_FORCE_RUN kept for backwards compatibility but has no effect.
+    Day-alternation gate: SerpAPI only runs on ODD-ordinal days.
+    This halves the monthly query spend (~75/month vs 150/month).
+    Bypass by setting SERPAPI_FORCE_RUN=1 in environment.
     """
-    return True
+    if os.environ.get("SERPAPI_FORCE_RUN", "").strip() == "1":
+        log.info("[serpapi] SERPAPI_FORCE_RUN=1 — bypassing day-alternation check")
+        return True
+    today_ordinal = date.today().toordinal()
+    runs_today = (today_ordinal % 2 == 1)
+    if not runs_today:
+        log.info(
+            f"[serpapi] Even-ordinal day ({today_ordinal}) — scheduled OFF today. "
+            f"Runs on odd days to stay within 100 searches/month free tier. "
+            f"Set SERPAPI_FORCE_RUN=1 to override."
+        )
+    return runs_today
 
 
 class SerpApiScraper:
@@ -159,46 +172,60 @@ class SerpApiScraper:
             out.append(normalized)
 
     def _api_call(self, query: str, start: int = 0) -> Tuple[List[Dict], bool]:
-        """Returns (results, has_next_page). Logs API-level error field if set."""
-        params = {
+        """
+        Returns (results, has_next_page).
+        Attempt 1: with chips filter. On HTTP 400, retries without chips —
+        Google occasionally rejects chips+query combos for niche searches.
+        """
+        base_params = {
             "engine":  "google_jobs",
             "q":       query,
             "hl":      "en",
             "gl":      "us",
-            "chips":   CHIPS_FILTER,
-            # NOTE: "num" removed — not valid for google_jobs engine (HTTP 400)
             "api_key": SERPAPI_KEY,
         }
         if start > 0:
-            params["start"] = start
-        try:
-            r = requests.get(SERPAPI_URL, params=params, timeout=20)
-            if r.status_code == 401:
-                log.error("[serpapi] 401 Unauthorized — check SERPAPI_KEY")
+            base_params["start"] = start
+
+        for attempt, chips_val in enumerate([CHIPS_FILTER, None]):
+            params = dict(base_params)
+            if chips_val:
+                params["chips"] = chips_val
+
+            try:
+                r = requests.get(SERPAPI_URL, params=params, timeout=20)
+                if r.status_code == 401:
+                    log.error("[serpapi] 401 Unauthorized — check SERPAPI_KEY")
+                    return [], False
+                if r.status_code == 429:
+                    log.error("[serpapi] 429 Too Many Requests — quota exhausted")
+                    return [], False
+                if r.status_code == 400:
+                    if attempt == 0:
+                        log.warning("[serpapi] HTTP 400 with chips — retrying without chips")
+                        continue
+                    log.warning("[serpapi] HTTP 400 without chips — skipping query")
+                    return [], False
+                if r.status_code != 200:
+                    log.warning(f"[serpapi] HTTP {r.status_code}")
+                    return [], False
+
+                data = r.json()
+                if "error" in data:
+                    log.error(f"[serpapi] API error: {data['error']}")
+                    return [], False
+
+                results  = data.get("jobs_results", [])
+                has_next = bool(data.get("serpapi_pagination", {}).get("next"))
+                if not results:
+                    log.info(f"  [serpapi] 0 results (chips={chips_val or 'none'})")
+                return results, has_next
+
+            except Exception as e:
+                log.error(f"[serpapi] Request error: {e}")
                 return [], False
-            if r.status_code == 429:
-                log.error("[serpapi] 429 Too Many Requests — quota exhausted")
-                return [], False
-            if r.status_code != 200:
-                log.warning(f"[serpapi] HTTP {r.status_code}")
-                return [], False
 
-            data = r.json()
-            if "error" in data:
-                log.error(f"[serpapi] API error: {data['error']}")
-                return [], False
-
-            results  = data.get("jobs_results", [])
-            has_next = bool(data.get("serpapi_pagination", {}).get("next"))
-
-            if not results:
-                log.info(f"  [serpapi] No results for this phrase (chips={CHIPS_FILTER})")
-
-            return results, has_next
-
-        except Exception as e:
-            log.error(f"[serpapi] Request error: {e}")
-            return [], False
+        return [], False
 
     def _normalize(self, raw: Dict, cluster: str) -> Optional[Dict]:
         title    = raw.get("title",        "") or ""

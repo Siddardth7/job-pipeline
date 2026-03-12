@@ -38,14 +38,8 @@ JSEARCH_HOST = "jsearch.p.rapidapi.com"
 JSEARCH_URL = "https://jsearch.p.rapidapi.com/search"
 
 SCRIPT_DIR = Path(__file__).parent
-ROOT_DIR = SCRIPT_DIR.parent  # repo root (one level up from scrapers/)
-
-# Config file location: check data/ first, then repo root (GitHub Actions layout)
-_config_in_data = ROOT_DIR / "data" / "M628_JSEARCH_CONFIG.json"
-_config_in_root = ROOT_DIR / "M628_JSEARCH_CONFIG.json"
-CONFIG_PATH = _config_in_data if _config_in_data.exists() else _config_in_root
-
-OUTPUT_DIR = ROOT_DIR / "output"
+CONFIG_PATH = SCRIPT_DIR / "M628_JSEARCH_CONFIG.json"
+OUTPUT_DIR = SCRIPT_DIR / "output"
 OUTPUT_DIR.mkdir(exist_ok=True)
 
 # Rate limiting
@@ -140,7 +134,7 @@ def search_jobs(query, page=1, num_pages=1, date_posted="3days", _retry_wait=0):
     try:
         r = requests.get(JSEARCH_URL, headers=headers, params=params, timeout=15)
         if r.status_code == 429:
-            wait = 60
+            wait = 10  # reduced from 60s — prevents hitting the 8-min hard timeout
             log.warning(f"[jsearch] Rate limited — waiting {wait}s "
                         f"(cumulative wait for this query: {_retry_wait + wait}s / "
                         f"{JSEARCH_PER_QUERY_TIMEOUT_SECONDS}s limit) ...")
@@ -333,148 +327,6 @@ def _write_empty_output(reason=""):
     log.warning(f"Wrote empty output. Reason: {reason}")
 
 
-
-# ─── ORCHESTRATOR-COMPATIBLE CLASS ────────────────────────────────────────
-class JSearchScraper:
-    """
-    Orchestrator-compatible JSearch scraper.
-
-    STRATEGY CHANGE (v4.2):
-    The old approach queried "{keyword} at {CompanyName}" per company, which:
-      - Hit RapidAPI rate limits (429) because queries are fired in rapid succession
-      - Burned 2 API calls per company × 3 companies = 6 calls just for 3 companies
-      - Got stuck waiting 60s per retry, causing GitHub Actions timeouts
-
-    New approach: broad title-based queries, US-wide, recent 3 days.
-      - Each query = one job title phrase, e.g. "Manufacturing Engineer entry level"
-      - 10 queries × up to 10 results = up to 100 jobs per run
-      - No per-company retries — if a query gets 429, skip it immediately (no waiting)
-      - Stays well within 200 req/month free tier even running daily
-    """
-
-    # Title queries to run — ordered by priority for our target clusters
-    TITLE_QUERIES = [
-        "Manufacturing Engineer entry level",
-        "Process Engineer entry level",
-        "Composites Engineer manufacturing",
-        "Quality Engineer entry level",
-        "Materials Engineer entry level",
-        "Industrial Engineer entry level",
-        "Tooling Engineer manufacturing",
-        "NPI Engineer manufacturing",
-        "Production Engineer entry level",
-        "Continuous Improvement Engineer",
-    ]
-
-    def run(self, queries=None) -> list:
-        """
-        Run broad title-based JSearch queries.
-        queries: passed by orchestrator but not used — we use TITLE_QUERIES instead.
-        Returns list of jobs in merge-pipeline schema.
-        """
-        if not JSEARCH_API_KEY:
-            log.warning("[jsearch] JSEARCH_API_KEY not set — skipping")
-            return []
-
-        headers = {
-            "X-RapidAPI-Key":  JSEARCH_API_KEY,
-            "X-RapidAPI-Host": JSEARCH_HOST,
-        }
-
-        all_jobs = []
-        seen_ids: set = set()
-        api_calls = 0
-        MAX_CALLS = 10  # hard cap per run
-
-        for i, query in enumerate(self.TITLE_QUERIES):
-            if api_calls >= MAX_CALLS:
-                break
-
-            params = {
-                "query":       query,
-                "page":        "1",
-                "num_pages":   "1",
-                "date_posted": "3days",
-                "country":     "us",
-                "language":    "en",
-            }
-
-            log.info(f"[jsearch] [{i+1}/{len(self.TITLE_QUERIES)}] Query: {query!r}")
-            time.sleep(REQUEST_DELAY)
-
-            try:
-                r = requests.get(JSEARCH_URL, headers=headers, params=params, timeout=15)
-                api_calls += 1
-
-                if r.status_code == 429:
-                    # Rate limited — skip immediately, do NOT wait (avoid pipeline timeout)
-                    log.warning(f"[jsearch] 429 rate limit on query {i+1} — skipping (no wait)")
-                    continue
-                if r.status_code == 403:
-                    log.error("[jsearch] 403 — API key invalid or monthly quota exhausted")
-                    break
-                if r.status_code != 200:
-                    log.warning(f"[jsearch] HTTP {r.status_code} for {query!r} — skipping")
-                    continue
-
-                results = r.json().get("data", [])
-                log.info(f"[jsearch]   → {len(results)} results")
-
-                for job in results:
-                    job_id = job.get("job_id", "")
-                    if job_id and job_id in seen_ids:
-                        continue
-                    seen_ids.add(job_id)
-
-                    apply_link = job.get("job_apply_link", "") or ""
-                    if is_aggregator(apply_link):
-                        apply_link = job.get("job_google_link", apply_link) or ""
-                        if is_aggregator(apply_link):
-                            continue
-
-                    desc = job.get("job_description", "") or ""
-                    itar_flags = check_itar(desc)
-
-                    city  = job.get("job_city",  "") or ""
-                    state = job.get("job_state", "") or ""
-                    location = f"{city}, {state}".strip(", ") or "US"
-
-                    posted_raw = job.get("job_posted_at_datetime_utc", "") or ""
-                    posted_date = posted_raw[:10] if posted_raw else datetime.utcnow().strftime("%Y-%m-%d")
-
-                    all_jobs.append({
-                        "job_title":    job.get("job_title", ""),
-                        "company_name": job.get("employer_name", ""),
-                        "job_url":      apply_link,
-                        "location":     location,
-                        "posted_date":  posted_date,
-                        "description":  desc[:500],
-                        "source":       "jsearch",
-                        "cluster":      self._infer_cluster(query),
-                        "itar_flag":    bool(itar_flags),
-                        "itar_detail":  ", ".join(itar_flags),
-                        "raw_id":       job_id,
-                    })
-
-            except Exception as e:
-                log.warning(f"[jsearch] Request error on {query!r}: {e} — skipping")
-                continue
-
-        log.info(f"[jsearch] Done. {len(all_jobs)} jobs from {api_calls} API calls.")
-        return all_jobs
-
-    def _infer_cluster(self, query: str) -> str:
-        q = query.lower()
-        if "composit" in q:                   return "composites"
-        if "material" in q:                   return "materials"
-        if "quality" in q:                    return "quality"
-        if "process" in q:                    return "process"
-        if "industrial" in q or "lean" in q:  return "industrial"
-        if "tooling" in q:                    return "tooling_inspection"
-        if "npi" in q or "continuous" in q:   return "startup_manufacturing"
-        return "manufacturing"
-
-
 # ─── MAIN ─────────────────────────────────────────────────────────────────────
 def main():
     log.info("=" * 60)
@@ -600,6 +452,121 @@ def main():
     if timed_out:
         sys.exit(2)
 
+
+
+
+# ─── ORCHESTRATOR-COMPATIBLE CLASS ────────────────────────────────────────────
+# The orchestrator (scraper_orchestrator.py) imports and calls JSearchScraper().run().
+# This class uses broad title-based queries instead of per-company queries to
+# avoid rapid 429s from burst-firing company-specific searches.
+class JSearchScraper:
+    TITLE_QUERIES = [
+        "Manufacturing Engineer entry level",
+        "Process Engineer entry level",
+        "Composites Engineer manufacturing",
+        "Quality Engineer entry level",
+        "Materials Engineer entry level",
+        "Industrial Engineer entry level",
+        "Tooling Engineer manufacturing",
+        "NPI Engineer manufacturing",
+        "Production Engineer entry level",
+        "Continuous Improvement Engineer manufacturing",
+    ]
+    MAX_CALLS   = 10   # stays within 200 req/month free tier
+    RETRY_WAIT  = 10   # seconds before one 429 retry
+    QUERY_DELAY = 2.0  # seconds between queries
+
+    def run(self, queries=None) -> list:
+        """Called by orchestrator. Returns jobs in pipeline schema."""
+        if not JSEARCH_API_KEY:
+            log.warning("[jsearch] JSEARCH_API_KEY not set — skipping")
+            return []
+
+        headers = {"X-RapidAPI-Key": JSEARCH_API_KEY, "X-RapidAPI-Host": JSEARCH_HOST}
+        all_jobs, seen_ids, api_calls, quota_hit = [], set(), 0, False
+
+        for i, query in enumerate(self.TITLE_QUERIES):
+            if api_calls >= self.MAX_CALLS or quota_hit:
+                break
+            log.info(f"[jsearch] [{i+1}/{len(self.TITLE_QUERIES)}] Query: {query!r}")
+            time.sleep(self.QUERY_DELAY)
+
+            result = self._single_query(headers, query)
+            api_calls += 1
+
+            if result == "quota":
+                log.error("[jsearch] 403 — monthly quota exhausted. Stopping.")
+                quota_hit = True
+                break
+            if result in ("rate_limited", "error"):
+                log.warning(f"[jsearch] Query {i+1} skipped ({result})")
+                continue
+
+            for job in result:
+                job_id = job.get("job_id", "")
+                if job_id in seen_ids:
+                    continue
+                seen_ids.add(job_id)
+                apply_link = job.get("job_apply_link", "") or ""
+                if is_aggregator(apply_link):
+                    apply_link = job.get("job_google_link", "") or apply_link
+                    if is_aggregator(apply_link):
+                        continue
+                desc = job.get("job_description", "") or ""
+                city  = job.get("job_city",  "") or ""
+                state = job.get("job_state", "") or ""
+                location = f"{city}, {state}".strip(", ") or "United States"
+                posted_raw = job.get("job_posted_at_datetime_utc", "") or ""
+                posted_date = posted_raw[:10] if posted_raw else datetime.utcnow().strftime("%Y-%m-%d")
+                all_jobs.append({
+                    "job_title":    job.get("job_title", ""),
+                    "company_name": job.get("employer_name", ""),
+                    "job_url":      apply_link,
+                    "location":     location,
+                    "posted_date":  posted_date,
+                    "description":  desc[:500],
+                    "source":       "jsearch",
+                    "cluster":      self._cluster(query),
+                    "itar_flag":    bool(check_itar(desc)),
+                    "itar_detail":  ", ".join(check_itar(desc)),
+                    "raw_id":       job_id,
+                })
+
+        log.info(f"[jsearch] Done. {len(all_jobs)} jobs from {api_calls} API calls.")
+        return all_jobs
+
+    def _single_query(self, headers, query):
+        params = {"query": query, "page": "1", "num_pages": "1",
+                  "date_posted": "week", "country": "us", "language": "en"}
+        for attempt in range(2):
+            try:
+                r = requests.get(JSEARCH_URL, headers=headers, params=params, timeout=15)
+                if r.status_code == 200:
+                    return r.json().get("data", [])
+                if r.status_code == 429:
+                    if attempt == 0:
+                        log.warning(f"[jsearch] 429 rate limit — waiting {self.RETRY_WAIT}s then retrying once")
+                        time.sleep(self.RETRY_WAIT)
+                        continue
+                    return "rate_limited"
+                if r.status_code == 403:
+                    return "quota"
+                return "error"
+            except Exception as e:
+                log.warning(f"[jsearch] Request error: {e}")
+                return "error"
+        return "rate_limited"
+
+    def _cluster(self, query):
+        q = query.lower()
+        if "composit" in q: return "composites"
+        if "material" in q: return "materials"
+        if "quality"  in q: return "quality"
+        if "process"  in q: return "process"
+        if "industri" in q: return "industrial"
+        if "tooling"  in q: return "tooling_inspection"
+        if "npi" in q or "continuous" in q: return "startup_manufacturing"
+        return "manufacturing"
 
 if __name__ == "__main__":
     main()

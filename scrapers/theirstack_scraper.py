@@ -27,7 +27,7 @@ API reference:
 Key filter parameters used:
     job_title_pattern_or   list[str]   regex patterns for title matching
     posted_at_max_age_days int         max age of job postings in days
-    job_country_code_or    list[str]   ISO country codes (["US"])  ← correct field per API spec
+    country_code_or        list[str]   ISO country codes (["US"])
     limit                  int         max results per response (max 25 on free tier)
     page                   int         0-based page number
     order_by               list[dict]  [{field, desc}]
@@ -59,11 +59,15 @@ log = logging.getLogger("theirstack_scraper")
 THEIRSTACK_API_KEY = os.environ.get("THEIRSTACK_API_KEY", "")
 THEIRSTACK_URL     = "https://api.theirstack.com/v1/jobs/search"
 
+# ── Activation threshold ──────────────────────────────────────────────────────
+# Orchestrator passes total_primary_jobs when calling this scraper.
+# If total_primary_jobs >= FALLBACK_THRESHOLD, this scraper returns [] immediately.
+FALLBACK_THRESHOLD = 20  # activate if primary scrapers yield fewer than 20 jobs
+
 # ── Credit conservation ───────────────────────────────────────────────────────
 # 1 credit = 1 job returned. Free tier = 200 credits/month.
-# 200 ÷ 30 days = 6.6 jobs/day → budget 6 jobs per run to stay safely under cap.
-# TheirStack now runs EVERY DAY (no longer conditional on primary scraper yield).
-MAX_JOBS_PER_RUN = 6
+# At MAX_JOBS_PER_RUN=25, we can activate up to 8 times/month within free tier.
+MAX_JOBS_PER_RUN = 25
 
 ITAR_KEYWORDS = [
     "security clearance", "us person", "itar", "export controlled",
@@ -106,16 +110,24 @@ class TheirStackScraper:
         """
         Args:
             queries:            QueryEngine output (used for cluster labels only)
-            total_primary_jobs: Total jobs already found by primary scrapers (informational only).
+            total_primary_jobs: Total jobs already found by primary scrapers.
+                                If >= FALLBACK_THRESHOLD, this scraper skips.
         """
         if not THEIRSTACK_API_KEY:
             log.warning("[theirstack] THEIRSTACK_API_KEY not set — skipping")
             return []
 
-        log.info(
-            f"[theirstack] Running daily (budget: {MAX_JOBS_PER_RUN} jobs/day, "
-            f"~{MAX_JOBS_PER_RUN * 30}/month from 200 credit free tier). "
-            f"Primary scrapers found {total_primary_jobs} jobs today."
+        if total_primary_jobs >= FALLBACK_THRESHOLD:
+            log.info(
+                f"[theirstack] Primary scrapers yielded {total_primary_jobs} jobs "
+                f"(>= threshold {FALLBACK_THRESHOLD}) — backup not needed today"
+            )
+            return []
+
+        log.warning(
+            f"[theirstack] PRIMARY SCRAPERS LOW: {total_primary_jobs} jobs found "
+            f"(threshold: {FALLBACK_THRESHOLD}). Activating TheirStack backup. "
+            f"Will consume up to {MAX_JOBS_PER_RUN} credits from 200/month free tier."
         )
 
         raw_jobs = self._fetch_jobs()
@@ -147,21 +159,15 @@ class TheirStackScraper:
             "Accept":        "application/json",
         }
         payload = {
-            "job_title_pattern_or":   TITLE_PATTERNS,
+            "job_title_pattern_or":  TITLE_PATTERNS,
             "posted_at_max_age_days": 7,
-            "job_country_code_or":    ["US"],   # correct field per TheirStack v1 API spec
-            "limit":                  MAX_JOBS_PER_RUN,
-            "page":                   0,
+            "job_country_code_or":   ["US"],    # correct TheirStack v1 field name
+            "limit":                 MAX_JOBS_PER_RUN,
+            "page":                  0,
             "order_by": [
                 {"field": "date_posted", "desc": True}
             ],
-            # Exclude senior titles at API level to save credits
-            "job_title_pattern_not": [
-                r"(?i)\bsenior\b", r"(?i)\bsr\.\b", r"(?i)\bstaff\b",
-                r"(?i)\bprincipal\b", r"(?i)\bdirector\b", r"(?i)\bmanager\b",
-                r"(?i)\bvp\b", r"(?i)\blead\s+engineer\b",
-            ],
-            # NOTE: job_url_domain_or does NOT exist in the API — removed (was causing 422)
+            # No domain filter applied (TheirStack v1 API does not support URL domain filtering)
         }
         log.debug(f"[theirstack] POST {THEIRSTACK_URL} payload={json.dumps(payload)[:200]}")
         try:
@@ -195,12 +201,20 @@ class TheirStackScraper:
     # ── Normalise ─────────────────────────────────────────────────────────────
 
     def _normalize(self, raw: Dict) -> Optional[Dict]:
-        title   = raw.get("title",        "") or raw.get("job_title", "") or ""
-        company = (
-            raw.get("company_name", "")
-            or (raw.get("company") or {}).get("name", "")
-            or ""
-        )
+        if not isinstance(raw, dict):
+            log.debug(f"[theirstack] _normalize: non-dict ({type(raw)}) — skipping")
+            return None
+
+        title = raw.get("title", "") or raw.get("job_title", "") or ""
+
+        raw_company = raw.get("company") or ""
+        if isinstance(raw_company, dict):
+            company = raw_company.get("name", "") or ""
+        elif isinstance(raw_company, str):
+            company = raw_company
+        else:
+            company = ""
+        company = company or raw.get("company_name", "") or ""
         location = (
             raw.get("location", "")
             or raw.get("city", "")

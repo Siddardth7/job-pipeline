@@ -18,8 +18,8 @@ from pathlib import Path
 from itertools import islice
 from typing import List, Dict
 
-DATA_DIR = Path(__file__).parent.parent / "data"
-CONFIG_PATH = DATA_DIR / "query_engine.json"
+DATA_DIR = Path(__file__).parent  # flat repo — query_engine.json is at root level
+CONFIG_PATH = DATA_DIR / "query_engine.json"  # resolves to ./query_engine.json
 
 log = logging.getLogger("query_engine")
 
