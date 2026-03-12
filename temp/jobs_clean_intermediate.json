@@ -1,6 +1,34 @@
 {
-  "green_jobs": [],
-  "yellow_jobs": [
+  "generated_utc": "2026-03-12T16:54:06.465676Z",
+  "stats": {
+    "total_raw": 167,
+    "schema_rejected": 0,
+    "f3_aggregator": 9,
+    "f4_age": 121,
+    "f5_duplicates": 0,
+    "f6_seniority": 3,
+    "f7_role": 6,
+    "f8_itar": 4,
+    "f9_blacklist": 1,
+    "final_count": 23
+  },
+  "jobs": [
+    {
+      "job_title": "Process Engineer Intern",
+      "company_name": "Freudenberg Group",
+      "job_url": "https://bandana.com/jobs/b3a13414-ee15-40ed-a759-cc3f94c29bfb?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+      "location": "Candler, NC",
+      "posted_date": "2026-03-10",
+      "description": "## Working at Freudenberg\n\nWe will wow your world! As a Process Engineer Intern with Freudenberg Performance Materials LP, you'll join a global technology group with 51,000 employees committed to making the world cleaner, healthier, and more comfortable. We're an equal opportunity employer dedicated to diversity and inclusion, offering a networked and diverse environment where everyone can thrive individually.\n\n## What You'll Do\n\nYou'll develop scope, charter, and documentation for engineering p",
+      "source": "serpapi",
+      "cluster": "process",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 71,
+      "boost_tags": [
+        "engineer i"
+      ]
+    },
     {
       "job_title": "Associate Manufacturing Engineer",
       "company_name": "Beyond Gravity",
@@ -15,8 +43,39 @@
       "relevance_score": 69,
       "boost_tags": [
         "associate"
-      ],
-      "verdict": "YELLOW"
+      ]
+    },
+    {
+      "job_title": "Additive Manufacturing Engineer I",
+      "company_name": "Relativity Space",
+      "job_url": "https://boards.greenhouse.io/relativity/jobs/8423422002?gh_jid=8423422002",
+      "location": "Long Beach, California",
+      "posted_date": "2026-03-10",
+      "description": "<div class=&quot;content-intro&quot;><p><span style=&quot;font-family: arial, helvetica, sans-serif; font-size: 10pt;&quot;>At Relativity Space, we\u2019re building rockets to serve today\u2019s needs and tomorrow\u2019s breakthroughs. Our&nbsp;Terran R vehicle will deliver customer payloads to orbit, meeting the growing demand for launch&nbsp;capacity. But that\u2019s just the start. Achieving commercial success with Terran R will unlock new&nbsp;opportunities to advance science, exploration, and innovation, pione",
+      "source": "ats_greenhouse",
+      "cluster": "manufacturing",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 65,
+      "boost_tags": [
+        "engineer i"
+      ]
+    },
+    {
+      "job_title": "Build Quality Engineer II",
+      "company_name": "Relativity Space",
+      "job_url": "https://boards.greenhouse.io/relativity/jobs/8381951002?gh_jid=8381951002",
+      "location": "Long Beach, California",
+      "posted_date": "2026-03-10",
+      "description": "<div class=&quot;content-intro&quot;><p><span style=&quot;font-family: arial, helvetica, sans-serif; font-size: 10pt;&quot;>At Relativity Space, we\u2019re building rockets to serve today\u2019s needs and tomorrow\u2019s breakthroughs. Our&nbsp;Terran R vehicle will deliver customer payloads to orbit, meeting the growing demand for launch&nbsp;capacity. But that\u2019s just the start. Achieving commercial success with Terran R will unlock new&nbsp;opportunities to advance science, exploration, and innovation, pione",
+      "source": "ats_greenhouse",
+      "cluster": "quality",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 65,
+      "boost_tags": [
+        "engineer i"
+      ]
     },
     {
       "job_title": "CNC Manufacturing Engineer",
@@ -30,8 +89,21 @@
       "itar_flag": false,
       "itar_detail": "",
       "relevance_score": 62,
-      "boost_tags": [],
-      "verdict": "YELLOW"
+      "boost_tags": []
+    },
+    {
+      "job_title": "Process Engineer",
+      "company_name": "Crane Company",
+      "job_url": "https://www.tealhq.com/job/process-engineer_7ea1a195659fb5efa166a71f905e89e4abf15?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+      "location": "Marion, NC",
+      "posted_date": "2026-03-10",
+      "description": "Position Summary:\n\nA process engineer at Crane Resistoflex is responsible for supporting production through daily trouble shooting and root cause analysis to ensure processes are safe, meet quality and throughput requirements and make the work easier for the operators. This requires hands on involvement and working on the shop floor. In addition to this support, they will be responsible for design and implementation of tooling and/or process changes to improve manufacturing processes. They will",
+      "source": "serpapi",
+      "cluster": "process",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 60,
+      "boost_tags": []
     },
     {
       "job_title": "Tooling Engineer",
@@ -45,8 +117,49 @@
       "itar_flag": false,
       "itar_detail": "",
       "relevance_score": 58,
-      "boost_tags": [],
-      "verdict": "YELLOW"
+      "boost_tags": []
+    },
+    {
+      "job_title": "Composite Resources Project Engineer Expression of Interest",
+      "company_name": "Re:Build Manufacturing",
+      "job_url": "https://job-boards.greenhouse.io/rebuildmanufacturing/jobs/4405546005",
+      "location": "Rock Hill, SC",
+      "posted_date": "2026-03-11",
+      "description": "<h2><strong>Who are Composite Resources and Re:Build Manufacturing?</strong></h2> <p>Composite Resources, a Re:Build Manufacturing company, is an innovative, rapidly growing manufacturer of composite components and tooling located in Rock Hill, SC. Our constantly evolving portfolio of projects includes parts and assemblies for clients in the aerospace and defense industries. At Composite Resources, we embrace a culture defined by teamwork, ownership, and accountability.</p> <p>At Re:Build Manufa",
+      "source": "ats_greenhouse",
+      "cluster": "composites",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 56,
+      "boost_tags": []
+    },
+    {
+      "job_title": "Composite Technician",
+      "company_name": "Re:Build Manufacturing",
+      "job_url": "https://job-boards.greenhouse.io/rebuildmanufacturing/jobs/4643638005",
+      "location": "New Kensington, PA",
+      "posted_date": "2026-03-11",
+      "description": "<h2><strong>About Re:Build Manufacturing \u2013 New Kensington</strong></h2> <p>Re:Build Manufacturing New Kensington is part of the Re:Build family of companies, located in New Kensington, PA. Capabilities in a wide variety of industries and materials allow our unique value proposition to bring exciting and advanced programs back to American Manufacturing.</p> <p>Re:Build Manufacturing is a growing family of industrial and engineering businesses combining enabling technologies, operational superiori",
+      "source": "ats_greenhouse",
+      "cluster": "composites",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 56,
+      "boost_tags": []
+    },
+    {
+      "job_title": "Experienced Composite Technician",
+      "company_name": "Re:Build Manufacturing",
+      "job_url": "https://job-boards.greenhouse.io/rebuildmanufacturing/jobs/4528270005",
+      "location": "Rock Hill, SC",
+      "posted_date": "2026-03-11",
+      "description": "<p><strong>Who are Composite Resources and Re:Build Manufacturing?</strong></p> <p>Re:Build CR, LLC (Composite Resources), a Re:Build Manufacturing, LLC company, is an innovative, rapidly growing manufacturer of composite components and tooling located in Rock Hill, SC. Our constantly evolving portfolio of projects includes parts and assemblies for clients in the aerospace and defense industries. At Composite Resources, we embrace a culture defined by teamwork, ownership, and accountability.</p>",
+      "source": "ats_greenhouse",
+      "cluster": "composites",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 56,
+      "boost_tags": []
     },
     {
       "job_title": "Product Quality Engineer",
@@ -60,8 +173,7 @@
       "itar_flag": false,
       "itar_detail": "",
       "relevance_score": 56,
-      "boost_tags": [],
-      "verdict": "YELLOW"
+      "boost_tags": []
     },
     {
       "job_title": "Quality Engineering Intern [Summer 2026]New",
@@ -75,8 +187,21 @@
       "itar_flag": false,
       "itar_detail": "",
       "relevance_score": 56,
-      "boost_tags": [],
-      "verdict": "YELLOW"
+      "boost_tags": []
+    },
+    {
+      "job_title": "Warehouse Operations Process Engineer",
+      "company_name": "Procter & Gamble",
+      "job_url": "https://bandana.com/jobs/2264e612-277b-43c3-aaa3-4cb89e1437b4?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+      "location": "Locust Grove, GA",
+      "posted_date": "2026-03-10",
+      "description": "## About P&G Manufacturing\n\nP&G Manufacturing is all about safety, quality, and productivity. We package and palletize products ready for shipment, but this goes far beyond traditional warehousing. Our operations include state-of-the-art robotics, automation, zero-touch systems, and zero waste to landfill capabilities. Our team of analysts, engineers, leaders, and managers ensures the excellence of our 65 iconic, trusted brands throughout P&G's global end-to-end supply chain.\n\nFrom Day 1, you'll",
+      "source": "serpapi",
+      "cluster": "process",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 54,
+      "boost_tags": []
     },
     {
       "job_title": "Optical Assembly Process Engineer",
@@ -90,8 +215,7 @@
       "itar_flag": false,
       "itar_detail": "",
       "relevance_score": 54,
-      "boost_tags": [],
-      "verdict": "YELLOW"
+      "boost_tags": []
     },
     {
       "job_title": "Embedded Software Quality Engineer",
@@ -105,8 +229,49 @@
       "itar_flag": false,
       "itar_detail": "",
       "relevance_score": 54,
-      "boost_tags": [],
-      "verdict": "YELLOW"
+      "boost_tags": []
+    },
+    {
+      "job_title": "Advanced Manufacturing Engineer",
+      "company_name": "Divergent Technologies",
+      "job_url": "https://job-boards.greenhouse.io/divergent/jobs/5081611008",
+      "location": "Torrance, California, United States",
+      "posted_date": "2026-03-10",
+      "description": "<div class=&quot;content-intro&quot;><p>Divergent is a technology company that has architected, invented, built, and commercialized an end-to-end factory system called the Divergent Adaptive Production System (DAPS) that comprehensively uses machine learning to optimally engineer, additively manufacture, and flexibly assemble complex integrated vehicle structures and subsystems. Products created using DAPS are superior in performance, lower in cost, rapidly customizable to meet mission and custo",
+      "source": "ats_greenhouse",
+      "cluster": "manufacturing",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 52,
+      "boost_tags": []
+    },
+    {
+      "job_title": "Compliance Quality Engineer, Energy Storage",
+      "company_name": "Redwood Materials",
+      "job_url": "https://boards.greenhouse.io/redwoodmaterials/jobs/5737877004?gh_jid=5737877004",
+      "location": "McCarran, NV; San Francisco, California, United States",
+      "posted_date": "2026-03-11",
+      "description": "<div class=&quot;content-intro&quot;><div class=&quot;page&quot;> <div class=&quot;section&quot;> <div class=&quot;layoutArea&quot;> <div class=&quot;column&quot;> <p><span style=&quot;font-family: helvetica, arial, sans-serif; font-size: 12pt;&quot;><strong>About Redwood Materials</strong></span></p> <div> <p><strong>Redwood is localizing a global battery supply chain that seamlessly integrates recovery, reuse, and recycling&nbsp;</strong><strong>\u2014&nbsp;</strong><strong>keeping critical mineral",
+      "source": "ats_greenhouse",
+      "cluster": "quality",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 52,
+      "boost_tags": []
+    },
+    {
+      "job_title": "Field Quality Engineer, Energy Storage",
+      "company_name": "Redwood Materials",
+      "job_url": "https://boards.greenhouse.io/redwoodmaterials/jobs/5823614004?gh_jid=5823614004",
+      "location": "San Francisco, California, United States",
+      "posted_date": "2026-03-12",
+      "description": "<div class=&quot;content-intro&quot;><div class=&quot;page&quot;> <div class=&quot;section&quot;> <div class=&quot;layoutArea&quot;> <div class=&quot;column&quot;> <p><span style=&quot;font-family: helvetica, arial, sans-serif; font-size: 12pt;&quot;><strong>About Redwood Materials</strong></span></p> <div> <p><strong>Redwood is localizing a global battery supply chain that seamlessly integrates recovery, reuse, and recycling&nbsp;</strong><strong>\u2014&nbsp;</strong><strong>keeping critical mineral",
+      "source": "ats_greenhouse",
+      "cluster": "quality",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 52,
+      "boost_tags": []
     },
     {
       "job_title": "Quality Engineer (Automation + AI Testing)",
@@ -120,8 +285,7 @@
       "itar_flag": false,
       "itar_detail": "",
       "relevance_score": 52,
-      "boost_tags": [],
-      "verdict": "YELLOW"
+      "boost_tags": []
     },
     {
       "job_title": "Industrial Engineer",
@@ -135,8 +299,7 @@
       "itar_flag": false,
       "itar_detail": "",
       "relevance_score": 52,
-      "boost_tags": [],
-      "verdict": "YELLOW"
+      "boost_tags": []
     },
     {
       "job_title": "Process Engineer",
@@ -150,8 +313,7 @@
       "itar_flag": false,
       "itar_detail": "",
       "relevance_score": 52,
-      "boost_tags": [],
-      "verdict": "YELLOW"
+      "boost_tags": []
     },
     {
       "job_title": "Process Engineer",
@@ -165,8 +327,7 @@
       "itar_flag": false,
       "itar_detail": "",
       "relevance_score": 52,
-      "boost_tags": [],
-      "verdict": "YELLOW"
+      "boost_tags": []
     },
     {
       "job_title": "Production Engineer",
@@ -180,18 +341,7 @@
       "itar_flag": false,
       "itar_detail": "",
       "relevance_score": 50,
-      "boost_tags": [],
-      "verdict": "YELLOW"
+      "boost_tags": []
     }
-  ],
-  "summary": {
-    "run_date": "2026-03-12",
-    "generated_utc": "2026-03-12T16:54:06.526522Z",
-    "total_scraped": 23,
-    "duplicates_removed": 11,
-    "filtered_jobs": 0,
-    "green_jobs": 0,
-    "yellow_jobs": 12,
-    "promoted_companies": []
-  }
+  ]
 }
