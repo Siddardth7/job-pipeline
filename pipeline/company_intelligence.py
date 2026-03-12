@@ -18,8 +18,8 @@ from datetime import date, datetime, timedelta
 from pathlib import Path
 from typing import Dict, List, Tuple
 
-ROOT = Path(__file__).parent  # flat repo — all files at root level
-DATA_DIR = ROOT  # company_database.json and job_history.json live at repo root
+ROOT = Path(__file__).parent.parent  # pipeline/ subdir → parent.parent = repo root
+DATA_DIR = ROOT / "data"
 TEMP_DIR = ROOT / "temp"
 OUTPUT_DIR = ROOT / "output"
 

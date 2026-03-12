@@ -34,24 +34,24 @@ jobs:
 
       # ── STEP 1: Run all scrapers via orchestrator ─────────────────────────
       # Runs ATS → JSearch → Apify → SerpAPI → TheirStack in order.
-      # Each scraper is isolated in a try/except — one failure never blocks others.
+      # Each scraper isolated in try/except — one failure never blocks others.
       # Outputs written to temp/jobs_*.json for the merge step.
       - name: Run scraper orchestrator
         continue-on-error: true
-        run: python scraper_orchestrator.py
+        run: python engine/scraper_orchestrator.py
 
       # ── STEP 2: Merge all sources + run hard filter stack (F1–F9) ─────────
       # Reads temp/jobs_*.json, deduplicates, filters, scores.
       # Output: temp/jobs_clean_intermediate.json
       - name: Merge and filter
-        run: python merge_pipeline.py
+        run: python pipeline/merge_pipeline.py
 
       # ── STEP 3: Company intelligence enrichment ───────────────────────────
       # Reads temp/jobs_clean_intermediate.json, adds tier/H1B/industry data.
       # Output: output/jobs_clean_latest.json
       - name: Run company intelligence
         continue-on-error: true
-        run: python company_intelligence.py
+        run: python pipeline/company_intelligence.py
 
       # ── STEP 4: Commit results ────────────────────────────────────────────
       - name: Commit and push results
@@ -85,8 +85,8 @@ jobs:
           import json
           d = json.load(open('temp/jobs_clean_intermediate.json'))
           jobs = d.get('jobs', [])
-          print(f'Intermediate output: {len(jobs)} jobs (company_intelligence may have failed)')
+          print(f'Intermediate: {len(jobs)} jobs (company_intelligence may have failed)')
           "
           else
-            echo "WARNING: No output files found — check orchestrator and merge logs above"
+            echo "WARNING: No output files found — check logs above"
           fi

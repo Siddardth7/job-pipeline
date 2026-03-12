@@ -32,7 +32,7 @@ from pathlib import Path
 from typing import List, Dict, Optional, Tuple
 from urllib.parse import urlparse
 
-ROOT = Path(__file__).parent  # flat repo — all files at root level
+ROOT = Path(__file__).parent.parent  # pipeline/ subdir → parent.parent = repo root
 TEMP_DIR   = ROOT / "temp"
 OUTPUT_PATH = TEMP_DIR / "jobs_clean_intermediate.json"
 

@@ -33,23 +33,23 @@ from datetime import date, datetime
 from pathlib import Path
 from typing import List, Dict
 
-ROOT = Path(__file__).parent  # flat repo — all files at root level
+ROOT = Path(__file__).parent.parent  # engine/ subdir → parent.parent = repo root
 sys.path.insert(0, str(ROOT))
 
-from query_engine                     import QueryEngine
-from ats_scraper                      import AtsScraper
-from jsearch_scraper                  import JSearchScraper
-from apify_scraper                    import ApifyScraper
-from serpapi_scraper                  import SerpApiScraper
-from theirstack_scraper               import TheirStackScraper
+from engine.query_engine              import QueryEngine
+from scrapers.ats_scraper             import AtsScraper
+from scrapers.jsearch_scraper         import JSearchScraper
+from scrapers.apify_scraper           import ApifyScraper
+from scrapers.serpapi_scraper         import SerpApiScraper
+from scrapers.theirstack_scraper      import TheirStackScraper
 
-DATA_DIR     = ROOT  # scraper_state.json and run_log.json live at repo root
+DATA_DIR     = ROOT / "data"
 TEMP_DIR     = ROOT / "temp"
 STATE_PATH   = DATA_DIR / "scraper_state.json"
 RUN_LOG_PATH = DATA_DIR / "run_log.json"
 
-TEMP_DIR.mkdir(exist_ok=True)  # create temp/ if not present
-# DATA_DIR is ROOT itself — no mkdir needed
+TEMP_DIR.mkdir(exist_ok=True)
+DATA_DIR.mkdir(exist_ok=True)
 
 # ── Daily query/run budgets ───────────────────────────────────────────────────
 # ats:        No quota — direct free APIs, unlimited.
