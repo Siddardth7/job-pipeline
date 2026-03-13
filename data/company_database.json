@@ -284,6 +284,66 @@
       "name": "Freudenberg Group",
       "domain": "",
       "industry": "Auto-promoted"
+    },
+    {
+      "name": "Actalent",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Beyond Gravity",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Nobel Biocare",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Legrand, North America",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Figure",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Excelitas Technologies Corp.",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "ASML",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Capgemini",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Lakeside Manufacturing, Inc",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Hikma",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Atlantic Union Bank",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Placer.ai",
+      "domain": "",
+      "industry": "Auto-promoted"
     }
   ],
   "promotion_tracking": {
@@ -360,7 +420,8 @@
     ],
     "Actalent": [
       "2026-03-11",
-      "2026-03-12"
+      "2026-03-12",
+      "2026-03-13"
     ],
     "Florida International University": [
       "2026-03-11"
@@ -541,47 +602,130 @@
     ],
     "Beyond Gravity": [
       "2026-03-12",
-      "2026-03-12"
+      "2026-03-12",
+      "2026-03-13"
     ],
     "Nobel Biocare": [
       "2026-03-12",
-      "2026-03-12"
+      "2026-03-12",
+      "2026-03-13"
     ],
     "Legrand, North America": [
       "2026-03-12",
-      "2026-03-12"
+      "2026-03-12",
+      "2026-03-13"
     ],
     "Figure": [
       "2026-03-12",
-      "2026-03-12"
+      "2026-03-12",
+      "2026-03-13"
     ],
     "Excelitas Technologies Corp.": [
       "2026-03-12",
-      "2026-03-12"
+      "2026-03-12",
+      "2026-03-13"
     ],
     "ASML": [
       "2026-03-12",
-      "2026-03-12"
+      "2026-03-12",
+      "2026-03-13"
     ],
     "Capgemini": [
       "2026-03-12",
-      "2026-03-12"
+      "2026-03-12",
+      "2026-03-13"
     ],
     "Lakeside Manufacturing, Inc": [
       "2026-03-12",
-      "2026-03-12"
+      "2026-03-12",
+      "2026-03-13"
     ],
     "Hikma": [
       "2026-03-12",
-      "2026-03-12"
+      "2026-03-12",
+      "2026-03-13"
     ],
     "Atlantic Union Bank": [
       "2026-03-12",
-      "2026-03-12"
+      "2026-03-12",
+      "2026-03-13"
     ],
     "Placer.ai": [
       "2026-03-12",
-      "2026-03-12"
+      "2026-03-12",
+      "2026-03-13"
+    ],
+    "Ford Motor Company": [
+      "2026-03-13"
+    ],
+    "Kindeva Drug Delivery": [
+      "2026-03-13"
+    ],
+    "Equinox Engineering Ltd.": [
+      "2026-03-13"
+    ],
+    "TSI Incorporated": [
+      "2026-03-13"
+    ],
+    "CRB": [
+      "2026-03-13"
+    ],
+    "Integer Holdings Corporation": [
+      "2026-03-13"
+    ],
+    "Mitsubishi Chemical America": [
+      "2026-03-13"
+    ],
+    "Tenneco": [
+      "2026-03-13"
+    ],
+    "DSJ Global": [
+      "2026-03-13"
+    ],
+    "Crossing Hurdles": [
+      "2026-03-13"
+    ],
+    "Motion Recruitment": [
+      "2026-03-13"
+    ],
+    "Micron Technology": [
+      "2026-03-13"
+    ],
+    "Michael Page": [
+      "2026-03-13"
+    ],
+    "CIRCOR International, Inc.": [
+      "2026-03-13"
+    ],
+    "Module X Solutions LLC": [
+      "2026-03-13"
+    ],
+    "Rain Carbon Inc": [
+      "2026-03-13"
+    ],
+    "T1 Energy Inc.": [
+      "2026-03-13"
+    ],
+    "DHL Supply Chain": [
+      "2026-03-13"
+    ],
+    "SOGECLAIR": [
+      "2026-03-13"
+    ],
+    "Factorial Energy": [
+      "2026-03-13"
+    ],
+    "ASM": [
+      "2026-03-13"
+    ],
+    "Cargill": [
+      "2026-03-13"
+    ],
+    "Ingersoll Rand": [
+      "2026-03-13"
+    ],
+    "Factorial": [
+      "2026-03-13"
     ]
   },
   "rejected_companies": [],
