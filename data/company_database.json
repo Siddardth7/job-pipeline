@@ -309,6 +309,131 @@
       "name": "Placer.ai",
       "domain": "",
       "industry": "Auto-promoted"
+    },
+    {
+      "name": "Ford Motor Company",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Kindeva Drug Delivery",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Equinox Engineering Ltd.",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "TSI Incorporated",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "CRB",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Integer Holdings Corporation",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Mitsubishi Chemical America",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Tenneco",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "DSJ Global",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Crossing Hurdles",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Motion Recruitment",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Micron Technology",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Michael Page",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "CIRCOR International, Inc.",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Module X Solutions LLC",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Rain Carbon Inc",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "T1 Energy Inc.",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "DHL Supply Chain",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "SOGECLAIR",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Factorial Energy",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "ASM",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Cargill",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Ingersoll Rand",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Factorial",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Precision Castparts",
+      "domain": "",
+      "industry": "Auto-promoted"
     }
   ],
   "promotion_tracking": {
@@ -516,7 +641,8 @@
       "2026-03-11"
     ],
     "Avery Dennison": [
-      "2026-03-11"
+      "2026-03-11",
+      "2026-03-14"
     ],
     "The Hershey Company": [
       "2026-03-11"
@@ -622,98 +748,322 @@
     ],
     "Ford Motor Company": [
       "2026-03-13",
+      "2026-03-14",
+      "2026-03-14",
+      "2026-03-14",
       "2026-03-14"
     ],
     "Kindeva Drug Delivery": [
       "2026-03-13",
+      "2026-03-14",
       "2026-03-14"
     ],
     "Equinox Engineering Ltd.": [
       "2026-03-13",
+      "2026-03-14",
       "2026-03-14"
     ],
     "TSI Incorporated": [
       "2026-03-13",
+      "2026-03-14",
       "2026-03-14"
     ],
     "CRB": [
       "2026-03-13",
+      "2026-03-14",
+      "2026-03-14",
       "2026-03-14"
     ],
     "Integer Holdings Corporation": [
       "2026-03-13",
+      "2026-03-14",
       "2026-03-14"
     ],
     "Mitsubishi Chemical America": [
       "2026-03-13",
+      "2026-03-14",
+      "2026-03-14",
       "2026-03-14"
     ],
     "Tenneco": [
       "2026-03-13",
+      "2026-03-14",
       "2026-03-14"
     ],
     "DSJ Global": [
       "2026-03-13",
+      "2026-03-14",
       "2026-03-14"
     ],
     "Crossing Hurdles": [
       "2026-03-13",
+      "2026-03-14",
       "2026-03-14"
     ],
     "Motion Recruitment": [
       "2026-03-13",
+      "2026-03-14",
       "2026-03-14"
     ],
     "Micron Technology": [
       "2026-03-13",
+      "2026-03-14",
+      "2026-03-14",
       "2026-03-14"
     ],
     "Michael Page": [
       "2026-03-13",
+      "2026-03-14",
       "2026-03-14"
     ],
     "CIRCOR International, Inc.": [
       "2026-03-13",
+      "2026-03-14",
       "2026-03-14"
     ],
     "Module X Solutions LLC": [
       "2026-03-13",
+      "2026-03-14",
       "2026-03-14"
     ],
     "Rain Carbon Inc": [
       "2026-03-13",
+      "2026-03-14",
       "2026-03-14"
     ],
     "T1 Energy Inc.": [
       "2026-03-13",
+      "2026-03-14",
       "2026-03-14"
     ],
     "DHL Supply Chain": [
       "2026-03-13",
+      "2026-03-14",
       "2026-03-14"
     ],
     "SOGECLAIR": [
       "2026-03-13",
+      "2026-03-14",
       "2026-03-14"
     ],
     "Factorial Energy": [
       "2026-03-13",
+      "2026-03-14",
       "2026-03-14"
     ],
     "ASM": [
       "2026-03-13",
+      "2026-03-14",
       "2026-03-14"
     ],
     "Cargill": [
       "2026-03-13",
+      "2026-03-14",
       "2026-03-14"
     ],
     "Ingersoll Rand": [
       "2026-03-13",
+      "2026-03-14",
+      "2026-03-14",
       "2026-03-14"
     ],
     "Factorial": [
       "2026-03-13",
+      "2026-03-14",
+      "2026-03-14"
+    ],
+    "CoorsTek, Inc.": [
+      "2026-03-14"
+    ],
+    "Superior Essex": [
+      "2026-03-14"
+    ],
+    "Garmin": [
+      "2026-03-14"
+    ],
+    "Sysco": [
+      "2026-03-14"
+    ],
+    "Precision Castparts": [
+      "2026-03-14",
+      "2026-03-14",
+      "2026-03-14"
+    ],
+    "TE Connectivity": [
+      "2026-03-14"
+    ],
+    "Hoshizaki America": [
+      "2026-03-14"
+    ],
+    "Firefly Aerospace": [
+      "2026-03-14"
+    ],
+    "myGwork - LGBTQ+ Business Community": [
+      "2026-03-14"
+    ],
+    "MLC": [
+      "2026-03-14"
+    ],
+    "CVR Energy, Inc.": [
+      "2026-03-14"
+    ],
+    "Singer Vehicle Design": [
+      "2026-03-14"
+    ],
+    "FlatironDragados": [
+      "2026-03-14"
+    ],
+    "DLB Associates": [
+      "2026-03-14"
+    ],
+    "Essex Brownell": [
+      "2026-03-14"
+    ],
+    "CVRx | Barostim": [
+      "2026-03-14"
+    ],
+    "Trane Technologies": [
+      "2026-03-14"
+    ],
+    "Andersen Corporation": [
+      "2026-03-14"
+    ],
+    "Jobs via Dice": [
+      "2026-03-14"
+    ],
+    "APTIM": [
+      "2026-03-14"
+    ],
+    "Mortenson": [
+      "2026-03-14"
+    ],
+    "AEROCONTACT": [
+      "2026-03-14"
+    ],
+    "AISIN World Corp. of America": [
+      "2026-03-14"
+    ],
+    "Pennsylvania Transformer Technology LLC (PTT)": [
+      "2026-03-14"
+    ],
+    "AMETEK": [
+      "2026-03-14"
+    ],
+    "Piston Automotive": [
+      "2026-03-14"
+    ],
+    "Kelly Science, Engineering, Technology & Telecom": [
+      "2026-03-14"
+    ],
+    "Autoliv": [
+      "2026-03-14"
+    ],
+    "Wolverine Advanced Materials": [
+      "2026-03-14"
+    ],
+    "Kimball International": [
+      "2026-03-14"
+    ],
+    "Philips": [
+      "2026-03-14"
+    ],
+    "Holden Industries, Inc.": [
+      "2026-03-14"
+    ],
+    "Times Microwave Systems": [
+      "2026-03-14"
+    ],
+    "Moog Inc.": [
+      "2026-03-14"
+    ],
+    "PANGEATWO": [
+      "2026-03-14"
+    ],
+    "Syensqo": [
+      "2026-03-14"
+    ],
+    "FetchJobs.co": [
+      "2026-03-14"
+    ],
+    "Hexagon Mining": [
+      "2026-03-14"
+    ],
+    "Modine Manufacturing Company": [
+      "2026-03-14"
+    ],
+    "Howmet Aerospace": [
+      "2026-03-14"
+    ],
+    "Quanta Manufacturing Nashville": [
+      "2026-03-14"
+    ],
+    "Lincare": [
+      "2026-03-14"
+    ],
+    "K\u00f6rber Supply Chain": [
+      "2026-03-14"
+    ],
+    "Smith+Nephew": [
+      "2026-03-14"
+    ],
+    "Shaw Industries": [
+      "2026-03-14"
+    ],
+    "Kaney": [
+      "2026-03-14"
+    ],
+    "Graco": [
+      "2026-03-14"
+    ],
+    "NML Medical": [
+      "2026-03-14"
+    ],
+    "Justrite Safety Group": [
+      "2026-03-14"
+    ],
+    "CF Industries": [
+      "2026-03-14"
+    ],
+    "Ashland": [
+      "2026-03-14"
+    ],
+    "Exponent": [
+      "2026-03-14"
+    ],
+    "Hartzell Propeller": [
+      "2026-03-14"
+    ],
+    "Adient": [
+      "2026-03-14"
+    ],
+    "DBSI Services": [
+      "2026-03-14"
+    ],
+    "Neuralink": [
+      "2026-03-14"
+    ],
+    "Dandy": [
+      "2026-03-14"
+    ],
+    "Whirlpool Corporation": [
+      "2026-03-14"
+    ],
+    "ID Logistics US": [
+      "2026-03-14"
+    ],
+    "IFF": [
+      "2026-03-14"
+    ],
+    "Winchester Interconnect": [
+      "2026-03-14"
+    ],
+    "KONE": [
+      "2026-03-14"
+    ],
+    "Siemens": [
+      "2026-03-14"
+    ],
+    "CNH": [
       "2026-03-14"
     ]
   },
