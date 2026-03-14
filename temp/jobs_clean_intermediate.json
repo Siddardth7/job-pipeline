@@ -1,16 +1,16 @@
 {
-  "generated_utc": "2026-03-13T14:04:01.162276Z",
+  "generated_utc": "2026-03-14T13:46:02.972718Z",
   "stats": {
-    "total_raw": 213,
+    "total_raw": 238,
     "schema_rejected": 0,
     "f3_aggregator": 12,
-    "f4_age": 111,
-    "f5_duplicates": 9,
-    "f6_seniority": 3,
-    "f7_role": 16,
+    "f4_age": 116,
+    "f5_duplicates": 37,
+    "f6_seniority": 2,
+    "f7_role": 12,
     "f8_itar": 14,
     "f9_blacklist": 0,
-    "final_count": 48
+    "final_count": 45
   },
   "jobs": [
     {
@@ -276,48 +276,6 @@
       "description": "Lead process improvement initiatives for a well-established CNC department!Company prioritizes promoting from within!\n\nAbout Our Client\n\nOur client is a large-scale contract manufacturer that prides themselves on their rigorous quality standards, customer service, and being able to machine nearly any part a customer can bring their way. They're looking to continue their growth in their industry and are looking for a Process Engineer to identify machining bottlenecks, improve process flow, and ma",
       "source": "apify",
       "cluster": "linkedin",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 56,
-      "boost_tags": []
-    },
-    {
-      "job_title": "Composite Resources Project Engineer Expression of Interest",
-      "company_name": "Re:Build Manufacturing",
-      "job_url": "https://job-boards.greenhouse.io/rebuildmanufacturing/jobs/4405546005",
-      "location": "Rock Hill, SC",
-      "posted_date": "2026-03-11",
-      "description": "<h2><strong>Who are Composite Resources and Re:Build Manufacturing?</strong></h2> <p>Composite Resources, a Re:Build Manufacturing company, is an innovative, rapidly growing manufacturer of composite components and tooling located in Rock Hill, SC. Our constantly evolving portfolio of projects includes parts and assemblies for clients in the aerospace and defense industries. At Composite Resources, we embrace a culture defined by teamwork, ownership, and accountability.</p> <p>At Re:Build Manufa",
-      "source": "ats_greenhouse",
-      "cluster": "composites",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 56,
-      "boost_tags": []
-    },
-    {
-      "job_title": "Composite Technician",
-      "company_name": "Re:Build Manufacturing",
-      "job_url": "https://job-boards.greenhouse.io/rebuildmanufacturing/jobs/4643638005",
-      "location": "New Kensington, PA",
-      "posted_date": "2026-03-11",
-      "description": "<h2><strong>About Re:Build Manufacturing \u2013 New Kensington</strong></h2> <p>Re:Build Manufacturing New Kensington is part of the Re:Build family of companies, located in New Kensington, PA. Capabilities in a wide variety of industries and materials allow our unique value proposition to bring exciting and advanced programs back to American Manufacturing.</p> <p>Re:Build Manufacturing is a growing family of industrial and engineering businesses combining enabling technologies, operational superiori",
-      "source": "ats_greenhouse",
-      "cluster": "composites",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 56,
-      "boost_tags": []
-    },
-    {
-      "job_title": "Experienced Composite Technician",
-      "company_name": "Re:Build Manufacturing",
-      "job_url": "https://job-boards.greenhouse.io/rebuildmanufacturing/jobs/4528270005",
-      "location": "Rock Hill, SC",
-      "posted_date": "2026-03-11",
-      "description": "<p><strong>Who are Composite Resources and Re:Build Manufacturing?</strong></p> <p>Re:Build CR, LLC (Composite Resources), a Re:Build Manufacturing, LLC company, is an innovative, rapidly growing manufacturer of composite components and tooling located in Rock Hill, SC. Our constantly evolving portfolio of projects includes parts and assemblies for clients in the aerospace and defense industries. At Composite Resources, we embrace a culture defined by teamwork, ownership, and accountability.</p>",
-      "source": "ats_greenhouse",
-      "cluster": "composites",
       "itar_flag": false,
       "itar_detail": "",
       "relevance_score": 56,
