@@ -16,21 +16,6 @@
       "industry": "Aerospace"
     },
     {
-      "name": "Lockheed Martin",
-      "domain": "lockheedmartin.com",
-      "industry": "Aerospace & Defense"
-    },
-    {
-      "name": "Northrop Grumman",
-      "domain": "northropgrumman.com",
-      "industry": "Aerospace & Defense"
-    },
-    {
-      "name": "RTX",
-      "domain": "rtx.com",
-      "industry": "Aerospace & Defense"
-    },
-    {
       "name": "Honeywell Aerospace",
       "domain": "honeywell.com",
       "industry": "Aerospace"
@@ -74,26 +59,6 @@
       "name": "Caterpillar",
       "domain": "caterpillar.com",
       "industry": "Industrial Equipment"
-    },
-    {
-      "name": "Raytheon",
-      "domain": "rtx.com",
-      "industry": "Aerospace & Defense"
-    },
-    {
-      "name": "L3Harris",
-      "domain": "l3harris.com",
-      "industry": "Aerospace & Defense"
-    },
-    {
-      "name": "BAE Systems",
-      "domain": "baesystems.com",
-      "industry": "Aerospace & Defense"
-    },
-    {
-      "name": "General Dynamics",
-      "domain": "gd.com",
-      "industry": "Aerospace & Defense"
     },
     {
       "name": "Textron",

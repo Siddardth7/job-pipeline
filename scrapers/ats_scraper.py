@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-scrapers/ats_scraper.py — JobAgent v4.1
+scrapers/ats_scraper.py — JobAgent v4.2
 ATS Direct Scraper — Greenhouse & Lever
 
 Scrapes jobs DIRECTLY from company career pages using the free public APIs
@@ -8,33 +8,27 @@ provided by Greenhouse and Lever. No authentication, no third-party service,
 no quota limits, no cost.
 
 Why this is the best scraper in the stack:
-    • 100% of results come from our 628-company target universe
+    • 100% of results come from our target company universe
     • Returns direct company career page apply URLs (never aggregators)
     • Full job descriptions available immediately (no follow-up fetch needed)
     • Title + seniority filtering happens before any data is written to disk
     • Completely free — just plain HTTP GET/POST calls
 
 Supported ATS platforms:
-    Greenhouse  →  GET  https://api.greenhouse.io/v1/boards/{slug}/jobs?content=true
+    Greenhouse  →  GET  https://api.greenhouse.io/v1/boards/{slug}/jobs?content=true&updated_after=...
     Lever       →  GET  https://api.lever.co/v0/postings/{slug}?mode=json
 
-Company list is built from two sources (merged, deduped):
-    1. GREENHOUSE_COMPANIES / LEVER_COMPANIES dicts below (hardcoded, verified)
-    2. data/company_database.json if it contains ats_platform / ats_board_url fields
+Company list is loaded from data/ats_companies.json (edit that file to add/remove
+companies — no code changes needed).
 
 No env vars required — this scraper makes no authenticated API calls.
-
-ADDING MORE COMPANIES:
-    Add entries to GREENHOUSE_COMPANIES or LEVER_COMPANIES below.
-    The key is the company slug used in the ATS URL.
-    If a slug is wrong, the API returns 404 and the company is skipped silently.
-    Priority order: Aerospace > Composites/Materials > eVTOL/Space > Other.
 """
 
 import json
 import logging
 import re
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import List, Dict, Optional, Tuple
@@ -47,107 +41,33 @@ except ImportError:
 log = logging.getLogger("ats_scraper")
 
 # ── Request config ────────────────────────────────────────────────────────────
-REQUEST_DELAY    = 0.5   # seconds between company API calls (be polite)
 REQUEST_TIMEOUT  = 12    # seconds per HTTP request
 MAX_JOBS_PER_CO  = 50    # cap to avoid runaway on companies with 1000+ postings
+MAX_WORKERS      = 6     # concurrent threads for fetching companies
+# Greenhouse updated_after window — fetch only jobs updated in the last N hours.
+# Slightly wider than F4's 72h to avoid edge-case drops at the boundary.
+GH_UPDATED_AFTER_HOURS = 96
 
-# ── Company registry ──────────────────────────────────────────────────────────
-# Format: { "slug": {"name": str, "tier": str, "industry": str, "h1b": str, "itar": str} }
-# Priority order: Aerospace/eVTOL first, then Composites/Materials, then others.
-# All verified as of March 2026 — check https://boards.greenhouse.io/{slug}
-# or https://jobs.lever.co/{slug} to confirm a slug before adding it.
-# Greenhouse: 28 companies (26 existing + 2 new: dawnaerospace, carbon)
-# Lever: 6 companies (1 existing + 4 new/migrated: loftorbital, hermeus, beta, velo3d, orbitalsidekick)
+# ── Load company registry from data file ─────────────────────────────────────
+_DATA_DIR          = Path(__file__).parent.parent / "data"
+_ATS_COMPANIES_PATH = _DATA_DIR / "ats_companies.json"
 
-GREENHOUSE_COMPANIES: Dict[str, Dict] = {
-    # ══════════════════════════════════════════════════════════════════════════
-    # Greenhouse APIs are 100% free, no auth, no quota. Scrape ALL every day.
-    # All slugs live-verified March 2026 — 404s removed, corrected slugs added.
-    # ══════════════════════════════════════════════════════════════════════════
+def _load_companies() -> Tuple[Dict, Dict]:
+    """Load Greenhouse and Lever company dicts from data/ats_companies.json."""
+    try:
+        data = json.loads(_ATS_COMPANIES_PATH.read_text())
+        return data.get("greenhouse", {}), data.get("lever", {})
+    except Exception as e:
+        log.error(f"[ats] Failed to load ats_companies.json: {e}. Using empty company lists.")
+        return {}, {}
 
-    # ── Aerospace / Space / eVTOL ────────────────────────────────────────
-    "supernal":             {"name": "Supernal",                "tier": "Tier 1", "industry": "Aerospace",              "h1b": "YES",    "itar": "Partial"},
-    "planetlabs":           {"name": "Planet Labs",             "tier": "Tier 1", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "Partial"},
-    "astspacemobile":       {"name": "AST SpaceMobile",         "tier": "Tier 2", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "NO"},
-    "relativity":           {"name": "Relativity Space",        "tier": "Tier 2", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "NO"},
-    "astranis":             {"name": "Astranis",                "tier": "Tier 1", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "Partial"},
-    "rocketlab":            {"name": "Rocket Lab",              "tier": "Tier 1", "industry": "Aerospace",              "h1b": "YES",    "itar": "Partial"},
-    "vast":                 {"name": "Vast Space",              "tier": "Tier 1", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "NO"},
-    "divergent":            {"name": "Divergent Technologies",  "tier": "Tier 2", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "NO"},
-    "flyzipline":           {"name": "Zipline",                 "tier": "Tier 2", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "NO"},
-    "heartaerospace":       {"name": "Heart Aerospace",         "tier": "Tier 1", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "NO"},
-    "ottoaviation":         {"name": "Otto Aviation",           "tier": "Tier 1", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "NO"},
-    "rebuildmanufacturing": {"name": "Re:Build Manufacturing",  "tier": "Tier 2", "industry": "Materials & Composites", "h1b": "LIKELY", "itar": "NO"},
-    "ursamajor":            {"name": "Ursa Major",              "tier": "Tier 1", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "Partial"},
-    "spire":                {"name": "Spire Global",            "tier": "Tier 2", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "NO"},
-    # ── CORRECTED SLUGS (were 404ing with old slugs — fixed March 2026) ──
-    "archer":               {"name": "Archer Aviation",         "tier": "Tier 1", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "Partial"},
-    # was "archeravia"
-    "axiom":                {"name": "Axiom Space",             "tier": "Tier 1", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "Partial"},
-    # was "axiomspace"
-    "solidpower":           {"name": "Solid Power",             "tier": "Tier 3", "industry": "Energy",                 "h1b": "LIKELY", "itar": "NO"},
-    # was "solidpowerbattery"
-    "sesai":                {"name": "SES AI",                  "tier": "Tier 3", "industry": "Energy",                 "h1b": "LIKELY", "itar": "NO"},
-    # was "scibattery"
-    # ── Automotive / EV ──────────────────────────────────────────────────
-    "nuro":                 {"name": "Nuro",                    "tier": "Tier 2", "industry": "Automotive",             "h1b": "YES",    "itar": "NO"},
-    "lucidmotors":          {"name": "Lucid Motors",            "tier": "Tier 2", "industry": "Automotive",             "h1b": "YES",    "itar": "NO"},
-    "faradayfuture":        {"name": "Faraday Future",          "tier": "Tier 2", "industry": "Automotive",             "h1b": "LIKELY", "itar": "NO"},
-    "chargepoint":          {"name": "ChargePoint",             "tier": "Tier 2", "industry": "Automotive",             "h1b": "LIKELY", "itar": "NO"},
-    # ── Energy / Materials ───────────────────────────────────────────────
-    "redwoodmaterials":     {"name": "Redwood Materials",       "tier": "Tier 2", "industry": "Energy",                 "h1b": "LIKELY", "itar": "NO"},
-    # ── Manufacturing / Industrial ───────────────────────────────────────
-    "markforged":           {"name": "Markforged",              "tier": "Tier 2", "industry": "Manufacturing",          "h1b": "LIKELY", "itar": "NO"},
-    # ── NEW COMPANIES (verified live — March 2026) ────────────────────────
-    # Dawn Aerospace — NZ/US reusable propulsion startup, composites/mfg roles
-    "dawnaerospace":        {"name": "Dawn Aerospace",          "tier": "Tier 2", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "NO"},
-    # Carbon — CLIP additive manufacturing, process/materials roles
-    "carbon":               {"name": "Carbon",                  "tier": "Tier 2", "industry": "Manufacturing",          "h1b": "YES",    "itar": "NO"},
-    # ── NOT FOUND ON GREENHOUSE OR LEVER (covered by JSearch/SerpAPI/TheirStack) ─
-    # hermeus → Lever slug: 'hermeus' ← added to LEVER_COMPANIES below
-    # beta → Lever slug: 'beta' ← added to LEVER_COMPANIES below
-    # velo3d → Lever slug: 'velo3d' ← added to LEVER_COMPANIES below
-    # loftorbital → Lever slug: 'loftorbital' ← added to LEVER_COMPANIES below
-    # skydio / joby / terranorbital / zeroavia / wisk / sierraspace /
-    # intuitivemachines / aerojet / impulse-space / stoke-space / astroscale /
-    # rivian / canoo / proterra / formenergy / quantumscape / desktop-metal →
-    # Use enterprise ATS (Workday, iCIMS, Taleo). Covered by search scrapers.
-}
-
-LEVER_COMPANIES: Dict[str, Dict] = {
-    # ══════════════════════════════════════════════════════════════════════════
-    # Lever APIs are 100% free, no auth, no quota. Try all slugs every day.
-    # All slugs live-verified March 2026.
-    # ══════════════════════════════════════════════════════════════════════════
-
-    # ── Working slugs (verified 200) ─────────────────────────────────────
-    "shieldai":          {"name": "Shield AI",             "tier": "Tier 1", "industry": "Aerospace",     "h1b": "LIKELY", "itar": "Partial"},
-    # ── FIXED SLUGS (were 404ing — corrected March 2026) ─────────────────
-    "loftorbital":       {"name": "Loft Orbital",          "tier": "Tier 2", "industry": "Aerospace",     "h1b": "LIKELY", "itar": "NO"},
-    # was "loftorbital" in GH (incorrect) — correct Lever slug confirmed
-    # ── NEW ADDITIONS (were incorrectly listed as Greenhouse — found on Lever) ─
-    "hermeus":           {"name": "Hermeus",               "tier": "Tier 1", "industry": "Aerospace",     "h1b": "LIKELY", "itar": "Partial"},
-    # Mach 5 commercial aircraft startup; 113 open jobs on Lever
-    "beta":              {"name": "Beta Technologies",     "tier": "Tier 1", "industry": "Aerospace",     "h1b": "LIKELY", "itar": "Partial"},
-    # Electric vertical takeoff; 208 open jobs on Lever
-    "velo3d":            {"name": "Velo3D",                "tier": "Tier 2", "industry": "Manufacturing", "h1b": "LIKELY", "itar": "NO"},
-    # Metal additive manufacturing; 20 open jobs on Lever
-    "orbitalsidekick":   {"name": "Orbital Sidekick",      "tier": "Tier 2", "industry": "Aerospace",     "h1b": "LIKELY", "itar": "NO"},
-    # Hyperspectral Earth observation startup; 2 open jobs on Lever
-    # ── REMOVED (404 confirmed on both Greenhouse and Lever — March 2026) ─
-    # boomsupersonic / fireflyspace / spinlaunch / capellaspace / voyagerspace
-    # / astrolab / hadrian / aptera / momentus-space → not on GH or Lever.
-    # These companies use Workday, iCIMS, or custom ATS and are covered
-    # by JSearch + SerpAPI + TheirStack search scrapers.
-}
+GREENHOUSE_COMPANIES, LEVER_COMPANIES = _load_companies()
 
 # ── ITAR / seniority keyword lists ────────────────────────────────────────────
-ITAR_KEYWORDS = [
-    "security clearance", "us person", "itar", "export controlled",
-    "classified", "us citizen or permanent resident",
-    "must be authorized to work without sponsorship",
-    "u.s. citizen", "u.s. national", "permanent resident only",
-]
+try:
+    ITAR_KEYWORDS: List[str] = json.loads((_DATA_DIR / "itar_keywords.json").read_text())
+except Exception:
+    ITAR_KEYWORDS = ["itar", "security clearance", "export controlled", "u.s. citizen"]
 
 SENIORITY_REJECT_PATTERNS = re.compile(
     r"\b(senior|sr\.|staff|principal|lead\s+engineer|manager|director|"
@@ -155,7 +75,7 @@ SENIORITY_REJECT_PATTERNS = re.compile(
     re.IGNORECASE,
 )
 
-# Job title keywords that must appear (at least one) for a title to match our clusters
+# Job title keywords — at least one must appear for a title to match our clusters
 TITLE_KEYWORDS = [
     "manufacturing", "process", "materials", "composites", "composite",
     "quality", "industrial", "tooling", "metrology", "inspection",
@@ -168,7 +88,8 @@ TITLE_KEYWORDS = [
 class AtsScraper:
     """
     Scrapes jobs directly from Greenhouse and Lever public APIs.
-    No authentication, no quota, no cost. Targeted to our 628-company universe.
+    No authentication, no quota, no cost. Targeted to our company universe
+    defined in data/ats_companies.json.
     """
 
     def run(self, queries: List[Dict] = None) -> List[Dict]:
@@ -189,37 +110,47 @@ class AtsScraper:
             f"{total_lv} Lever companies"
         )
 
-        # ── Greenhouse ────────────────────────────────────────────────────────
-        for slug, meta in gh_companies.items():
-            jobs = self._fetch_greenhouse(slug, meta)
-            for j in jobs:
-                key = (j["company_name"].lower(), j["job_title"].lower(), j["location"].lower())
-                if key not in seen:
-                    seen.add(key)
-                    all_jobs.append(j)
-            time.sleep(REQUEST_DELAY)
+        # Compute updated_after cutoff for Greenhouse requests
+        gh_cutoff = (
+            datetime.utcnow() - timedelta(hours=GH_UPDATED_AFTER_HOURS)
+        ).strftime("%Y-%m-%dT%H:%M:%SZ")
 
-        # ── Lever ─────────────────────────────────────────────────────────────
-        for slug, meta in lv_companies.items():
-            jobs = self._fetch_lever(slug, meta)
-            for j in jobs:
-                key = (j["company_name"].lower(), j["job_title"].lower(), j["location"].lower())
-                if key not in seen:
-                    seen.add(key)
-                    all_jobs.append(j)
-            time.sleep(REQUEST_DELAY)
+        # ── Fetch all companies concurrently ──────────────────────────────────
+        gh_futures = {}
+        lv_futures = {}
+
+        with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
+            for slug, meta in gh_companies.items():
+                fut = pool.submit(self._fetch_greenhouse, slug, meta, gh_cutoff)
+                gh_futures[fut] = (slug, meta)
+            for slug, meta in lv_companies.items():
+                fut = pool.submit(self._fetch_lever, slug, meta)
+                lv_futures[fut] = (slug, meta)
+
+            for fut in as_completed({**gh_futures, **lv_futures}):
+                jobs = fut.result()
+                for j in jobs:
+                    key = (j["company_name"].lower(), j["job_title"].lower(), j["location"].lower())
+                    if key not in seen:
+                        seen.add(key)
+                        all_jobs.append(j)
 
         log.info(f"[ats] Total unique jobs after title/seniority filter: {len(all_jobs)}")
         return all_jobs
 
     # ── Greenhouse ────────────────────────────────────────────────────────────
 
-    def _fetch_greenhouse(self, slug: str, meta: Dict) -> List[Dict]:
+    def _fetch_greenhouse(self, slug: str, meta: Dict, updated_after: str = "") -> List[Dict]:
         url = f"https://api.greenhouse.io/v1/boards/{slug}/jobs?content=true"
+        if updated_after:
+            url += f"&updated_after={updated_after}"
         try:
             r = requests.get(url, timeout=REQUEST_TIMEOUT)
             if r.status_code == 404:
-                log.warning(f"  [ats/gh] {meta['name']!r} — 404 (slug={slug!r}). Verify slug at boards.greenhouse.io/{slug}")
+                log.warning(
+                    f"  [ats/gh] {meta['name']!r} — 404 (slug={slug!r}). "
+                    f"Verify slug at boards.greenhouse.io/{slug}"
+                )
                 return []
             if r.status_code != 200:
                 log.warning(f"  [ats/gh] {meta['name']!r} — HTTP {r.status_code}")
@@ -247,19 +178,16 @@ class AtsScraper:
         location_list = raw.get("location", {}) or {}
         location = location_list.get("name", "") or "United States"
 
-        job_id  = str(raw.get("id", "") or "")
-        url     = raw.get("absolute_url", "") or f"https://boards.greenhouse.io/{slug}/jobs/{job_id}"
+        job_id = str(raw.get("id", "") or "")
+        url    = raw.get("absolute_url", "") or f"https://boards.greenhouse.io/{slug}/jobs/{job_id}"
 
-        # content is only present when ?content=true is passed
         content = raw.get("content", "") or ""
         desc    = _strip_html(content)
 
-        posted_raw = raw.get("updated_at", "") or raw.get("created_at", "")
+        posted_raw  = raw.get("updated_at", "") or raw.get("created_at", "")
         posted_date = self._parse_iso(posted_raw)
 
         itar_flags = [kw for kw in ITAR_KEYWORDS if kw in desc.lower()]
-        if itar_flags and meta.get("itar") == "NO":
-            pass  # description check overrides company tag — log and include anyway (pipeline filters)
 
         return {
             "job_title":    title,
@@ -284,7 +212,10 @@ class AtsScraper:
         try:
             r = requests.get(url, timeout=REQUEST_TIMEOUT)
             if r.status_code == 404:
-                log.warning(f"  [ats/lv] {meta['name']!r} — 404 (slug={slug!r}). Verify at jobs.lever.co/{slug}")
+                log.warning(
+                    f"  [ats/lv] {meta['name']!r} — 404 (slug={slug!r}). "
+                    f"Verify at jobs.lever.co/{slug}"
+                )
                 return []
             if r.status_code != 200:
                 log.warning(f"  [ats/lv] {meta['name']!r} — HTTP {r.status_code}")
@@ -314,10 +245,9 @@ class AtsScraper:
         categories = raw.get("categories", {}) or {}
         location   = categories.get("location", "") or "United States"
 
-        url        = raw.get("hostedUrl", "") or raw.get("applyUrl", "") or ""
-        job_id     = raw.get("id", "") or ""
+        url    = raw.get("hostedUrl", "") or raw.get("applyUrl", "") or ""
+        job_id = raw.get("id", "") or ""
 
-        # Lever description is nested under lists of content blocks
         desc_blocks = raw.get("description", "") or ""
         desc_extra  = " ".join(
             item.get("content", "") or ""
@@ -325,7 +255,6 @@ class AtsScraper:
         )
         desc = _strip_html(desc_blocks + " " + desc_extra)
 
-        # createdAt is Unix ms timestamp
         created_ms  = raw.get("createdAt", 0) or 0
         posted_date = (
             datetime.utcfromtimestamp(created_ms / 1000).strftime("%Y-%m-%d")
@@ -353,11 +282,6 @@ class AtsScraper:
     # ── Shared helpers ────────────────────────────────────────────────────────
 
     def _title_matches(self, title: str) -> bool:
-        """
-        Returns True if the job title:
-          (a) contains at least one of our cluster keywords, AND
-          (b) does NOT contain a seniority rejection keyword.
-        """
         t = title.lower()
         has_keyword = any(kw in t for kw in TITLE_KEYWORDS)
         if not has_keyword:
@@ -367,15 +291,14 @@ class AtsScraper:
         return True
 
     def _infer_cluster(self, title: str) -> str:
-        """Map a job title to the closest QueryEngine cluster name."""
         t = title.lower()
-        if "composit" in t:                     return "composites"
-        if "material" in t:                     return "materials"
-        if "quality" in t or "supplier" in t:   return "quality"
-        if "process" in t:                      return "process"
-        if "industrial" in t or "lean" in t:    return "industrial"
-        if "tooling" in t or "metrology" in t:  return "tooling_inspection"
-        if "npi" in t or "prototype" in t or "build" in t: return "startup_manufacturing"
+        if "composit"    in t:                              return "composites"
+        if "material"    in t:                              return "materials"
+        if "quality"     in t or "supplier" in t:          return "quality"
+        if "process"     in t:                              return "process"
+        if "industrial"  in t or "lean" in t:              return "industrial"
+        if "tooling"     in t or "metrology" in t:         return "tooling_inspection"
+        if "npi"         in t or "prototype" in t or "build" in t: return "startup_manufacturing"
         return "manufacturing"
 
     def _parse_iso(self, ts: str) -> str:
@@ -398,10 +321,10 @@ def _strip_html(text: str) -> str:
         return ""
     clean = re.sub(r"<[^>]+>", " ", text)
     clean = re.sub(r"&nbsp;", " ", clean)
-    clean = re.sub(r"&amp;", "&", clean)
-    clean = re.sub(r"&lt;",  "<", clean)
-    clean = re.sub(r"&gt;",  ">", clean)
-    clean = re.sub(r"\s+",   " ", clean).strip()
+    clean = re.sub(r"&amp;",  "&", clean)
+    clean = re.sub(r"&lt;",   "<", clean)
+    clean = re.sub(r"&gt;",   ">", clean)
+    clean = re.sub(r"\s+",    " ", clean).strip()
     return clean
 
 

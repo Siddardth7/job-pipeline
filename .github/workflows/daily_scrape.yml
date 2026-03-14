@@ -70,15 +70,23 @@ jobs:
             python3 -c "
           import json
           d = json.load(open('output/jobs_clean_latest.json'))
-          jobs = d.get('jobs', [])
+          green  = d.get('green_jobs',  [])
+          yellow = d.get('yellow_jobs', [])
+          jobs   = green + yellow
+          summary = d.get('summary', {})
           print('=== CLEAN FEED READY ===')
-          print(f'Total jobs: {len(jobs)}')
+          print(f'GREEN:  {len(green)}')
+          print(f'YELLOW: {len(yellow)}')
+          print(f'TOTAL:  {len(jobs)}')
+          print(f'History dupes removed: {summary.get(\"duplicates_removed\", \"?\")}')
           sources = {}
           for j in jobs:
-              s = j.get('source','?')
+              s = j.get('source', '?')
               sources[s] = sources.get(s, 0) + 1
-          for s, n in sorted(sources.items()):
-              print(f'  {s}: {n}')
+          if sources:
+              print('Sources:')
+              for s, n in sorted(sources.items()):
+                  print(f'  {s}: {n}')
           "
           elif [ -f temp/jobs_clean_intermediate.json ]; then
             python3 -c "

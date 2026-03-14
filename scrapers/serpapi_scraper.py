@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-scrapers/serpapi_scraper.py — JobAgent v4.1
+scrapers/serpapi_scraper.py — JobAgent v4.2
 SerpAPI / Google Jobs Scraper
 
 Queries Google Jobs via SerpAPI using short natural-language phrases.
@@ -42,47 +42,27 @@ except ImportError:
 
 log = logging.getLogger("serpapi_scraper")
 
-SERPAPI_KEY  = (
+SERPAPI_KEY = (
     os.environ.get("SERPAPI_KEY", "")
     or os.environ.get("SERPAPI_API_KEY", "")
 )
-SERPAPI_URL  = "https://serpapi.com/search"
+SERPAPI_URL = "https://serpapi.com/search"
 
-REQUEST_DELAY   = 2.0   # seconds between calls
-RESULTS_PER_REQ = 20    # Google Jobs: up to ~30 per page; 20 is safe
-CHIPS_FILTER    = "date_posted:week"   # broader window — fewer empty-result 400s
+REQUEST_DELAY   = 2.0
+RESULTS_PER_REQ = 20
+CHIPS_FILTER    = "date_posted:week"
 
 AGGREGATOR_DOMAINS = [
     "indeed.com", "glassdoor.com", "ziprecruiter.com",
     "simplyhired.com", "monster.com", "careerbuilder.com",
 ]
 
-ITAR_KEYWORDS = [
-    "security clearance", "us person", "itar", "export controlled",
-    "classified", "us citizen or permanent resident",
-    "must be authorized to work without sponsorship",
-    "u.s. citizen", "u.s. national", "permanent resident only",
-]
-
-
-def should_run_today() -> bool:
-    """
-    Day-alternation gate: SerpAPI only runs on ODD-ordinal days.
-    This halves the monthly query spend (~75/month vs 150/month).
-    Bypass by setting SERPAPI_FORCE_RUN=1 in environment.
-    """
-    if os.environ.get("SERPAPI_FORCE_RUN", "").strip() == "1":
-        log.info("[serpapi] SERPAPI_FORCE_RUN=1 — bypassing day-alternation check")
-        return True
-    today_ordinal = date.today().toordinal()
-    runs_today = (today_ordinal % 2 == 1)
-    if not runs_today:
-        log.info(
-            f"[serpapi] Even-ordinal day ({today_ordinal}) — scheduled OFF today. "
-            f"Runs on odd days to stay within 100 searches/month free tier. "
-            f"Set SERPAPI_FORCE_RUN=1 to override."
-        )
-    return runs_today
+# ── ITAR keywords loaded from shared data file ────────────────────────────────
+_DATA_DIR = Path(__file__).parent.parent / "data"
+try:
+    ITAR_KEYWORDS: List[str] = json.loads((_DATA_DIR / "itar_keywords.json").read_text())
+except Exception:
+    ITAR_KEYWORDS = ["itar", "security clearance", "export controlled", "u.s. citizen"]
 
 
 class SerpApiScraper:
@@ -99,7 +79,6 @@ class SerpApiScraper:
         "industrial":                 "Industrial Engineer entry level",
         "tooling_inspection":         "Tooling Engineer manufacturing",
         "startup_manufacturing":      "Manufacturing Engineer NPI startup",
-        # Open-sweep clusters
         "manufacturing_open":         "Manufacturing Engineer",
         "quality_open":               "Quality Engineer",
         "composites_open":            "Composites Engineer",
@@ -109,13 +88,30 @@ class SerpApiScraper:
         "industrial_open":            "Industrial Engineer",
     }
 
+    @staticmethod
+    def is_scheduled_off() -> bool:
+        """
+        Returns True when SerpAPI should be SKIPPED today (even-ordinal day).
+        The orchestrator calls this before running to set the correct status
+        ('skipped' vs 'zero_results'). SERPAPI_FORCE_RUN=1 overrides this.
+        """
+        if os.environ.get("SERPAPI_FORCE_RUN", "").strip() == "1":
+            return False
+        return (date.today().toordinal() % 2 == 0)
+
     def run(self, queries: List[Dict]) -> List[Dict]:
         if not SERPAPI_KEY:
             log.warning("[serpapi] SERPAPI_KEY not set — skipping")
             return []
 
-        # Day-alternation check
-        if not should_run_today():
+        # Day-alternation check — orchestrator checks is_scheduled_off() before
+        # calling run(), so this is a belt-and-suspenders guard only.
+        if self.is_scheduled_off():
+            log.info(
+                f"[serpapi] Even-ordinal day — scheduled OFF today. "
+                f"Runs on odd days to stay within 100 searches/month free tier. "
+                f"Set SERPAPI_FORCE_RUN=1 to override."
+            )
             return []
 
         all_jobs:     List[Dict] = []
@@ -127,7 +123,6 @@ class SerpApiScraper:
             phrase  = self.CLUSTER_QUERIES.get(cluster)
 
             if not phrase:
-                # Strip boolean syntax from any unknown cluster query
                 raw_q = q_dict.get("query", "")
                 phrase = " ".join(
                     w for w in raw_q.replace('"', '').replace('(', '').split()
@@ -141,12 +136,10 @@ class SerpApiScraper:
             log.info(f"[serpapi] Query ({cluster}): {phrase!r}")
             time.sleep(REQUEST_DELAY)
 
-            # Page 1
             results, has_next = self._api_call(phrase, start=0)
             for raw in results:
                 self._add_if_new(raw, cluster, seen, all_jobs)
 
-            # Page 2 — only when page 1 had results (doubles coverage, 1 extra credit)
             if has_next and results:
                 time.sleep(REQUEST_DELAY)
                 results2, _ = self._api_call(phrase, start=RESULTS_PER_REQ)
@@ -174,8 +167,7 @@ class SerpApiScraper:
     def _api_call(self, query: str, start: int = 0) -> Tuple[List[Dict], bool]:
         """
         Returns (results, has_next_page).
-        Attempt 1: with chips filter. On HTTP 400, retries without chips —
-        Google occasionally rejects chips+query combos for niche searches.
+        Attempt 1: with chips filter. On HTTP 400, retries without chips.
         """
         base_params = {
             "engine":  "google_jobs",
@@ -260,19 +252,16 @@ class SerpApiScraper:
     def _best_apply_link(self, raw: Dict) -> str:
         options = raw.get("apply_options", []) or []
 
-        # Priority 1 — direct company / non-aggregator link
         for opt in options:
             link = opt.get("link", "") or ""
             if link and not self._is_aggregator(link) and "google.com" not in link:
                 return link
 
-        # Priority 2 — any non-Google link (merge pipeline will re-filter aggregators)
         for opt in options:
             link = opt.get("link", "") or ""
             if link and "google.com" not in link:
                 return link
 
-        # Priority 3 — Google Jobs canonical URL from job_id
         job_id = raw.get("job_id", "") or ""
         if job_id:
             return (
@@ -280,7 +269,6 @@ class SerpApiScraper:
                 f"#htivrt=jobs&htidocid={job_id}"
             )
 
-        # Priority 4 — anything at all
         if options:
             link = options[0].get("link", "") or ""
             if link:

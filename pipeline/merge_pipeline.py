@@ -33,7 +33,7 @@ from typing import List, Dict, Optional, Tuple
 from urllib.parse import urlparse
 
 ROOT = Path(__file__).parent.parent  # pipeline/ subdir → parent.parent = repo root
-TEMP_DIR   = ROOT / "temp"
+TEMP_DIR    = ROOT / "temp"
 OUTPUT_PATH = TEMP_DIR / "jobs_clean_intermediate.json"
 
 sys.path.insert(0, str(ROOT))
@@ -43,6 +43,22 @@ log = logging.getLogger("merge_pipeline")
 # ── Constants ─────────────────────────────────────────────────────────────────
 
 MAX_AGE_HOURS = 72
+
+# ── ITAR keywords loaded from shared data file ────────────────────────────────
+# data/itar_keywords.json is the single source of truth for all scrapers and
+# the pipeline. Bare "classified" was removed to prevent false positives
+# (FLSA classification, pay grades, pharma regulatory uses).
+try:
+    ITAR_REJECT_KEYWORDS: List[str] = json.loads(
+        (ROOT / "data" / "itar_keywords.json").read_text()
+    )
+except Exception:
+    # Fallback in case the file is missing — keeps pipeline running
+    log.error("Could not load data/itar_keywords.json — using fallback ITAR keyword list")
+    ITAR_REJECT_KEYWORDS = [
+        "itar", "us person", "u.s. person", "export controlled", "security clearance",
+        "classified information", "u.s. citizen", "u.s. national",
+    ]
 
 # F3 — Aggregator domains (applied post-merge to catch all scrapers)
 AGGREGATOR_DOMAINS = [
@@ -90,25 +106,12 @@ ROLE_RELEVANCE_TOKENS = [
 ]
 
 # F8 — ITAR / export control keywords (hard drop — no exceptions)
-ITAR_REJECT_KEYWORDS = [
-    "itar",
-    "us person",
-    "u.s. person",
-    "us citizenship required",
-    "u.s. citizenship required",
-    "export control",
-    "export controlled",
-    "security clearance",
-    "classified",
-    "us citizen or permanent resident",
-    "u.s. citizen",
-    "u.s. national",
-    "permanent resident only",
-    "must be authorized to work without sponsorship",
-    "active clearance",
-    "secret clearance",
-    "top secret",
-]
+# Loaded from data/itar_keywords.json (see block above).
+# Note: bare "classified" was intentionally removed from the keyword list
+# to avoid false positives on job descriptions using "classified" in
+# non-ITAR contexts (FLSA pay classification, pharmaceutical compliance, etc.).
+# Specific phrases like "classified information", "classified program", and
+# "classified access" are used instead.
 
 # F9 — Blacklisted company names (substring match, case-insensitive)
 BLACKLISTED_COMPANIES = [

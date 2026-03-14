@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-scrapers/apify_scraper.py — JobAgent v4.1
+scrapers/apify_scraper.py — JobAgent v4.2
 Apify / LinkedIn Scraper (harvestapi/linkedin-job-search)
 
 Uses the HarvestAPI "Advanced LinkedIn Job Scraper (No Cookies)" actor
@@ -49,23 +49,30 @@ log = logging.getLogger("apify_scraper")
 APIFY_TOKEN = os.environ.get("APIFY_TOKEN", "")
 
 # Actor slug — stable identifier for harvestapi LinkedIn scraper
-# This actor is bookmarked in your Apify account (15 successful runs as of 2026-02-06)
-ACTOR_SLUG      = "harvestapi/linkedin-job-search"
-MAX_ITEMS       = 25    # per job title; 25 × 8 = 200 max raw jobs per run
-RUN_TIMEOUT     = 480   # 8 minutes — LinkedIn scraping needs more headroom
+ACTOR_SLUG  = "harvestapi/linkedin-job-search"
+MAX_ITEMS   = 25    # per job title; 25 × 8 = 200 max raw jobs per run
+RUN_TIMEOUT = 480   # 8 minutes — LinkedIn scraping needs more headroom
 
-ITAR_KEYWORDS = [
-    "security clearance", "us person", "itar", "export controlled",
-    "classified", "us citizen or permanent resident",
-    "must be authorized to work without sponsorship",
-    "u.s. citizen", "u.s. national", "permanent resident only",
-]
+# ── ITAR keywords loaded from shared data file ────────────────────────────────
+_DATA_DIR = Path(__file__).parent.parent / "data"
+try:
+    ITAR_KEYWORDS: List[str] = json.loads((_DATA_DIR / "itar_keywords.json").read_text())
+except Exception:
+    ITAR_KEYWORDS = ["itar", "security clearance", "export controlled", "u.s. citizen"]
+
+
+def _coerce_str(v) -> str:
+    """Coerce a value that may be a dict, string, or None to a plain string."""
+    if isinstance(v, dict):
+        return v.get("city", "") or v.get("name", "") or str(v)
+    return str(v or "")
 
 
 class ApifyScraper:
     """
     Runs harvestapi/linkedin-job-search for LinkedIn job discovery.
-    Sends jobTitles[] from our cluster map — short natural language phrases only.
+    Accepts all QueryEngine queries and maps unique cluster names to
+    LinkedIn job title phrases (one per distinct cluster).
     """
 
     # QueryEngine cluster name → LinkedIn job title keyword phrase.
@@ -93,7 +100,7 @@ class ApifyScraper:
             log.warning("[apify] APIFY_TOKEN not set — skipping")
             return []
 
-        client = ApifyClient(APIFY_TOKEN)
+        client     = ApifyClient(APIFY_TOKEN)
         job_titles = self._build_job_titles(queries)
 
         log.info(
@@ -105,8 +112,8 @@ class ApifyScraper:
         run_input = {
             "jobTitles":       job_titles,
             "locations":       ["United States"],
-            "postedLimit":     "week",           # actor requires lowercase: week|month|24h
-            "experienceLevel": ["entry", "associate"],  # actor rejects title-case values
+            "postedLimit":     "week",
+            "experienceLevel": ["entry", "associate"],
             "sortBy":          "date",
             "maxItems":        MAX_ITEMS,
         }
@@ -148,30 +155,32 @@ class ApifyScraper:
 
         log.info(f"[apify] Actor SUCCEEDED — reading dataset {dataset_id} ...")
 
+        # Build a cluster lookup by title so we can tag jobs correctly
+        title_to_cluster = {}
+        for q in queries:
+            cluster = q.get("cluster", "")
+            title   = self.CLUSTER_TO_TITLE.get(cluster)
+            if title and title not in title_to_cluster:
+                title_to_cluster[title.lower()] = cluster.replace("_open", "")
+
         # ── Fetch and normalize dataset ───────────────────────────────────────
-        all_jobs: List[Dict] = []
-        seen:     set        = set()
-        item_count = 0
+        all_jobs:   List[Dict] = []
+        seen:       set        = set()
+        item_count              = 0
 
         try:
             for item in client.dataset(dataset_id).iterate_items():
                 item_count += 1
-                # HarvestAPI returns location (and sometimes other fields) as dicts
-                # — coerce everything to str before .lower() to avoid AttributeError
-                def _str(v):
-                    if isinstance(v, dict):
-                        return v.get("city", "") or v.get("name", "") or str(v)
-                    return str(v or "")
                 key = (
-                    _str((item.get("company") or {}).get("name", "")),
-                    _str(item.get("title", "")).lower(),
-                    _str(item.get("location", "")).lower(),
+                    _coerce_str((item.get("company") or {}).get("name", "")),
+                    _coerce_str(item.get("title", "")).lower(),
+                    _coerce_str(item.get("location", "")).lower(),
                 )
                 if key in seen:
                     continue
                 seen.add(key)
 
-                normalized = self._normalize(item)
+                normalized = self._normalize(item, title_to_cluster)
                 if normalized:
                     all_jobs.append(normalized)
 
@@ -189,7 +198,7 @@ class ApifyScraper:
     def _build_job_titles(self, queries: List[Dict]) -> List[str]:
         """Convert QueryEngine cluster list → deduplicated LinkedIn job title phrases."""
         titles: List[str] = []
-        seen: set = set()
+        seen:   set        = set()
         for q in queries:
             cluster = q.get("cluster", "")
             title   = self.CLUSTER_TO_TITLE.get(cluster)
@@ -198,7 +207,7 @@ class ApifyScraper:
                 seen.add(title)
         return titles or ["Manufacturing Engineer"]
 
-    def _normalize(self, raw: Dict) -> Optional[Dict]:
+    def _normalize(self, raw: Dict, title_to_cluster: Dict[str, str]) -> Optional[Dict]:
         """
         Map harvestapi output fields to the standard JobAgent schema.
         harvestapi fields: title, linkedinUrl, postedDate, descriptionText,
@@ -207,7 +216,6 @@ class ApifyScraper:
         title    = str(raw.get("title", "") or "")
         _co_raw  = raw.get("company") or {}
         company  = str(_co_raw.get("name", "") if isinstance(_co_raw, dict) else _co_raw or "")
-        # HarvestAPI returns location as either a string or a dict {city, country, ...}
         _loc_raw = raw.get("location", "") or ""
         if isinstance(_loc_raw, dict):
             location = ", ".join(filter(None, [
@@ -217,12 +225,14 @@ class ApifyScraper:
             ]))
         else:
             location = str(_loc_raw)
-        desc     = raw.get("descriptionText", "") or raw.get("description", "") or ""
+
+        desc = raw.get("descriptionText", "") or raw.get("description", "") or ""
+
         # Prefer direct ATS URL (Workday, Greenhouse) over LinkedIn redirect
         apply_method = raw.get("applyMethod") or {}
         direct_url   = apply_method.get("companyApplyUrl") or ""
         linkedin_url = raw.get("linkedinUrl") or raw.get("jobUrl") or ""
-        url = direct_url or linkedin_url
+        url          = direct_url or linkedin_url
 
         if not url:
             log.debug(
@@ -230,6 +240,11 @@ class ApifyScraper:
                 f"Available keys: {list(raw.keys())}"
             )
             return None
+
+        # Infer cluster from job title
+        cluster = title_to_cluster.get(title.lower(), "")
+        if not cluster:
+            cluster = self._infer_cluster(title)
 
         posted_date = self._parse_date(raw.get("postedDate", "") or "")
         itar_flags  = [kw for kw in ITAR_KEYWORDS if kw in desc.lower()]
@@ -242,11 +257,22 @@ class ApifyScraper:
             "posted_date":  posted_date,
             "description":  desc[:500],
             "source":       "apify",
-            "cluster":      "linkedin",
+            "cluster":      cluster,
             "itar_flag":    bool(itar_flags),
             "itar_detail":  ", ".join(itar_flags),
             "raw_id":       str(raw.get("id", "") or ""),
         }
+
+    def _infer_cluster(self, title: str) -> str:
+        t = title.lower()
+        if "composit"    in t: return "composites"
+        if "material"    in t: return "materials"
+        if "quality"     in t: return "quality"
+        if "process"     in t: return "process"
+        if "industrial"  in t: return "industrial"
+        if "tooling"     in t: return "tooling_inspection"
+        if "npi"         in t: return "startup_manufacturing"
+        return "manufacturing"
 
     def _parse_date(self, ts: str) -> str:
         """Parse ISO 8601 date from harvestapi (e.g. '2025-05-14T17:12:41.000Z')."""
@@ -285,7 +311,7 @@ if __name__ == "__main__":
                         format="%(asctime)s [%(levelname)s] %(message)s")
     sys.path.insert(0, str(Path(__file__).parent.parent))
     from engine.query_engine import QueryEngine
-    queries = QueryEngine().generate_queries()[:5]
+    queries = QueryEngine().generate_queries()
     scraper = ApifyScraper()
     jobs = scraper.run(queries)
     print(f"\n{len(jobs)} jobs found")
