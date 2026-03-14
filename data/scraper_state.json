@@ -1,22 +1,17 @@
 {
   "jsearch": {
-    "queries_today": 10,
+    "queries_today": 0,
     "queries_this_month": 10
   },
   "serpapi": {
-    "queries_today": 5
+    "queries_today": 0
   },
   "apify": {
-    "runs_today": 2
+    "runs_today": 0
   },
   "theirstack": {
-    "activations_today": 1
+    "activations_today": 0
   },
-<<<<<<< HEAD
-  "last_reset": "2026-03-13"
-}
-=======
-  "last_reset": "2026-03-13",
+  "last_reset": "2026-03-14",
   "month_year": "2026-03"
 }
->>>>>>> 6e58837 (Update scraper files 2026-03-13 23:33:01)
