@@ -115,12 +115,13 @@ export default function JobAgent() {
   useEffect(() => {
     (async () => {
       try {
-        const [dbApps, dbJobs, dbNetlog, dbTemplates, dbSettings] = await Promise.all([
+        const [dbApps, dbJobs, dbNetlog, dbTemplates, dbSettings, savedJob] = await Promise.all([
           Storage.fetchApplications(),
           Storage.fetchJobs(),
           Storage.fetchNetlog(),
           Storage.fetchTemplates(),
           Storage.fetchSettings(),
+          Storage.loadCurrentJob(),
         ]);
 
         const pipelineJobs = dbJobs.filter(j => j.in_pipeline);
@@ -132,6 +133,7 @@ export default function JobAgent() {
         setNetworkingLog(dbNetlog);
         if (dbTemplates.length > 0) setTemplates(dbTemplates);
         if (dbSettings.dark) setDark(dbSettings.dark === 'true');
+        if (savedJob) setCurrentJob(savedJob);
       } catch(e) {
         console.warn('Supabase load error (will use local state):', e.message);
       }
@@ -154,6 +156,15 @@ export default function JobAgent() {
       }
     }, 2000);
   }, []);
+
+  // Auto-save currentJob to Supabase whenever it changes
+  useEffect(() => {
+    if (!loaded || !currentJob) return;
+    const timer = setTimeout(() => {
+      Storage.saveCurrentJob(currentJob).catch(e => console.warn('currentJob save error:', e));
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [currentJob, loaded]);
 
   // ─── State handlers ───────────────────────────────────────────────────────
   const setPage = useCallback((pg, jobData) => {

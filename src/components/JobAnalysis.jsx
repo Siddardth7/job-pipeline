@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { BarChart2, CheckCircle, Users, Copy, Check, Briefcase, Zap, SlidersHorizontal, Edit3, Target } from 'lucide-react';
+import { useState, useEffect, useCallback } from 'react';
+import { BarChart2, CheckCircle, Users, Copy, Check, Briefcase, Zap, SlidersHorizontal, Edit3 } from 'lucide-react';
 import { analyzeJob } from '../lib/scoring.js';
 
 const RESUMES = {
@@ -9,8 +9,8 @@ const RESUMES = {
   D: {name:"Equipment & NPI", skills:"Tooling, PFMEA, DOE"}
 };
 
-function Card({children, t, style, onClick}) {
-  return <div onClick={onClick} style={{background:t.card,border:`1px solid ${t.border}`,borderRadius:12,padding:20,boxShadow:t.shadow,cursor:onClick?"pointer":"default",...style}}>{children}</div>;
+function Card({children, t, style}) {
+  return <div style={{background:t.card,border:`1px solid ${t.border}`,borderRadius:12,padding:20,boxShadow:t.shadow,...style}}>{children}</div>;
 }
 function Btn({children, onClick, disabled, variant="primary", size="md", t, style:xs}) {
   const V={primary:{bg:t.pri,c:"#fff",b:"none"},secondary:{bg:"transparent",c:t.sub,b:`1px solid ${t.border}`},ghost:{bg:"transparent",c:t.muted,b:`1px solid ${t.border}`},green:{bg:t.greenL,c:t.green,b:`1px solid ${t.greenBd}`},red:{bg:t.redL,c:t.red,b:`1px solid ${t.redBd}`}};
@@ -27,19 +27,37 @@ function SectionLabel({children, t}) {
 
 function robustCopy(text) {
   if (!text) return Promise.reject("Nothing to copy");
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    return navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
-  }
-  return fallbackCopy(text);
-}
-function fallbackCopy(text) {
+  if (navigator.clipboard?.writeText) return navigator.clipboard.writeText(text);
   return new Promise((resolve, reject) => {
     const ta = document.createElement("textarea");
-    ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+    ta.value = text; ta.style.cssText = "position:fixed;opacity:0";
     document.body.appendChild(ta); ta.select();
-    try { document.execCommand("copy"); resolve(); } catch { reject("Copy failed"); }
+    try { document.execCommand("copy"); resolve(); } catch { reject(); }
     finally { document.body.removeChild(ta); }
   });
+}
+
+// Parse \skillline{Label}{Skills} into rows
+function SkilllinePreview({latex, t}) {
+  const lines = (latex || "").split('\n').filter(Boolean);
+  const parsed = lines.map(line => {
+    const m = line.match(/\\skillline\{([^}]+)\}\{([^}]+)\}/);
+    return m ? {label: m[1], skills: m[2]} : null;
+  }).filter(Boolean);
+
+  if (!parsed.length) {
+    return <div style={{fontSize:12.5,color:t.sub,whiteSpace:"pre-wrap",lineHeight:1.7}}>{latex}</div>;
+  }
+  return (
+    <div>
+      {parsed.map((row, i) => (
+        <div key={i} style={{display:"flex",gap:8,marginBottom:6,fontSize:12,lineHeight:1.5,alignItems:"baseline"}}>
+          <span style={{fontWeight:700,color:t.pri,minWidth:170,flexShrink:0,fontSize:11.5}}>{row.label.replace(/\\&/g, '&')}</span>
+          <span style={{color:t.sub}}>{row.skills.replace(/\\&/g, '&')}</span>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 export default function JobAnalysis({currentJob, updatePipelineJob, completePipeline, onLogApp, setPage, setCurrentJob, apps, findCompany, isBlacklisted, checkITAR, t}) {
@@ -49,12 +67,14 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
   const [link, setLink] = useState(currentJob?.link || "");
   const [jd, setJd] = useState(currentJob?.jd || "");
   const [res, setRes] = useState(null);
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState(currentJob?.analysisResult || null);
   const [loading, setLoading] = useState(false);
   const [checks, setChecks] = useState(null);
   const [copied, setCopied] = useState("");
-  const isExternal = currentJob?.source === "external";
+  const [showRaw1, setShowRaw1] = useState(false);
+  const [showRaw2, setShowRaw2] = useState(false);
 
+  // Sync from currentJob whenever the active job changes
   useEffect(() => {
     if (currentJob) {
       setCo(currentJob.company || "");
@@ -66,6 +86,21 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
     }
   }, [currentJob?.id]);
 
+  // Persist JD and form fields back to currentJob so they survive page switches
+  const syncToParent = useCallback((updates) => {
+    setCurrentJob(prev => prev ? {...prev, ...updates} : updates);
+  }, [setCurrentJob]);
+
+  const handleJdChange = (e) => {
+    setJd(e.target.value);
+    syncToParent({ jd: e.target.value });
+  };
+  const handleCoChange = (e) => { setCo(e.target.value); syncToParent({ company: e.target.value }); };
+  const handleRoleChange = (e) => { setRole(e.target.value); syncToParent({ role: e.target.value }); };
+  const handleLocChange = (e) => { setLoc(e.target.value); syncToParent({ location: e.target.value }); };
+  const handleLinkChange = (e) => { setLink(e.target.value); syncToParent({ link: e.target.value }); };
+
+  // ITAR/blacklist checks
   useEffect(() => {
     if (!co && !jd) return;
     const c = {};
@@ -81,15 +116,16 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
     setTimeout(() => {
       const analysisResult = analyzeJob(jd, res);
       setResult(analysisResult);
+      syncToParent({ analysisResult, jd, company: co, role, location: loc, link });
       if (currentJob?.id) {
-        updatePipelineJob(currentJob.id, {analysisResult, jd, company: co, role, location: loc, link});
+        updatePipelineJob(currentJob.id, { analysisResult, jd, company: co, role, location: loc, link });
       }
       setLoading(false);
     }, 300);
   };
 
   const copyText = (k, v) => {
-    robustCopy(v).then(() => { setCopied(k); setTimeout(() => setCopied(""), 2000); }).catch(() => {});
+    robustCopy(v).then(() => { setCopied(k); setTimeout(() => setCopied(""), 2500); }).catch(() => {});
   };
 
   const handleCompleteAndLog = () => {
@@ -118,6 +154,8 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
     setPage("pipeline");
   };
 
+  const mod1LaTeX = result ? `\\textbf{${result.mod1_summary}}` : "";
+
   return (
     <div>
       <div style={{marginBottom:24}}>
@@ -125,7 +163,7 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
         <p style={{margin:0,fontSize:14,color:t.sub}}>Resume modifications for ATS optimization (2 edits only: Summary + Skills)</p>
       </div>
 
-      {!currentJob?.role && (
+      {!currentJob?.role && !co && (
         <Card t={t} style={{textAlign:"center",padding:"60px 24px"}}>
           <BarChart2 size={32} color={t.muted} style={{marginBottom:12}}/>
           <div style={{fontSize:14,fontWeight:600,color:t.sub,marginBottom:16}}>Select a job from Pipeline to analyze.</div>
@@ -135,32 +173,48 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
 
       {(currentJob?.role || co) && (
         <Card t={t} style={{marginBottom:16}}>
-          <SectionLabel t={t}>Job Details {isExternal && <span style={{color:t.yellow,fontSize:10,fontWeight:700,padding:"2px 8px",borderRadius:10,background:t.yellowL,marginLeft:8}}>EXTERNAL</span>}</SectionLabel>
+          <SectionLabel t={t}>Job Details</SectionLabel>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:12,marginBottom:12}}>
-            <Input label="Company" value={co} onChange={e => setCo(e.target.value)} t={t}/>
-            <Input label="Role" value={role} onChange={e => setRole(e.target.value)} t={t}/>
-            <Input label="Location" value={loc} onChange={e => setLoc(e.target.value)} t={t}/>
-            <Input label="Link" value={link} onChange={e => setLink(e.target.value)} t={t}/>
+            <Input label="Company" value={co} onChange={handleCoChange} t={t}/>
+            <Input label="Role" value={role} onChange={handleRoleChange} t={t}/>
+            <Input label="Location" value={loc} onChange={handleLocChange} t={t}/>
+            <Input label="Link" value={link} onChange={handleLinkChange} t={t}/>
           </div>
-          <Input label="Full Job Description" value={jd} onChange={e => setJd(e.target.value)} placeholder="Paste the complete job description here..." multiline rows={8} t={t}/>
+          <Input
+            label="Full Job Description"
+            value={jd}
+            onChange={handleJdChange}
+            placeholder="Paste the complete job description here..."
+            multiline rows={8} t={t}
+          />
           <div style={{display:"flex",gap:10,alignItems:"center",flexWrap:"wrap"}}>
-            <Btn onClick={analyze} disabled={loading||!jd.trim()} t={t}>{loading?"Analyzing...":"Run Resume Analysis"}</Btn>
+            <Btn onClick={analyze} disabled={loading||!jd.trim()} t={t}>
+              {loading ? "Analyzing..." : "Run Resume Analysis"}
+            </Btn>
             <span style={{fontSize:12,color:t.muted}}>Override resume:</span>
-            {["A","B","C","D","Auto"].map(k => (
-              <button key={k} onClick={() => setRes(k === "Auto" ? null : (res === k ? null : k))} style={{padding:"8px 14px",borderRadius:8,fontSize:12.5,fontWeight:700,cursor:"pointer",fontFamily:"inherit",background:(k === "Auto" ? res === null : res === k)?t.pri+"18":"transparent",border:`1px solid ${(k === "Auto" ? res === null : res === k)?t.pri:t.border}`,color:(k === "Auto" ? res === null : res === k)?t.pri:t.sub}}>
-                {k === "Auto" ? "Auto-detect" : `Resume ${k}`}
-              </button>
-            ))}
+            {["Auto","A","B","C","D"].map(k => {
+              const active = k === "Auto" ? res === null : res === k;
+              return (
+                <button key={k}
+                  onClick={() => setRes(k === "Auto" ? null : (res === k ? null : k))}
+                  style={{padding:"8px 14px",borderRadius:8,fontSize:12.5,fontWeight:700,cursor:"pointer",fontFamily:"inherit",
+                    background:active?t.pri+"18":"transparent",
+                    border:`1px solid ${active?t.pri:t.border}`,
+                    color:active?t.pri:t.sub}}>
+                  {k === "Auto" ? "Auto-detect" : `Resume ${k}`}
+                </button>
+              );
+            })}
           </div>
         </Card>
       )}
 
       {checks && (
         <Card t={t} style={{marginBottom:16,borderColor:checks.ok?t.greenBd:t.redBd}}>
-          {checks.bl && <div style={{color:t.red,fontSize:13,fontWeight:700,marginBottom:4}}>Blacklisted: {checks.bl}</div>}
-          {checks.itar?.length > 0 && <div style={{color:t.red,fontSize:13,fontWeight:700,marginBottom:4}}>ITAR keywords: {checks.itar.join(", ")}</div>}
-          {checks.m628 && <div style={{color:t.green,fontSize:13,fontWeight:600,marginBottom:4}}>M628: {checks.m628.name} (T{checks.m628.tier} H-1B: {checks.m628.h1b} ITAR: {checks.m628.itar})</div>}
-          {checks.ok && <div style={{color:t.green,fontSize:13,fontWeight:600}}>No ITAR or blacklist flags</div>}
+          {checks.bl && <div style={{color:t.red,fontSize:13,fontWeight:700,marginBottom:4}}>⛔ Blacklisted: {checks.bl}</div>}
+          {checks.itar?.length > 0 && <div style={{color:t.red,fontSize:13,fontWeight:700,marginBottom:4}}>🔒 ITAR keywords: {checks.itar.join(", ")}</div>}
+          {checks.m628 && <div style={{color:t.green,fontSize:13,fontWeight:600,marginBottom:4}}>✓ M628: {checks.m628.name} · Tier {checks.m628.tier} · H-1B: {checks.m628.h1b} · ITAR: {checks.m628.itar}</div>}
+          {checks.ok && <div style={{color:t.green,fontSize:13,fontWeight:600}}>✓ No ITAR or blacklist flags</div>}
         </Card>
       )}
 
@@ -188,10 +242,11 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
           </Card>
 
           <div style={{background:t.redL,border:`1px solid ${t.redBd}`,borderRadius:8,padding:"10px 16px",marginBottom:16,fontSize:12.5,fontWeight:700,color:t.red}}>
-            CRITICAL: Only TWO modifications permitted. Experience and project bullets are LOCKED.
+            CRITICAL: Only TWO modifications permitted — Summary and Skills only. Experience and project bullets are LOCKED.
           </div>
 
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:16}}>
+
             {/* MOD 1: Summary */}
             <Card t={t} style={{borderColor:t.greenBd}}>
               <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
@@ -205,13 +260,31 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
                   </div>
                 </div>
                 <Btn size="sm" variant="green" onClick={() => copyText("mod1", result.mod1_summary)} t={t}>
-                  {copied === "mod1" ? <><Check size={11}/> Copied</> : <><Copy size={11}/> Copy</>}
+                  {copied === "mod1" ? <><Check size={11}/> Copied</> : <><Copy size={11}/> Copy Text</>}
                 </Btn>
               </div>
-              <div style={{background:t.bg,border:`1px solid ${t.border}`,borderRadius:8,padding:"14px 16px"}}>
-                <div style={{fontSize:10.5,fontWeight:700,color:t.muted,textTransform:"uppercase",letterSpacing:1,marginBottom:8}}>Preview</div>
+
+              {/* Preview */}
+              <div style={{background:t.bg,border:`1px solid ${t.border}`,borderRadius:8,padding:"14px 16px",marginBottom:10}}>
+                <div style={{fontSize:10,fontWeight:700,color:t.muted,textTransform:"uppercase",letterSpacing:1,marginBottom:8}}>Preview</div>
                 <div style={{fontSize:13,lineHeight:1.8,color:t.tx,fontStyle:"italic"}}>{result.mod1_summary || "—"}</div>
               </div>
+
+              {/* Raw LaTeX toggle */}
+              <button onClick={() => setShowRaw1(!showRaw1)} style={{background:"none",border:"none",cursor:"pointer",fontSize:11,color:t.muted,fontWeight:600,padding:0,marginBottom:showRaw1?8:0}}>
+                {showRaw1 ? "▼" : "▶"} Raw LaTeX
+              </button>
+              {showRaw1 && (
+                <div style={{position:"relative"}}>
+                  <div style={{background:t.hover,border:`1px solid ${t.border}`,borderRadius:6,padding:"10px 12px",fontSize:11,lineHeight:1.7,color:t.sub,fontFamily:"monospace",whiteSpace:"pre-wrap",maxHeight:120,overflowY:"auto"}}>
+                    {mod1LaTeX}
+                  </div>
+                  <Btn size="sm" variant="ghost" onClick={() => copyText("mod1latex", mod1LaTeX)} t={t}
+                    style={{position:"absolute",top:6,right:6,fontSize:10}}>
+                    {copied==="mod1latex"?<><Check size={10}/> Copied</>:<><Copy size={10}/> Copy LaTeX</>}
+                  </Btn>
+                </div>
+              )}
             </Card>
 
             {/* MOD 2: Skills */}
@@ -223,17 +296,29 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
                   </div>
                   <div>
                     <div style={{fontSize:13.5,fontWeight:700,color:t.tx}}>Mod 2 — Skills</div>
-                    <div style={{fontSize:11,color:t.muted}}>Keywords matched</div>
+                    <div style={{fontSize:11,color:t.muted}}>Replace all \skillline rows in Overleaf</div>
                   </div>
                 </div>
                 <Btn size="sm" variant="green" onClick={() => copyText("mod2", result.mod2_skills)} t={t}>
-                  {copied === "mod2" ? <><Check size={11}/> Copied</> : <><Copy size={11}/> Copy</>}
+                  {copied === "mod2" ? <><Check size={11}/> Copied</> : <><Copy size={11}/> Copy LaTeX</>}
                 </Btn>
               </div>
-              <div style={{background:t.bg,border:`1px solid ${t.border}`,borderRadius:8,padding:"12px 14px"}}>
-                <div style={{fontSize:10.5,fontWeight:700,color:t.muted,textTransform:"uppercase",letterSpacing:1,marginBottom:8}}>Skills Preview</div>
-                <div style={{fontSize:12.5,lineHeight:1.8,color:t.tx}}>{result.mod2_skills}</div>
+
+              {/* Formatted preview */}
+              <div style={{background:t.bg,border:`1px solid ${t.border}`,borderRadius:8,padding:"12px 14px",marginBottom:10}}>
+                <div style={{fontSize:10,fontWeight:700,color:t.muted,textTransform:"uppercase",letterSpacing:1,marginBottom:8}}>Preview</div>
+                <SkilllinePreview latex={result.mod2_skills} t={t}/>
               </div>
+
+              {/* Raw LaTeX toggle */}
+              <button onClick={() => setShowRaw2(!showRaw2)} style={{background:"none",border:"none",cursor:"pointer",fontSize:11,color:t.muted,fontWeight:600,padding:0,marginBottom:showRaw2?8:0}}>
+                {showRaw2 ? "▼" : "▶"} Raw LaTeX
+              </button>
+              {showRaw2 && (
+                <div style={{background:t.hover,border:`1px solid ${t.border}`,borderRadius:6,padding:"10px 12px",fontSize:11,lineHeight:1.7,color:t.sub,fontFamily:"monospace",whiteSpace:"pre-wrap",maxHeight:180,overflowY:"auto"}}>
+                  {result.mod2_skills}
+                </div>
+              )}
             </Card>
           </div>
 
@@ -246,25 +331,25 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
               <div>
                 <div style={{fontSize:11,fontWeight:700,color:t.sub,textTransform:"uppercase",letterSpacing:1,marginBottom:8}}>Top 5 Missing Keywords</div>
-                <div style={{display:"flex",gap:5,flexWrap:"wrap"}}>
+                <div style={{display:"flex",gap:5,flexWrap:"wrap",marginBottom:12}}>
                   {(result.missing_keywords || []).map(k => (
                     <span key={k} style={{fontSize:12,padding:"3px 10px",borderRadius:20,background:t.redL,color:t.red,fontWeight:600}}>{k}</span>
                   ))}
                 </div>
                 {result.top_matches?.length > 0 && (
-                  <div style={{marginTop:12}}>
-                    <div style={{fontSize:11,fontWeight:700,color:t.sub,textTransform:"uppercase",letterSpacing:1,marginBottom:8}}>Keyword Matches</div>
+                  <>
+                    <div style={{fontSize:11,fontWeight:700,color:t.sub,textTransform:"uppercase",letterSpacing:1,marginBottom:8}}>Keyword Matches Found</div>
                     <div style={{display:"flex",gap:5,flexWrap:"wrap"}}>
                       {result.top_matches.map(k => (
                         <span key={k} style={{fontSize:12,padding:"3px 10px",borderRadius:20,background:t.greenL,color:t.green,fontWeight:600}}>{k}</span>
                       ))}
                     </div>
-                  </div>
+                  </>
                 )}
               </div>
-              <div style={{display:"flex",flexDirection:"column",gap:10}}>
-                <div><span style={{fontSize:12,color:t.sub}}>ATS Keyword Coverage: </span><span style={{fontSize:13,fontWeight:700,color:t.tx}}>{result.ats_coverage}</span></div>
-                <div><span style={{fontSize:12,color:t.sub}}>Composites Visible: </span><span style={{fontSize:13,fontWeight:700,color:result.composites_visible?t.green:t.red}}>{result.composites_visible?"Yes":"No"}</span></div>
+              <div style={{display:"flex",flexDirection:"column",gap:12}}>
+                <div><span style={{fontSize:12,color:t.sub}}>ATS Keyword Coverage: </span><span style={{fontSize:14,fontWeight:800,color:t.tx}}>{result.ats_coverage}</span></div>
+                <div><span style={{fontSize:12,color:t.sub}}>Composites Visible: </span><span style={{fontSize:13,fontWeight:700,color:result.composites_visible?t.green:t.red}}>{result.composites_visible?"Yes — composites keywords present":"No — add composites terms"}</span></div>
                 <div><span style={{fontSize:12,color:t.sub}}>Quantification: </span><span style={{fontSize:13,fontWeight:700,color:t.tx}}>{result.quantification_check}</span></div>
               </div>
             </div>
@@ -272,8 +357,12 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
 
           {/* Action buttons */}
           <div style={{display:"flex",gap:10}}>
-            <Btn onClick={() => { setCurrentJob(prev => ({...prev, company:co, role, location:loc, link, jd})); setPage("networking"); }} t={t}><Users size={14}/> Find Contacts</Btn>
-            <Btn variant="green" onClick={handleCompleteAndLog} t={t}><CheckCircle size={14}/> Complete & Log to Tracker</Btn>
+            <Btn onClick={() => { syncToParent({company:co,role,location:loc,link,jd}); setPage("networking"); }} t={t}>
+              <Users size={14}/> Find Contacts
+            </Btn>
+            <Btn variant="green" onClick={handleCompleteAndLog} t={t}>
+              <CheckCircle size={14}/> Complete & Log to Tracker
+            </Btn>
             <Btn variant="ghost" onClick={() => setResult(null)} t={t}>Re-Analyze</Btn>
           </div>
         </div>

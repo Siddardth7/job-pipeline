@@ -28,11 +28,31 @@ const TEMPLATE_SUMMARIES = {
   D: "Equipment and NPI engineer experienced in tooling design, DOE, and process validation. Reduced cure cycle from 8 hours to 5 minutes at Beckman Institute. STEM OPT — 3 years, no sponsorship cost."
 };
 
+// LaTeX skillline format — copy-paste directly into Overleaf
 const TEMPLATE_SKILLS = {
-  A: "GD&T | CMM | Fixtures & Jigs | PPAP | First Article Inspection | AS9100 | SPC | SolidWorks | CATIA | MATLAB",
-  B: "FMEA | SPC | 8D | Lean/Kaizen | DMAIC | CAPA | VSM | Root Cause Analysis | SolidWorks | MATLAB | Python",
-  C: "CMM | MRB | Composites Manufacturing | NDT | CAPA | AS9100 | Prepreg Layup | Autoclave | Vacuum Bagging | ABAQUS | ANSYS",
-  D: "Tooling Design | PFMEA | DOE | NPI | Process Validation | APQP | SolidWorks | CATIA | FEA | MATLAB | Python"
+  A: `\\skillline{Manufacturing \\& Quality:}{GD\\&T, CMM Inspection, First Article Inspection, PPAP, AS9100, SPC, Dimensional Inspection}
+\\skillline{Process \\& Tooling:}{Fixtures \\& Jigs, Metrology, Tolerance Analysis, NADCAP, Production Planning, Shop Floor}
+\\skillline{Engineering Tools:}{SolidWorks, CATIA, MATLAB, Python}
+\\skillline{Manufacturing Processes:}{Machining, Assembly, Stamping, Casting, Forging, Welding, CNC}
+\\skillline{Project Management:}{Cross-Functional Collaboration, Continuous Improvement, Lean Methodologies}`,
+
+  B: `\\skillline{Quality \\& CI Systems:}{FMEA, SPC, 8D Root Cause Analysis, DMAIC, CAPA, Kaizen, Lean, Six Sigma}
+\\skillline{Process Tools:}{Value Stream Mapping, Poka-Yoke, 5S, OEE, Defect Reduction, Process Optimization, Corrective Action}
+\\skillline{Engineering Tools:}{SolidWorks, MATLAB, Python, Minitab}
+\\skillline{Documentation:}{Technical Writing, SOPs, Control Plans, Work Instructions, Change Control}
+\\skillline{Project Management:}{Cross-Functional Collaboration, Continuous Improvement, Lean Methodologies}`,
+
+  C: `\\skillline{Quality Systems:}{CAPA, FMEA, 8D Root Cause Analysis, SPC, MRB, GD\\&T, CMM Inspection}
+\\skillline{Regulatory \\& Documentation:}{Technical Writing, SOPs, Change Control, Quality Records, ISO Standards, AS9100}
+\\skillline{Manufacturing \\& Materials:}{Prepreg Layup, Autoclave Processing, Vacuum Bagging, Composite Materials, NDT}
+\\skillline{Engineering Tools:}{ABAQUS, ANSYS, FEA, SolidWorks, CATIA, MATLAB, Python}
+\\skillline{Project Management:}{Cross-Functional Collaboration, Continuous Improvement, Lean Methodologies}`,
+
+  D: `\\skillline{NPI \\& Tooling:}{PFMEA, DOE, APQP, Tooling Design, Fixture Design, Process Validation, IQ/OQ/PQ}
+\\skillline{Product Development:}{New Product Introduction, Design Review, Prototype, Manufacturing Readiness, Commissioning}
+\\skillline{Engineering Tools:}{SolidWorks, CATIA, FEA, MATLAB, Python}
+\\skillline{Manufacturing:}{Capital Equipment, Production Launch, Process Development, Validation, R\\&D}
+\\skillline{Project Management:}{Cross-Functional Collaboration, Continuous Improvement, Lean Methodologies}`,
 };
 
 export function analyzeJob(jdText, selectedVariant = null) {

@@ -4,7 +4,8 @@
       "Bash(python3 << 'PYEOF'\nimport re, json\n\nwith open\\('/Users/jashwanth/Downloads/JobAgent_v5_7.jsx', 'r'\\) as f:\n    content = f.read\\(\\)\n\n# Extract M628_RAW\nm = re.search\\(r'const M628_RAW = \\(\\\\[.*?\\\\]\\);', content, re.DOTALL\\)\ndata = json.loads\\(m.group\\(1\\)\\)\n\n# Generate the M628 object array\nlines = []\nfor c in data:\n    name, tier, h1b_raw, itar_raw, industry, roles, atsPlatform, domain, atsBoardUrl = c\n    h1b = \"YES\" if h1b_raw == 1 else \\(\"NO\" if h1b_raw == 0 else h1b_raw\\)\n    itar = \"YES\" if itar_raw == 1 else \\(\"NO\" if itar_raw == 0 else itar_raw\\)\n    lines.append\\(f'  {{name:{json.dumps\\(name\\)},tier:{tier},h1b:{json.dumps\\(h1b\\)},itar:{json.dumps\\(itar\\)},industry:{json.dumps\\(industry\\)},roles:{json.dumps\\(roles\\)},atsPlatform:{json.dumps\\(atsPlatform\\)},domain:{json.dumps\\(domain\\)},atsBoardUrl:{json.dumps\\(atsBoardUrl\\)}}}'\\)\n\nprint\\(f\"Total companies: {len\\(lines\\)}\"\\)\nprint\\(\"First 5 entries:\"\\)\nfor l in lines[:5]:\n    print\\(l\\)\nPYEOF)",
       "Bash(npm create:*)",
       "Bash(npm install:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(git add:*)"
     ]
   }
 }
