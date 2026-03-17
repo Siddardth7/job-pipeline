@@ -729,6 +729,56 @@
       "name": "CNH",
       "domain": "",
       "industry": "Auto-promoted"
+    },
+    {
+      "name": "MCE - Magnetic Component Engineering",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Bartell Machinery Systems",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "LJA",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Connexus\u00ae Energy",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Milacron",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "OES Equipment",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "CityView Solutions",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Prestolite Electric, Leece-Neville North America",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Tata Consultancy Services",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "S&ME",
+      "domain": "",
+      "industry": "Auto-promoted"
     }
   ],
   "promotion_tracking": {
@@ -1492,27 +1542,33 @@
     ],
     "MCE - Magnetic Component Engineering": [
       "2026-03-15",
-      "2026-03-16"
+      "2026-03-16",
+      "2026-03-17"
     ],
     "Bartell Machinery Systems": [
       "2026-03-15",
-      "2026-03-16"
+      "2026-03-16",
+      "2026-03-17"
     ],
     "LJA": [
       "2026-03-15",
-      "2026-03-16"
+      "2026-03-16",
+      "2026-03-17"
     ],
     "Connexus\u00ae Energy": [
       "2026-03-15",
-      "2026-03-16"
+      "2026-03-16",
+      "2026-03-17"
     ],
     "Milacron": [
       "2026-03-15",
-      "2026-03-16"
+      "2026-03-16",
+      "2026-03-17"
     ],
     "OES Equipment": [
       "2026-03-15",
-      "2026-03-16"
+      "2026-03-16",
+      "2026-03-17"
     ],
     "Konik": [
       "2026-03-15",
@@ -1537,11 +1593,13 @@
     ],
     "CityView Solutions": [
       "2026-03-15",
-      "2026-03-16"
+      "2026-03-16",
+      "2026-03-17"
     ],
     "Prestolite Electric, Leece-Neville North America": [
       "2026-03-15",
-      "2026-03-16"
+      "2026-03-16",
+      "2026-03-17"
     ],
     "Lakeside Manufacturing Foodservice": [
       "2026-03-15",
@@ -1549,71 +1607,153 @@
     ],
     "Tata Consultancy Services": [
       "2026-03-15",
-      "2026-03-16"
+      "2026-03-16",
+      "2026-03-17"
     ],
     "Illuminate USA": [
       "2026-03-15"
     ],
     "S&ME": [
       "2026-03-15",
-      "2026-03-16"
+      "2026-03-16",
+      "2026-03-17"
     ],
     "Zachary Piper Solutions": [
-      "2026-03-16"
+      "2026-03-16",
+      "2026-03-17"
     ],
     "Wichitalifeict": [
       "2026-03-16"
     ],
     "Calgon Carbon Corporation": [
-      "2026-03-16"
+      "2026-03-16",
+      "2026-03-17"
     ],
     "FNA Group": [
-      "2026-03-16"
+      "2026-03-16",
+      "2026-03-17"
     ],
     "Barry-Wehmiller": [
       "2026-03-16"
     ],
     "Sundt Construction": [
-      "2026-03-16"
+      "2026-03-16",
+      "2026-03-17"
     ],
     "Stockton East Water District": [
-      "2026-03-16"
+      "2026-03-16",
+      "2026-03-17"
     ],
     "Hypertherm Associates": [
-      "2026-03-16"
+      "2026-03-16",
+      "2026-03-17"
     ],
     "Atalco Gramercy Operations": [
-      "2026-03-16"
+      "2026-03-16",
+      "2026-03-17"
     ],
     "Whitmore Manufacturing": [
-      "2026-03-16"
+      "2026-03-16",
+      "2026-03-17"
     ],
     "Butler Aerospace & Defense": [
       "2026-03-16"
     ],
     "Continental": [
-      "2026-03-16"
+      "2026-03-16",
+      "2026-03-17"
     ],
     "Align Technology": [
-      "2026-03-16"
+      "2026-03-16",
+      "2026-03-17"
     ],
     "Warn Industries": [
-      "2026-03-16"
+      "2026-03-16",
+      "2026-03-17"
     ],
     "Gentex Corp.": [
-      "2026-03-16"
+      "2026-03-16",
+      "2026-03-17"
     ],
     "TalentAlly": [
-      "2026-03-16"
+      "2026-03-16",
+      "2026-03-17"
     ],
     "IPS-Integrated Project Services": [
-      "2026-03-16"
+      "2026-03-16",
+      "2026-03-17"
     ],
     "ZOLL Medical Corporation": [
-      "2026-03-16"
+      "2026-03-16",
+      "2026-03-17"
     ],
     "Supply Technologies": [
-      "2026-03-16"
+      "2026-03-16",
+      "2026-03-17"
+    ],
+    "Resonetics": [
+      "2026-03-17"
+    ],
+    "Exact Sciences": [
+      "2026-03-17"
+    ],
+    "Klein Tools": [
+      "2026-03-17"
+    ],
+    "Veranex": [
+      "2026-03-17"
+    ],
+    "Grifols": [
+      "2026-03-17"
+    ],
+    "CME Associates": [
+      "2026-03-17"
+    ],
+    "City of Dallas": [
+      "2026-03-17"
+    ],
+    "MANN+HUMMEL": [
+      "2026-03-17"
+    ],
+    "Victaulic": [
+      "2026-03-17"
+    ],
+    "Northern Manufacturing": [
+      "2026-03-17"
+    ],
+    "Magna Machine": [
+      "2026-03-17"
+    ],
+    "Medline": [
+      "2026-03-17",
+      "2026-03-17"
+    ],
+    "TAMKO": [
+      "2026-03-17"
+    ],
+    "P&G Ventures": [
+      "2026-03-17"
+    ],
+    "Magna International": [
+      "2026-03-17"
+    ],
+    "Rockwell Automation": [
+      "2026-03-17"
+    ],
+    "Domtar": [
+      "2026-03-17"
+    ],
+    "W3Global": [
+      "2026-03-17"
+    ],
+    "University of Nebraska-Lincoln": [
+      "2026-03-17"
+    ],
+    "Amcor": [
+      "2026-03-17"
+    ],
+    "Mclaurin Aerospace": [
+      "2026-03-17"
     ]
   },
   "rejected_companies": [],
