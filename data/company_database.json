@@ -779,6 +779,91 @@
       "name": "S&ME",
       "domain": "",
       "industry": "Auto-promoted"
+    },
+    {
+      "name": "Zachary Piper Solutions",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Calgon Carbon Corporation",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Sundt Construction",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Stockton East Water District",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Hypertherm Associates",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Atalco Gramercy Operations",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Whitmore Manufacturing",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Warn Industries",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Gentex Corp.",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "TalentAlly",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "IPS-Integrated Project Services",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "ZOLL Medical Corporation",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Supply Technologies",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Resonetics",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Medline",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Magna International",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "SES AI",
+      "domain": "",
+      "industry": "Auto-promoted"
     }
   ],
   "promotion_tracking": {
@@ -1620,14 +1705,16 @@
     ],
     "Zachary Piper Solutions": [
       "2026-03-16",
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18"
     ],
     "Wichitalifeict": [
       "2026-03-16"
     ],
     "Calgon Carbon Corporation": [
       "2026-03-16",
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18"
     ],
     "FNA Group": [
       "2026-03-16",
@@ -1638,23 +1725,28 @@
     ],
     "Sundt Construction": [
       "2026-03-16",
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18"
     ],
     "Stockton East Water District": [
       "2026-03-16",
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18"
     ],
     "Hypertherm Associates": [
       "2026-03-16",
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18"
     ],
     "Atalco Gramercy Operations": [
       "2026-03-16",
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18"
     ],
     "Whitmore Manufacturing": [
       "2026-03-16",
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18"
     ],
     "Butler Aerospace & Defense": [
       "2026-03-16"
@@ -1669,91 +1761,193 @@
     ],
     "Warn Industries": [
       "2026-03-16",
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18"
     ],
     "Gentex Corp.": [
       "2026-03-16",
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18"
     ],
     "TalentAlly": [
       "2026-03-16",
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18",
+      "2026-03-18"
     ],
     "IPS-Integrated Project Services": [
       "2026-03-16",
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18"
     ],
     "ZOLL Medical Corporation": [
       "2026-03-16",
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18"
     ],
     "Supply Technologies": [
       "2026-03-16",
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18"
     ],
     "Resonetics": [
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18",
+      "2026-03-18"
     ],
     "Exact Sciences": [
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18"
     ],
     "Klein Tools": [
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18"
     ],
     "Veranex": [
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18"
     ],
     "Grifols": [
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18"
     ],
     "CME Associates": [
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18"
     ],
     "City of Dallas": [
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18"
     ],
     "MANN+HUMMEL": [
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18"
     ],
     "Victaulic": [
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18"
     ],
     "Northern Manufacturing": [
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18"
     ],
     "Magna Machine": [
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18"
     ],
     "Medline": [
       "2026-03-17",
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18",
+      "2026-03-18"
     ],
     "TAMKO": [
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18"
     ],
     "P&G Ventures": [
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18"
     ],
     "Magna International": [
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18",
+      "2026-03-18"
     ],
     "Rockwell Automation": [
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18"
     ],
     "Domtar": [
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18"
     ],
     "W3Global": [
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18"
     ],
     "University of Nebraska-Lincoln": [
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18"
     ],
     "Amcor": [
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18"
     ],
     "Mclaurin Aerospace": [
-      "2026-03-17"
+      "2026-03-17",
+      "2026-03-18"
+    ],
+    "Hunter Engineering Company": [
+      "2026-03-18"
+    ],
+    "ATI": [
+      "2026-03-18"
+    ],
+    "Medtronic": [
+      "2026-03-18"
+    ],
+    "The Judge Group": [
+      "2026-03-18"
+    ],
+    "Kasa Companies": [
+      "2026-03-18"
+    ],
+    "Textiles Coated International (TCI)": [
+      "2026-03-18"
+    ],
+    "ManpowerGroup": [
+      "2026-03-18"
+    ],
+    "Approach Venture LLC": [
+      "2026-03-18"
+    ],
+    "Belimo": [
+      "2026-03-18"
+    ],
+    "Vertiv": [
+      "2026-03-18"
+    ],
+    "Quanex": [
+      "2026-03-18"
+    ],
+    "Great Plains Manufacturing, Inc.": [
+      "2026-03-18"
+    ],
+    "Sonnax": [
+      "2026-03-18"
+    ],
+    "SHL Medical": [
+      "2026-03-18"
+    ],
+    "SES AI": [
+      "2026-03-18",
+      "2026-03-18",
+      "2026-03-18"
+    ],
+    "New Flyer": [
+      "2026-03-18"
+    ],
+    "Pharmavite": [
+      "2026-03-18"
+    ],
+    "Linde Gas & Equipment": [
+      "2026-03-18"
+    ],
+    "AmerCable": [
+      "2026-03-18"
+    ],
+    "Dart Container": [
+      "2026-03-18"
+    ],
+    "Airgas": [
+      "2026-03-18"
+    ],
+    "Bunge": [
+      "2026-03-18"
+    ],
+    "RENK America": [
+      "2026-03-18"
     ]
   },
   "rejected_companies": [],
