@@ -864,6 +864,86 @@
       "name": "SES AI",
       "domain": "",
       "industry": "Auto-promoted"
+    },
+    {
+      "name": "Exact Sciences",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Klein Tools",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Veranex",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Grifols",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "CME Associates",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "City of Dallas",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "MANN+HUMMEL",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Victaulic",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Northern Manufacturing",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Magna Machine",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "TAMKO",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "P&G Ventures",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Rockwell Automation",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Domtar",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "W3Global",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "University of Nebraska-Lincoln",
+      "domain": "",
+      "industry": "Auto-promoted"
     }
   ],
   "promotion_tracking": {
@@ -1797,43 +1877,53 @@
     ],
     "Exact Sciences": [
       "2026-03-17",
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "Klein Tools": [
       "2026-03-17",
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "Veranex": [
       "2026-03-17",
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "Grifols": [
       "2026-03-17",
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "CME Associates": [
       "2026-03-17",
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "City of Dallas": [
       "2026-03-17",
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "MANN+HUMMEL": [
       "2026-03-17",
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "Victaulic": [
       "2026-03-17",
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "Northern Manufacturing": [
       "2026-03-17",
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "Magna Machine": [
       "2026-03-17",
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "Medline": [
       "2026-03-17",
@@ -1843,11 +1933,13 @@
     ],
     "TAMKO": [
       "2026-03-17",
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "P&G Ventures": [
       "2026-03-17",
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "Magna International": [
       "2026-03-17",
@@ -1856,19 +1948,24 @@
     ],
     "Rockwell Automation": [
       "2026-03-17",
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19",
+      "2026-03-19"
     ],
     "Domtar": [
       "2026-03-17",
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "W3Global": [
       "2026-03-17",
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "University of Nebraska-Lincoln": [
       "2026-03-17",
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "Amcor": [
       "2026-03-17",
@@ -1879,46 +1976,59 @@
       "2026-03-18"
     ],
     "Hunter Engineering Company": [
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "ATI": [
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "Medtronic": [
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "The Judge Group": [
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "Kasa Companies": [
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "Textiles Coated International (TCI)": [
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "ManpowerGroup": [
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "Approach Venture LLC": [
       "2026-03-18"
     ],
     "Belimo": [
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "Vertiv": [
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "Quanex": [
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "Great Plains Manufacturing, Inc.": [
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "Sonnax": [
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "SHL Medical": [
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "SES AI": [
       "2026-03-18",
@@ -1926,28 +2036,109 @@
       "2026-03-18"
     ],
     "New Flyer": [
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "Pharmavite": [
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "Linde Gas & Equipment": [
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "AmerCable": [
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "Dart Container": [
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "Airgas": [
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "Bunge": [
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
     ],
     "RENK America": [
-      "2026-03-18"
+      "2026-03-18",
+      "2026-03-19"
+    ],
+    "Benda Infotech": [
+      "2026-03-19"
+    ],
+    "Phoenix Tailings": [
+      "2026-03-19"
+    ],
+    "Cirtec Medical": [
+      "2026-03-19"
+    ],
+    "Particle Measuring Systems": [
+      "2026-03-19"
+    ],
+    "Lennox": [
+      "2026-03-19"
+    ],
+    "Marion Tool & Die, Inc. dba Marion Manufacturing": [
+      "2026-03-19"
+    ],
+    "Gulfstream Aerospace": [
+      "2026-03-19",
+      "2026-03-19"
+    ],
+    "Wieland Group": [
+      "2026-03-19"
+    ],
+    "NEFF Automation": [
+      "2026-03-19"
+    ],
+    "Flex-N-Gate": [
+      "2026-03-19"
+    ],
+    "Kemira": [
+      "2026-03-19"
+    ],
+    "Adisseo": [
+      "2026-03-19"
+    ],
+    "Eastman": [
+      "2026-03-19"
+    ],
+    "Fives Intralogistics": [
+      "2026-03-19"
+    ],
+    "Danone": [
+      "2026-03-19"
+    ],
+    "Niagara Bottling": [
+      "2026-03-19"
+    ],
+    "Oceaneering": [
+      "2026-03-19"
+    ],
+    "OmniSite": [
+      "2026-03-19"
+    ],
+    "Standex International": [
+      "2026-03-19"
+    ],
+    "Conagra Brands": [
+      "2026-03-19"
+    ],
+    "CTDI": [
+      "2026-03-19"
+    ],
+    "Arvato": [
+      "2026-03-19"
+    ],
+    "Pixelle Specialty Solutions": [
+      "2026-03-19"
+    ],
+    "FOX Sports": [
+      "2026-03-19"
     ]
   },
   "rejected_companies": [],
