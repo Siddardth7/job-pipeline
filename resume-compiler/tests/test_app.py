@@ -30,9 +30,9 @@ def test_sanitize_plain_text_unchanged():
     assert result == "Process engineer with 3 years experience"
 
 def test_sanitize_backslash_becomes_textbackslash():
-    # After \\ → \textbackslash{}, then { → \{ and } → \}, giving \textbackslash\{\}
+    # Single-pass regex: backslash becomes \textbackslash{} — braces NOT re-escaped
     result = sanitize_latex("path\\to\\file")
-    assert r"\textbackslash\{\}" in result
+    assert result == r"path\textbackslash{}to\textbackslash{}file"
 
 # ──────────────────────────────────────────────
 # inject_placeholders tests
@@ -114,5 +114,28 @@ def test_generate_missing_summary(client):
     response = client.post('/generate', json={
         'variant': 'A',
         'skills_latex': r'\skillline{X:}{y}'
+    })
+    assert response.status_code == 400
+
+def test_generate_missing_skills(client):
+    response = client.post('/generate', json={
+        'variant': 'A',
+        'summary': 'test summary',
+    })
+    assert response.status_code == 400
+
+def test_cover_letter_missing_company(client):
+    response = client.post('/generate-cover-letter', json={
+        'role': 'Engineer',
+        'variant_focus': 'Process & CI',
+        'summary': 'test'
+    })
+    assert response.status_code == 400
+
+def test_cover_letter_missing_role(client):
+    response = client.post('/generate-cover-letter', json={
+        'company': 'Acme',
+        'variant_focus': 'Process & CI',
+        'summary': 'test'
     })
     assert response.status_code == 400

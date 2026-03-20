@@ -15,27 +15,27 @@ ALLOWED_ORIGIN = os.environ.get("ALLOWED_ORIGIN", "*")
 # Characters that break LaTeX if not escaped.
 # Applied ONLY to plain-text inputs (summary, company, role).
 # NOT applied to skills_latex — that's already valid LaTeX.
-_LATEX_ESCAPES = [
-    ("\\", r"\textbackslash{}"),   # must be first to avoid double-escaping
-    ("&",  r"\&"),
-    ("%",  r"\%"),
-    ("$",  r"\$"),
-    ("#",  r"\#"),
-    ("_",  r"\_"),
-    ("{",  r"\{"),
-    ("}",  r"\}"),
-    ("^",  r"\^{}"),
-    ("~",  r"\~{}"),
-]
+_LATEX_SPECIAL = re.compile(r'[\\&%$#_{}^~]')
 
+_LATEX_REPLACEMENTS = {
+    '\\': r'\textbackslash{}',
+    '&':  r'\&',
+    '%':  r'\%',
+    '$':  r'\$',
+    '#':  r'\#',
+    '_':  r'\_',
+    '{':  r'\{',
+    '}':  r'\}',
+    '^':  r'\^{}',
+    '~':  r'\~{}',
+}
 
 def sanitize_latex(text: str) -> str:
-    """Escape LaTeX special characters in plain text before injection."""
+    """Escape LaTeX special characters in plain text before injection.
+    Uses a single-pass regex so replacements are never re-processed."""
     if not text:
         return ""
-    for old, new in _LATEX_ESCAPES:
-        text = text.replace(old, new)
-    return text
+    return _LATEX_SPECIAL.sub(lambda m: _LATEX_REPLACEMENTS[m.group(0)], text)
 
 
 def inject_placeholders(tex: str, summary: str, skills_latex: str) -> str:
@@ -174,6 +174,11 @@ def generate():
     if not skills_latex:
         return jsonify(error="skills_latex is required"), 400
 
+    if len(skills_latex) > 50_000:
+        return jsonify(error="skills_latex exceeds maximum allowed length"), 400
+    if len(summary) > 5_000:
+        return jsonify(error="summary exceeds maximum allowed length"), 400
+
     try:
         base_tex = _load_template(variant)
         _validate_template_markers(base_tex, variant)
@@ -226,6 +231,11 @@ def generate_cover_letter():
     with open(cl_path, "r", encoding="utf-8") as f:
         cl_tex = f.read()
 
+    cl_markers = ["%%COMPANY%%", "%%ROLE%%", "%%VARIANT_FOCUS%%", "%%SUMMARY_SENTENCE%%"]
+    missing_cl = [m for m in cl_markers if m not in cl_tex]
+    if missing_cl:
+        return jsonify(error=f"cover_letter.tex is missing markers: {missing_cl}"), 500
+
     cl_tex = cl_tex.replace("%%COMPANY%%", sanitize_latex(company))
     cl_tex = cl_tex.replace("%%ROLE%%", sanitize_latex(role))
     cl_tex = cl_tex.replace("%%VARIANT_FOCUS%%", sanitize_latex(variant_focus))
@@ -255,7 +265,6 @@ if __name__ == "__main__":
 
 
 # Run validation when loaded by gunicorn (not during tests)
-import os as _os
-if not _os.environ.get("FLASK_TESTING"):
+if not os.environ.get("FLASK_TESTING"):
     with app.app_context():
         _startup_validate()
