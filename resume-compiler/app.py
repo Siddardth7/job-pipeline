@@ -251,7 +251,6 @@ def generate_cover_letter():
 
 
 if __name__ == "__main__":
-    _startup_validate()
     app.run(host="0.0.0.0", port=8080, debug=True)
 
 
