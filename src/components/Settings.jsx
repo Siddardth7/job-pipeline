@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Database, Zap, RefreshCw, Plus, Trash2, Edit3, Check, X, ChevronDown } from 'lucide-react';
+import { Database, Zap, RefreshCw, Plus, Trash2, Edit3, Check, X, ChevronDown, Sparkles } from 'lucide-react';
 import { DEFAULT_TEMPLATES } from '../lib/templates.js';
 import * as Storage from '../lib/storage.js';
 
@@ -12,36 +12,49 @@ function Btn({children, onClick, disabled, variant="primary", size="md", t, styl
   return <button onClick={onClick} disabled={disabled} style={{background:s.bg,color:s.c,border:s.b,padding:p,borderRadius:8,fontSize:fs,fontWeight:600,cursor:disabled?"not-allowed":"pointer",opacity:disabled?.4:1,fontFamily:"inherit",whiteSpace:"nowrap",display:"inline-flex",alignItems:"center",gap:6,...xs}}>{children}</button>;
 }
 
-export default function AppSettings({templates, setTemplates, t}) {
+export default function AppSettings({templates, setTemplates, groqKey, setGroqKey, serperKey, setSerperKey, t}) {
   const [serperStatus, setSerperStatus] = useState("");
   const [testingSerper, setTestingSerper] = useState(false);
+  const [serperInput, setSerperInput] = useState(serperKey || "");
+  const [serperSaveStatus, setSerperSaveStatus] = useState("");
   const [editingTemplate, setEditingTemplate] = useState(null);
   const [editDraft, setEditDraft] = useState({name:"", body:""});
   const [premiumOpen, setPremiumOpen] = useState(false);
+  const [groqInput, setGroqInput] = useState(groqKey || "");
+  const [groqSaveStatus, setGroqSaveStatus] = useState("");
   const [gistMigrateId, setGistMigrateId] = useState("");
   const [gistMigrateToken, setGistMigrateToken] = useState("");
   const [migrating, setMigrating] = useState(false);
   const [migrateStatus, setMigrateStatus] = useState("");
 
+  const saveSerperKey = async () => {
+    try {
+      setSerperSaveStatus("Saving...");
+      await Storage.saveSetting('serper_api_key', serperInput.trim());
+      setSerperKey(serperInput.trim());
+      setSerperSaveStatus(serperInput.trim() ? "Saved!" : "Key cleared.");
+      setTimeout(() => setSerperSaveStatus(""), 3000);
+    } catch(e) {
+      setSerperSaveStatus("Save failed: " + e.message);
+    }
+  };
+
   const testSerper = async () => {
     setTestingSerper(true);
     setSerperStatus("Testing...");
+    const keyToUse = serperInput.trim() || serperKey;
     try {
-      const res = await fetch('/api/find-contacts', {
+      const res = await fetch('/.netlify/functions/find-contacts', {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({company:"Boeing", role:"Engineer", count:3})
+        body: JSON.stringify({company:"Boeing", role:"Engineer", count:3, serperKey: keyToUse})
       });
       if (res.ok) {
         const data = await res.json();
-        setSerperStatus(`Connected! Found ${data.length} results for test query.`);
+        setSerperStatus(`Connected! Found ${data.length} results.`);
       } else {
         const err = await res.json();
-        if (err.error?.includes('SERPER_API_KEY not configured')) {
-          setSerperStatus("SERPER_API_KEY not set in environment variables.");
-        } else {
-          setSerperStatus(`Error: ${err.error}`);
-        }
+        setSerperStatus(`Error: ${err.error}`);
       }
     } catch(e) {
       setSerperStatus(`Failed: ${e.message}`);
@@ -74,6 +87,18 @@ export default function AppSettings({templates, setTemplates, t}) {
   const resetTemplates = () => {
     setTemplates(DEFAULT_TEMPLATES);
     DEFAULT_TEMPLATES.forEach(tpl => Storage.upsertTemplate(tpl).catch(console.error));
+  };
+
+  const saveGroqKey = async () => {
+    try {
+      setGroqSaveStatus("Saving...");
+      await Storage.saveSetting('groq_api_key', groqInput.trim());
+      setGroqKey(groqInput.trim());
+      setGroqSaveStatus(groqInput.trim() ? "Saved! Groq AI is now active." : "Key cleared.");
+      setTimeout(() => setGroqSaveStatus(""), 3000);
+    } catch(e) {
+      setGroqSaveStatus("Save failed: " + e.message);
+    }
   };
 
   const addTemplate = () => {
@@ -191,54 +216,76 @@ export default function AppSettings({templates, setTemplates, t}) {
         </div>
       </Card>
 
-      {/* Serper API Test */}
+      {/* Serper API Key */}
       <Card t={t} style={{marginBottom:20}}>
         <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16}}>
           <div style={{width:34,height:34,borderRadius:9,background:t.greenL,display:"flex",alignItems:"center",justifyContent:"center"}}>
             <Database size={16} color={t.green}/>
           </div>
           <div>
-            <div style={{fontSize:14.5,fontWeight:700,color:t.tx}}>Serper API Status</div>
-            <div style={{fontSize:12,color:t.muted}}>Powers the "Find Contacts" feature in Networking</div>
+            <div style={{fontSize:14.5,fontWeight:700,color:t.tx}}>Serper API Key</div>
+            <div style={{fontSize:12,color:serperKey?t.green:t.muted}}>{serperKey ? "Active — Find Contacts enabled" : "Add key to enable Find Contacts in Networking"}</div>
           </div>
         </div>
         <div style={{background:t.hover,borderRadius:8,padding:"12px 14px",marginBottom:14,fontSize:12.5,color:t.sub,lineHeight:1.6}}>
-          Set <code style={{background:t.card,padding:"2px 6px",borderRadius:4,fontFamily:"monospace"}}>SERPER_API_KEY</code> in your Vercel environment variables. Get a free key at <strong>serper.dev</strong>.
+          Get a free key at <strong>serper.dev</strong>. Powers the LinkedIn contact search in Networking.
         </div>
-        <div style={{display:"flex",gap:10,alignItems:"center"}}>
-          <Btn variant="secondary" onClick={testSerper} disabled={testingSerper} t={t}>{testingSerper ? "Testing..." : "Test Serper Connection"}</Btn>
-          {serperStatus && (
-            <span style={{fontSize:12.5,fontWeight:600,color:serperStatus.includes("Connected")?t.green:t.red,maxWidth:400}}>{serperStatus}</span>
-          )}
+        <div style={{marginBottom:12}}>
+          <label style={{fontSize:11,fontWeight:700,color:t.sub,display:"block",marginBottom:5,textTransform:"uppercase",letterSpacing:1}}>Serper API Key</label>
+          <input
+            type="password"
+            value={serperInput}
+            onChange={e => setSerperInput(e.target.value)}
+            placeholder="paste your Serper key..."
+            style={{width:"100%",background:t.bg,border:`1px solid ${t.border}`,borderRadius:8,padding:"9px 13px",color:t.tx,fontSize:13,fontFamily:"monospace",outline:"none",boxSizing:"border-box"}}
+          />
+        </div>
+        <div style={{display:"flex",gap:10,alignItems:"center",flexWrap:"wrap"}}>
+          <Btn onClick={saveSerperKey} disabled={serperInput === (serperKey||"")} t={t}>Save Key</Btn>
+          <Btn variant="secondary" onClick={testSerper} disabled={testingSerper||(!serperInput&&!serperKey)} t={t}>{testingSerper ? "Testing..." : "Test Connection"}</Btn>
+          {serperSaveStatus && <span style={{fontSize:12.5,fontWeight:600,color:serperSaveStatus.includes("failed")?t.red:t.green}}>{serperSaveStatus}</span>}
+          {serperStatus && <span style={{fontSize:12.5,fontWeight:600,color:serperStatus.includes("Connected")?t.green:t.red}}>{serperStatus}</span>}
         </div>
       </Card>
 
-      {/* Premium AI — collapsed, grayed out */}
-      <Card t={t} style={{marginBottom:20,opacity:0.6}}>
+      {/* Groq AI */}
+      <Card t={t} style={{marginBottom:20}}>
         <button onClick={() => setPremiumOpen(!premiumOpen)} style={{width:"100%",display:"flex",alignItems:"center",justifyContent:"space-between",background:"transparent",border:"none",cursor:"pointer",fontFamily:"inherit",padding:0}}>
           <div style={{display:"flex",alignItems:"center",gap:10}}>
             <div style={{width:34,height:34,borderRadius:9,background:t.yellowL,display:"flex",alignItems:"center",justifyContent:"center"}}>
-              <Zap size={16} color={t.yellow}/>
+              <Sparkles size={16} color={t.yellow}/>
             </div>
             <div style={{textAlign:"left"}}>
-              <div style={{fontSize:14.5,fontWeight:700,color:t.tx}}>Premium AI Features</div>
-              <div style={{fontSize:12,color:t.muted}}>Claude-powered analysis — coming soon</div>
+              <div style={{fontSize:14.5,fontWeight:700,color:t.tx}}>Groq AI (Free)</div>
+              <div style={{fontSize:12,color:groqKey?t.green:t.muted}}>{groqKey ? "Active — AI-powered analysis enabled" : "Add key to enable AI analysis and drafting"}</div>
             </div>
           </div>
           <div style={{display:"flex",alignItems:"center",gap:8}}>
-            <span style={{fontSize:11,fontWeight:700,padding:"3px 10px",borderRadius:20,background:t.yellowL,color:t.yellow}}>COMING SOON</span>
+            {groqKey && <span style={{fontSize:11,fontWeight:700,padding:"3px 10px",borderRadius:20,background:t.greenL,color:t.green}}>ACTIVE</span>}
             <ChevronDown size={16} color={t.muted} style={{transform:premiumOpen?"rotate(180deg)":"rotate(0deg)",transition:"transform .2s"}}/>
           </div>
         </button>
         {premiumOpen && (
           <div style={{marginTop:16,paddingTop:16,borderTop:`1px solid ${t.border}`}}>
-            <div style={{fontSize:13,color:t.sub,lineHeight:1.7}}>
-              Premium AI features will include:<br/>
-              • AI-powered JD analysis with Claude<br/>
-              • Intelligent contact drafting<br/>
-              • Role fit assessment<br/>
-              • Market insights<br/><br/>
-              Configure a Claude API key to unlock these features.
+            <div style={{background:t.hover,borderRadius:8,padding:"12px 14px",marginBottom:14,fontSize:12.5,color:t.sub,lineHeight:1.6}}>
+              Groq provides a free API for <strong>llama-3.3-70b</strong>. Get a key at <strong>console.groq.com</strong> (free tier). Enables AI-powered Job Analysis and smart message drafting.
+            </div>
+            <div style={{marginBottom:12}}>
+              <label style={{fontSize:11,fontWeight:700,color:t.sub,display:"block",marginBottom:5,textTransform:"uppercase",letterSpacing:1}}>Groq API Key</label>
+              <input
+                type="password"
+                value={groqInput}
+                onChange={e => setGroqInput(e.target.value)}
+                placeholder="gsk_..."
+                style={{width:"100%",background:t.bg,border:`1px solid ${t.border}`,borderRadius:8,padding:"9px 13px",color:t.tx,fontSize:13,fontFamily:"monospace",outline:"none",boxSizing:"border-box"}}
+              />
+            </div>
+            <div style={{display:"flex",gap:10,alignItems:"center"}}>
+              <Btn onClick={saveGroqKey} disabled={groqInput === (groqKey||"")} t={t}><Sparkles size={13}/> Save Key</Btn>
+              {groqKey && <Btn variant="secondary" onClick={() => { setGroqInput(""); }} t={t}>Clear</Btn>}
+              {groqSaveStatus && (
+                <span style={{fontSize:12.5,fontWeight:600,color:groqSaveStatus.includes("failed")?t.red:t.green}}>{groqSaveStatus}</span>
+              )}
             </div>
           </div>
         )}

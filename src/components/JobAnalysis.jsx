@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
-import { BarChart2, CheckCircle, Users, Copy, Check, Briefcase, Zap, SlidersHorizontal, Edit3 } from 'lucide-react';
+import { BarChart2, CheckCircle, Users, Copy, Check, Briefcase, Zap, SlidersHorizontal, Edit3, Sparkles, FileText, Download, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
 import { analyzeJob } from '../lib/scoring.js';
+import { analyzeJobWithGroq, generateCoverLetterWithGroq } from '../lib/groq.js';
 import { buildCoverLetterPayload } from '../lib/coverLetter.js';
 
 const RESUMES = {
@@ -63,7 +64,185 @@ function SkilllinePreview({latex, t}) {
   );
 }
 
-export default function JobAnalysis({currentJob, updatePipelineJob, completePipeline, onLogApp, setPage, setCurrentJob, apps, findCompany, isBlacklisted, checkITAR, t}) {
+const TONES = [
+  { value: 'professional',   label: 'Professional' },
+  { value: 'technical',      label: 'Technical' },
+  { value: 'conversational', label: 'Conversational' },
+];
+
+// ─── AI Cover Letter Section ───────────────────────────────────────────────────
+function CoverLetterSection({ role, company, jd, analysis, groqKey, t }) {
+  const [open, setOpen]         = useState(false);
+  const [tone, setTone]         = useState('professional');
+  const [letter, setLetter]     = useState('');
+  const [loading, setLoading]   = useState(false);
+  const [error, setError]       = useState('');
+  const [copied, setCopied]     = useState(false);
+  const [regenNote, setRegenNote] = useState('');
+
+  const wordCount = letter.trim() ? letter.trim().split(/\s+/).length : 0;
+  const overWords = wordCount > 370;
+
+  const generate = async () => {
+    if (!groqKey) { setError('Add your Groq API key in Settings to generate cover letters.'); return; }
+    setError('');
+    setLoading(true);
+    try {
+      const result = await generateCoverLetterWithGroq(role, company, jd, analysis, tone, groqKey, regenNote);
+      setLetter(result);
+      setRegenNote('');
+    } catch(e) {
+      setError('Generation failed: ' + e.message);
+    }
+    setLoading(false);
+  };
+
+  const handleCopy = () => {
+    robustCopy(letter).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2200); }).catch(() => {});
+  };
+
+  const downloadPDF = () => {
+    const date = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    const paras = letter
+      .split('\n')
+      .map(l => l.trim())
+      .filter(Boolean)
+      .map(p => `<p>${p}</p>`)
+      .join('\n');
+
+    const html = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<title>Cover Letter — ${role} at ${company}</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Georgia','Times New Roman',serif;font-size:11.5pt;line-height:1.8;color:#111;max-width:680px;margin:0 auto;padding:72pt 0}
+  .hdr{margin-bottom:32pt;font-size:10.5pt;line-height:1.7}
+  .name{font-size:15pt;font-weight:bold;margin-bottom:4pt;letter-spacing:.3pt}
+  .salute{margin-bottom:20pt;font-size:11pt}
+  p{margin-bottom:14pt;text-align:justify;hyphens:auto}
+  .sign{margin-top:20pt}
+  @media print{@page{margin:72pt}body{padding:0}}
+</style></head><body>
+<div class="hdr">
+  <div class="name">Siddardth Pathipaka</div>
+  <div>siddardth.pathipaka@gmail.com</div>
+  <div style="margin-top:12pt">${date}</div>
+  <div style="margin-top:12pt">Hiring Team<br>${company}</div>
+</div>
+<div class="salute">Dear Hiring Manager,</div>
+${paras}
+</body></html>`;
+
+    const win = window.open('', '_blank');
+    if (!win) { setError('Pop-up blocked — allow pop-ups and try again.'); return; }
+    win.document.write(html);
+    win.document.close();
+    setTimeout(() => win.print(), 500);
+  };
+
+  const sel = { background: t.bg, border: `1px solid ${t.border}`, borderRadius: 8, padding: '8px 12px', color: t.tx, fontSize: 13, fontFamily: 'inherit', outline: 'none' };
+
+  return (
+    <Card t={t} style={{ marginBottom: 16, borderColor: open ? t.yellowBd : t.border }}>
+      {/* Header row — click to expand */}
+      <div
+        onClick={() => setOpen(o => !o)}
+        style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{ width: 32, height: 32, borderRadius: 8, background: t.yellowL, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <FileText size={15} color={t.yellow} />
+          </div>
+          <div>
+            <div style={{ fontSize: 13.5, fontWeight: 700, color: t.tx }}>Cover Letter Generator</div>
+            <div style={{ fontSize: 11, color: t.muted }}>AI-generated, JD-targeted — edit before sending</div>
+          </div>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          {letter && <span style={{ fontSize: 10.5, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: t.greenL, color: t.green }}>Ready</span>}
+          {groqKey && <span style={{ fontSize: 10.5, fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: t.yellowL, color: t.yellow }}>Groq AI</span>}
+          {open ? <ChevronUp size={16} color={t.muted} /> : <ChevronDown size={16} color={t.muted} />}
+        </div>
+      </div>
+
+      {open && (
+        <div style={{ marginTop: 18, paddingTop: 16, borderTop: `1px solid ${t.border}` }}>
+
+          {/* Tone + Generate row */}
+          <div style={{ display: 'flex', gap: 10, alignItems: 'flex-end', marginBottom: 12 }}>
+            <div>
+              <label style={{ fontSize: 10, fontWeight: 700, color: t.muted, display: 'block', marginBottom: 5, textTransform: 'uppercase', letterSpacing: 1 }}>Tone</label>
+              <select value={tone} onChange={e => setTone(e.target.value)} style={sel}>
+                {TONES.map(t_ => <option key={t_.value} value={t_.value}>{t_.label}</option>)}
+              </select>
+            </div>
+            <Btn onClick={generate} disabled={loading || !groqKey} t={t}>
+              {loading
+                ? <><RefreshCw size={13} style={{ animation: 'spin 1s linear infinite' }} /> Generating...</>
+                : <><Sparkles size={13} /> Generate Cover Letter</>}
+            </Btn>
+          </div>
+
+          {!groqKey && (
+            <div style={{ fontSize: 12, color: t.yellow, padding: '8px 12px', background: t.yellowL, borderRadius: 8, border: `1px solid ${t.yellowBd}`, marginBottom: 12 }}>
+              Add Groq API key in Settings to use AI cover letter generation.
+            </div>
+          )}
+          {error && <div style={{ fontSize: 12.5, color: t.red, fontWeight: 600, marginBottom: 10 }}>{error}</div>}
+
+          {letter && (
+            <div>
+              <textarea
+                value={letter}
+                onChange={e => setLetter(e.target.value)}
+                rows={18}
+                style={{ width: '100%', background: t.bg, border: `1px solid ${overWords ? t.red : t.border}`, borderRadius: 8, padding: '14px 18px', color: t.tx, fontSize: 12.5, fontFamily: "'Georgia','Times New Roman',serif", resize: 'vertical', boxSizing: 'border-box', outline: 'none', lineHeight: 1.85 }}
+              />
+
+              {/* Word count + action buttons */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 }}>
+                <span style={{ fontSize: 11.5, fontWeight: 700, color: overWords ? t.red : wordCount > 340 ? t.yellow : t.green }}>
+                  {wordCount} words{overWords ? ' — OVER 370 limit' : wordCount > 340 ? ' — approaching limit' : ' — OK'}
+                </span>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <Btn size="sm" variant="secondary" onClick={generate} disabled={loading || !groqKey} t={t}>
+                    <RefreshCw size={11} /> Redo
+                  </Btn>
+                  <Btn size="sm" variant="green" onClick={handleCopy} t={t}>
+                    {copied ? <><Check size={12} /> Copied!</> : <><Copy size={12} /> Copy Text</>}
+                  </Btn>
+                  <Btn size="sm" t={t} onClick={downloadPDF}>
+                    <Download size={12} /> Download PDF
+                  </Btn>
+                </div>
+              </div>
+
+              {/* Regeneration direction */}
+              <div style={{ marginTop: 10, display: 'flex', gap: 8 }}>
+                <input
+                  value={regenNote}
+                  onChange={e => setRegenNote(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter' && regenNote.trim()) generate(); }}
+                  placeholder='Direction for Redo, e.g. "more technical" or "emphasise SAMPE work" or "shorten Para 2"'
+                  style={{ flex: 1, background: t.bg, border: `1px solid ${t.border}`, borderRadius: 8, padding: '7px 12px', color: t.tx, fontSize: 12.5, fontFamily: 'inherit', outline: 'none' }}
+                />
+                <Btn size="sm" variant="secondary" onClick={generate} disabled={loading || !groqKey || !regenNote.trim()} t={t}>
+                  <RefreshCw size={11} /> Apply
+                </Btn>
+              </div>
+
+              {/* PDF tip */}
+              <div style={{ marginTop: 10, fontSize: 11.5, color: t.muted, padding: '6px 10px', background: t.hover, borderRadius: 6 }}>
+                <strong>PDF download</strong> opens a print dialog — choose "Save as PDF" in your browser. The PDF includes the header, date, and salutation automatically.
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </Card>
+  );
+}
+
+export default function JobAnalysis({currentJob, updatePipelineJob, completePipeline, onLogApp, setPage, setCurrentJob, apps, findCompany, isBlacklisted, checkITAR, groqKey, t}) {
   const [co, setCo] = useState(currentJob?.company || "");
   const [role, setRole] = useState(currentJob?.role || "");
   const [loc, setLoc] = useState(currentJob?.location || "");
@@ -115,18 +294,42 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
     setChecks(c);
   }, [co, jd]);
 
-  const analyze = () => {
+  const analyze = async () => {
     if (!jd.trim()) return;
     setLoading(true);
-    setTimeout(() => {
-      const analysisResult = analyzeJob(jd, res);
+
+    try {
+      let analysisResult;
+
+      if (groqKey) {
+        // Use Groq AI for tailored analysis — picks variant first via local scoring, then enriches
+        const localResult = analyzeJob(jd, res);
+        const chosenVariant = res || localResult.recommendedResume;
+        const groqResult = await analyzeJobWithGroq(jd, chosenVariant, groqKey);
+        analysisResult = {
+          ...localResult,
+          ...groqResult,
+          recommendedResume: chosenVariant,
+          aiPowered: true,
+        };
+      } else {
+        // Fallback: local keyword scoring
+        analysisResult = analyzeJob(jd, res);
+      }
+
       setResult(analysisResult);
       syncToParent({ analysisResult, jd, company: co, role, location: loc, link });
       if (currentJob?.id) {
         updatePipelineJob(currentJob.id, { analysisResult, jd, company: co, role, location: loc, link });
       }
-      setLoading(false);
-    }, 300);
+    } catch (e) {
+      // If Groq fails, fall back to local
+      const analysisResult = analyzeJob(jd, res);
+      setResult({ ...analysisResult, aiError: e.message });
+      syncToParent({ analysisResult, jd });
+    }
+
+    setLoading(false);
   };
 
   const copyText = (k, v) => {
@@ -217,7 +420,18 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
     setPage("pipeline");
   };
 
-  const mod1LaTeX = result ? `\\textbf{${result.mod1_summary}}` : "";
+  // Render **bold** markers as <strong> spans
+  function renderBoldMarkers(text) {
+    if (!text) return null;
+    const parts = text.split(/\*\*([^*]+)\*\*/g);
+    return parts.map((p, i) =>
+      i % 2 === 1
+        ? <strong key={i} style={{color: t.tx, fontWeight: 800}}>{p}</strong>
+        : <span key={i}>{p}</span>
+    );
+  }
+
+  const mod1LaTeX = result ? `\\textbf{${result.mod1_summary?.replace(/\*\*/g, '')}}` : "";
 
   return (
     <div>
@@ -252,8 +466,11 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
           />
           <div style={{display:"flex",gap:10,alignItems:"center",flexWrap:"wrap"}}>
             <Btn onClick={analyze} disabled={loading||!jd.trim()} t={t}>
-              {loading ? "Analyzing..." : "Run Resume Analysis"}
+              {groqKey && <Sparkles size={13}/>}
+              {loading ? "Analyzing..." : groqKey ? "Run AI Analysis" : "Run Resume Analysis"}
             </Btn>
+            {groqKey && <span style={{fontSize:11,color:t.green,fontWeight:700}}>✦ Groq AI active</span>}
+            {!groqKey && <span style={{fontSize:11,color:t.muted}}>Add Groq key in Settings for AI-tailored output</span>}
             <span style={{fontSize:12,color:t.muted}}>Override resume:</span>
             {["Auto","A","B","C","D"].map(k => {
               const active = k === "Auto" ? res === null : res === k;
@@ -287,8 +504,19 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
         </div>
       )}
 
+      {result?.aiError && (
+        <div style={{background:t.yellowL,border:`1px solid ${t.yellowBd}`,borderRadius:8,padding:"10px 16px",marginBottom:12,fontSize:12.5,color:t.yellow,fontWeight:600}}>
+          ⚠ AI error: {result.aiError} — showing local keyword results instead.
+        </div>
+      )}
+
       {result && !loading && (
         <div>
+          {result.aiPowered && (
+            <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:12,fontSize:12.5,color:t.green,fontWeight:700}}>
+              <Sparkles size={13}/> AI-powered analysis by Groq (llama-3.3-70b)
+            </div>
+          )}
           {/* Recommended Resume */}
           <Card t={t} style={{marginBottom:16}}>
             <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
@@ -364,10 +592,24 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
                 </Btn>
               </div>
 
-              {/* Preview */}
+              {/* Top 5 JD Skills chips */}
+              {result.top5_jd_skills?.length > 0 && (
+                <div style={{marginBottom:10}}>
+                  <div style={{fontSize:10,fontWeight:700,color:t.muted,textTransform:"uppercase",letterSpacing:1,marginBottom:6}}>Top 5 JD Requirements Targeted</div>
+                  <div style={{display:"flex",gap:5,flexWrap:"wrap"}}>
+                    {result.top5_jd_skills.map((k, i) => (
+                      <span key={i} style={{fontSize:11.5,padding:"3px 10px",borderRadius:20,background:t.priL,color:t.pri,fontWeight:700,border:`1px solid ${t.priBd}`}}>{k}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Preview with bold markers rendered */}
               <div style={{background:t.bg,border:`1px solid ${t.border}`,borderRadius:8,padding:"14px 16px",marginBottom:10}}>
                 <div style={{fontSize:10,fontWeight:700,color:t.muted,textTransform:"uppercase",letterSpacing:1,marginBottom:8}}>Preview</div>
-                <div style={{fontSize:13,lineHeight:1.8,color:t.tx,fontStyle:"italic"}}>{result.mod1_summary || "—"}</div>
+                <div style={{fontSize:13,lineHeight:1.8,color:t.sub,fontStyle:"italic"}}>
+                  {renderBoldMarkers(result.mod1_summary) || "—"}
+                </div>
               </div>
 
               {/* Raw LaTeX toggle */}
@@ -454,6 +696,34 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
               </div>
             </div>
           </Card>
+
+          {/* AI Insights block */}
+          {result.ai_insights && (
+            <Card t={t} style={{marginBottom:16,borderColor:t.yellowBd}}>
+              <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
+                <div style={{width:28,height:28,borderRadius:7,background:t.yellowL,display:"flex",alignItems:"center",justifyContent:"center"}}>
+                  <Sparkles size={14} color={t.yellow}/>
+                </div>
+                <div>
+                  <div style={{fontSize:13.5,fontWeight:700,color:t.tx}}>AI Insights</div>
+                  <div style={{fontSize:11,color:t.muted}}>Recommendations and strategic notes for this application</div>
+                </div>
+              </div>
+              <div style={{fontSize:13,lineHeight:1.8,color:t.sub,background:t.bg,border:`1px solid ${t.border}`,borderRadius:8,padding:"14px 16px",whiteSpace:"pre-wrap"}}>
+                {result.ai_insights}
+              </div>
+            </Card>
+          )}
+
+          {/* AI Cover Letter Generator */}
+          <CoverLetterSection
+            role={role || currentJob?.role || ''}
+            company={co || currentJob?.company || ''}
+            jd={jd}
+            analysis={result}
+            groqKey={groqKey}
+            t={t}
+          />
 
           {/* Action buttons */}
           <div style={{display:"flex",gap:10}}>

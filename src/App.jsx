@@ -102,6 +102,9 @@ export default function JobAgent() {
   const [currentJob, setCurrentJob] = useState(null);
   const [customCompanies, setCustomCompanies] = useState([]);
   const [templates, setTemplates] = useState(DEFAULT_TEMPLATES);
+  const [groqKey, setGroqKey] = useState("");
+  const [serperKey, setSerperKey] = useState("");
+  const [netlogMeta, setNetlogMeta] = useState({}); // {contactId: {status, followUpDate}}
 
   const saveTimer = useRef(null);
   const stateRef = useRef({});
@@ -133,6 +136,11 @@ export default function JobAgent() {
         setNetworkingLog(dbNetlog);
         if (dbTemplates.length > 0) setTemplates(dbTemplates);
         if (dbSettings.dark) setDark(dbSettings.dark === 'true');
+        if (dbSettings.groq_api_key) setGroqKey(dbSettings.groq_api_key);
+        if (dbSettings.serper_api_key) setSerperKey(dbSettings.serper_api_key);
+        if (dbSettings.netlog_meta) {
+          try { setNetlogMeta(JSON.parse(dbSettings.netlog_meta)); } catch { /* ignore */ }
+        }
         if (savedJob) setCurrentJob(savedJob);
       } catch(e) {
         console.warn('Supabase load error (will use local state):', e.message);
@@ -198,9 +206,25 @@ export default function JobAgent() {
     });
   }, [debouncedSave]);
 
+  const updateNetlogMeta = useCallback((contactId, updates) => {
+    setNetlogMeta(prev => {
+      const next = {...prev, [contactId]: {...(prev[contactId]||{}), ...updates}};
+      Storage.saveSetting('netlog_meta', JSON.stringify(next)).catch(e => console.warn('netlog_meta save error:', e));
+      return next;
+    });
+  }, []);
+
   const addToNetworkingLog = useCallback((contact) => {
     setNetworkingLog(nl => nl.find(x => x.id === contact.id) ? nl : [...nl, contact]);
     debouncedSave(() => Storage.upsertNetlog(contact));
+    // Auto-set Pending status + follow-up reminder 5 days out
+    const followUpDate = new Date(Date.now() + 5 * 86400000).toISOString().split('T')[0];
+    setNetlogMeta(prev => {
+      if (prev[contact.id]) return prev; // don't overwrite if already set
+      const next = {...prev, [contact.id]: {status: 'Pending', followUpDate}};
+      Storage.saveSetting('netlog_meta', JSON.stringify(next)).catch(e => console.warn('netlog_meta save error:', e));
+      return next;
+    });
   }, [debouncedSave]);
 
   const logApplication = useCallback((app) => {
@@ -237,7 +261,7 @@ export default function JobAgent() {
     dashboard: (
       <Dashboard
         apps={apps} pipeline={pipeline} searchResults={searchResults}
-        networkingLog={networkingLog} setPage={setPage} t={t}
+        networkingLog={networkingLog} netlogMeta={netlogMeta} setPage={setPage} t={t}
       />
     ),
     search: (
@@ -258,10 +282,12 @@ export default function JobAgent() {
     ),
     analyze: (
       <JobAnalysis
+        key={currentJob?.id || 'no-job'}
         currentJob={currentJob} updatePipelineJob={updatePipelineJob}
         completePipeline={completePipeline} onLogApp={logApplication}
         setPage={setPage} setCurrentJob={setCurrentJob} apps={apps}
-        findCompany={findCompany} isBlacklisted={isBlacklisted} checkITAR={checkITAR} t={t}
+        findCompany={findCompany} isBlacklisted={isBlacklisted} checkITAR={checkITAR}
+        groqKey={groqKey} t={t}
       />
     ),
     networking: (
@@ -269,17 +295,26 @@ export default function JobAgent() {
         currentJob={currentJob} setCurrentJob={setCurrentJob}
         contactResults={contactResults} setContactResults={setContactResults}
         networkingLog={networkingLog} addToNetworkingLog={addToNetworkingLog}
-        setPage={setPage} templates={templates} t={t}
+        netlogMeta={netlogMeta} updateNetlogMeta={updateNetlogMeta}
+        setPage={setPage} templates={templates} groqKey={groqKey} serperKey={serperKey} t={t}
       />
     ),
     applied: (
       <Applied apps={apps} networkingLog={networkingLog} setPage={setPage} t={t}/>
     ),
     intel: (
-      <CompanyIntel customCompanies={customCompanies} t={t}/>
+      <CompanyIntel
+        customCompanies={customCompanies}
+        setCustomCompanies={setCustomCompanies}
+        onStartOutreach={(companyName) => {
+          setCurrentJob(prev => ({...(prev||{}), company: companyName}));
+          setPageRaw('networking');
+        }}
+        t={t}
+      />
     ),
     settings: (
-      <AppSettings templates={templates} setTemplates={setTemplates} t={t}/>
+      <AppSettings templates={templates} setTemplates={setTemplates} groqKey={groqKey} setGroqKey={setGroqKey} serperKey={serperKey} setSerperKey={setSerperKey} t={t}/>
     ),
   };
 
@@ -289,6 +324,7 @@ export default function JobAgent() {
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
         @keyframes lp-dot{0%,100%{transform:translateY(0);opacity:.25}50%{transform:translateY(-5px);opacity:1}}
         @keyframes lp-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+        @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
         ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:${t.border};border-radius:5px}
         *{box-sizing:border-box}a{text-decoration:none}
         input::placeholder,textarea::placeholder{color:${t.muted}}

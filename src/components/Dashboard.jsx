@@ -1,5 +1,14 @@
-import { Search, BarChart2, CheckCircle, Users, Database, Briefcase, Shield, Activity, Building2 } from 'lucide-react';
+import { Search, BarChart2, CheckCircle, Users, Database, Briefcase, Shield, Activity, Building2, AlertTriangle, MessageSquare, Coffee } from 'lucide-react';
 import { M628 } from '../data/m628.js';
+
+const PERSONA_COLORS = {
+  'Recruiter':      '#0284c7',
+  'Hiring Manager': '#d97706',
+  'Peer Engineer':  '#16a34a',
+  'Executive':      '#7c3aed',
+  'UIUC Alumni':    '#0891b2',
+  'Senior Engineer':'#db2777',
+};
 
 function Card({children, t, style, onClick}) {
   return (
@@ -17,7 +26,7 @@ function ProgressBar({value, max, color, t}) {
   );
 }
 
-export default function Dashboard({apps, pipeline, searchResults, networkingLog, setPage, t}) {
+export default function Dashboard({apps, pipeline, searchResults, networkingLog, netlogMeta, setPage, t}) {
   const activeP = pipeline.filter(j => j.status === "active").length;
   const completedP = pipeline.filter(j => j.status === "completed").length;
   const totalImported = searchResults.length;
@@ -47,6 +56,27 @@ export default function Dashboard({apps, pipeline, searchResults, networkingLog,
   const weekAgo = new Date(Date.now() - 7*86400000);
   const recentApps = apps.filter(a => { try { return new Date(a.date) >= weekAgo; } catch { return false; } }).length;
   const recentNet = networkingLog.filter(c => { try { return new Date(c.date) >= weekAgo; } catch { return false; } }).length;
+
+  // ── Networking analytics ──────────────────────────────────────────────────
+  const todayStr = new Date().toISOString().split('T')[0];
+  const statusCounts = {'Pending':0,'Replied':0,'Coffee Chat':0,'No Response':0};
+  networkingLog.forEach(c => {
+    const s = netlogMeta?.[c.id]?.status || 'Pending';
+    statusCounts[s] = (statusCounts[s] || 0) + 1;
+  });
+  const responseRate = totalNetworked > 0
+    ? Math.round(((statusCounts['Replied'] + statusCounts['Coffee Chat']) / totalNetworked) * 100)
+    : 0;
+  const overdueFollowUps = networkingLog.filter(c => {
+    const meta = netlogMeta?.[c.id];
+    return meta?.status === 'Pending' && meta?.followUpDate && meta.followUpDate < todayStr;
+  }).length;
+  const personaMap = {};
+  networkingLog.forEach(c => {
+    const p = c.type || 'Unknown';
+    personaMap[p] = (personaMap[p] || 0) + 1;
+  });
+  const topPersonas = Object.entries(personaMap).sort((a,b) => b[1]-a[1]);
 
   return (
     <div>
@@ -140,7 +170,7 @@ export default function Dashboard({apps, pipeline, searchResults, networkingLog,
       </div>
 
       {/* Industry Breakdown + Quick Actions */}
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:16}}>
         {topIndustries.length > 0 && (
           <Card t={t}>
             <div style={{fontSize:11.5,fontWeight:700,color:t.tx,textTransform:"uppercase",letterSpacing:1.5,marginBottom:14}}>Top Industries (from jobs found)</div>
@@ -178,6 +208,87 @@ export default function Dashboard({apps, pipeline, searchResults, networkingLog,
           </div>
         </Card>
       </div>
+
+      {/* Networking Analysis */}
+      {totalNetworked > 0 && (
+        <Card t={t}>
+          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:20}}>
+            <div style={{fontSize:11.5,fontWeight:700,color:t.tx,textTransform:"uppercase",letterSpacing:1.5}}>Networking Analysis</div>
+            <div style={{display:"flex",gap:16,alignItems:"center"}}>
+              <div style={{textAlign:"right"}}>
+                <div style={{fontSize:22,fontWeight:800,color:responseRate >= 30 ? t.green : responseRate >= 10 ? t.yellow : t.red}}>{responseRate}%</div>
+                <div style={{fontSize:10.5,color:t.muted,fontWeight:600}}>Response Rate</div>
+              </div>
+              {overdueFollowUps > 0 && (
+                <div style={{padding:"10px 16px",background:t.redL,border:`1px solid ${t.redBd}`,borderRadius:10,textAlign:"center"}}>
+                  <div style={{display:"flex",alignItems:"center",gap:5,color:t.red}}>
+                    <AlertTriangle size={14}/>
+                    <span style={{fontSize:18,fontWeight:800}}>{overdueFollowUps}</span>
+                  </div>
+                  <div style={{fontSize:10.5,color:t.red,fontWeight:600,marginTop:2}}>Overdue Follow-ups</div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:24}}>
+            {/* Status breakdown */}
+            <div>
+              <div style={{fontSize:10.5,fontWeight:700,color:t.muted,textTransform:"uppercase",letterSpacing:1.5,marginBottom:12}}>Response Status</div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:16}}>
+                {[
+                  {label:'Pending',     color:t.yellow, bg:t.yellowL, bd:t.yellowBd, count:statusCounts['Pending'],     Icon:MessageSquare},
+                  {label:'Replied',     color:t.green,  bg:t.greenL,  bd:t.greenBd,  count:statusCounts['Replied'],     Icon:CheckCircle},
+                  {label:'Coffee Chat', color:'#7c3aed', bg:'#ede9fe', bd:'#c4b5fd',  count:statusCounts['Coffee Chat'], Icon:Coffee},
+                  {label:'No Response', color:t.red,    bg:t.redL,    bd:t.redBd,    count:statusCounts['No Response'], Icon:Users},
+                ].map(({label, color, bg, bd, count, Icon}) => (
+                  <div key={label} style={{padding:"12px 14px",background:bg,borderRadius:9,border:`1px solid ${bd}`,display:"flex",alignItems:"center",gap:10}}>
+                    <Icon size={16} color={color}/>
+                    <div>
+                      <div style={{fontSize:20,fontWeight:800,color,lineHeight:1}}>{count}</div>
+                      <div style={{fontSize:10.5,color,fontWeight:600,marginTop:2}}>{label}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div style={{paddingTop:12,borderTop:`1px solid ${t.border}`}}>
+                <ProgressBar value={statusCounts['Replied'] + statusCounts['Coffee Chat']} max={Math.max(1,totalNetworked)} color={t.green} t={t}/>
+                <div style={{display:"flex",justifyContent:"space-between",marginTop:5}}>
+                  <span style={{fontSize:11.5,color:t.muted}}>Engaged ({statusCounts['Replied'] + statusCounts['Coffee Chat']} of {totalNetworked})</span>
+                  <span style={{fontSize:11.5,fontWeight:700,color:t.green}}>{responseRate}% rate</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Persona breakdown + recent activity */}
+            <div>
+              <div style={{fontSize:10.5,fontWeight:700,color:t.muted,textTransform:"uppercase",letterSpacing:1.5,marginBottom:12}}>By Persona Type</div>
+              {topPersonas.map(([type, cnt]) => (
+                <div key={type} style={{marginBottom:9}}>
+                  <div style={{display:"flex",justifyContent:"space-between",marginBottom:3}}>
+                    <div style={{display:"flex",alignItems:"center",gap:7}}>
+                      <div style={{width:8,height:8,borderRadius:2,background:PERSONA_COLORS[type]||t.pri}}/>
+                      <span style={{fontSize:12.5,color:t.sub,fontWeight:500}}>{type}</span>
+                    </div>
+                    <span style={{fontSize:12,fontWeight:700,color:t.tx}}>{cnt}</span>
+                  </div>
+                  <ProgressBar value={cnt} max={Math.max(1,totalNetworked)} color={PERSONA_COLORS[type]||t.pri} t={t}/>
+                </div>
+              ))}
+              <div style={{marginTop:14,paddingTop:12,borderTop:`1px solid ${t.border}`,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                <div>
+                  <div style={{fontSize:12,color:t.muted}}>This week</div>
+                  <div style={{fontSize:17,fontWeight:800,color:t.tx}}>{recentNet} <span style={{fontSize:12,fontWeight:500,color:t.sub}}>contacts</span></div>
+                </div>
+                <div style={{textAlign:"right"}}>
+                  <div style={{fontSize:12,color:t.muted}}>Total outreach</div>
+                  <div style={{fontSize:17,fontWeight:800,color:t.tx}}>{totalNetworked} <span style={{fontSize:12,fontWeight:500,color:t.sub}}>contacts</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Card>
+      )}
     </div>
   );
 }

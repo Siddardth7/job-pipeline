@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Search, RefreshCw, Plus, Check, ExternalLink, Upload, PenTool, Globe, CheckCircle, UserPlus } from 'lucide-react';
+import { Search, RefreshCw, Plus, Check, ExternalLink, Upload, PenTool, Globe, CheckCircle, UserPlus, History, ChevronDown, ChevronUp } from 'lucide-react';
 
 function Card({children, t, style, onClick}) {
   return <div onClick={onClick} style={{background:t.card,border:`1px solid ${t.border}`,borderRadius:12,padding:20,boxShadow:t.shadow,cursor:onClick?"pointer":"default",...style}}>{children}</div>;
@@ -31,14 +31,38 @@ const matchColor=(v,t)=>v>=90?t.green:v>=75?t.yellow:t.red;
 
 function universalParse(data) {
   if (Array.isArray(data)) return data;
-  for (const k of ["jobs","results","data","items","listings","postings","records","green_jobs"]) {
+  // Merge green + yellow before any generic key check (green_jobs alone would drop yellow)
+  if (data.green_jobs || data.yellow_jobs) return [...(data.green_jobs||[]),...(data.yellow_jobs||[])];
+  for (const k of ["jobs","results","data","items","listings","postings","records"]) {
     if (data[k] && Array.isArray(data[k])) return data[k];
   }
-  if (data.green_jobs || data.yellow_jobs) return [...(data.green_jobs||[]),...(data.yellow_jobs||[])];
   for (const v of Object.values(data)) {
     if (Array.isArray(v) && v.length > 0 && typeof v[0] === "object") return v;
   }
   return [];
+}
+
+const PIPELINE_REPO = "Siddardth7/job-pipeline";
+const OUTPUT_DIR   = "output";
+
+async function fetchHistoryFiles() {
+  const res = await fetch(`https://api.github.com/repos/${PIPELINE_REPO}/contents/${OUTPUT_DIR}`, {
+    headers: { Accept: "application/vnd.github.v3+json" }
+  });
+  if (!res.ok) throw new Error(`GitHub API ${res.status}`);
+  const files = await res.json();
+  return files
+    .filter(f => f.name.endsWith(".json") && f.name !== "jobs_clean_latest.json")
+    .sort((a, b) => b.name.localeCompare(a.name)); // newest first
+}
+
+function parseFileDate(name) {
+  // Matches: jobs_clean_2025-03-15.json or jobs_clean_20250315.json or any _YYYY-MM-DD pattern
+  const m = name.match(/(\d{4}-\d{2}-\d{2})/);
+  if (m) return new Date(m[1]).toLocaleDateString(undefined, {year:"numeric",month:"short",day:"numeric"});
+  const m2 = name.match(/(\d{8})/);
+  if (m2) { const s=m2[1]; return new Date(`${s.slice(0,4)}-${s.slice(4,6)}-${s.slice(6,8)}`).toLocaleDateString(undefined,{year:"numeric",month:"short",day:"numeric"}); }
+  return name.replace(/jobs_clean_?|\.json/g,"") || name;
 }
 
 const FILTERS = ["All","Visa Sponsor","Remote","90%+ Match","ITAR-Free"];
@@ -57,8 +81,47 @@ export default function FindJobs({searchResults, setSearchResults, pipeline, add
   const [ext, setExt] = useState({role:"",company:"",location:"",link:"",type:"Full-time",description:""});
   const [addToIntel, setAddToIntel] = useState(false);
   const [extIntel, setExtIntel] = useState({industry:"",h1b:"LIKELY",itar:"NO"});
+  const [showHistory, setShowHistory] = useState(false);
+  const [historyFiles, setHistoryFiles] = useState([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [historyError, setHistoryError] = useState("");
+  const [loadingFile, setLoadingFile] = useState("");
   const fileRef = useRef(null);
   const pipeIds = new Set(pipeline.map(j => j.id));
+
+  const openHistory = async () => {
+    if (showHistory) { setShowHistory(false); return; }
+    setShowHistory(true);
+    if (historyFiles.length > 0) return; // already loaded
+    setHistoryLoading(true);
+    setHistoryError("");
+    try {
+      const files = await fetchHistoryFiles();
+      setHistoryFiles(files);
+      if (files.length === 0) setHistoryError("No historical runs found in the repo output folder.");
+    } catch(e) {
+      setHistoryError("Could not fetch history: " + e.message);
+    }
+    setHistoryLoading(false);
+  };
+
+  const loadHistoryFile = async (file) => {
+    setLoadingFile(file.name);
+    setError("");
+    try {
+      const r = await fetch(file.download_url, {cache:"no-store"});
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const data = JSON.parse(await r.text());
+      const arr = universalParse(data);
+      if (!arr.length) throw new Error("No jobs found in this file.");
+      loadJobs(arr);
+      setLastUpdated(data.generated_utc || file.name);
+      setShowHistory(false);
+    } catch(e) {
+      setError(`Failed to load ${file.name}: ${e.message}`);
+    }
+    setLoadingFile("");
+  };
 
   const loadJobs = (arr, append=false) => {
     const norm = arr.map((j,i) => normalizeJob(j,i));
@@ -178,11 +241,54 @@ export default function FindJobs({searchResults, setSearchResults, pipeline, add
               <RefreshCw size={14} style={{animation:loading?"lp-spin 1s linear infinite":"none"}}/>{loading?"Loading":"Refresh"}
             </button>
           </div>
-          <div style={{display:"flex",gap:6,marginBottom:6,alignItems:"center"}}>
-            <span style={{fontSize:11,color:t.muted}}>Feed URL:</span>
+          <div style={{display:"flex",gap:8,marginBottom:6,alignItems:"center"}}>
+            <span style={{fontSize:11,color:t.muted,flexShrink:0}}>Feed URL:</span>
             <input value={feedUrl} onChange={e => setFeedUrl(e.target.value)} style={{flex:1,background:t.bg,border:`1px solid ${t.border}`,borderRadius:6,padding:"5px 10px",color:t.tx,fontSize:11.5,fontFamily:"monospace",outline:"none"}}/>
+            <button onClick={openHistory}
+              style={{display:"flex",alignItems:"center",gap:6,padding:"6px 14px",borderRadius:8,background:showHistory?t.priL:t.card,border:`1px solid ${showHistory?t.pri:t.border}`,color:showHistory?t.pri:t.sub,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",flexShrink:0,whiteSpace:"nowrap"}}>
+              <History size={14}/> Past Runs {showHistory ? <ChevronUp size={13}/> : <ChevronDown size={13}/>}
+            </button>
           </div>
-          <div style={{display:"flex",gap:8,marginBottom:16,marginTop:12,flexWrap:"wrap"}}>
+
+          {/* Historical runs panel */}
+          {showHistory && (
+            <div style={{marginBottom:14,border:`1px solid ${t.priBd}`,borderRadius:10,overflow:"hidden"}}>
+              <div style={{padding:"10px 16px",background:t.priL,borderBottom:`1px solid ${t.priBd}`,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                <div style={{fontSize:12.5,fontWeight:700,color:t.pri}}>Select a Past Run to Load</div>
+                <div style={{fontSize:11.5,color:t.sub}}>Results replace current feed</div>
+              </div>
+              {historyLoading && (
+                <div style={{padding:"20px",display:"flex",gap:6,alignItems:"center",justifyContent:"center"}}>
+                  {[0,1,2].map(i=><div key={i} style={{width:6,height:6,borderRadius:"50%",background:t.pri,animation:`lp-dot .8s ${i*.15}s ease-in-out infinite`,opacity:.3}}/>)}
+                </div>
+              )}
+              {historyError && <div style={{padding:"14px 16px",color:t.red,fontSize:13}}>{historyError}</div>}
+              {!historyLoading && historyFiles.length > 0 && (
+                <div style={{maxHeight:280,overflowY:"auto"}}>
+                  {historyFiles.map(file => {
+                    const dateLabel = parseFileDate(file.name);
+                    const isLoading = loadingFile === file.name;
+                    return (
+                      <div key={file.name} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 16px",borderBottom:`1px solid ${t.border}`,background:t.card}}>
+                        <div>
+                          <div style={{fontSize:13.5,fontWeight:600,color:t.tx}}>{dateLabel}</div>
+                          <div style={{fontSize:11,color:t.muted,fontFamily:"monospace",marginTop:1}}>{file.name}</div>
+                        </div>
+                        <Btn size="sm" variant="secondary" onClick={() => loadHistoryFile(file)} disabled={isLoading} t={t}>
+                          {isLoading ? <><RefreshCw size={11} style={{animation:"spin 1s linear infinite"}}/> Loading...</> : "Load"}
+                        </Btn>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              {!historyLoading && !historyError && historyFiles.length === 0 && (
+                <div style={{padding:"20px 16px",textAlign:"center",color:t.muted,fontSize:13}}>No historical runs found.</div>
+              )}
+            </div>
+          )}
+
+          <div style={{display:"flex",gap:8,marginBottom:16,marginTop:8,flexWrap:"wrap"}}>
             {FILTERS.map(f => <Chip key={f} active={activeFilter===f} onClick={() => setActiveFilter(f)} t={t}>{f}</Chip>)}
           </div>
         </div>
