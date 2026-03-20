@@ -1,12 +1,14 @@
 FROM python:3.11-slim
 
-# Install TeX Live (core + fonts + extra for common packages)
+# Install XeLaTeX (required for fontspec/Carlito font) + Carlito font package
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-      texlive-latex-base \
+      texlive-xetex \
       texlive-fonts-recommended \
       texlive-latex-extra \
-      texlive-fonts-extra && \
+      texlive-fonts-extra \
+      fonts-crosextra-carlito && \
+    fc-cache -f -v && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -16,8 +18,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# Verify pdflatex is available at build time
-RUN pdflatex --version
+# Verify xelatex is available at build time
+RUN xelatex --version
 
 EXPOSE 8080
 

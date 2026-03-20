@@ -1,0 +1,166 @@
+%-------------------------
+% Resume - Siddardth Pathipaka
+% Version A: Manufacturing Engineer (Plant-Focused)
+%-------------------------
+\documentclass[letterpaper,9pt]{extarticle}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{fontspec}
+\usepackage{tabularx}
+
+\geometry{
+  letterpaper,
+  left=0.47in,
+  right=0.47in,
+  top=0.20in,
+  bottom=0.15in,
+  noheadfoot
+}
+
+\setmainfont{Carlito}[
+  BoldFont=Carlito Bold,
+  ItalicFont=Carlito Italic,
+  BoldItalicFont=Carlito Bold Italic
+]
+
+\pagestyle{empty}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor={rgb:red,5;green,99;blue,193},
+  urlcolor={rgb:red,5;green,99;blue,193},
+}
+\definecolor{linkblue}{RGB}{5,99,193}
+
+\titleformat{\section}{
+  \bfseries\fontsize{10pt}{12pt}\selectfont
+}{}{0em}{}[\vspace{-4pt}\rule{\textwidth}{0.5pt}]
+\titlespacing*{\section}{0pt}{4pt}{1pt}
+
+\setlist[itemize]{
+  leftmargin=0.25in,
+  labelsep=0.06in,
+  itemsep=0pt,
+  parsep=0pt,
+  topsep=0pt,
+  label=\textbullet
+}
+
+\newcommand{\expentry}[2]{%
+  \vspace{2pt}%
+  \noindent\begin{tabularx}{\textwidth}{@{}X r@{}}
+    {\fontsize{11pt}{13pt}\selectfont\textbf{#1}} & {\fontsize{11pt}{13pt}\selectfont\textbf{#2}}
+  \end{tabularx}%
+  \vspace{-1pt}%
+}
+
+\newcommand{\eduentry}[2]{%
+  \vspace{2pt}%
+  \noindent\begin{tabularx}{\textwidth}{@{}X r@{}}
+    {\fontsize{11pt}{13pt}\selectfont\textbf{#1}} & {\fontsize{11pt}{13pt}\selectfont\textbf{#2}}
+  \end{tabularx}%
+}
+
+\newcommand{\skillline}[2]{%
+  \noindent{\fontsize{9pt}{11pt}\selectfont\textbf{#1} #2}\par\vspace{1pt}%
+}
+
+\begin{document}
+
+%----------NAME----------
+\begin{center}
+  {\fontsize{14pt}{16pt}\selectfont\textbf{Siddardth Pathipaka}}\\[2pt]
+  {\fontsize{10pt}{12pt}\selectfont\textbf{siddardth1524@gmail.com \textbar\ +1(217) 255-0104 \textbar\ %
+  \href{https://github.com/siddardth7}{\color{linkblue}\underline{GitHub}} \textbar\ %
+  \href{https://linkedin.com/in/siddardth-pathipaka}{\color{linkblue}\underline{LinkedIn}} \textbar\ %
+  \href{https://siddardth7.github.io/portfolio/}{\color{linkblue}\underline{Portfolio}}}}
+\end{center}
+
+\vspace{-4pt}
+
+%----------SUMMARY----------
+\section{SUMMARY}
+{\fontsize{9pt}{11pt}\selectfont
+\textbf{%%SUMMARY%%}
+}
+
+%----------SKILLS----------
+\section{SKILLS}
+\vspace{1pt}
+%%SKILLS_BLOCK_START%%
+\skillline{Manufacturing \& Tooling:}{Fixture Design, Assembly Sequencing, Tooling Qualification, CNC Machining, GD\&T, CMM Inspection, Blueprint Reading, SolidWorks}
+\skillline{Process \& Quality Control:}{FMEA, SPC, 8D Root Cause Analysis, First Article Inspection, MRB Disposition, CAPA, Defect Reduction, Lean Principles}
+\skillline{Composite Processing:}{Prepreg Layup, Autoclave Processing, Vacuum Bagging, Cure Cycle Development, Out-of-Autoclave Methods}
+\skillline{Simulation \& Software:}{ABAQUS, ANSYS Fluent, FEA, MATLAB, Python, AutoCAD}
+%%SKILLS_BLOCK_END%%
+
+%----------EXPERIENCE----------
+\section{MANUFACTURING \& ENGINEERING EXPERIENCE}
+
+% Tata Boeing -- lead card for plant-focused
+\expentry{Manufacturing \& Quality Intern \textbar\ Tata Boeing Aerospace}{Oct 2022 \textbar\ Mar 2023}
+\begin{itemize}
+  \item Established \textbf{GD\&T-driven CMM inspection workflow} validating \textbf{450+} flight-critical aerospace components to \textbf{0.02 mm accuracy}, achieving \textbf{zero customer escapes} on GE and Boeing programs.
+  \item Ran \textbf{SPC-based investigation} that isolated \textbf{CNC tool wear} as primary driver of position tolerance failures, reducing recurring defect rate from \textbf{15\% to under 3\%}.
+  \item Drove cross-functional \textbf{MRB dispositions} using \textbf{8D root cause analysis} for GE engine components, cutting nonconformance cycle time by \textbf{22\%}.
+  \item Prevented \textbf{\textasciitilde\$3,000} in potential scrap by conducting \textbf{FMEA} on supplier nonconformance and supporting engineering team in securing use-as-is disposition.
+\end{itemize}
+
+% SAMPE
+\expentry{Manufacturing Lead \textbar\ SAMPE Composite Fuselage Program, UIUC}{Jan 2025 \textbar\ May 2025}
+\begin{itemize}
+  \item Built a \textbf{24-inch composite fuselage} using \textbf{prepreg layup} and \textbf{autoclave cure (275°F, 40 psi)}, achieving first-article success with under \textbf{2\% void content}.
+  \item Redesigned layup workflow by switching from individual ply wraps to a \textbf{continuous prepreg blanket}, eliminating delamination risk and improving \textbf{process repeatability}.
+  \item Implemented \textbf{FMEA} identifying vacuum bag leaks as highest-risk failure mode \textbf{(RPN=60)}, configuring automated leak detection that achieved \textbf{zero process deviations} across all cure cycles.
+  \item Used \textbf{FEA-validated stacking sequence} to make a production build decision that reduced part deflection by \textbf{38\%} at \textbf{150\% design load (1,000 lbf)}, eliminating a rework loop before the cure cycle.
+\end{itemize}
+
+% EQIC
+\expentry{Manufacturing Intern \textbar\ EQIC Dies \& Moulds Engineers Pvt. Ltd.}{Jun 2022 \textbar\ Aug 2022}
+\begin{itemize}
+  \item Worked directly with technicians across a \textbf{12-stage die manufacturing line} -- CNC machining, EDM, wire EDM, vacuum heat treatment, and final assembly -- building shop-floor fluency in multi-step production execution and machine setup.
+  \item Owned dimensional verification of cavity and core components to \textbf{±0.02 mm} against \textbf{GD\&T specifications} and confirmed \textbf{parting surface alignment ({>}80\% contact)} on \textbf{800-bar HPDC tooling} before release to production.
+\end{itemize}
+
+% Graduate Research
+\expentry{Graduate Research Assistant \textbar\ Beckman Institute, UIUC}{May 2024 \textbar\ Dec 2024}
+\begin{itemize}
+  \item Developed a \textbf{rapid out-of-autoclave cure method} reducing composite processing time from \textbf{8+ hours to under 5 minutes}, demonstrating scalable alternative to traditional autoclave production cycles.
+  \item Reduced composite process qualification time by \textbf{94\%} through validated computational modeling, enabling faster process parameter decisions without additional physical builds.
+\end{itemize}
+
+%----------PROJECTS----------
+\section{PROJECTS}
+
+\expentry{Brakes \& Suspension Lead \textbar\ Electric Solar Vehicle Championship (ESVC)}{Oct 2019 \textbar\ Apr 2023}
+\begin{itemize}
+  \item Led manufacturing and assembly of brake and suspension hardware for a \textbf{30-member} team using manual machining and welding, delivering \textbf{zero mechanical failures} and \textbf{7th place nationally}.
+  \item Achieved \textbf{180.43/200 on Cross Pad Test} (top handling score), validating manufactured brake and suspension geometry performance.
+\end{itemize}
+
+\expentry{Structures \& Manufacturing Lead \textbar\ SAE Aero Design Challenge}{Dec 2021 \textbar\ Sep 2022}
+\begin{itemize}
+  \item Planned \textbf{end-to-end assembly sequencing} for a \textbf{92-inch tapered balsa wing} including reinforcement design and \textbf{CG balancing at 25\% MAC}, coordinating fabrication across multiple sub-teams.
+\end{itemize}
+
+\expentry{Research Assistant \textbar\ VNR VJIET Composites Lab, Hyderabad}{Aug 2022 \textbar\ Apr 2023}
+\begin{itemize}
+  \item Fabricated \textbf{borosilicate glass-ceramic composite specimens} using \textbf{powder metallurgy} across \textbf{24 formulations}, achieving \textbf{27\% hardness improvement (548 to 699 HV)}.
+\end{itemize}
+
+%----------EDUCATION----------
+\section{EDUCATION}
+
+\eduentry{M.S., Aerospace Engineering \textbar\ University of Illinois at Urbana-Champaign}{Jan 2024 \textbar\ Dec 2025}
+\vspace{1pt}
+\hspace{0.12in}{\fontsize{9pt}{11pt}\selectfont\textbf{\textit{Relevant Coursework:}} \textit{Manufacturing Processes, Composite Materials, Materials Characterization, Structural Mechanics, Finite Element Methods}}
+
+\eduentry{B.Tech, Mechanical Engineering \textbar\ VNR VJIET}{Aug 2019 \textbar\ May 2023}
+
+\end{document}

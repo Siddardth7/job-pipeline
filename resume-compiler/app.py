@@ -78,13 +78,13 @@ def _compile_tex(tex_content: str) -> bytes:
 
         result = subprocess.run(
             [
-                "pdflatex",
+                "xelatex",
                 "-interaction=nonstopmode",
                 f"-output-directory={tmpdir}",
                 tex_path,
             ],
             capture_output=True,
-            timeout=30,
+            timeout=60,   # xelatex is slightly slower — increase timeout to 60s
             cwd=tmpdir,
         )
 
@@ -196,7 +196,7 @@ def generate():
     try:
         pdf_bytes = _compile_tex(patched_tex)
     except subprocess.TimeoutExpired:
-        return jsonify(error="Compilation timed out (30s)."), 504
+        return jsonify(error="Compilation timed out (60s)."), 504
     except RuntimeError as e:
         return jsonify(error="LaTeX compilation failed", log=str(e)), 500
 
