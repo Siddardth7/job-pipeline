@@ -224,6 +224,11 @@ def generate_cover_letter():
     if not company or not role:
         return jsonify(error="company and role are required"), 400
 
+    if len(summary) > 5_000:
+        return jsonify(error="summary exceeds maximum allowed length"), 400
+    if len(variant_focus) > 500:
+        return jsonify(error="variant_focus exceeds maximum allowed length"), 400
+
     cl_path = os.path.join(TEMPLATES_DIR, "cover_letter.tex")
     if not os.path.exists(cl_path):
         return jsonify(error="cover_letter.tex template not found"), 500
