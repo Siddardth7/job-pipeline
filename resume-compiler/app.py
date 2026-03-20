@@ -65,7 +65,7 @@ def _safe_filename_part(s: str, max_len: int = 25) -> str:
 
 def _compile_tex(tex_content: str) -> bytes:
     """
-    Write tex_content to a temp dir, compile with pdflatex, return PDF bytes.
+    Write tex_content to a temp dir, compile with xelatex, return PDF bytes.
     Raises RuntimeError with last 2000 chars of log on failure.
     Cleans up temp dir on exit.
     """
