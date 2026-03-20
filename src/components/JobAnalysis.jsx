@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { BarChart2, CheckCircle, Users, Copy, Check, Briefcase, Zap, SlidersHorizontal, Edit3 } from 'lucide-react';
 import { analyzeJob } from '../lib/scoring.js';
+import { buildCoverLetterPayload } from '../lib/coverLetter.js';
 
 const RESUMES = {
   A: {name:"Manufacturing & Plant Ops", skills:"GD&T, CMM, Fixtures"},
@@ -8,6 +9,8 @@ const RESUMES = {
   C: {name:"Quality & Materials", skills:"CMM, MRB, Composites"},
   D: {name:"Equipment & NPI", skills:"Tooling, PFMEA, DOE"}
 };
+
+const COMPILER_URL = import.meta.env.VITE_COMPILER_URL ?? "http://localhost:8080";
 
 function Card({children, t, style}) {
   return <div style={{background:t.card,border:`1px solid ${t.border}`,borderRadius:12,padding:20,boxShadow:t.shadow,...style}}>{children}</div>;
@@ -73,6 +76,8 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
   const [copied, setCopied] = useState("");
   const [showRaw1, setShowRaw1] = useState(false);
   const [showRaw2, setShowRaw2] = useState(false);
+  const [genLoading, setGenLoading] = useState(null); // null | "resume" | "coverletter"
+  const [genError, setGenError] = useState(null);
 
   // Sync from currentJob whenever the active job changes
   useEffect(() => {
@@ -84,7 +89,7 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
       setJd(currentJob.jd || "");
       setResult(currentJob.analysisResult || null);
     }
-  }, [currentJob?.id]);
+  }, [currentJob?.id, currentJob?.location, currentJob?.company, currentJob?.role]);
 
   // Persist JD and form fields back to currentJob so they survive page switches
   const syncToParent = useCallback((updates) => {
@@ -126,6 +131,62 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
 
   const copyText = (k, v) => {
     robustCopy(v).then(() => { setCopied(k); setTimeout(() => setCopied(""), 2500); }).catch(() => {});
+  };
+
+  const downloadFile = async (endpoint, payload, fallbackFilename) => {
+    setGenLoading(endpoint === "/generate" ? "resume" : "coverletter");
+    setGenError(null);
+    try {
+      const res = await fetch(`${COMPILER_URL}${endpoint}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.error ?? `HTTP ${res.status}`);
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      const cd = res.headers.get("Content-Disposition") ?? "";
+      const nameMatch = cd.match(/filename="?([^";\n]+)"?/);
+      a.download = nameMatch ? nameMatch[1] : fallbackFilename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      setGenError(err.message);
+    } finally {
+      setGenLoading(null);
+    }
+  };
+
+  const downloadResume = () => {
+    if (!result) return;
+    downloadFile(
+      "/generate",
+      {
+        variant: result.recommendedResume,
+        summary: result.mod1_summary,
+        skills_latex: result.mod2_skills,
+        company: co,
+        role: role,
+      },
+      `Resume_${result.recommendedResume}_${co || "Company"}.pdf`
+    );
+  };
+
+  const downloadCoverLetter = () => {
+    if (!result) return;
+    const payload = buildCoverLetterPayload({ result, company: co, role });
+    downloadFile(
+      "/generate-cover-letter",
+      payload,
+      `CoverLetter_${co || "Company"}.pdf`
+    );
   };
 
   const handleCompleteAndLog = () => {
@@ -243,6 +304,43 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
 
           <div style={{background:t.redL,border:`1px solid ${t.redBd}`,borderRadius:8,padding:"10px 16px",marginBottom:16,fontSize:12.5,fontWeight:700,color:t.red}}>
             CRITICAL: Only TWO modifications permitted — Summary and Skills only. Experience and project bullets are LOCKED.
+          </div>
+
+          {genError && (
+            <div style={{
+              background: t.redL,
+              border: `1px solid ${t.redBd}`,
+              borderRadius: 8,
+              padding: "10px 16px",
+              marginBottom: 12,
+              fontSize: 12.5,
+              color: t.red,
+              fontWeight: 600
+            }}>
+              Generation failed: {genError}. Check that the compilation service is running.
+            </div>
+          )}
+          <div style={{display:"flex",gap:10,marginBottom:16,flexWrap:"wrap",alignItems:"center"}}>
+            <Btn
+              onClick={downloadResume}
+              disabled={genLoading !== null}
+              t={t}
+            >
+              {genLoading === "resume" ? "Compiling PDF\u2026" : "\u2b07 Download Resume PDF"}
+            </Btn>
+            <Btn
+              onClick={downloadCoverLetter}
+              disabled={genLoading !== null}
+              variant="secondary"
+              t={t}
+            >
+              {genLoading === "coverletter" ? "Generating\u2026" : "\u2b07 Download Cover Letter"}
+            </Btn>
+            {genLoading && (
+              <span style={{fontSize:12,color:t.muted,fontStyle:"italic"}}>
+                First generation may take a few seconds if the service just started\u2026
+              </span>
+            )}
           </div>
 
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:16}}>
