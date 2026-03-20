@@ -1,0 +1,944 @@
+[
+  {
+    "job_url": "https://rivian.com/careers/98765",
+    "company_name": "Rivian",
+    "job_title": "Process Engineer Entry Level",
+    "seen_date": "2026-03-06"
+  },
+  {
+    "job_url": "https://spacex.com/jobs/12345",
+    "company_name": "SpaceX",
+    "job_title": "Manufacturing Engineer I",
+    "seen_date": "2026-03-06"
+  },
+  {
+    "job_url": "https://talents.vaia.com/companies/rocket-lab-usa/manufacturing-engineer-ii-composites-34166917/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Rocket Lab USA",
+    "job_title": "Manufacturing Engineer II, Composites",
+    "seen_date": "2026-03-06"
+  },
+  {
+    "job_url": "https://www.lockheedmartinjobs.com/job/littleton/composites-manufacturing-engineer-sr/694/92430876400?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Lockheed Martin",
+    "job_title": "Composites Manufacturing Engineer Sr",
+    "seen_date": "2026-03-06"
+  },
+  {
+    "job_url": "https://tallo.com/talent/job/engineering/manufacturing-engineer/md/middle-river/manufacturing-engineer-ii-co-0b1fb9b2?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Rocket Lab",
+    "job_title": "Composite Manufacturing Engineers",
+    "seen_date": "2026-03-06"
+  },
+  {
+    "job_url": "https://tallo.com/talent/job/engineering/civil-engineer/dc/washington/senior-bridge-inspection-engin-809143b2?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "WSP USA",
+    "job_title": "Bridge Inspectors",
+    "seen_date": "2026-03-06"
+  },
+  {
+    "job_url": "https://www.jobzmall.com/boeing/job/composites-manufacturing-engineers?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Boeing",
+    "job_title": "Composites Manufacturing Engineers",
+    "seen_date": "2026-03-07"
+  },
+  {
+    "job_url": "https://careers.regalrexnord.com/en/jobs/r26_00861/manufacturing-engineer-i/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Regal Rexnord",
+    "job_title": "Manufacturing Engineer I",
+    "seen_date": "2026-03-07"
+  },
+  {
+    "job_url": "https://www.google.com/search?q=jobs&gl=us&hl=en&udm=8#vhid=vt%3D20/docid%3D_dJXNBKLBzYKen4WAAAAAA%3D%3D&vssid=jobs-detail-viewer",
+    "company_name": "AvL Technologies",
+    "job_title": "Manufacturing Engineer - Composites",
+    "seen_date": "2026-03-07"
+  },
+  {
+    "job_url": "https://jobright.ai/jobs/info/69a8cd8779f3f4037f434eab?utm_source=1014&utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Intel",
+    "job_title": "APTM Yield Defect Metrology Engineer",
+    "seen_date": "2026-03-07"
+  },
+  {
+    "job_url": "https://us.bebee.com/job/4231b63d95cfe313b2fa0a4e776e4d76?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Great Lakes Engineering Group",
+    "job_title": "Bridge Inspection Engineer Level 2",
+    "seen_date": "2026-03-07"
+  },
+  {
+    "job_url": "https://tallo.com/talent/job/engineering/mechanical-engineer/ky/louisville/senior-tooling-engineer-10296759?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Haier US Appliance Solutions, Inc.",
+    "job_title": "Tooling Engineers",
+    "seen_date": "2026-03-07"
+  },
+  {
+    "job_url": "https://boards.greenhouse.io/relativity/jobs/8381951002?gh_jid=8381951002",
+    "company_name": "Relativity Space",
+    "job_title": "Build Quality Engineer II",
+    "seen_date": "2026-03-08"
+  },
+  {
+    "job_url": "https://careers.dupont.com/us/en/job/246492W/2026-Entry-Level-Engineering-Direct-Hire-Opportunities?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Dupont",
+    "job_title": "2026 Entry Level Engineering Direct Hire Opportunities",
+    "seen_date": "2026-03-08"
+  },
+  {
+    "job_url": "https://jobs.8vc.com/companies/icomat-2/jobs/69422223-composites-manufacturing-engineer?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "iCOMAT",
+    "job_title": "Composites Manufacturing Engineer",
+    "seen_date": "2026-03-08"
+  },
+  {
+    "job_url": "https://www.pgcareers.com/eu/en/job/R000142178/Manufacturing-Physical-Distribution-Process-Engineer-Mehoopany?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "PGBPGNGLOBAL",
+    "job_title": "Manufacturing / Physical Distribution Process Engineer - Mehoopany",
+    "seen_date": "2026-03-08"
+  },
+  {
+    "job_url": "https://www.disabledperson.com/jobs/70649865-manufacturing-engineer-composites?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Ajulia Executive Search",
+    "job_title": "Manufacturing Engineer(Composites)",
+    "seen_date": "2026-03-08"
+  },
+  {
+    "job_url": "https://job-boards.greenhouse.io/divergent/jobs/5081611008",
+    "company_name": "Divergent Technologies",
+    "job_title": "Advanced Manufacturing Engineer",
+    "seen_date": "2026-03-08"
+  },
+  {
+    "job_url": "https://job-boards.greenhouse.io/divergent/jobs/5031249008",
+    "company_name": "Divergent Technologies",
+    "job_title": "Metrology Engineer",
+    "seen_date": "2026-03-08"
+  },
+  {
+    "job_url": "https://www.pgcareers.com/global/en/job/R000126185/Chemical-Process-Engineer-Manufacturing?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "PGBPGNGLOBAL",
+    "job_title": "Chemical Process Engineer - Manufacturing",
+    "seen_date": "2026-03-08"
+  },
+  {
+    "job_url": "https://boards.greenhouse.io/relativity/jobs/8423422002?gh_jid=8423422002",
+    "company_name": "Relativity Space",
+    "job_title": "Additive Manufacturing Engineer I",
+    "seen_date": "2026-03-09"
+  },
+  {
+    "job_url": "https://job-boards.greenhouse.io/lucidmotors/jobs/4953758007",
+    "company_name": "Lucid Motors",
+    "job_title": "Intern, Industrial Engineering, Summer 2026",
+    "seen_date": "2026-03-09"
+  },
+  {
+    "job_url": "https://job-boards.greenhouse.io/ottoaviation/jobs/5099523008",
+    "company_name": "Otto Aerospace",
+    "job_title": "Associate Manufacturing Engineer, AFA (Aft Fuselage Assembly)",
+    "seen_date": "2026-03-09"
+  },
+  {
+    "job_url": "https://job-boards.greenhouse.io/ottoaviation/jobs/5101228008",
+    "company_name": "Otto Aerospace",
+    "job_title": "Associate Manufacturing Engineer, Empennage",
+    "seen_date": "2026-03-09"
+  },
+  {
+    "job_url": "https://job-boards.greenhouse.io/ottoaviation/jobs/5101528008",
+    "company_name": "Otto Aerospace",
+    "job_title": "Associate Manufacturing Engineer, Fuselage Cabin Assembly",
+    "seen_date": "2026-03-09"
+  },
+  {
+    "job_url": "https://job-boards.greenhouse.io/ottoaviation/jobs/5101828008",
+    "company_name": "Otto Aerospace",
+    "job_title": "Associate Manufacturing Engineer, Fuselage Cockpit Assembly",
+    "seen_date": "2026-03-09"
+  },
+  {
+    "job_url": "https://job-boards.greenhouse.io/ottoaviation/jobs/5118648008",
+    "company_name": "Otto Aerospace",
+    "job_title": "Associate Manufacturing Engineer, LASAR (Robotics)",
+    "seen_date": "2026-03-09"
+  },
+  {
+    "job_url": "https://job-boards.greenhouse.io/ottoaviation/jobs/5104921008",
+    "company_name": "Otto Aerospace",
+    "job_title": "Associate Manufacturing Engineer, Wing Assembly",
+    "seen_date": "2026-03-09"
+  },
+  {
+    "job_url": "https://job-boards.greenhouse.io/ottoaviation/jobs/5016267008",
+    "company_name": "Otto Aerospace",
+    "job_title": "Associate Engineer, Materials, Processes & Structural Test",
+    "seen_date": "2026-03-09"
+  },
+  {
+    "job_url": "https://job-boards.greenhouse.io/rebuildmanufacturing/jobs/4405546005",
+    "company_name": "Re:Build Manufacturing",
+    "job_title": "Composite Resources Project Engineer Expression of Interest",
+    "seen_date": "2026-03-09"
+  },
+  {
+    "job_url": "https://job-boards.greenhouse.io/rebuildmanufacturing/jobs/4643638005",
+    "company_name": "Re:Build Manufacturing",
+    "job_title": "Composite Technician",
+    "seen_date": "2026-03-09"
+  },
+  {
+    "job_url": "https://job-boards.greenhouse.io/rebuildmanufacturing/jobs/4528270005",
+    "company_name": "Re:Build Manufacturing",
+    "job_title": "Experienced Composite Technician",
+    "seen_date": "2026-03-09"
+  },
+  {
+    "job_url": "https://job-boards.greenhouse.io/ottoaviation/jobs/5118890008",
+    "company_name": "Otto Aerospace",
+    "job_title": "Engineer, Supplier Quality",
+    "seen_date": "2026-03-09"
+  },
+  {
+    "job_url": "https://boards.greenhouse.io/redwoodmaterials/jobs/5737877004?gh_jid=5737877004",
+    "company_name": "Redwood Materials",
+    "job_title": "Compliance Quality Engineer, Energy Storage",
+    "seen_date": "2026-03-09"
+  },
+  {
+    "job_url": "https://boards.greenhouse.io/redwoodmaterials/jobs/5737890004?gh_jid=5737890004",
+    "company_name": "Redwood Materials",
+    "job_title": "Manufacturing Engineer, Energy Storage",
+    "seen_date": "2026-03-09"
+  },
+  {
+    "job_url": "https://boards.greenhouse.io/redwoodmaterials/jobs/5737873004?gh_jid=5737873004",
+    "company_name": "Redwood Materials",
+    "job_title": "Manufacturing Quality Engineer, Energy Storage",
+    "seen_date": "2026-03-09"
+  },
+  {
+    "job_url": "https://ast-science.com/company/careers/?gh_jid=4633455005",
+    "company_name": "AST SpaceMobile",
+    "job_title": "Associate Flight Assurance Manufacturing Engineer",
+    "seen_date": "2026-03-09"
+  },
+  {
+    "job_url": "https://jobs.digitalhire.com/job-listing/opening/3XcOWpAlU2jKeAOLJA47rf?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Boeing",
+    "job_title": "Entry Level Industrial Engineer",
+    "seen_date": "2026-03-10"
+  },
+  {
+    "job_url": "https://us.bebee.com/job/01b6991d45dca27e03567ddb475e7439?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Progress Rail",
+    "job_title": "Engineer I",
+    "seen_date": "2026-03-10"
+  },
+  {
+    "job_url": "https://careers.dupont.com/tw/zh/job/246492W/2026-Entry-Level-Engineering-Direct-Hire-Opportunities?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Dupont",
+    "job_title": "2026 Entry Level Engineering Direct Hire Opportunities",
+    "seen_date": "2026-03-10"
+  },
+  {
+    "job_url": "https://jooble.org/rjdp/-872370219212710370?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Zachry Group",
+    "job_title": "Process Engineering - Entry Level",
+    "seen_date": "2026-03-10"
+  },
+  {
+    "job_url": "https://us.bebee.com/job/a2239ceb29e117ce304076787b58a811?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "LanceSoft",
+    "job_title": "Engineer I",
+    "seen_date": "2026-03-10"
+  },
+  {
+    "job_url": "https://lucaciuti.com/jobs/job/chemical-process-engineer-at-the-goodyear-tire-and-rubber-company-beaumont-tx-V3dWMzBKcENoQUZBbS9kT3hkd2lZUFFFeXc9PQ==?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "The Goodyear Tire & Rubber Company",
+    "job_title": "Chemical Process Engineer at The Goodyear Tire & Rubber Company Beaumont, TX",
+    "seen_date": "2026-03-10"
+  },
+  {
+    "job_url": "https://boards.greenhouse.io/redwoodmaterials/jobs/5823614004?gh_jid=5823614004",
+    "company_name": "Redwood Materials",
+    "job_title": "Field Quality Engineer, Energy Storage",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://us.bebee.com/job/995ae72c7a6e5d0d49decf18bf1cfc21?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Boeing",
+    "job_title": "Cutter Composite Materials",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://www.climatetechlist.com/job/tesla-industrial-engineer-energy-ic9rIcwt30fwf2?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Tesla",
+    "job_title": "Industrial Engineer, Energy",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://www.adzuna.com/details/5661292271?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "The Pivot Group Network",
+    "job_title": "Tooling Engineer - Holt Area",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://www.careers-page.com/the-pivot-group-careers/job/3WR86YWW?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "The Pivot Group Network",
+    "job_title": "Tooling Engineer - Kentwood Area",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://us.jobrapido.com/jobpreview/7564117106157944832?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "The Pivot Group Network",
+    "job_title": "Tooling Engineer - Battle Creek Area",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://jobs.lever.co/beta/68606840-68bd-4510-9b4c-88979537c804",
+    "company_name": "Beta Technologies",
+    "job_title": "Design Engineer - Structure Integration | NPI Engineering",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://jobs.lever.co/beta/b9a09a53-a655-4240-af97-5873abe718e2",
+    "company_name": "Beta Technologies",
+    "job_title": "Design Engineer - System Integration | NPI Engineering",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://www.careers-page.com/the-pivot-group-careers/job/4RV489RV?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "The Pivot Group Network",
+    "job_title": "Tooling Engineer - Wyoming Area",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://jobs.lever.co/hermeus/6a817380-3349-41ee-bcc7-6bca6c63648d",
+    "company_name": "Hermeus",
+    "job_title": "Avionics Manufacturing Engineer",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://jobs.lever.co/hermeus/cc641245-38c3-4c44-8557-db3baf1498fe",
+    "company_name": "Hermeus",
+    "job_title": "Build Engineer",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://jobs.lever.co/hermeus/202fb9e1-6ad6-4d91-bb72-3ef0e0463b5b",
+    "company_name": "Hermeus",
+    "job_title": "Fluids Manufacturing Engineer",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://jobs.lever.co/beta/aab963dd-9061-48ad-80c2-143ec1d06144",
+    "company_name": "Beta Technologies",
+    "job_title": "Business Process Engineer | Business Processes",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://westcarrollton.us.expertini.com/job/product-quality-engineer-entry-level-west-carrollton-corbus-269aa28ae30e/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Corbus",
+    "job_title": "Product Quality Engineer (Entry Level)",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://jobs.stevenagefc.com/jobs/entry-level-manufacturing-engineer-depew-new-york/2663356502-2/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "PCB Piezotronics, Inc.",
+    "job_title": "Entry-Level Manufacturing Engineer",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://us.jobrapido.com/jobpreview/8957004824503648256?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "WestRock Company",
+    "job_title": "Entry-Level Process Engineer: Rotational Paperboard Training",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://us.bebee.com/job/3b3c6f84affb4c8eabc5598dff496bf8?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "INDEPENDENT CAN COMPANY",
+    "job_title": "Tooling Engineer II",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://careers.actalentservices.com/ca/fr/job/JP-005882646/Quality-Engineer-II-Customer-Quality-Engineer?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Actalent",
+    "job_title": "Quality Engineer II / Customer Quality Engineer",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://us.bebee.com/job/3ef45dc176b3e58eaa86bf3044604403?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Florida International University",
+    "job_title": "Associate Professor in Mechanical and Materials Engineering",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://jobs.stevenagefc.com/jobs/entry-level-manufacturing-engineer-columbus-mississippi/2663360692-2/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Airbus",
+    "job_title": "Entry-Level Manufacturing Engineer",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://abbott.wd5.myworkdayjobs.com/en-US/abbottcareers2/job/United-States---California---Pleasanton/Quality-Engineer-II--Risk-Management_31144004?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "3205 St. Jude Medical, Cardiology Division, I",
+    "job_title": "Quality Engineer II, Risk Management",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://www.jobs.abbott/us/en/job/31143637/Engineer-II-Software-Quality?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Abbott Laboratories",
+    "job_title": "Engineer II Software Quality",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://talents.vaia.com/companies/jobot/quality-engineer-32465713/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Entegee",
+    "job_title": "Composites Quality Engineer",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://www.tealhq.com/job/process-engineer_7ea1a195659fb5efa166a71f905e89e4abf15?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Crane Company",
+    "job_title": "Process Engineer",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://jobs.lever.co/loftorbital/181e4924-ed45-47eb-b27b-d9bc6c8c52e2",
+    "company_name": "Loft Orbital",
+    "job_title": "Manufacturing Engineer",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://www.recruit.net/job/tooling-engineer-jobs/0F4D8CC12C4B3C62?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Acara Solutions, An Aleron Company",
+    "job_title": "Tooling Engineer",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://us.bebee.com/job/bc2726ddd854756e080a5cc5d204cef7?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Global Connect Technologies",
+    "job_title": "Tooling Engineer",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://us.bebee.com/job/bdf9f59d55e77e0afa7bd4add7769cf1?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "W3Global Inc.",
+    "job_title": "NPI Engineer",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://jooble.org/jdp/-2134298241859829950?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Stellantis",
+    "job_title": "Industrial Engineer",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://job-boards.anz.greenhouse.io/dawnaerospace/jobs/4000876201",
+    "company_name": "Dawn Aerospace",
+    "job_title": "Manufacturing Engineer \u2013 CNC Programmer Operator",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://us.bebee.com/job/bf31ab0ffaa6d018d3750c7e10d59ad2?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Schluter Systems L.P",
+    "job_title": "Manufacturing Process Engineer",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://jobs.womenforhire.com/job/usa/campbell-oh/manufacturing-engineer-411792/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Aegis Manufacturing & Engineering",
+    "job_title": "Manufacturing Engineer",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://jobs.lever.co/loftorbital/949981ab-8420-4a1f-9003-7fefb0819280",
+    "company_name": "Loft Orbital",
+    "job_title": "Production Engineer",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://salutemyjob.com/jobs/quality-engineer-manufacturing-columbia-south-carolina/2660512307-2/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Meta",
+    "job_title": "Quality Engineer - Manufacturing",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://us.bebee.com/job/967b70c8fd8f98953874ef57166dfdbe?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Hired by Matrix",
+    "job_title": "Supplier Quality Engineer",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://salutemyjob.com/jobs/supplier-quality-engineer-m-w-d-salisbury-north-carolina/2662327855-2/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "JABIL CIRCUIT, INC",
+    "job_title": "Supplier Quality Engineer (m/w/d)",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://us.bebee.com/job/26fe9046d3f1f632d4b4dd889e3650d0?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Computer Task Group, Inc",
+    "job_title": "Quality Engineer Automation Engineer",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://us.bebee.com/job/04ed5e2b5f54e996855f5e892e1af676?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Apetan Consulting LLC",
+    "job_title": "Pharmaceutical Process Engineer",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://www.usajobs.gov/job/860576400?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "NAVAIRWARCENAC DIV",
+    "job_title": "SUPERVISORY INDUSTRIAL ENGINEER/OPERATIONS RESEARCH ANALYST",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://job-boards.anz.greenhouse.io/dawnaerospace/jobs/4000878201",
+    "company_name": "Dawn Aerospace",
+    "job_title": "Satellite RF Hardware & Operations Engineer",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://careers.honda.com/us/en/job/9255/Manufacturing-Engineer?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Honda Dev. and Mfg. of Am.,LLC",
+    "job_title": "Manufacturing Engineer",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://www.careers-page.com/the-pivot-group-careers/job/W3685R6W?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "The Pivot Group Network",
+    "job_title": "Tooling Engineer - DeWitt Area",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://www.careers-page.com/the-pivot-group-careers/job/4RV48987?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "The Pivot Group Network",
+    "job_title": "Tooling Engineer - Plainwell Area",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://us.bebee.com/job/43a528aede73f7012cd5e61bbb243c8c?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "The Pivot Group Network",
+    "job_title": "Tooling Engineer",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://jooble.org/jdp/-4966860717622497669?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "The Pivot Group Network",
+    "job_title": "Tooling Engineer - Rockford Area",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://www.careers-page.com/the-pivot-group-careers/job/V638Y946?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "The Pivot Group Network",
+    "job_title": "Tooling Engineer - Ludington Area",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://lensa.com/job-v1/the-pivot-group/east-lansing-mi/tooling-engineer/3878e89822599e004c75ab3cbf9d2846?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "The Pivot Group Network",
+    "job_title": "Tooling Engineer - East Lansing Area",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://jooble.org/jdp/-4607798891139245354?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Boeing Co",
+    "job_title": "Aerospace MRB Engineer: Material Review & Root Cause",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://www.snagajob.com/jobs/1205934505?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "DuPont",
+    "job_title": "2026 Entry Level Engineering Direct Hire Opportunities - Full-time",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://www.disabledperson.com/jobs/70720300-manufacturing-engineer-entry-level?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "DC Fabricators",
+    "job_title": "Manufacturing Engineer - entry level",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://us.bebee.com/job/2bc4e6ccd26eac09399531fdfb9ec716?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "ATR International",
+    "job_title": "Quality Engineer I",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://jobs.stevenagefc.com/jobs/entry-level-manufacturing-engineer-redmond-washington/2663369065-2/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Terex Corporation",
+    "job_title": "Entry-Level Manufacturing Engineer",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://us.bebee.com/job/fdf95e9336a4ae427b0dae8de291b811?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Detroit Thermal Systems, LLC - Tier 1 Automotive Supplier",
+    "job_title": "Tooling Engineer, Plastic Injection Molding",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://us.bebee.com/job/2dc4559cd1215835641156f8d6e4a79b?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "AirBurners",
+    "job_title": "Manufacturing Engineer",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://jobs.thermofisher.com/global/en/job/R-01334377/Process-Engineer?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Thermo Fisher Scientific",
+    "job_title": "Process Engineer",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://bandana.com/jobs/2264e612-277b-43c3-aaa3-4cb89e1437b4?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Procter & Gamble",
+    "job_title": "Warehouse Operations Process Engineer",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://careers.envistaco.com/job/23122505/quality-engineer-mahwah-nj/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Envista",
+    "job_title": "Quality Engineer",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://jobs.ksnt.com/jobs/manufacturing-process-engineer-lebanon-pennsylvania/2663258148-2/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "PRL Industries, Inc.",
+    "job_title": "Manufacturing Process Engineer",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://jobs.smartrecruiters.com/AveryDennison/744000113808419-process-engineer?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Avery Dennison",
+    "job_title": "Process Engineer",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://careers.thehersheycompany.com/job/Hershey-Future-Opportunities-Process-Engineering-Co-Op-%28Fall-2026%29-PA-17033/1318094900/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "The Hershey Company",
+    "job_title": "Future Opportunities Process Engineering Co-Op (Fall 2026)",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://www.talent.com/view?id=610079398943331170&utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "VirtualVocations",
+    "job_title": "Quality Engineer Automation",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://tdbank.jobs/mount-laurel-nj/2026-summer-internship-program-platforms-technology-quality-engineer/7D24F173CF034F8EA49527B4AB7BFFE8/job/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "TD Bank",
+    "job_title": "2026 Summer Internship Program - Platforms & Technology - Quality Engineer",
+    "seen_date": "2026-03-11"
+  },
+  {
+    "job_url": "https://careers.actalentservices.com/us/en/job/JP-005886461/Entry-Level-Manufacturing-Engineer?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Actalent",
+    "job_title": "Entry Level Manufacturing Engineer",
+    "seen_date": "2026-03-12"
+  },
+  {
+    "job_url": "https://bandana.com/jobs/b3a13414-ee15-40ed-a759-cc3f94c29bfb?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Freudenberg Group",
+    "job_title": "Process Engineer Intern",
+    "seen_date": "2026-03-12"
+  },
+  {
+    "job_url": "https://www.paycomonline.net/v4/ats/web.php/portal/801431A71C4BD00C53844864E2DB4B87/jobs/320022?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Independent Can Company",
+    "job_title": "Tooling Engineer II",
+    "seen_date": "2026-03-12"
+  },
+  {
+    "job_url": "https://www.tealhq.com/job/manufacturing-process-engineer-i_7ea1a2393c09a20c98299eb975ee55b2860f6?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Indium Corporation",
+    "job_title": "Manufacturing Process Engineer I",
+    "seen_date": "2026-03-12"
+  },
+  {
+    "job_url": "https://us.jobrapido.com/jobpreview/7376651473133764608?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Medium",
+    "job_title": "Entry-Level Chemical Process Engineer: Rare Earth Lab",
+    "seen_date": "2026-03-12"
+  },
+  {
+    "job_url": "https://us.bebee.com/job/07b3c6aa52b5b74a9e9bb1d4d3474822?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Michael Page International Inc.",
+    "job_title": "Tool Design Manufacturing Engineer",
+    "seen_date": "2026-03-12"
+  },
+  {
+    "job_url": "https://www.disabledperson.com/jobs/70524649-manufacturing-engineer-controls?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Renewyx",
+    "job_title": "Manufacturing Engineer - Controls",
+    "seen_date": "2026-03-12"
+  },
+  {
+    "job_url": "https://jobs.pridestaff.com/job/PRIDUS575956/Mold-Tooling-Engineer?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "PrideStaff",
+    "job_title": "Mold Tooling Engineer",
+    "seen_date": "2026-03-12"
+  },
+  {
+    "job_url": "https://jobs.stevenagefc.com/jobs/manufacturing-engineer-onsite-phoenix-arizona/2663354811-2/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Moog, Inc.",
+    "job_title": "Manufacturing Engineer - Onsite",
+    "seen_date": "2026-03-12"
+  },
+  {
+    "job_url": "https://jobs.stevenagefc.com/jobs/manufacturing-engineer-defense-systems-mesa-arizona/2663364522-2/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Nammo Defense Systems, Inc",
+    "job_title": "Manufacturing Engineer - Defense Systems",
+    "seen_date": "2026-03-12"
+  },
+  {
+    "job_url": "https://www.theladders.com/job/manufacturing-engineer-mesa-i-super-radiator-coils-mesa-az_85805696?ir=1&utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Super Radiator Coils",
+    "job_title": "Manufacturing Engineer - Mesa I",
+    "seen_date": "2026-03-12"
+  },
+  {
+    "job_url": "https://us.bebee.com/job/800bddbdd5c1731557ec5dda30f09a8c?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Qcells",
+    "job_title": "Field Quality Engineer",
+    "seen_date": "2026-03-12"
+  },
+  {
+    "job_url": "https://careercenter.iapmo.org/job/process-engineer-amherst-ma-1e2f1607a7073bad3e21b19fde96fdefb?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+    "company_name": "Myrias Optics",
+    "job_title": "Process Engineer",
+    "seen_date": "2026-03-12"
+  },
+  {
+    "job_url": "https://careers.beyondgravity.com/BeyondGravity/job/Trinity-Associate-Manufacturing-Engineer-AL-35673/1288281901/",
+    "company_name": "Beyond Gravity",
+    "job_title": "Associate Manufacturing Engineer",
+    "seen_date": "2026-03-12"
+  },
+  {
+    "job_url": "https://envista.wd1.myworkdayjobs.com/envistacareers/job/United-States-of-America--California--Yorba-Linda/CNC-Manufacturing-Engineer_R5025677?source=LinkedIn",
+    "company_name": "Nobel Biocare",
+    "job_title": "CNC Manufacturing Engineer",
+    "seen_date": "2026-03-12"
+  },
+  {
+    "job_url": "https://100hires.com/j/53DkKsy",
+    "company_name": "Aegis Manufacturing & Engineering",
+    "job_title": "Tooling Engineer",
+    "seen_date": "2026-03-12"
+  },
+  {
+    "job_url": "https://jobs-legrand.icims.com/jobs/9892/product-quality-engineer/job",
+    "company_name": "Legrand, North America",
+    "job_title": "Product Quality Engineer",
+    "seen_date": "2026-03-12"
+  },
+  {
+    "job_url": "https://job-boards.greenhouse.io/figureai/jobs/4662470006",
+    "company_name": "Figure",
+    "job_title": "Quality Engineering Intern [Summer 2026]New",
+    "seen_date": "2026-03-12"
+  },
+  {
+    "job_url": "https://jobs.excelitas.com/job/Boulder-Optical-Assembly-Process-Engineer-CO-80301/1232358101/?feedId=418033&source=linkedin&utm_source=LinkedInJobPostings",
+    "company_name": "Excelitas Technologies Corp.",
+    "job_title": "Optical Assembly Process Engineer",
+    "seen_date": "2026-03-12"
+  },
+  {
+    "job_url": "https://www.asml.com/en/careers/find-your-job/embedded-software-quality-engineer-j00336332?source=LinkedIn",
+    "company_name": "ASML",
+    "job_title": "Embedded Software Quality Engineer",
+    "seen_date": "2026-03-12"
+  },
+  {
+    "job_url": "https://www.capgemini.com/jobs/432393-en_US_SAPBTP/",
+    "company_name": "Capgemini",
+    "job_title": "Quality Engineer (Automation + AI Testing)",
+    "seen_date": "2026-03-12"
+  },
+  {
+    "job_url": "https://www.applicantpro.com/openings/elakeside/jobs/4019983-44993",
+    "company_name": "Lakeside Manufacturing, Inc",
+    "job_title": "Industrial Engineer",
+    "seen_date": "2026-03-12"
+  },
+  {
+    "job_url": "https://talents.hikma.com/job/Columbus-Process-Engineer-OH-43228/1372241933/",
+    "company_name": "Hikma",
+    "job_title": "Process Engineer",
+    "seen_date": "2026-03-12"
+  },
+  {
+    "job_url": "https://recruiting.ultipro.com/UNI1046UFMB/JobBoard/d8f90aad-672e-4f0a-bbc1-a17aa8cf1111/OpportunityDetail?opportunityId=61c0fe10-58db-4727-94c2-ac0839ab3f2a&postingId=9253651d-1177-4f2c-bf5f-3fb9dbe52f34",
+    "company_name": "Atlantic Union Bank",
+    "job_title": "Process Engineer",
+    "seen_date": "2026-03-12"
+  },
+  {
+    "job_url": "https://placer.ai/company/we-are-hiring/?gh_jid=7660276003",
+    "company_name": "Placer.ai",
+    "job_title": "Production Engineer",
+    "seen_date": "2026-03-12"
+  },
+  {
+    "job_url": "https://job-boards.greenhouse.io/ottoaviation/jobs/5138354008",
+    "company_name": "Otto Aviation",
+    "job_title": "Associate Engineer, Non-Metallic M&P",
+    "seen_date": "2026-03-13"
+  },
+  {
+    "job_url": "https://www.tesla.com/careers/search/job/265075?source=LinkedIn",
+    "company_name": "Tesla",
+    "job_title": "Process Engineer, Assembly",
+    "seen_date": "2026-03-13"
+  },
+  {
+    "job_url": "https://efds.fa.em5.oraclecloud.com/hcmUI/CandidateExperience/en/job/56248/?utm_medium=jobboard&utm_source=linkedin",
+    "company_name": "Ford Motor Company",
+    "job_title": "ICE Powertrain & Thermal Systems Engineering (IPTSE) Quality Engineer \u2013 High Time In Service (HTIS) Reliability",
+    "seen_date": "2026-03-13"
+  },
+  {
+    "job_url": "https://jsv3.recruitics.com/redirect?rx_cid=3374&rx_jobId=JP-005887555&rx_url=https%3A%2F%2Fars2.equest.com%2F%3Ficid%3Dlinkedin_recruitics%26response_id%3Deed656d79facb62e7c203d551561b056%26rx_campaign%3DLinkedin1%26rx_ch%3Dconnector%26rx_group%3D125337%26rx_id%3Dd4d60cdb-1e2f-11f1-91c0-61edb2b798eb%26rx_job%3DJP-005887555%26rx_medium%3Dpost%26rx_r%3Dnone%26rx_source%3DLinkedin%26rx_ts%3D20260313T061204Z%26rx_vp%3Dslots",
+    "company_name": "Actalent",
+    "job_title": "Quality Engineer",
+    "seen_date": "2026-03-13"
+  },
+  {
+    "job_url": "https://jobs.dayforcehcm.com/en-US/kindeva/CANDIDATEPORTAL/jobs/12350?src=LinkedIn",
+    "company_name": "Kindeva Drug Delivery",
+    "job_title": "Manufacturing Engineer II",
+    "seen_date": "2026-03-13"
+  },
+  {
+    "job_url": "https://careers.equinox-eng.com/postings/431d9a0a-54d3-4093-9a16-7690c2516ed0",
+    "company_name": "Equinox Engineering Ltd.",
+    "job_title": "Junior Process Engineer (Houston)",
+    "seen_date": "2026-03-13"
+  },
+  {
+    "job_url": "https://careers.tsi.com/job/Auburn-AU-Manufacturing-Engineer-I-IL-62615/1359449700/?utm_source=LINKEDIN&utm_medium=referrer",
+    "company_name": "TSI Incorporated",
+    "job_title": "AU-Manufacturing Engineer I",
+    "seen_date": "2026-03-13"
+  },
+  {
+    "job_url": "https://jobs.smartrecruiters.com/CRB/744000102336311-process-utilities-engineer-i",
+    "company_name": "CRB",
+    "job_title": "Process Utilities Engineer I",
+    "seen_date": "2026-03-13"
+  },
+  {
+    "job_url": "https://integer.wd1.myworkdayjobs.com/External/job/Plymouth-MN/Process-Development-Engineer-I_R34520?source=LinkedIn",
+    "company_name": "Integer Holdings Corporation",
+    "job_title": "Process Development Engineer I",
+    "seen_date": "2026-03-13"
+  },
+  {
+    "job_url": "https://mitsubishichemicalgroup.wd3.myworkdayjobs.com/MCCGroupCareers/job/Greer-South-Carolina/Process-Engineer_JR_0000567?source=LinkedIn",
+    "company_name": "Mitsubishi Chemical America",
+    "job_title": "Process Engineer",
+    "seen_date": "2026-03-13"
+  },
+  {
+    "job_url": "https://jobs.tenneco.com/job/Van-Wert-Manufacturing-Engineer-Coordinator-OH/1360341400/?utm_medium=referrer&utm_source=LINKEDIN",
+    "company_name": "Tenneco",
+    "job_title": "Manufacturing Engineer Coordinator",
+    "seen_date": "2026-03-13"
+  },
+  {
+    "job_url": "https://www.aplitrak.com/?adid=RGlsbG9uLkFybm8uMjE0OTIuMTU1MEBkc2pib3N0b24uYXBsaXRyYWsuY29t",
+    "company_name": "DSJ Global",
+    "job_title": "Manufacturing Engineer",
+    "seen_date": "2026-03-13"
+  },
+  {
+    "job_url": "https://candidateportal.ceipal.com/job-details/yBnYGQ4QXibeM4dFjH6LGUQlEUj3QLvhwqDBZGvDrxg#.job_boards.LinkedIn",
+    "company_name": "Crossing Hurdles",
+    "job_title": "Manufacturing Engineer (Content Contributor) | $60/hr Remote",
+    "seen_date": "2026-03-13"
+  },
+  {
+    "job_url": "https://motionrecruitment.com/tech-jobs/gaffney/direct-hire/process-engineer/866661?utm_source=linkedin&utm_medium=feed&utm_campaign=paid-20210428",
+    "company_name": "Motion Recruitment",
+    "job_title": "Process Engineer",
+    "seen_date": "2026-03-13"
+  },
+  {
+    "job_url": "https://careers.micron.com/careers/job/40776642?utm_source=linkedin&domain=micron.com&src=JB-12600",
+    "company_name": "Micron Technology",
+    "job_title": "ATE Process Engineer",
+    "seen_date": "2026-03-13"
+  },
+  {
+    "job_url": "https://michaelpage.com/job-detail/process-engineer-cnc-cleveland-oh/ref/jn-032026-6970486",
+    "company_name": "Michael Page",
+    "job_title": "Process Engineer | CNC | Cleveland, OH",
+    "seen_date": "2026-03-13"
+  },
+  {
+    "job_url": "https://recruiting2.ultipro.com/CIR1001CIRCR/JobBoard/5545d8b0-2410-46b9-a6df-dec8f891b6ee/Opportunity/OpportunityDetail?opportunityId=3ab037b4-708a-4ee5-b56d-03f8731b4c9f",
+    "company_name": "CIRCOR International, Inc.",
+    "job_title": "Quality Engineer",
+    "seen_date": "2026-03-13"
+  },
+  {
+    "job_url": "https://modulexsolutions.apscareerportal.com/j/02wyyqp",
+    "company_name": "Module X Solutions LLC",
+    "job_title": "Process Engineer",
+    "seen_date": "2026-03-13"
+  },
+  {
+    "job_url": "https://careers.rain-industries.com/raincarbon/job/Gramercy-Process-Engineer-LA-70052/1358070366/?src=LinkedIn",
+    "company_name": "Rain Carbon Inc",
+    "job_title": "Process Engineer",
+    "seen_date": "2026-03-13"
+  },
+  {
+    "job_url": "https://jobs.ashbyhq.com/t1energy/a905f613-fabc-4257-9aaf-d5a004411168?src=LinkedIn",
+    "company_name": "T1 Energy Inc.",
+    "job_title": "Wet Process Engineer, Solar Cell Manufacturing",
+    "seen_date": "2026-03-13"
+  },
+  {
+    "job_url": "https://careers.dhl.com/global/en/job/DPDHGLOBAL10782062ENGLOBALEXTERNALTALENTREEF/Industrial-Engineer?UTM_Campaign=2dhl&UTM_Medium=1JobWrapper&UTM_Source=0LinkedIn",
+    "company_name": "DHL Supply Chain",
+    "job_title": "Industrial Engineer",
+    "seen_date": "2026-03-13"
+  },
+  {
+    "job_url": "https://sogeclair.workable.com/jobs/5382762?utm_source=wttj",
+    "company_name": "SOGECLAIR",
+    "job_title": "Manufacturing Engineering",
+    "seen_date": "2026-03-13"
+  },
+  {
+    "job_url": "https://grnh.se/qcwq6roe4us",
+    "company_name": "Factorial Energy",
+    "job_title": "Process Engineer",
+    "seen_date": "2026-03-13"
+  },
+  {
+    "job_url": "https://www.asm.com/open-vacancies/?gh_jid=4663055101&gh_src=2f01c6f2teu",
+    "company_name": "ASM",
+    "job_title": "HVM Field Process Engineer \u2013 tALD, Epitaxy, Vertical Diffusion",
+    "seen_date": "2026-03-13"
+  },
+  {
+    "job_url": "https://careers.cargill.com/en/job/-/-/23251/91848086784",
+    "company_name": "Cargill",
+    "job_title": "Process Engineer",
+    "seen_date": "2026-03-13"
+  },
+  {
+    "job_url": "https://careers.irco.com/job/Springfield-Manufacturing-Engineering-Internship-'26-1-MO-65803/1350528500/?feedId=419700&src=LinkedIn&utm_campaign=Irco_LinkedIn&utm_source=LinkedInJobPostings",
+    "company_name": "Ingersoll Rand",
+    "job_title": "Manufacturing Engineering Internship '26 1",
+    "seen_date": "2026-03-13"
+  },
+  {
+    "job_url": "https://grnh.se/vmgix3nu4us",
+    "company_name": "Factorial",
+    "job_title": "Process Engineer",
+    "seen_date": "2026-03-13"
+  }
+]

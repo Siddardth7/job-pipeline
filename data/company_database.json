@@ -1,0 +1,747 @@
+{
+  "green": [
+    {
+      "name": "GE Aerospace",
+      "domain": "geaerospace.com",
+      "industry": "Aerospace"
+    },
+    {
+      "name": "SpaceX",
+      "domain": "spacex.com",
+      "industry": "Aerospace"
+    },
+    {
+      "name": "Boeing",
+      "domain": "boeing.com",
+      "industry": "Aerospace"
+    },
+    {
+      "name": "Honeywell Aerospace",
+      "domain": "honeywell.com",
+      "industry": "Aerospace"
+    },
+    {
+      "name": "Tesla",
+      "domain": "tesla.com",
+      "industry": "Automotive / EV"
+    },
+    {
+      "name": "Rivian",
+      "domain": "rivian.com",
+      "industry": "Automotive / EV"
+    },
+    {
+      "name": "Lucid Motors",
+      "domain": "lucidmotors.com",
+      "industry": "Automotive / EV"
+    },
+    {
+      "name": "General Motors",
+      "domain": "gm.com",
+      "industry": "Automotive"
+    },
+    {
+      "name": "Ford",
+      "domain": "ford.com",
+      "industry": "Automotive"
+    },
+    {
+      "name": "Cummins",
+      "domain": "cummins.com",
+      "industry": "Industrial Equipment"
+    },
+    {
+      "name": "John Deere",
+      "domain": "deere.com",
+      "industry": "Industrial Equipment"
+    },
+    {
+      "name": "Caterpillar",
+      "domain": "caterpillar.com",
+      "industry": "Industrial Equipment"
+    },
+    {
+      "name": "Textron",
+      "domain": "textron.com",
+      "industry": "Aerospace"
+    },
+    {
+      "name": "Spirit AeroSystems",
+      "domain": "spiritaero.com",
+      "industry": "Aerospace"
+    },
+    {
+      "name": "Safran",
+      "domain": "safran-group.com",
+      "industry": "Aerospace"
+    },
+    {
+      "name": "Rolls-Royce",
+      "domain": "rolls-royce.com",
+      "industry": "Aerospace"
+    },
+    {
+      "name": "Parker Hannifin",
+      "domain": "parker.com",
+      "industry": "Industrial"
+    },
+    {
+      "name": "Eaton",
+      "domain": "eaton.com",
+      "industry": "Industrial"
+    },
+    {
+      "name": "3M",
+      "domain": "3m.com",
+      "industry": "Materials / Industrial"
+    },
+    {
+      "name": "Corning",
+      "domain": "corning.com",
+      "industry": "Materials"
+    },
+    {
+      "name": "Hexcel",
+      "domain": "hexcel.com",
+      "industry": "Composites / Materials"
+    },
+    {
+      "name": "Solvay",
+      "domain": "solvay.com",
+      "industry": "Composites / Materials"
+    },
+    {
+      "name": "Toray",
+      "domain": "toray.com",
+      "industry": "Composites / Materials"
+    },
+    {
+      "name": "Apple",
+      "domain": "apple.com",
+      "industry": "Consumer Electronics"
+    },
+    {
+      "name": "Amazon",
+      "domain": "amazon.com",
+      "industry": "Logistics / Manufacturing"
+    },
+    {
+      "name": "Joby Aviation",
+      "domain": "jobyaviation.com",
+      "industry": "Aerospace / eVTOL"
+    },
+    {
+      "name": "Archer Aviation",
+      "domain": "archer.com",
+      "industry": "Aerospace / eVTOL"
+    },
+    {
+      "name": "Wisk Aero",
+      "domain": "wisk.aero",
+      "industry": "Aerospace / eVTOL"
+    },
+    {
+      "name": "Relativity Space",
+      "domain": "relativityspace.com",
+      "industry": "Aerospace"
+    },
+    {
+      "name": "Rocket Lab",
+      "domain": "rocketlabusa.com",
+      "industry": "Aerospace"
+    },
+    {
+      "name": "Blue Origin",
+      "domain": "blueorigin.com",
+      "industry": "Aerospace"
+    },
+    {
+      "name": "Aerojet Rocketdyne",
+      "domain": "l3harris.com",
+      "industry": "Aerospace"
+    },
+    {
+      "name": "TransDigm",
+      "domain": "transdigm.com",
+      "industry": "Aerospace"
+    },
+    {
+      "name": "Ducommun",
+      "domain": "ducommun.com",
+      "industry": "Aerospace"
+    },
+    {
+      "name": "Otto Aerospace",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Re:Build Manufacturing",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Redwood Materials",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Divergent Technologies",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "AST SpaceMobile",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Otto Aviation",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "The Pivot Group Network",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Beta Technologies",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Hermeus",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Dupont",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Loft Orbital",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Dawn Aerospace",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Crane Company",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Aegis Manufacturing & Engineering",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Procter & Gamble",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Freudenberg Group",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Actalent",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Beyond Gravity",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Nobel Biocare",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Legrand, North America",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Figure",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Excelitas Technologies Corp.",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "ASML",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Capgemini",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Lakeside Manufacturing, Inc",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Hikma",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Atlantic Union Bank",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Placer.ai",
+      "domain": "",
+      "industry": "Auto-promoted"
+    }
+  ],
+  "promotion_tracking": {
+    "Otto Aerospace": [
+      "2026-03-09",
+      "2026-03-09",
+      "2026-03-09",
+      "2026-03-09",
+      "2026-03-09",
+      "2026-03-09",
+      "2026-03-09",
+      "2026-03-09"
+    ],
+    "AST SpaceMobile": [
+      "2026-03-09",
+      "2026-03-09",
+      "2026-03-10"
+    ],
+    "Re:Build Manufacturing": [
+      "2026-03-09",
+      "2026-03-09",
+      "2026-03-09"
+    ],
+    "Divergent Technologies": [
+      "2026-03-09",
+      "2026-03-09",
+      "2026-03-09",
+      "2026-03-09"
+    ],
+    "Redwood Materials": [
+      "2026-03-09",
+      "2026-03-09",
+      "2026-03-09"
+    ],
+    "Progress Rail": [
+      "2026-03-10"
+    ],
+    "Dupont": [
+      "2026-03-10",
+      "2026-03-11",
+      "2026-03-11"
+    ],
+    "Zachry Group": [
+      "2026-03-10"
+    ],
+    "LanceSoft": [
+      "2026-03-10"
+    ],
+    "The Goodyear Tire & Rubber Company": [
+      "2026-03-10"
+    ],
+    "Corbus": [
+      "2026-03-11"
+    ],
+    "Otto Aviation": [
+      "2026-03-11",
+      "2026-03-11",
+      "2026-03-11",
+      "2026-03-11",
+      "2026-03-11",
+      "2026-03-11",
+      "2026-03-11",
+      "2026-03-11"
+    ],
+    "PCB Piezotronics, Inc.": [
+      "2026-03-11"
+    ],
+    "WestRock Company": [
+      "2026-03-11",
+      "2026-03-11"
+    ],
+    "INDEPENDENT CAN COMPANY": [
+      "2026-03-11"
+    ],
+    "Actalent": [
+      "2026-03-11",
+      "2026-03-12",
+      "2026-03-13"
+    ],
+    "Florida International University": [
+      "2026-03-11"
+    ],
+    "Airbus": [
+      "2026-03-11"
+    ],
+    "3205 St. Jude Medical, Cardiology Division, I": [
+      "2026-03-11"
+    ],
+    "Abbott Laboratories": [
+      "2026-03-11",
+      "2026-03-12"
+    ],
+    "Entegee": [
+      "2026-03-11",
+      "2026-03-11"
+    ],
+    "Crane Company": [
+      "2026-03-11",
+      "2026-03-11",
+      "2026-03-12"
+    ],
+    "Loft Orbital": [
+      "2026-03-11",
+      "2026-03-11",
+      "2026-03-11",
+      "2026-03-11"
+    ],
+    "Acara Solutions, An Aleron Company": [
+      "2026-03-11",
+      "2026-03-12"
+    ],
+    "Global Connect Technologies": [
+      "2026-03-11"
+    ],
+    "W3Global Inc.": [
+      "2026-03-11"
+    ],
+    "Stellantis": [
+      "2026-03-11"
+    ],
+    "Dawn Aerospace": [
+      "2026-03-11",
+      "2026-03-11",
+      "2026-03-11",
+      "2026-03-11"
+    ],
+    "The Pivot Group Network": [
+      "2026-03-11",
+      "2026-03-11",
+      "2026-03-11",
+      "2026-03-11"
+    ],
+    "Schluter Systems L.P": [
+      "2026-03-11"
+    ],
+    "Aegis Manufacturing & Engineering": [
+      "2026-03-11",
+      "2026-03-12",
+      "2026-03-12"
+    ],
+    "Beta Technologies": [
+      "2026-03-11",
+      "2026-03-11",
+      "2026-03-11"
+    ],
+    "Meta": [
+      "2026-03-11"
+    ],
+    "Hired by Matrix": [
+      "2026-03-11"
+    ],
+    "JABIL CIRCUIT, INC": [
+      "2026-03-11"
+    ],
+    "Hermeus": [
+      "2026-03-11",
+      "2026-03-11",
+      "2026-03-11"
+    ],
+    "Computer Task Group, Inc": [
+      "2026-03-11"
+    ],
+    "Apetan Consulting LLC": [
+      "2026-03-11"
+    ],
+    "NAVAIRWARCENAC DIV": [
+      "2026-03-11"
+    ],
+    "Honda Dev. and Mfg. of Am.,LLC": [
+      "2026-03-11"
+    ],
+    "Boeing Co": [
+      "2026-03-11"
+    ],
+    "DuPont": [
+      "2026-03-11"
+    ],
+    "DC Fabricators": [
+      "2026-03-11"
+    ],
+    "ATR International": [
+      "2026-03-11"
+    ],
+    "Terex Corporation": [
+      "2026-03-11"
+    ],
+    "Detroit Thermal Systems, LLC - Tier 1 Automotive Supplier": [
+      "2026-03-11"
+    ],
+    "AirBurners": [
+      "2026-03-11"
+    ],
+    "Thermo Fisher Scientific": [
+      "2026-03-11"
+    ],
+    "Procter & Gamble": [
+      "2026-03-11",
+      "2026-03-12",
+      "2026-03-12"
+    ],
+    "Envista": [
+      "2026-03-11"
+    ],
+    "PRL Industries, Inc.": [
+      "2026-03-11"
+    ],
+    "Avery Dennison": [
+      "2026-03-11"
+    ],
+    "The Hershey Company": [
+      "2026-03-11"
+    ],
+    "VirtualVocations": [
+      "2026-03-11"
+    ],
+    "TD Bank": [
+      "2026-03-11"
+    ],
+    "Freudenberg Group": [
+      "2026-03-12",
+      "2026-03-12",
+      "2026-03-12"
+    ],
+    "Independent Can Company": [
+      "2026-03-12"
+    ],
+    "Indium Corporation": [
+      "2026-03-12"
+    ],
+    "Medium": [
+      "2026-03-12"
+    ],
+    "Michael Page International Inc.": [
+      "2026-03-12"
+    ],
+    "Renewyx": [
+      "2026-03-12"
+    ],
+    "PrideStaff": [
+      "2026-03-12"
+    ],
+    "Moog, Inc.": [
+      "2026-03-12"
+    ],
+    "Nammo Defense Systems, Inc": [
+      "2026-03-12"
+    ],
+    "Super Radiator Coils": [
+      "2026-03-12"
+    ],
+    "Qcells": [
+      "2026-03-12"
+    ],
+    "Myrias Optics": [
+      "2026-03-12"
+    ],
+    "Beyond Gravity": [
+      "2026-03-12",
+      "2026-03-12",
+      "2026-03-13"
+    ],
+    "Nobel Biocare": [
+      "2026-03-12",
+      "2026-03-12",
+      "2026-03-13"
+    ],
+    "Legrand, North America": [
+      "2026-03-12",
+      "2026-03-12",
+      "2026-03-13"
+    ],
+    "Figure": [
+      "2026-03-12",
+      "2026-03-12",
+      "2026-03-13"
+    ],
+    "Excelitas Technologies Corp.": [
+      "2026-03-12",
+      "2026-03-12",
+      "2026-03-13"
+    ],
+    "ASML": [
+      "2026-03-12",
+      "2026-03-12",
+      "2026-03-13"
+    ],
+    "Capgemini": [
+      "2026-03-12",
+      "2026-03-12",
+      "2026-03-13"
+    ],
+    "Lakeside Manufacturing, Inc": [
+      "2026-03-12",
+      "2026-03-12",
+      "2026-03-13"
+    ],
+    "Hikma": [
+      "2026-03-12",
+      "2026-03-12",
+      "2026-03-13"
+    ],
+    "Atlantic Union Bank": [
+      "2026-03-12",
+      "2026-03-12",
+      "2026-03-13"
+    ],
+    "Placer.ai": [
+      "2026-03-12",
+      "2026-03-12",
+      "2026-03-13"
+    ],
+    "Ford Motor Company": [
+      "2026-03-13",
+      "2026-03-14"
+    ],
+    "Kindeva Drug Delivery": [
+      "2026-03-13",
+      "2026-03-14"
+    ],
+    "Equinox Engineering Ltd.": [
+      "2026-03-13",
+      "2026-03-14"
+    ],
+    "TSI Incorporated": [
+      "2026-03-13",
+      "2026-03-14"
+    ],
+    "CRB": [
+      "2026-03-13",
+      "2026-03-14"
+    ],
+    "Integer Holdings Corporation": [
+      "2026-03-13",
+      "2026-03-14"
+    ],
+    "Mitsubishi Chemical America": [
+      "2026-03-13",
+      "2026-03-14"
+    ],
+    "Tenneco": [
+      "2026-03-13",
+      "2026-03-14"
+    ],
+    "DSJ Global": [
+      "2026-03-13",
+      "2026-03-14"
+    ],
+    "Crossing Hurdles": [
+      "2026-03-13",
+      "2026-03-14"
+    ],
+    "Motion Recruitment": [
+      "2026-03-13",
+      "2026-03-14"
+    ],
+    "Micron Technology": [
+      "2026-03-13",
+      "2026-03-14"
+    ],
+    "Michael Page": [
+      "2026-03-13",
+      "2026-03-14"
+    ],
+    "CIRCOR International, Inc.": [
+      "2026-03-13",
+      "2026-03-14"
+    ],
+    "Module X Solutions LLC": [
+      "2026-03-13",
+      "2026-03-14"
+    ],
+    "Rain Carbon Inc": [
+      "2026-03-13",
+      "2026-03-14"
+    ],
+    "T1 Energy Inc.": [
+      "2026-03-13",
+      "2026-03-14"
+    ],
+    "DHL Supply Chain": [
+      "2026-03-13",
+      "2026-03-14"
+    ],
+    "SOGECLAIR": [
+      "2026-03-13",
+      "2026-03-14"
+    ],
+    "Factorial Energy": [
+      "2026-03-13",
+      "2026-03-14"
+    ],
+    "ASM": [
+      "2026-03-13",
+      "2026-03-14"
+    ],
+    "Cargill": [
+      "2026-03-13",
+      "2026-03-14"
+    ],
+    "Ingersoll Rand": [
+      "2026-03-13",
+      "2026-03-14"
+    ],
+    "Factorial": [
+      "2026-03-13",
+      "2026-03-14"
+    ]
+  },
+  "rejected_companies": [],
+  "industry_keywords": [
+    "Manufacturing",
+    "Aerospace",
+    "Energy",
+    "Automotive",
+    "Materials",
+    "Industrial Equipment",
+    "Medical Devices",
+    "Defense",
+    "Aviation",
+    "Composites",
+    "Electronics",
+    "Robotics",
+    "Space",
+    "Propulsion"
+  ],
+  "reject_keywords": [
+    "Staffing",
+    "Recruiting",
+    "Talent Solutions",
+    "Consulting Services",
+    "HR Solutions",
+    "Workforce Solutions",
+    "Placement",
+    "Headhunting"
+  ]
+}

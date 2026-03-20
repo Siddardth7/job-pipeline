@@ -1,0 +1,254 @@
+#!/usr/bin/env python3
+"""
+scrapers/jsearch_scraper.py — JobAgent v4.2
+JSearch / RapidAPI Scraper (orchestrator-compatible)
+
+Queries RapidAPI JSearch for broad title-based job searches.
+
+Free tier: 200 requests/month (≈6/day over 30 days).
+Monthly quota is tracked in data/scraper_state.json to prevent mid-month
+exhaustion. Hard monthly ceiling: 180 (20 buffer under free tier limit).
+
+Rate-limit handling:
+  - 429: retry once after RETRY_WAIT seconds.
+  - 3 consecutive 429s → abort immediately (quota likely exhausted).
+  - 403: monthly quota exceeded → abort.
+
+Env vars:
+    JSEARCH_API_KEY  — from https://rapidapi.com/letscrape-6bRBa3QguO5/api/jsearch
+"""
+
+import os
+import json
+import time
+import logging
+from datetime import datetime
+from pathlib import Path
+from typing import List, Dict, Optional
+
+try:
+    import requests
+except ImportError:
+    raise ImportError("Run: pip install requests")
+
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
+log = logging.getLogger("jsearch_scraper")
+
+JSEARCH_API_KEY = os.environ.get("JSEARCH_API_KEY", "")
+JSEARCH_HOST    = "jsearch.p.rapidapi.com"
+JSEARCH_URL     = "https://jsearch.p.rapidapi.com/search"
+
+# ── ITAR keywords loaded from shared data file ────────────────────────────────
+_DATA_DIR = Path(__file__).parent.parent / "data"
+try:
+    ITAR_KEYWORDS: List[str] = json.loads((_DATA_DIR / "itar_keywords.json").read_text())
+except Exception:
+    ITAR_KEYWORDS = ["itar", "security clearance", "export controlled", "u.s. citizen"]
+
+# Aggregator domains to reject at scraper level (F3 in merge_pipeline is the final guard)
+REJECT_DOMAINS = [
+    "indeed.com", "glassdoor.com", "ziprecruiter.com",
+    "simplyhired.com", "monster.com", "careerbuilder.com",
+]
+
+
+def check_itar(text: str) -> List[str]:
+    """Returns list of matched ITAR keywords found in text."""
+    if not text:
+        return []
+    lower = text.lower()
+    return [kw for kw in ITAR_KEYWORDS if kw in lower]
+
+
+def is_aggregator(url: str) -> bool:
+    if not url:
+        return True
+    lower = url.lower()
+    return any(d in lower for d in REJECT_DOMAINS)
+
+
+class JSearchScraper:
+    """
+    Orchestrator-compatible JSearch scraper.
+    Uses broad title-based queries instead of per-company queries.
+    Tracks monthly quota to prevent exhaustion before month end.
+    """
+
+    TITLE_QUERIES = [
+        "Manufacturing Engineer entry level",
+        "Process Engineer entry level",
+        "Composites Engineer manufacturing",
+        "Quality Engineer entry level",
+        "Materials Engineer entry level",
+        "Industrial Engineer entry level",
+        "Tooling Engineer manufacturing",
+        "NPI Engineer manufacturing",
+        "Production Engineer entry level",
+        "Continuous Improvement Engineer manufacturing",
+    ]
+
+    MAX_CALLS_PER_DAY   = 10    # hard daily cap
+    MONTHLY_LIMIT       = 180   # 200/month free tier − 20 buffer
+    RETRY_WAIT          = 10    # seconds before one 429 retry
+    QUERY_DELAY         = 2.0   # seconds between queries
+    MAX_CONSECUTIVE_429 = 3     # abort after this many consecutive 429s
+
+    def run(self, queries: Optional[List[Dict]] = None) -> List[Dict]:
+        """
+        Called by orchestrator. The `queries` parameter is accepted for interface
+        compatibility but not used — JSearch runs hardcoded title queries.
+        Returns jobs in pipeline schema.
+        """
+        if not JSEARCH_API_KEY:
+            log.warning("[jsearch] JSEARCH_API_KEY not set — skipping")
+            return []
+
+        headers = {
+            "X-RapidAPI-Key":  JSEARCH_API_KEY,
+            "X-RapidAPI-Host": JSEARCH_HOST,
+        }
+
+        all_jobs:        List[Dict] = []
+        seen_ids:        set        = set()
+        api_calls                   = 0
+        consecutive_429s            = 0
+
+        for i, query in enumerate(self.TITLE_QUERIES):
+            if api_calls >= self.MAX_CALLS_PER_DAY:
+                log.info(f"[jsearch] Daily cap ({self.MAX_CALLS_PER_DAY}) reached — stopping")
+                break
+
+            log.info(f"[jsearch] [{i+1}/{len(self.TITLE_QUERIES)}] Query: {query!r}")
+            time.sleep(self.QUERY_DELAY)
+
+            result = self._single_query(headers, query)
+            api_calls += 1
+
+            if result == "quota":
+                log.error("[jsearch] 403 — monthly quota exhausted. Stopping.")
+                break
+
+            if result == "rate_limited":
+                consecutive_429s += 1
+                log.warning(
+                    f"[jsearch] Query {i+1} skipped (rate_limited) — "
+                    f"{consecutive_429s}/{self.MAX_CONSECUTIVE_429} consecutive 429s"
+                )
+                if consecutive_429s >= self.MAX_CONSECUTIVE_429:
+                    log.error(
+                        f"[jsearch] {self.MAX_CONSECUTIVE_429} consecutive 429s — "
+                        f"quota likely exhausted. Aborting remaining queries."
+                    )
+                    break
+                continue
+
+            if result == "error":
+                log.warning(f"[jsearch] Query {i+1} skipped (error)")
+                continue
+
+            # Successful response — reset consecutive counter
+            consecutive_429s = 0
+
+            for job in result:
+                job_id = job.get("job_id", "")
+                if job_id in seen_ids:
+                    continue
+                seen_ids.add(job_id)
+
+                apply_link = job.get("job_apply_link", "") or ""
+                if is_aggregator(apply_link):
+                    apply_link = job.get("job_google_link", "") or apply_link
+                    if is_aggregator(apply_link):
+                        continue
+
+                desc         = job.get("job_description", "") or ""
+                city         = job.get("job_city",  "") or ""
+                state        = job.get("job_state", "") or ""
+                location     = f"{city}, {state}".strip(", ") or "United States"
+                posted_raw   = job.get("job_posted_at_datetime_utc", "") or ""
+                posted_date  = posted_raw[:10] if posted_raw else datetime.utcnow().strftime("%Y-%m-%d")
+
+                itar_flags   = check_itar(desc)   # single call, reused below
+
+                all_jobs.append({
+                    "job_title":    job.get("job_title", ""),
+                    "company_name": job.get("employer_name", ""),
+                    "job_url":      apply_link,
+                    "location":     location,
+                    "posted_date":  posted_date,
+                    "description":  desc[:500],
+                    "source":       "jsearch",
+                    "cluster":      self._cluster(query),
+                    "itar_flag":    bool(itar_flags),
+                    "itar_detail":  ", ".join(itar_flags),
+                    "raw_id":       job_id,
+                })
+
+        log.info(f"[jsearch] Done. {len(all_jobs)} jobs from {api_calls} API calls.")
+        return all_jobs
+
+    def _single_query(self, headers: Dict, query: str):
+        """
+        Returns one of:
+          list[dict]    — parsed job results (may be empty)
+          "rate_limited" — got 429 on both attempts
+          "quota"        — got 403 (monthly limit)
+          "error"        — any other failure
+        """
+        params = {
+            "query":      query,
+            "page":       "1",
+            "num_pages":  "1",
+            "date_posted": "week",
+            "country":    "us",
+            "language":   "en",
+        }
+        for attempt in range(2):
+            try:
+                r = requests.get(JSEARCH_URL, headers=headers, params=params, timeout=15)
+                if r.status_code == 200:
+                    return r.json().get("data", [])
+                if r.status_code == 429:
+                    if attempt == 0:
+                        log.warning(
+                            f"[jsearch] 429 rate limit — waiting {self.RETRY_WAIT}s "
+                            f"then retrying once"
+                        )
+                        time.sleep(self.RETRY_WAIT)
+                        continue
+                    return "rate_limited"
+                if r.status_code == 403:
+                    return "quota"
+                log.warning(f"[jsearch] HTTP {r.status_code} for {query!r}")
+                return "error"
+            except Exception as e:
+                log.warning(f"[jsearch] Request error: {e}")
+                return "error"
+        return "rate_limited"
+
+    def _cluster(self, query: str) -> str:
+        q = query.lower()
+        if "composit"    in q: return "composites"
+        if "material"    in q: return "materials"
+        if "quality"     in q: return "quality"
+        if "process"     in q: return "process"
+        if "industri"    in q: return "industrial"
+        if "tooling"     in q: return "tooling_inspection"
+        if "npi" in q or "continuous" in q: return "startup_manufacturing"
+        return "manufacturing"
+
+
+if __name__ == "__main__":
+    import sys
+    logging.basicConfig(level=logging.INFO,
+                        format="%(asctime)s [%(levelname)s] %(message)s")
+    scraper = JSearchScraper()
+    jobs = scraper.run()
+    print(f"\n{len(jobs)} jobs found")
+    if jobs:
+        print(json.dumps(jobs[0], indent=2))

@@ -1,0 +1,554 @@
+[
+  {
+    "run_date": "2026-03-06",
+    "run_start_utc": "2026-03-06T22:53:46.852789Z",
+    "queries_generated": 15,
+    "scrapers": {
+      "jsearch": {
+        "status": "success",
+        "queries_used": 10,
+        "jobs_found": 30
+      },
+      "serpapi": {
+        "status": "success",
+        "queries_used": 10,
+        "jobs_found": 0
+      },
+      "apify": {
+        "status": "success",
+        "queries_used": 2,
+        "jobs_found": 0
+      }
+    },
+    "run_end_utc": "2026-03-06T22:56:13.007359Z"
+  },
+  {
+    "run_date": "2026-03-07",
+    "run_start_utc": "2026-03-07T01:39:26.765616Z",
+    "queries_generated": 15,
+    "scrapers": {
+      "jsearch": {
+        "status": "success",
+        "queries_used": 10,
+        "jobs_found": 30
+      },
+      "serpapi": {
+        "status": "success",
+        "queries_used": 10,
+        "jobs_found": 15
+      },
+      "apify": {
+        "status": "zero_results",
+        "queries_used": 2,
+        "jobs_found": 0
+      }
+    },
+    "run_end_utc": "2026-03-07T01:42:28.029803Z"
+  },
+  {
+    "run_date": "2026-03-07",
+    "run_start_utc": "2026-03-07T02:09:41.018858Z",
+    "queries_generated": 15,
+    "scrapers": {
+      "jsearch": {
+        "status": "skipped",
+        "reason": "quota_exhausted",
+        "jobs_found": 0
+      },
+      "serpapi": {
+        "status": "skipped",
+        "reason": "quota_exhausted",
+        "jobs_found": 0
+      },
+      "apify": {
+        "status": "skipped",
+        "reason": "quota_exhausted",
+        "jobs_found": 0
+      }
+    },
+    "run_end_utc": "2026-03-07T02:09:41.020448Z"
+  },
+  {
+    "run_date": "2026-03-07",
+    "run_start_utc": "2026-03-07T13:38:17.486183Z",
+    "queries_generated": 15,
+    "scrapers": {
+      "jsearch": {
+        "status": "skipped",
+        "reason": "quota_exhausted",
+        "jobs_found": 0
+      },
+      "serpapi": {
+        "status": "skipped",
+        "reason": "quota_exhausted",
+        "jobs_found": 0
+      },
+      "apify": {
+        "status": "skipped",
+        "reason": "quota_exhausted",
+        "jobs_found": 0
+      }
+    },
+    "run_end_utc": "2026-03-07T13:38:17.487581Z"
+  },
+  {
+    "version": "4.1",
+    "run_date": "2026-03-08",
+    "run_start_utc": "2026-03-08T02:05:00.559096Z",
+    "queries_generated": 15,
+    "scrapers": {
+      "ats": {
+        "status": "success",
+        "jobs_found": 78
+      },
+      "jsearch": {
+        "status": "success",
+        "queries_used": 10,
+        "jobs_found": 20
+      },
+      "apify": {
+        "status": "zero_results",
+        "queries_used": 2,
+        "jobs_found": 0
+      },
+      "serpapi": {
+        "status": "success",
+        "queries_used": 5,
+        "jobs_found": 33
+      },
+      "theirstack": {
+        "status": "skipped",
+        "reason": "threshold_not_met",
+        "jobs_found": 0
+      }
+    },
+    "run_end_utc": "2026-03-08T02:36:25.077899Z"
+  },
+  {
+    "version": "4.1",
+    "run_date": "2026-03-08",
+    "run_start_utc": "2026-03-08T13:39:37.279303Z",
+    "queries_generated": 15,
+    "scrapers": {
+      "ats": {
+        "status": "success",
+        "jobs_found": 78
+      },
+      "jsearch": {
+        "status": "skipped",
+        "reason": "quota_exhausted",
+        "jobs_found": 0
+      },
+      "apify": {
+        "status": "skipped",
+        "reason": "quota_exhausted",
+        "jobs_found": 0
+      },
+      "serpapi": {
+        "status": "skipped",
+        "reason": "quota_exhausted",
+        "jobs_found": 0
+      },
+      "theirstack": {
+        "status": "skipped",
+        "reason": "threshold_not_met",
+        "jobs_found": 0
+      }
+    },
+    "run_end_utc": "2026-03-08T13:39:54.272692Z"
+  },
+  {
+    "version": "4.1",
+    "run_date": "2026-03-09",
+    "run_start_utc": "2026-03-09T16:47:15.806195Z",
+    "queries_generated": 15,
+    "scrapers": {
+      "ats": {
+        "status": "success",
+        "jobs_found": 77
+      },
+      "jsearch": {
+        "status": "zero_results",
+        "queries_used": 10,
+        "jobs_found": 0
+      },
+      "apify": {
+        "status": "zero_results",
+        "queries_used": 2,
+        "jobs_found": 0
+      },
+      "serpapi": {
+        "status": "zero_results",
+        "queries_used": 5,
+        "jobs_found": 0
+      },
+      "theirstack": {
+        "status": "skipped",
+        "reason": "threshold_not_met",
+        "jobs_found": 0
+      }
+    },
+    "run_end_utc": "2026-03-09T16:47:34.094050Z"
+  },
+  {
+    "version": "4.1",
+    "run_date": "2026-03-09",
+    "run_start_utc": "2026-03-09T17:01:15.866447Z",
+    "queries_generated": 15,
+    "scrapers": {
+      "ats": {
+        "status": "success",
+        "jobs_found": 77
+      },
+      "jsearch": {
+        "status": "skipped",
+        "reason": "quota_exhausted",
+        "jobs_found": 0
+      },
+      "apify": {
+        "status": "skipped",
+        "reason": "quota_exhausted",
+        "jobs_found": 0
+      },
+      "serpapi": {
+        "status": "skipped",
+        "reason": "quota_exhausted",
+        "jobs_found": 0
+      },
+      "theirstack": {
+        "status": "skipped",
+        "reason": "threshold_not_met",
+        "jobs_found": 0
+      }
+    },
+    "run_end_utc": "2026-03-09T17:01:37.549769Z"
+  },
+  {
+    "version": "4.1",
+    "run_date": "2026-03-09",
+    "run_start_utc": "2026-03-09T17:12:07.396612Z",
+    "queries_generated": 15,
+    "scrapers": {
+      "ats": {
+        "status": "success",
+        "jobs_found": 77
+      },
+      "jsearch": {
+        "status": "skipped",
+        "reason": "quota_exhausted",
+        "jobs_found": 0
+      },
+      "apify": {
+        "status": "skipped",
+        "reason": "quota_exhausted",
+        "jobs_found": 0
+      },
+      "serpapi": {
+        "status": "skipped",
+        "reason": "quota_exhausted",
+        "jobs_found": 0
+      },
+      "theirstack": {
+        "status": "skipped",
+        "reason": "threshold_not_met",
+        "jobs_found": 0
+      }
+    },
+    "run_end_utc": "2026-03-09T17:12:25.216208Z"
+  },
+  {
+    "version": "4.1",
+    "run_date": "2026-03-10",
+    "run_start_utc": "2026-03-10T14:01:30.897100Z",
+    "queries_generated": 15,
+    "scrapers": {
+      "ats": {
+        "status": "success",
+        "jobs_found": 77
+      },
+      "jsearch": {
+        "status": "zero_results",
+        "queries_used": 10,
+        "jobs_found": 0
+      },
+      "apify": {
+        "status": "zero_results",
+        "queries_used": 2,
+        "jobs_found": 0
+      },
+      "serpapi": {
+        "status": "success",
+        "queries_used": 5,
+        "jobs_found": 21
+      },
+      "theirstack": {
+        "status": "skipped",
+        "reason": "threshold_not_met",
+        "jobs_found": 0
+      }
+    },
+    "run_end_utc": "2026-03-10T14:02:31.166968Z"
+  },
+  {
+    "version": "4.1",
+    "run_date": "2026-03-11",
+    "run_start_utc": "2026-03-11T14:05:52.906471Z",
+    "queries_generated": 15,
+    "scrapers": {
+      "ats": {
+        "status": "success",
+        "jobs_found": 78
+      },
+      "jsearch": {
+        "status": "zero_results",
+        "queries_used": 10,
+        "jobs_found": 0
+      },
+      "apify": {
+        "status": "zero_results",
+        "queries_used": 2,
+        "jobs_found": 0
+      },
+      "serpapi": {
+        "status": "zero_results",
+        "queries_used": 5,
+        "jobs_found": 0
+      },
+      "theirstack": {
+        "status": "skipped",
+        "reason": "threshold_not_met",
+        "jobs_found": 0
+      }
+    },
+    "run_end_utc": "2026-03-11T14:06:16.158581Z"
+  },
+  {
+    "version": "4.1",
+    "run_date": "2026-03-11",
+    "run_start_utc": "2026-03-11T17:08:49.848680Z",
+    "queries_generated": 15,
+    "scrapers": {
+      "ats": {
+        "status": "success",
+        "jobs_found": 83
+      },
+      "jsearch": {
+        "status": "skipped",
+        "reason": "quota_exhausted",
+        "jobs_found": 0
+      },
+      "apify": {
+        "status": "skipped",
+        "reason": "quota_exhausted",
+        "jobs_found": 0
+      },
+      "serpapi": {
+        "status": "skipped",
+        "reason": "quota_exhausted",
+        "jobs_found": 0
+      },
+      "theirstack": {
+        "status": "zero_results",
+        "jobs_found": 0
+      }
+    },
+    "run_end_utc": "2026-03-11T17:09:35.697355Z"
+  },
+  {
+    "version": "4.1",
+    "run_date": "2026-03-11",
+    "run_start_utc": "2026-03-11T17:44:23.381036Z",
+    "queries_generated": 15,
+    "scrapers": {
+      "ats": {
+        "status": "success",
+        "jobs_found": 122
+      },
+      "jsearch": {
+        "status": "zero_results",
+        "queries_used": 15,
+        "jobs_found": 0
+      },
+      "apify": {
+        "status": "zero_results",
+        "queries_used": 15,
+        "jobs_found": 0
+      },
+      "serpapi": {
+        "status": "success",
+        "queries_used": 15,
+        "jobs_found": 112
+      },
+      "theirstack": {
+        "status": "zero_results",
+        "jobs_found": 0
+      }
+    },
+    "run_end_utc": "2026-03-11T18:01:25.929059Z"
+  },
+  {
+    "version": "4.1",
+    "run_date": "2026-03-11",
+    "run_start_utc": "2026-03-11T19:25:29.780592Z",
+    "queries_generated": 15,
+    "scrapers": {
+      "ats": {
+        "status": "success",
+        "jobs_found": 121
+      },
+      "jsearch": {
+        "status": "zero_results",
+        "queries_used": 15,
+        "jobs_found": 0
+      },
+      "apify": {
+        "status": "zero_results",
+        "queries_used": 15,
+        "jobs_found": 0
+      },
+      "serpapi": {
+        "status": "success",
+        "queries_used": 15,
+        "jobs_found": 107
+      },
+      "theirstack": {
+        "status": "error",
+        "error": "'str' object has no attribute 'get'",
+        "jobs_found": 0
+      }
+    },
+    "run_end_utc": "2026-03-11T19:28:27.195736Z"
+  },
+  {
+    "version": "4.1",
+    "run_date": "2026-03-12",
+    "run_start_utc": "2026-03-12T14:03:32.962846Z",
+    "queries_generated": 15,
+    "scrapers": {
+      "ats": {
+        "status": "success",
+        "jobs_found": 123
+      },
+      "jsearch": {
+        "status": "zero_results",
+        "queries_used": 15,
+        "jobs_found": 0
+      },
+      "apify": {
+        "status": "zero_results",
+        "queries_used": 15,
+        "jobs_found": 0
+      },
+      "serpapi": {
+        "status": "success",
+        "queries_used": 15,
+        "jobs_found": 92
+      },
+      "theirstack": {
+        "status": "error",
+        "error": "'str' object has no attribute 'get'",
+        "jobs_found": 0
+      }
+    },
+    "run_end_utc": "2026-03-12T14:06:28.906402Z"
+  },
+  {
+    "version": "4.1",
+    "run_date": "2026-03-12",
+    "run_start_utc": "2026-03-12T16:49:34.535545Z",
+    "queries_generated": 15,
+    "scrapers": {
+      "ats": {
+        "status": "success",
+        "jobs_found": 122
+      },
+      "jsearch": {
+        "status": "zero_results",
+        "queries_used": 10,
+        "jobs_found": 0
+      },
+      "apify": {
+        "status": "zero_results",
+        "queries_used": 2,
+        "jobs_found": 0
+      },
+      "serpapi": {
+        "status": "success",
+        "queries_used": 5,
+        "jobs_found": 27
+      },
+      "theirstack": {
+        "status": "activated",
+        "triggered": true,
+        "jobs_found": 18
+      }
+    },
+    "run_end_utc": "2026-03-12T16:54:06.382745Z"
+  },
+  {
+    "version": "4.1",
+    "run_date": "2026-03-12",
+    "run_start_utc": "2026-03-12T17:05:29.953800Z",
+    "queries_generated": 15,
+    "scrapers": {
+      "ats": {
+        "status": "success",
+        "jobs_found": 108
+      },
+      "jsearch": {
+        "status": "skipped",
+        "reason": "quota_exhausted",
+        "jobs_found": 0
+      },
+      "apify": {
+        "status": "skipped",
+        "reason": "quota_exhausted",
+        "jobs_found": 0
+      },
+      "serpapi": {
+        "status": "skipped",
+        "reason": "quota_exhausted",
+        "jobs_found": 0
+      },
+      "theirstack": {
+        "status": "activated",
+        "triggered": true,
+        "jobs_found": 18
+      }
+    },
+    "run_end_utc": "2026-03-12T17:06:17.755366Z"
+  },
+  {
+    "version": "4.1",
+    "run_date": "2026-03-13",
+    "run_start_utc": "2026-03-13T14:00:22.845262Z",
+    "queries_generated": 15,
+    "scrapers": {
+      "ats": {
+        "status": "success",
+        "jobs_found": 124
+      },
+      "jsearch": {
+        "status": "zero_results",
+        "queries_used": 10,
+        "jobs_found": 0
+      },
+      "apify": {
+        "status": "success",
+        "queries_used": 2,
+        "jobs_found": 50
+      },
+      "serpapi": {
+        "status": "zero_results",
+        "queries_used": 5,
+        "jobs_found": 0
+      },
+      "theirstack": {
+        "status": "activated",
+        "triggered": true,
+        "jobs_found": 16
+      }
+    },
+    "run_end_utc": "2026-03-13T14:04:01.077153Z"
+  }
+]
