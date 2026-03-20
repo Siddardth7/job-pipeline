@@ -1,21 +1,23 @@
 %-------------------------
 % Cover Letter - Siddardth Pathipaka
-% XeLaTeX compatible (fontspec)
 %-------------------------
-\documentclass[11pt,letterpaper]{article}
+\documentclass[letterpaper,10pt]{extarticle}
 
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
 \usepackage{geometry}
-\usepackage{fontspec}
-\usepackage{parskip}
 \usepackage{hyperref}
 \usepackage{xcolor}
+\usepackage{fontspec}
+\usepackage{parskip}
 
 \geometry{
   letterpaper,
-  left=1in,
-  right=1in,
-  top=1in,
-  bottom=1in
+  left=0.85in,
+  right=0.85in,
+  top=0.65in,
+  bottom=0.65in,
+  noheadfoot
 }
 
 \setmainfont{Carlito}[
@@ -26,42 +28,61 @@
 
 \pagestyle{empty}
 
+\definecolor{linkblue}{RGB}{5,99,193}
+
 \hypersetup{
   colorlinks=true,
-  urlcolor=blue,
-  linkcolor=blue
+  urlcolor=linkblue,
+  linkcolor=linkblue
 }
+
+\setlength{\parskip}{10pt}
+\setlength{\parindent}{0pt}
 
 \begin{document}
 
-\today
+%----------HEADER (matches resume)----------
+{\fontsize{14pt}{16pt}\selectfont\textbf{Siddardth Pathipaka}}\\[3pt]
+{\fontsize{9.5pt}{11pt}\selectfont
+siddardth1524@gmail.com \textbar\
++1(217) 255-0104 \textbar\
+\href{https://linkedin.com/in/siddardth-pathipaka}{\color{linkblue}\underline{LinkedIn}} \textbar\
+\href{https://siddardth7.github.io/portfolio/}{\color{linkblue}\underline{Portfolio}}
+}
 
-\bigskip
+\vspace{4pt}
+\noindent\rule{\textwidth}{0.5pt}
+\vspace{8pt}
 
-Dear Hiring Manager,
+%----------DATE----------
+{\fontsize{10pt}{12pt}\selectfont\today}
 
-\bigskip
+\vspace{6pt}
 
-I am writing to apply for the \textbf{%%ROLE%%} position at \textbf{%%COMPANY%%}.
-As an MS Aerospace Engineering graduate from the University of Illinois Urbana-Champaign
-(December 2025), I bring hands-on experience in %%VARIANT_FOCUS%%.
+%----------SALUTATION----------
+{\fontsize{10pt}{12pt}\selectfont
+Dear Hiring Manager at \textbf{%%COMPANY%%},
+}
+
+%----------BODY----------
+{\fontsize{10pt}{12pt}\selectfont
+
+I am writing to express my strong interest in the \textbf{%%ROLE%%} position at \textbf{%%COMPANY%%}. As an MS Aerospace Engineering graduate from the University of Illinois Urbana-Champaign (December 2025), I bring hands-on experience in \textbf{%%VARIANT_FOCUS%%} with a track record of delivering measurable results in aerospace manufacturing environments.
 
 %%SUMMARY_SENTENCE%%
 
-At Tata Boeing Aerospace, I reduced defect rates from 15\% to 3\% through SPC and 8D
-methodology. At SAMPE, I led the fabrication of a 24-inch composite fuselage achieving
-2\% void content via autoclave cure at 275\textdegree F/40 psi.
+In my work at Tata Boeing Aerospace, I established a GD\&T-driven CMM inspection workflow validating 450+ flight-critical components to 0.02\,mm accuracy with zero customer escapes. I also led an SPC-based investigation that identified CNC tool wear as the root cause of position tolerance failures, cutting the defect rate from 15\% to under 3\%. At SAMPE, I led fabrication of a 24-inch composite fuselage achieving under 2\% void content through autoclave cure, exceeding program targets.
 
-I am available on STEM OPT for 3 years with zero sponsorship cost to the employer, and
-I am excited about the opportunity to contribute to \textbf{%%COMPANY%%}.
+I am authorized to work in the U.S.\ on STEM OPT for 3 years with no sponsorship required, making me available to contribute immediately and at no visa cost to \textbf{%%COMPANY%%}. I would welcome the chance to discuss how my background aligns with your team's needs.
 
-\bigskip
+Thank you for your time and consideration.
 
-Sincerely,
+}
 
-\bigskip
-\bigskip
-
-Siddardth Pathipaka
+\vspace{10pt}
+{\fontsize{10pt}{12pt}\selectfont
+Sincerely,\\[20pt]
+\textbf{Siddardth Pathipaka}
+}
 
 \end{document}
