@@ -1,0 +1,85 @@
+%-------------------------
+% Tectonic package warmup document
+% Compiled during Docker build to pre-cache all needed packages
+%-------------------------
+\documentclass[letterpaper,9pt]{extarticle}
+
+\usepackage{fontspec}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{tabularx}
+\usepackage{parskip}
+
+\geometry{
+  letterpaper,
+  left=0.47in,
+  right=0.47in,
+  top=0.20in,
+  bottom=0.15in,
+  noheadfoot
+}
+
+\setmainfont{Carlito}[
+  BoldFont=Carlito Bold,
+  ItalicFont=Carlito Italic,
+  BoldItalicFont=Carlito Bold Italic
+]
+
+\pagestyle{empty}
+
+\hypersetup{
+  colorlinks=true,
+  urlcolor=blue,
+  linkcolor=blue
+}
+
+\definecolor{linkblue}{RGB}{5,99,193}
+
+\titleformat{\section}{
+  \bfseries\fontsize{10pt}{12pt}\selectfont
+}{}{0em}{}[\vspace{-4pt}\rule{\textwidth}{0.5pt}]
+\titlespacing*{\section}{0pt}{4pt}{1pt}
+
+\setlist[itemize]{
+  leftmargin=0.25in,
+  labelsep=0.06in,
+  itemsep=0pt,
+  parsep=0pt,
+  topsep=0pt,
+  label=\textbullet
+}
+
+\newcommand{\skillline}[2]{%
+  \noindent{\fontsize{9pt}{11pt}\selectfont\textbf{#1} #2}\par\vspace{1pt}%
+}
+
+\newcommand{\expentry}[2]{%
+  \vspace{2pt}%
+  \noindent\begin{tabularx}{\textwidth}{@{}X r@{}}
+    {\fontsize{11pt}{13pt}\selectfont\textbf{#1}} & {\fontsize{11pt}{13pt}\selectfont\textbf{#2}}
+  \end{tabularx}%
+  \vspace{-1pt}%
+}
+
+\begin{document}
+
+\section{SUMMARY}
+{\fontsize{9pt}{11pt}\selectfont
+\textbf{Tectonic package warmup document.} This file is compiled during Docker build to pre-cache all LaTeX packages used by the resume templates. It is never served to users.
+}
+
+\section{SKILLS}
+\vspace{1pt}
+\skillline{Engineering:}{XeLaTeX, Tectonic, fontspec, geometry}
+\skillline{Tools:}{hyperref, xcolor, tabularx, enumitem}
+
+\section{EXPERIENCE}
+\expentry{Package Cache Warmup}{2026}
+\begin{itemize}
+  \item Pre-caches all packages needed for resume compilation.
+\end{itemize}
+
+\end{document}

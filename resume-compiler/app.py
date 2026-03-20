@@ -65,7 +65,7 @@ def _safe_filename_part(s: str, max_len: int = 25) -> str:
 
 def _compile_tex(tex_content: str) -> bytes:
     """
-    Write tex_content to a temp dir, compile with xelatex, return PDF bytes.
+    Write tex_content to a temp dir, compile with tectonic, return PDF bytes.
     Raises RuntimeError with last 2000 chars of log on failure.
     Cleans up temp dir on exit.
     """
@@ -78,13 +78,12 @@ def _compile_tex(tex_content: str) -> bytes:
 
         result = subprocess.run(
             [
-                "xelatex",
-                "-interaction=nonstopmode",
-                f"-output-directory={tmpdir}",
+                "tectonic",
+                "--outdir", tmpdir,
                 tex_path,
             ],
             capture_output=True,
-            timeout=60,   # xelatex is slightly slower — increase timeout to 60s
+            timeout=60,
             cwd=tmpdir,
         )
 
