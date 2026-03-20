@@ -5,7 +5,5 @@
 [functions]
   directory = "netlify/functions"
 
-[[plugins]]
-
 [scheduled-functions.keep-alive]
   schedule = "*/10 * * * *"
