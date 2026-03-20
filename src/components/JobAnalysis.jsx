@@ -133,24 +133,24 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
     robustCopy(v).then(() => { setCopied(k); setTimeout(() => setCopied(""), 2500); }).catch(() => {});
   };
 
-  const downloadFile = async (endpoint, payload, fallbackFilename) => {
-    setGenLoading(endpoint === "/generate" ? "resume" : "coverletter");
+  const downloadFile = useCallback(async (endpoint, payload, fallbackFilename, loadingKey) => {
+    setGenLoading(loadingKey);
     setGenError(null);
     try {
-      const res = await fetch(`${COMPILER_URL}${endpoint}`, {
+      const response = await fetch(`${COMPILER_URL}${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({}));
-        throw new Error(err.error ?? `HTTP ${res.status}`);
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.error ?? `HTTP ${response.status}`);
       }
-      const blob = await res.blob();
+      const blob = await response.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      const cd = res.headers.get("Content-Disposition") ?? "";
+      const cd = response.headers.get("Content-Disposition") ?? "";
       const nameMatch = cd.match(/filename="?([^";\n]+)"?/);
       a.download = nameMatch ? nameMatch[1] : fallbackFilename;
       document.body.appendChild(a);
@@ -162,9 +162,9 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
     } finally {
       setGenLoading(null);
     }
-  };
+  }, []);
 
-  const downloadResume = () => {
+  const downloadResume = useCallback(() => {
     if (!result) return;
     downloadFile(
       "/generate",
@@ -175,19 +175,21 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
         company: co,
         role: role,
       },
-      `Resume_${result.recommendedResume}_${co || "Company"}.pdf`
+      `Resume_${result.recommendedResume}_${co || "Company"}.pdf`,
+      "resume"
     );
-  };
+  }, [result, co, role, downloadFile]);
 
-  const downloadCoverLetter = () => {
+  const downloadCoverLetter = useCallback(() => {
     if (!result) return;
     const payload = buildCoverLetterPayload({ result, company: co, role });
     downloadFile(
       "/generate-cover-letter",
       payload,
-      `CoverLetter_${co || "Company"}.pdf`
+      `CoverLetter_${co || "Company"}.pdf`,
+      "coverletter"
     );
-  };
+  }, [result, co, role, downloadFile]);
 
   const handleCompleteAndLog = () => {
     if (currentJob?.id) completePipeline(currentJob.id);
