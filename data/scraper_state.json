@@ -1,17 +1,17 @@
 {
   "jsearch": {
-    "queries_today": 0,
-    "queries_this_month": 10
+    "queries_today": 10,
+    "queries_this_month": 20
   },
   "serpapi": {
     "queries_today": 0
   },
   "apify": {
-    "runs_today": 0
+    "runs_today": 1
   },
   "theirstack": {
     "activations_today": 0
   },
-  "last_reset": "2026-03-14",
+  "last_reset": "2026-03-21",
   "month_year": "2026-03"
 }

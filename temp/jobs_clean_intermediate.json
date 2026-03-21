@@ -1,0 +1,31 @@
+{
+  "generated_utc": "2026-03-21T13:38:22.431426Z",
+  "stats": {
+    "total_raw": 115,
+    "schema_rejected": 0,
+    "f3_aggregator": 0,
+    "f4_age": 96,
+    "f5_duplicates": 1,
+    "f6_seniority": 0,
+    "f7_role": 13,
+    "f8_itar": 4,
+    "f9_blacklist": 0,
+    "final_count": 1
+  },
+  "jobs": [
+    {
+      "job_title": "Field Quality Engineer, Energy Storage",
+      "company_name": "Redwood Materials",
+      "job_url": "https://boards.greenhouse.io/redwoodmaterials/jobs/5823614004?gh_jid=5823614004",
+      "location": "San Francisco, California, United States",
+      "posted_date": "2026-03-21",
+      "description": "<div class=&quot;content-intro&quot;><div class=&quot;page&quot;> <div class=&quot;section&quot;> <div class=&quot;layoutArea&quot;> <div class=&quot;column&quot;> <p><span style=&quot;font-family: helvetica, arial, sans-serif; font-size: 12pt;&quot;><strong>About Redwood Materials</strong></span></p> <div> <p><strong>Redwood is localizing a global battery supply chain that seamlessly integrates recovery, reuse, and recycling&nbsp;</strong><strong>\u2014&nbsp;</strong><strong>keeping critical mineral",
+      "source": "ats_greenhouse",
+      "cluster": "quality",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 52,
+      "boost_tags": []
+    }
+  ]
+}
