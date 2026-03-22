@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JobAgent</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div id="app">
+    <div id="header">
+      <span class="logo">🧩 JobAgent</span>
+      <span id="ats-badge"></span>
+    </div>
+    <div id="content">
+      <div id="loading">Loading pipeline...</div>
+      <div id="no-match" style="display:none">No pipeline job matched for this page.</div>
+      <div id="job-card" style="display:none">
+        <div id="job-role"></div>
+        <div id="job-company"></div>
+        <div id="job-meta"></div>
+        <div id="variant-picker" style="display:none">
+          <label>Resume variant:</label>
+          <select id="variant-select">
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
+          </select>
+        </div>
+        <button id="btn-fill" disabled>⚡ Auto-fill Application</button>
+        <div id="fill-status"></div>
+      </div>
+    </div>
+    <div id="footer">
+      <a id="btn-options" href="#">⚙ Profile Settings</a>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
