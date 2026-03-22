@@ -274,3 +274,21 @@ export const M628 = [
   {name:"Zipline International",tier:1,h1b:"YES",itar:"NO",industry:"Manufacturing",roles:"Mfg, Process, Hardware",atsPlatform:"Unknown",domain:"ziplineinternational.com",atsBoardUrl:""},
   {name:"Zoltek",tier:1,h1b:"NO",itar:"NO",industry:"Manufacturing",roles:"Manufacturing, Process",atsPlatform:"Unknown",domain:"zoltek.com",atsBoardUrl:""},
 ];
+
+export const ITAR_KEYWORDS = [
+  "itar", "us person", "u.s. person", "us citizenship required",
+  "u.s. citizenship required", "export control", "export controlled",
+  "security clearance", "classified information", "classified program",
+  "classified access", "us citizen or permanent resident", "u.s. citizen",
+  "u.s. national", "permanent resident only",
+  "must be authorized to work without sponsorship",
+  "lawfully admitted for permanent residence", "active clearance",
+  "secret clearance", "top secret",
+];
+
+export const BLACKLIST = [
+  "staffing", "consulting", "recruiter", "headhunter", "talent agency",
+  "manpower", "kelly services", "adecco", "randstad", "robert half",
+  "insight global", "apex systems", "ciber", "cognizant", "infosys",
+  "wipro", "tata consultancy", "hcl technologies", "tech mahindra",
+];
