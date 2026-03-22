@@ -1,0 +1,72 @@
+import { describe, it, expect } from 'vitest';
+import { detectAts, extractGreenhouseSlug, extractLeverSlug, matchPipelineJob } from '../extension/adapters/index.js';
+
+describe('detectAts', () => {
+  it('detects boards.greenhouse.io', () => {
+    expect(detectAts('https://boards.greenhouse.io/rocketlab/jobs/7883012')).toBe('greenhouse');
+  });
+
+  it('detects job-boards.greenhouse.io', () => {
+    expect(detectAts('https://job-boards.greenhouse.io/axiomspace/jobs/4045617007')).toBe('greenhouse');
+  });
+
+  it('detects jobs.greenhouse.io numeric', () => {
+    expect(detectAts('https://jobs.greenhouse.io/7883012')).toBe('greenhouse');
+  });
+
+  it('detects lever', () => {
+    expect(detectAts('https://jobs.lever.co/shieldai/abc-123')).toBe('lever');
+  });
+
+  it('returns null for unrecognized URL', () => {
+    expect(detectAts('https://careers.google.com/jobs/12345')).toBeNull();
+    expect(detectAts('https://www.linkedin.com/jobs/view/12345')).toBeNull();
+  });
+});
+
+describe('extractGreenhouseSlug', () => {
+  it('extracts slug from boards.greenhouse.io', () => {
+    expect(extractGreenhouseSlug('https://boards.greenhouse.io/rocketlab/jobs/7883012')).toBe('rocketlab');
+  });
+
+  it('extracts slug from job-boards.greenhouse.io', () => {
+    expect(extractGreenhouseSlug('https://job-boards.greenhouse.io/axiomspace/jobs/4045617007')).toBe('axiomspace');
+  });
+
+  it('returns null for jobs.greenhouse.io (no slug)', () => {
+    expect(extractGreenhouseSlug('https://jobs.greenhouse.io/7883012')).toBeNull();
+  });
+});
+
+describe('extractLeverSlug', () => {
+  it('extracts slug from lever URL', () => {
+    expect(extractLeverSlug('https://jobs.lever.co/shieldai/abc-123-def')).toBe('shieldai');
+  });
+});
+
+describe('matchPipelineJob', () => {
+  const pipeline = [
+    { id: '1', applyUrl: 'https://boards.greenhouse.io/rocketlab/jobs/7883012', role: 'Mech Eng', company: 'Rocket Lab' },
+    { id: '2', applyUrl: 'https://jobs.lever.co/shieldai/abc', role: 'Systems Eng', company: 'Shield AI' },
+    { id: '3', applyUrl: 'https://boards.greenhouse.io/axiomspace/jobs/999', role: 'Structural Eng', company: 'Axiom Space' },
+  ];
+
+  it('matches greenhouse job by slug', () => {
+    const match = matchPipelineJob('https://boards.greenhouse.io/rocketlab/jobs/7883012', pipeline);
+    expect(match?.id).toBe('1');
+  });
+
+  it('matches lever job by slug', () => {
+    const match = matchPipelineJob('https://jobs.lever.co/shieldai/xyz', pipeline);
+    expect(match?.id).toBe('2');
+  });
+
+  it('returns null when no match', () => {
+    const match = matchPipelineJob('https://boards.greenhouse.io/google/jobs/999', pipeline);
+    expect(match).toBeNull();
+  });
+
+  it('returns null for unrecognized URL', () => {
+    expect(matchPipelineJob('https://careers.google.com/jobs/1', pipeline)).toBeNull();
+  });
+});
