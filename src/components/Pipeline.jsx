@@ -89,7 +89,7 @@ export default function Pipeline({pipeline, removePipeline, completePipeline, on
                 <div style={{display:"flex",alignItems:"center",gap:8}}>
                   {job.match && <span style={{fontSize:13,fontWeight:700,color:matchColor(job.match,t)}}>{job.match}%</span>}
                   <StatusBadge status={job.verdict||"YELLOW"} t={t}/>
-                  <Btn size="sm" onClick={() => { setCurrentJob(job); setPage("analyze"); }} t={t}><ArrowRight size={12}/> Analyze</Btn>
+                  <Btn size="sm" onClick={() => setPage("analyze", job)} t={t}><ArrowRight size={12}/> Analyze</Btn>
                   <Btn size="sm" variant="green" onClick={() => handleComplete(job)} t={t}><Check size={12}/> Complete</Btn>
                   <Btn size="sm" variant="red" onClick={() => removePipeline(job.id)} t={t}><Trash2 size={12}/></Btn>
                 </div>
