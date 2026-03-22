@@ -810,5 +810,37 @@
       }
     },
     "run_end_utc": "2026-03-21T13:45:15.704157Z"
+  },
+  {
+    "version": "4.2",
+    "run_date": "2026-03-22",
+    "run_start_utc": "2026-03-22T13:43:49.610339Z",
+    "queries_generated": 15,
+    "scrapers": {
+      "ats": {
+        "status": "success",
+        "jobs_found": 115
+      },
+      "jsearch": {
+        "status": "zero_results",
+        "queries_used": 10,
+        "jobs_found": 0
+      },
+      "apify": {
+        "status": "success",
+        "queries_used": 15,
+        "jobs_found": 141
+      },
+      "serpapi": {
+        "status": "success",
+        "queries_used": 5,
+        "jobs_found": 26
+      },
+      "theirstack": {
+        "status": "zero_results",
+        "jobs_found": 0
+      }
+    },
+    "run_end_utc": "2026-03-22T13:47:56.949488Z"
   }
 ]

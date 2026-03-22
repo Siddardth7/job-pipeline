@@ -1174,6 +1174,86 @@
       "name": "Abbott",
       "domain": "",
       "industry": "Auto-promoted"
+    },
+    {
+      "name": "Imperative Care",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Zone 5 Technologies",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "CardWorks",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Jobot",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "A-dec Inc.",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Fastenal",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Wilbert Plastic Services",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Hydro-Gear",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "ProPharma",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Mueller Water Products",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Sub-Zero Group, Inc.",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Flex",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "fairlife, LLC",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Ruggable",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Xylem",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Westinghouse Electric Company",
+      "domain": "",
+      "industry": "Auto-promoted"
     }
   ],
   "promotion_tracking": {
@@ -2442,7 +2522,8 @@
     ],
     "Imperative Care": [
       "2026-03-20",
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22"
     ],
     "iA": [
       "2026-03-20"
@@ -2455,7 +2536,8 @@
     ],
     "Zone 5 Technologies": [
       "2026-03-20",
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22"
     ],
     "Duke Energy Corporation": [
       "2026-03-20",
@@ -2463,22 +2545,26 @@
     ],
     "CardWorks": [
       "2026-03-20",
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22"
     ],
     "NPAworldwide": [
       "2026-03-20"
     ],
     "Jobot": [
       "2026-03-20",
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22"
     ],
     "A-dec Inc.": [
       "2026-03-20",
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22"
     ],
     "Fastenal": [
       "2026-03-20",
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22"
     ],
     "Mohawk Industries": [
       "2026-03-20",
@@ -2486,67 +2572,86 @@
     ],
     "Wilbert Plastic Services": [
       "2026-03-20",
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22"
     ],
     "Hydro-Gear": [
       "2026-03-20",
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22"
     ],
     "ProPharma": [
       "2026-03-20",
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22"
     ],
     "Mueller Water Products": [
       "2026-03-20",
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22"
     ],
     "Sub-Zero Group, Inc.": [
       "2026-03-20",
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22"
     ],
     "Flex": [
       "2026-03-20",
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22"
     ],
     "fairlife, LLC": [
       "2026-03-20",
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22"
     ],
     "Ruggable": [
       "2026-03-20",
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22"
     ],
     "Xylem": [
       "2026-03-20",
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22"
     ],
     "Mativ": [
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22"
     ],
     "Siemens Energy": [
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22"
     ],
     "GTI Fabrication": [
       "2026-03-21"
     ],
     "Knowles Precision Devices": [
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22"
     ],
     "A Hiring Company": [
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22"
     ],
     "Westinghouse Electric Company": [
       "2026-03-21",
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22",
+      "2026-03-22",
+      "2026-03-22"
     ],
     "Yokogawa": [
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22"
     ],
     "Husqvarna Group": [
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22"
     ],
     "ENTRUST Solutions Group": [
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22"
     ],
     "Abbott": [
       "2026-03-21",
@@ -2554,37 +2659,93 @@
       "2026-03-21"
     ],
     "RoviSys": [
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22"
     ],
     "GE Vernova": [
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22"
     ],
     "EFP, LLC.": [
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22"
     ],
     "Celestica": [
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22"
     ],
     "Qcells North America": [
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22"
     ],
     "Premium Guard Inc. (PGI)": [
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22"
     ],
     "Cypress HCM": [
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22"
     ],
     "KLA": [
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22"
     ],
     "Hirenza": [
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22"
     ],
     "Stanley Black & Decker, Inc.": [
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22"
     ],
     "Elanco": [
-      "2026-03-21"
+      "2026-03-21",
+      "2026-03-22"
+    ],
+    "Power Integrations": [
+      "2026-03-22"
+    ],
+    "Midmark Corporation": [
+      "2026-03-22"
+    ],
+    "Brunswick Corporation": [
+      "2026-03-22"
+    ],
+    "Form Energy": [
+      "2026-03-22"
+    ],
+    "Syska Hennessy Group": [
+      "2026-03-22"
+    ],
+    "Granite Construction": [
+      "2026-03-22"
+    ],
+    "Epredia": [
+      "2026-03-22"
+    ],
+    "Ardurra": [
+      "2026-03-22"
+    ],
+    "VulcanForms Inc.": [
+      "2026-03-22"
+    ],
+    "General Mills": [
+      "2026-03-22"
+    ],
+    "Papa Johns": [
+      "2026-03-22"
+    ],
+    "Unilever": [
+      "2026-03-22"
+    ],
+    "Alstom": [
+      "2026-03-22"
+    ],
+    "Headway Technologies": [
+      "2026-03-22"
+    ],
+    "ExxonMobil": [
+      "2026-03-22"
     ]
   },
   "rejected_companies": [],
