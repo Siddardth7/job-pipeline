@@ -1,39 +1,238 @@
 {
   "_comment": "ATS company registry for ats_scraper.py. Format: {slug: {name, tier, industry, h1b, itar}}. Tier 1=top priority. h1b: YES/LIKELY/NO. itar: YES/Partial/NO. Slugs verified March 2026.",
   "greenhouse": {
-    "supernal":             {"name": "Supernal",                "tier": "Tier 1", "industry": "Aerospace",              "h1b": "YES",    "itar": "Partial"},
-    "planetlabs":           {"name": "Planet Labs",             "tier": "Tier 1", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "Partial"},
-    "astspacemobile":       {"name": "AST SpaceMobile",         "tier": "Tier 2", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "NO"},
-    "relativity":           {"name": "Relativity Space",        "tier": "Tier 2", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "NO"},
-    "astranis":             {"name": "Astranis",                "tier": "Tier 1", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "Partial"},
-    "rocketlab":            {"name": "Rocket Lab",              "tier": "Tier 1", "industry": "Aerospace",              "h1b": "YES",    "itar": "Partial"},
-    "vast":                 {"name": "Vast Space",              "tier": "Tier 1", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "NO"},
-    "divergent":            {"name": "Divergent Technologies",  "tier": "Tier 2", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "NO"},
-    "flyzipline":           {"name": "Zipline",                 "tier": "Tier 2", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "NO"},
-    "heartaerospace":       {"name": "Heart Aerospace",         "tier": "Tier 1", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "NO"},
-    "ottoaviation":         {"name": "Otto Aviation",           "tier": "Tier 1", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "NO"},
-    "rebuildmanufacturing": {"name": "Re:Build Manufacturing",  "tier": "Tier 2", "industry": "Materials & Composites", "h1b": "LIKELY", "itar": "NO"},
-    "ursamajor":            {"name": "Ursa Major",              "tier": "Tier 1", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "Partial"},
-    "spire":                {"name": "Spire Global",            "tier": "Tier 2", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "NO"},
-    "archer":               {"name": "Archer Aviation",         "tier": "Tier 1", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "Partial"},
-    "axiom":                {"name": "Axiom Space",             "tier": "Tier 1", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "Partial"},
-    "solidpower":           {"name": "Solid Power",             "tier": "Tier 3", "industry": "Energy",                 "h1b": "LIKELY", "itar": "NO"},
-    "sesai":                {"name": "SES AI",                  "tier": "Tier 3", "industry": "Energy",                 "h1b": "LIKELY", "itar": "NO"},
-    "nuro":                 {"name": "Nuro",                    "tier": "Tier 2", "industry": "Automotive",             "h1b": "YES",    "itar": "NO"},
-    "lucidmotors":          {"name": "Lucid Motors",            "tier": "Tier 2", "industry": "Automotive",             "h1b": "YES",    "itar": "NO"},
-    "faradayfuture":        {"name": "Faraday Future",          "tier": "Tier 2", "industry": "Automotive",             "h1b": "LIKELY", "itar": "NO"},
-    "chargepoint":          {"name": "ChargePoint",             "tier": "Tier 2", "industry": "Automotive",             "h1b": "LIKELY", "itar": "NO"},
-    "redwoodmaterials":     {"name": "Redwood Materials",       "tier": "Tier 2", "industry": "Energy",                 "h1b": "LIKELY", "itar": "NO"},
-    "markforged":           {"name": "Markforged",              "tier": "Tier 2", "industry": "Manufacturing",          "h1b": "LIKELY", "itar": "NO"},
-    "dawnaerospace":        {"name": "Dawn Aerospace",          "tier": "Tier 2", "industry": "Aerospace",              "h1b": "LIKELY", "itar": "NO"},
-    "carbon":               {"name": "Carbon",                  "tier": "Tier 2", "industry": "Manufacturing",          "h1b": "YES",    "itar": "NO"}
+    "supernal": {
+      "name": "Supernal",
+      "tier": "Tier 1",
+      "industry": "Aerospace",
+      "h1b": "YES",
+      "itar": "Partial"
+    },
+    "planetlabs": {
+      "name": "Planet Labs",
+      "tier": "Tier 1",
+      "industry": "Aerospace",
+      "h1b": "YES",
+      "itar": "Partial"
+    },
+    "astspacemobile": {
+      "name": "AST SpaceMobile",
+      "tier": "Tier 2",
+      "industry": "Aerospace",
+      "h1b": "YES",
+      "itar": "NO"
+    },
+    "relativity": {
+      "name": "Relativity Space",
+      "tier": "Tier 2",
+      "industry": "Aerospace",
+      "h1b": "LIKELY",
+      "itar": "NO"
+    },
+    "astranis": {
+      "name": "Astranis",
+      "tier": "Tier 1",
+      "industry": "Aerospace",
+      "h1b": "LIKELY",
+      "itar": "Partial"
+    },
+    "rocketlab": {
+      "name": "Rocket Lab",
+      "tier": "Tier 1",
+      "industry": "Aerospace",
+      "h1b": "YES",
+      "itar": "Partial"
+    },
+    "vast": {
+      "name": "Vast Space",
+      "tier": "Tier 1",
+      "industry": "Aerospace",
+      "h1b": "LIKELY",
+      "itar": "NO"
+    },
+    "divergent": {
+      "name": "Divergent Technologies",
+      "tier": "Tier 2",
+      "industry": "Aerospace",
+      "h1b": "LIKELY",
+      "itar": "NO"
+    },
+    "flyzipline": {
+      "name": "Zipline",
+      "tier": "Tier 2",
+      "industry": "Aerospace",
+      "h1b": "LIKELY",
+      "itar": "NO"
+    },
+    "heartaerospace": {
+      "name": "Heart Aerospace",
+      "tier": "Tier 1",
+      "industry": "Aerospace",
+      "h1b": "LIKELY",
+      "itar": "NO"
+    },
+    "ottoaviation": {
+      "name": "Otto Aviation",
+      "tier": "Tier 1",
+      "industry": "Aerospace",
+      "h1b": "LIKELY",
+      "itar": "NO"
+    },
+    "rebuildmanufacturing": {
+      "name": "Re:Build Manufacturing",
+      "tier": "Tier 2",
+      "industry": "Materials & Composites",
+      "h1b": "LIKELY",
+      "itar": "NO"
+    },
+    "ursamajor": {
+      "name": "Ursa Major",
+      "tier": "Tier 1",
+      "industry": "Aerospace",
+      "h1b": "LIKELY",
+      "itar": "Partial"
+    },
+    "spire": {
+      "name": "Spire Global",
+      "tier": "Tier 2",
+      "industry": "Aerospace",
+      "h1b": "YES",
+      "itar": "NO"
+    },
+    "archer": {
+      "name": "Archer Aviation",
+      "tier": "Tier 1",
+      "industry": "Aerospace",
+      "h1b": "YES",
+      "itar": "Partial"
+    },
+    "axiom": {
+      "name": "Axiom Space",
+      "tier": "Tier 1",
+      "industry": "Aerospace",
+      "h1b": "LIKELY",
+      "itar": "Partial"
+    },
+    "solidpower": {
+      "name": "Solid Power",
+      "tier": "Tier 3",
+      "industry": "Energy",
+      "h1b": "LIKELY",
+      "itar": "NO"
+    },
+    "sesai": {
+      "name": "SES AI",
+      "tier": "Tier 3",
+      "industry": "Energy",
+      "h1b": "LIKELY",
+      "itar": "NO"
+    },
+    "nuro": {
+      "name": "Nuro",
+      "tier": "Tier 2",
+      "industry": "Automotive",
+      "h1b": "YES",
+      "itar": "NO"
+    },
+    "lucidmotors": {
+      "name": "Lucid Motors",
+      "tier": "Tier 2",
+      "industry": "Automotive",
+      "h1b": "YES",
+      "itar": "NO"
+    },
+    "faradayfuture": {
+      "name": "Faraday Future",
+      "tier": "Tier 2",
+      "industry": "Automotive",
+      "h1b": "LIKELY",
+      "itar": "NO"
+    },
+    "chargepoint": {
+      "name": "ChargePoint",
+      "tier": "Tier 2",
+      "industry": "Automotive",
+      "h1b": "LIKELY",
+      "itar": "NO"
+    },
+    "redwoodmaterials": {
+      "name": "Redwood Materials",
+      "tier": "Tier 2",
+      "industry": "Energy",
+      "h1b": "LIKELY",
+      "itar": "NO"
+    },
+    "markforged": {
+      "name": "Markforged",
+      "tier": "Tier 2",
+      "industry": "Manufacturing",
+      "h1b": "LIKELY",
+      "itar": "NO"
+    },
+    "dawnaerospace": {
+      "name": "Dawn Aerospace",
+      "tier": "Tier 2",
+      "industry": "Aerospace",
+      "h1b": "LIKELY",
+      "itar": "NO"
+    },
+    "carbon": {
+      "name": "Carbon",
+      "tier": "Tier 2",
+      "industry": "Manufacturing",
+      "h1b": "YES",
+      "itar": "NO"
+    },
+    "jobycareers": {
+      "name": "Joby Aviation",
+      "tier": "Tier 1",
+      "industry": "Aerospace",
+      "h1b": "YES",
+      "itar": "Partial"
+    }
   },
   "lever": {
-    "shieldai":        {"name": "Shield AI",         "tier": "Tier 1", "industry": "Aerospace",     "h1b": "LIKELY", "itar": "Partial"},
-    "loftorbital":     {"name": "Loft Orbital",      "tier": "Tier 2", "industry": "Aerospace",     "h1b": "LIKELY", "itar": "NO"},
-    "hermeus":         {"name": "Hermeus",            "tier": "Tier 1", "industry": "Aerospace",     "h1b": "LIKELY", "itar": "Partial"},
-    "beta":            {"name": "Beta Technologies", "tier": "Tier 1", "industry": "Aerospace",     "h1b": "LIKELY", "itar": "Partial"},
-    "velo3d":          {"name": "Velo3D",             "tier": "Tier 2", "industry": "Manufacturing", "h1b": "LIKELY", "itar": "NO"},
-    "orbitalsidekick": {"name": "Orbital Sidekick",  "tier": "Tier 2", "industry": "Aerospace",     "h1b": "LIKELY", "itar": "NO"}
+    "shieldai": {
+      "name": "Shield AI",
+      "tier": "Tier 1",
+      "industry": "Aerospace",
+      "h1b": "LIKELY",
+      "itar": "Partial"
+    },
+    "loftorbital": {
+      "name": "Loft Orbital",
+      "tier": "Tier 2",
+      "industry": "Aerospace",
+      "h1b": "YES",
+      "itar": "NO"
+    },
+    "hermeus": {
+      "name": "Hermeus",
+      "tier": "Tier 1",
+      "industry": "Aerospace",
+      "h1b": "LIKELY",
+      "itar": "Partial"
+    },
+    "beta": {
+      "name": "Beta Technologies",
+      "tier": "Tier 1",
+      "industry": "Aerospace",
+      "h1b": "LIKELY",
+      "itar": "Partial"
+    },
+    "velo3d": {
+      "name": "Velo3D",
+      "tier": "Tier 2",
+      "industry": "Manufacturing",
+      "h1b": "LIKELY",
+      "itar": "NO"
+    },
+    "orbitalsidekick": {
+      "name": "Orbital Sidekick",
+      "tier": "Tier 2",
+      "industry": "Aerospace",
+      "h1b": "LIKELY",
+      "itar": "NO"
+    }
   }
 }
