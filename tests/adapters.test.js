@@ -108,3 +108,37 @@ describe('greenhouse adapter extractSlug()', () => {
     expect(ghExtractSlug('https://jobs.greenhouse.io/7883012')).toBeNull();
   });
 });
+
+import { detect as leverDetect, extractSlug as leverExtractSlug } from '../extension/adapters/lever.js';
+
+describe('lever adapter detect()', () => {
+  it('detects lever job page', () => {
+    expect(leverDetect('https://jobs.lever.co/shieldai/abc-123')).toBe(true);
+  });
+
+  it('detects lever job page with subpath', () => {
+    expect(leverDetect('https://jobs.lever.co/betatechnologies/xyz/apply')).toBe(true);
+  });
+
+  it('rejects greenhouse', () => {
+    expect(leverDetect('https://boards.greenhouse.io/rocketlab/jobs/123')).toBe(false);
+  });
+
+  it('rejects generic URL', () => {
+    expect(leverDetect('https://careers.google.com/jobs/1')).toBe(false);
+  });
+});
+
+describe('lever adapter extractSlug()', () => {
+  it('extracts slug from lever URL', () => {
+    expect(leverExtractSlug('https://jobs.lever.co/shieldai/abc-123')).toBe('shieldai');
+  });
+
+  it('extracts hyphenated slug', () => {
+    expect(leverExtractSlug('https://jobs.lever.co/beta-technologies/xyz')).toBe('beta-technologies');
+  });
+
+  it('returns null for non-lever URL', () => {
+    expect(leverExtractSlug('https://boards.greenhouse.io/rocketlab/jobs/123')).toBeNull();
+  });
+});
