@@ -133,11 +133,14 @@ SOFT CLOSE BANK:
 STEP 4 — COMPLIANCE CHECK before finalizing:
   - All 5 keywords present verbatim in the summary
   - ** markers on: [Title] + all 5 keywords — nothing else bolded
+  - Kw5 appears ONLY in the soft close sentence (S3) — never use Kw5 in the [skills] slot of S2
+  - [skills] in S2 must use tools/methods from the candidate background, NOT keywords from top5_jd_skills
   - Exactly 3 sentences — one period each, no semicolons
   - Total word count 60 or under
   - No first-person: no "I am", "I have", "I bring", "I hold"
   - No passive voice: no "is applied", "has been", "was implemented", "are utilized"
   - No filler: no "passionate", "dynamic", "well-equipped", "excited to", "results-driven"
+  - CRITICAL: Use ONLY ** markers for bold — never write \textbf{} or any LaTeX syntax in mod1_summary
 
 SKILLS RULES:
 - You are given the 5 base skilllines for this variant. You must return all 5 lines, modified

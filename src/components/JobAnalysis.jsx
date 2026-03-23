@@ -501,10 +501,23 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
   const toFileSlug = (s) =>
     (s || '').trim().replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_+|_+$/g, '');
 
+  // Recruiter-friendly slug: title-case words, strip filler, cap at maxWords
+  const toRoleSlug = (s, maxWords = 4) => {
+    const filler = new Set(['the','of','and','or','for','a','an','in','at','to','with','by']);
+    return (s || '')
+      .trim()
+      .split(/\s+/)
+      .filter(w => !filler.has(w.toLowerCase()))
+      .slice(0, maxWords)
+      .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+      .join('_')
+      .replace(/[^a-zA-Z0-9_]/g, '') || 'Engineer';
+  };
+
   const downloadResume = useCallback(() => {
     if (!result) return;
-    const company = toFileSlug(co) || 'Company';
-    const roleSlug = toFileSlug(role) || 'Engineer';
+    const companySlug = toFileSlug(co) || 'Company';
+    const roleSlug = toRoleSlug(role);
     downloadFile(
       "/generate",
       {
@@ -514,20 +527,20 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
         company: co,
         role: role,
       },
-      `Siddardth_Pathipaka_Resume_${company}_${roleSlug}.pdf`,
+      `Siddardth_Pathipaka_${roleSlug}_${companySlug}.pdf`,
       "resume"
     );
   }, [result, co, role, downloadFile]);
 
   const downloadCoverLetter = useCallback(() => {
     if (!result) return;
-    const company = toFileSlug(co) || 'Company';
-    const roleSlug = toFileSlug(role) || 'Engineer';
+    const companySlug = toFileSlug(co) || 'Company';
+    const roleSlug = toRoleSlug(role);
     const payload = buildCoverLetterPayload({ result, company: co, role });
     downloadFile(
       "/generate-cover-letter",
       payload,
-      `Siddardth_Pathipaka_CoverLetter_${company}_${roleSlug}.pdf`,
+      `Siddardth_Pathipaka_CoverLetter_${roleSlug}_${companySlug}.pdf`,
       "coverletter"
     );
   }, [result, co, role, downloadFile]);
