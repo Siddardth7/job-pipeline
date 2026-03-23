@@ -1254,6 +1254,81 @@
       "name": "Westinghouse Electric Company",
       "domain": "",
       "industry": "Auto-promoted"
+    },
+    {
+      "name": "Siemens Energy",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "A Hiring Company",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Yokogawa",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Husqvarna Group",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "ENTRUST Solutions Group",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "RoviSys",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "GE Vernova",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "EFP, LLC.",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Celestica",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Qcells North America",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Cypress HCM",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "KLA",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Hirenza",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Stanley Black & Decker, Inc.",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Elanco",
+      "domain": "",
+      "industry": "Auto-promoted"
     }
   ],
   "promotion_tracking": {
@@ -1439,7 +1514,8 @@
       "2026-03-11"
     ],
     "Terex Corporation": [
-      "2026-03-11"
+      "2026-03-11",
+      "2026-03-23"
     ],
     "Detroit Thermal Systems, LLC - Tier 1 Automotive Supplier": [
       "2026-03-11"
@@ -2621,7 +2697,8 @@
     ],
     "Siemens Energy": [
       "2026-03-21",
-      "2026-03-22"
+      "2026-03-22",
+      "2026-03-23"
     ],
     "GTI Fabrication": [
       "2026-03-21"
@@ -2632,7 +2709,8 @@
     ],
     "A Hiring Company": [
       "2026-03-21",
-      "2026-03-22"
+      "2026-03-22",
+      "2026-03-23"
     ],
     "Westinghouse Electric Company": [
       "2026-03-21",
@@ -2643,15 +2721,18 @@
     ],
     "Yokogawa": [
       "2026-03-21",
-      "2026-03-22"
+      "2026-03-22",
+      "2026-03-23"
     ],
     "Husqvarna Group": [
       "2026-03-21",
-      "2026-03-22"
+      "2026-03-22",
+      "2026-03-23"
     ],
     "ENTRUST Solutions Group": [
       "2026-03-21",
-      "2026-03-22"
+      "2026-03-22",
+      "2026-03-23"
     ],
     "Abbott": [
       "2026-03-21",
@@ -2660,23 +2741,28 @@
     ],
     "RoviSys": [
       "2026-03-21",
-      "2026-03-22"
+      "2026-03-22",
+      "2026-03-23"
     ],
     "GE Vernova": [
       "2026-03-21",
-      "2026-03-22"
+      "2026-03-22",
+      "2026-03-23"
     ],
     "EFP, LLC.": [
       "2026-03-21",
-      "2026-03-22"
+      "2026-03-22",
+      "2026-03-23"
     ],
     "Celestica": [
       "2026-03-21",
-      "2026-03-22"
+      "2026-03-22",
+      "2026-03-23"
     ],
     "Qcells North America": [
       "2026-03-21",
-      "2026-03-22"
+      "2026-03-22",
+      "2026-03-23"
     ],
     "Premium Guard Inc. (PGI)": [
       "2026-03-21",
@@ -2684,68 +2770,109 @@
     ],
     "Cypress HCM": [
       "2026-03-21",
-      "2026-03-22"
+      "2026-03-22",
+      "2026-03-23"
     ],
     "KLA": [
       "2026-03-21",
-      "2026-03-22"
+      "2026-03-22",
+      "2026-03-23"
     ],
     "Hirenza": [
       "2026-03-21",
-      "2026-03-22"
+      "2026-03-22",
+      "2026-03-23"
     ],
     "Stanley Black & Decker, Inc.": [
       "2026-03-21",
-      "2026-03-22"
+      "2026-03-22",
+      "2026-03-23"
     ],
     "Elanco": [
       "2026-03-21",
-      "2026-03-22"
+      "2026-03-22",
+      "2026-03-23"
     ],
     "Power Integrations": [
-      "2026-03-22"
+      "2026-03-22",
+      "2026-03-23"
     ],
     "Midmark Corporation": [
-      "2026-03-22"
+      "2026-03-22",
+      "2026-03-23"
     ],
     "Brunswick Corporation": [
-      "2026-03-22"
+      "2026-03-22",
+      "2026-03-23"
     ],
     "Form Energy": [
-      "2026-03-22"
+      "2026-03-22",
+      "2026-03-23"
     ],
     "Syska Hennessy Group": [
-      "2026-03-22"
+      "2026-03-22",
+      "2026-03-23"
     ],
     "Granite Construction": [
-      "2026-03-22"
+      "2026-03-22",
+      "2026-03-23"
     ],
     "Epredia": [
-      "2026-03-22"
+      "2026-03-22",
+      "2026-03-23"
     ],
     "Ardurra": [
-      "2026-03-22"
+      "2026-03-22",
+      "2026-03-23"
     ],
     "VulcanForms Inc.": [
-      "2026-03-22"
+      "2026-03-22",
+      "2026-03-23"
     ],
     "General Mills": [
-      "2026-03-22"
+      "2026-03-22",
+      "2026-03-23"
     ],
     "Papa Johns": [
-      "2026-03-22"
+      "2026-03-22",
+      "2026-03-23"
     ],
     "Unilever": [
-      "2026-03-22"
+      "2026-03-22",
+      "2026-03-23"
     ],
     "Alstom": [
-      "2026-03-22"
+      "2026-03-22",
+      "2026-03-23"
     ],
     "Headway Technologies": [
-      "2026-03-22"
+      "2026-03-22",
+      "2026-03-23"
     ],
     "ExxonMobil": [
-      "2026-03-22"
+      "2026-03-22",
+      "2026-03-23"
+    ],
+    "Packaging Corporation of America": [
+      "2026-03-23"
+    ],
+    "Holtec International": [
+      "2026-03-23"
+    ],
+    "Solar Turbines": [
+      "2026-03-23"
+    ],
+    "PharmEng Technology": [
+      "2026-03-23"
+    ],
+    "SSi People": [
+      "2026-03-23"
+    ],
+    "VERINGER ENGINEERING": [
+      "2026-03-23"
+    ],
+    "GHD": [
+      "2026-03-23"
     ]
   },
   "rejected_companies": [],
