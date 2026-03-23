@@ -509,7 +509,7 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
       "/generate",
       {
         variant: result.recommendedResume,
-        summary: result.mod1_summary?.replace(/\*\*/g, ''),
+        summary: result.mod1_summary_latex ?? result.mod1_summary?.replace(/\*\*/g, ''),
         skills_latex: result.mod2_skills,
         company: co,
         role: role,
@@ -569,7 +569,7 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
     );
   }
 
-  const mod1LaTeX = result ? `\\textbf{${result.mod1_summary?.replace(/\*\*/g, '')}}` : "";
+  const mod1LaTeX = result?.mod1_summary_latex ?? result?.mod1_summary?.replace(/\*\*/g, '') ?? "";
 
   return (
     <div>

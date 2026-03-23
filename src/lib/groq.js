@@ -89,21 +89,55 @@ CANDIDATE: Siddardth Pathipaka
 STRICT RULES:
 1. Only TWO modifications: Summary (mod1_summary) and Skills (mod2_skilllines)
 2. Experience and project bullet points are LOCKED — never modify them
-3. No dashes or em-dashes in output
+3. No em-dashes in output
 4. Output must be valid JSON only — no markdown fences
 
 SUMMARY RULES — HARD CONSTRAINTS (violating any rule means the output is rejected):
-- Identify the top 5 duties/responsibilities/skills the JD is primarily asking for (put these in top5_jd_skills)
-- EXACTLY 3 sentences. Count them. One period per sentence — no semicolons to sneak in a 4th clause.
-- HARD WORD LIMIT: 60 words total across all 3 sentences. Count every word. Stay under 60.
-- Sentence 1 (≤18 words): Degree/title + domain + 1 top JD keyword. No verbs like "is applied" or "brings". Example structure: "MS Aerospace Engineering, UIUC. Composites manufacturing and defect-reduction specialist with direct [keyword] experience."
-- Sentence 2 (≤20 words): ONE quantified achievement with real numbers that directly maps to this role's core need. Must contain at least one number.
-- Sentence 3 (≤18 words): 2-3 specific tools or methods from Siddardth's background + one JD keyword. No vague claims.
-- FORBIDDEN — passive voice: no "is applied", "has been", "was implemented", "are utilized", "is leveraged", "has led to"
-- FORBIDDEN — vague qualifiers: no "notable", "impactful", "significant", "strong", "various", "areas like", "ability to", "such as", "contributions to"
-- FORBIDDEN — first-person: no "I am", "I have", "I bring", "I hold"
-- FORBIDDEN — filler: no "passionate", "dynamic", "hands-on", "well-equipped", "excited to", "results-driven"
-- Plain text only. No ** markdown. No em-dashes.
+
+STEP 1 — IDENTIFY KEYWORDS
+Put the top 5 JD duties/skills in top5_jd_skills as [Kw1, Kw2, Kw3, Kw4, Kw5].
+These must appear VERBATIM in the summary. No synonyms, no paraphrasing.
+
+STEP 2 — PICK ONE STRUCTURE based on what the JD emphasizes:
+  Structure 1 (manufacturing execution, plant ops, quality ops):
+    **[Title]** with hands-on **[Kw1]** and **[Kw2]** experience at [company/project]. Proven ability to drive **[Kw3]** and **[Kw4]** results using [skills]. [Soft close with **[Kw5]**].
+
+  Structure 2 (quality systems, inspection, audits, AS9100):
+    **[Title]** specializing in **[Kw1]** and **[Kw2]**, with direct industry exposure at [company/project]. Built a track record of **[Kw3]** improvements and **[Kw4]** delivery using [skills]. [Soft close with **[Kw5]**].
+
+  Structure 3 (R&D to production, process development, cure cycle, materials):
+    **[Title]** with end-to-end **[Kw1]** exposure from [experience1] to [experience2]. Applies **[Kw2]** and **[Kw3]** methods to deliver **[Kw4]** outcomes. [Soft close with **[Kw5]**].
+
+  Structure 4 (NPI, tooling, product launch, APQP, commissioning):
+    **[Title]** combining **[Kw1]** depth with **[Kw2]** execution at [company/project]. Consistently delivers **[Kw3]** and **[Kw4]** outcomes through disciplined [skills]. [Soft close with **[Kw5]**].
+
+  Structure 5 (composites, NDT, validation, structural analysis, materials):
+    **[Title]** built on **[Kw1]** and **[Kw2]** work at [company/project]. Validated through **[Kw3]** and **[Kw4]** projects that directly map to production environments. [Soft close with **[Kw5]**].
+
+STEP 3 — FILL THE SLOTS:
+  [Title]           -> JD job title if specific, else resume variant focus name.
+                      Examples: "Composites Manufacturing Engineer", "NPI & Tooling Engineer", "Quality Systems Engineer"
+  [Kw1]..[Kw5]     -> top5_jd_skills verbatim, each wrapped in ** bold markers
+  [company/project] -> most relevant from: Tata Boeing (quality/manufacturing),
+                      SAMPE (composites/fabrication), Beckman Institute (R&D/materials/cure cycle)
+  [skills]          -> 2-3 specific tools/methods Siddardth actually used, relevant to the JD
+  [Soft close]      -> pick from bank below, weave Kw5 in naturally
+
+SOFT CLOSE BANK:
+  A. Adapts quickly from lab scale to production floor, ready to apply **[Kw5]** from day one.
+  B. Detail-oriented with a root-cause bias across **[Kw5]** workflows.
+  C. Brings structured problem-solving to cross-functional **[Kw5]** environments.
+  D. Comfortable driving alignment between engineering and production on **[Kw5]** initiatives.
+  E. Consistently delivers zero-escape quality at the component level across **[Kw5]** programs.
+
+STEP 4 — COMPLIANCE CHECK before finalizing:
+  - All 5 keywords present verbatim in the summary
+  - ** markers on: [Title] + all 5 keywords — nothing else bolded
+  - Exactly 3 sentences — one period each, no semicolons
+  - Total word count 60 or under
+  - No first-person: no "I am", "I have", "I bring", "I hold"
+  - No passive voice: no "is applied", "has been", "was implemented", "are utilized"
+  - No filler: no "passionate", "dynamic", "well-equipped", "excited to", "results-driven"
 
 SKILLS RULES:
 - You are given the 5 base skilllines for this variant. You must return all 5 lines, modified
@@ -126,7 +160,8 @@ ${jd.slice(0, 3500)}
 Return ONLY this JSON (no markdown, no code fences):
 {
   "top5_jd_skills": ["skill1", "skill2", "skill3", "skill4", "skill5"],
-  "mod1_summary": "EXACTLY 3 sentences, plain text, no markdown, no ** markers, no I/me pronouns",
+  "summary_structure_used": 1,
+  "mod1_summary": "EXACTLY 3 sentences. Use ** bold markers on Title and all 5 keywords. No I/me pronouns.",
   "mod2_skilllines": [
     {"label": "same label as base line 1", "skills": "reordered skills, added (Learning) if needed"},
     {"label": "same label as base line 2", "skills": "reordered skills"},
@@ -160,7 +195,8 @@ Return ONLY this JSON (no markdown, no code fences):
 }
 
 // ── QC BARRIER — applied to every parsed Groq result ────────────────────────
-// Deterministically enforces summary rules regardless of what the model outputs.
+// Enforces hard structural rules. Does NOT strip individual words —
+// word-level removal breaks sentence grammar. Prompt handles content quality.
 function applyQCBarriers(parsed) {
   if (parsed.mod2_skilllines && Array.isArray(parsed.mod2_skilllines)) {
     parsed.mod2_skills = parsed.mod2_skilllines
@@ -175,43 +211,36 @@ function applyQCBarriers(parsed) {
   if (parsed.mod1_summary) {
     let s = parsed.mod1_summary;
 
-    // 1. Strip ** markdown markers
-    s = s.replace(/\*\*/g, '');
-
-    // 2. Strip first-person pronouns
-    s = s.replace(/\b(I am|I have|I bring|I hold|I possess|I offer|I am excited|I am confident|I am well-equipped)\b/gi, '');
-
-    // 3. Kill filler phrases
-    [
-      /\bpassionate\b/gi, /\bdynamic\b/gi, /\bhands-on\b/gi,
-      /\bindependent individual\b/gi, /\bexcited to bring\b/gi,
-      /\bwell-equipped\b/gi, /\bresults-driven\b/gi, /\bself-starter\b/gi,
-    ].forEach(f => { s = s.replace(f, ''); });
-
-    // 4. Kill vague qualifiers that signal AI padding
-    [
-      /\bnotable\b/gi, /\bimpactful\b/gi, /\bsignificant\b/gi,
-      /\bareas like\b/gi, /\bsuch as\b/gi, /\bability to\b/gi,
-      /\bcontributions to\b/gi, /\bvarious\b/gi,
-    ].forEach(f => { s = s.replace(f, ''); });
-
-    // 5. Kill passive voice constructions
-    [
-      /\bis applied\b/gi, /\bhas been\b/gi, /\bwas implemented\b/gi,
-      /\bare utilized\b/gi, /\bis leveraged\b/gi, /\bhas led to\b/gi,
-      /\bwere reduced\b/gi, /\bcan be\b/gi, /\bwill be\b/gi,
-    ].forEach(f => { s = s.replace(f, ''); });
-
-    // 6. Enforce max 3 sentences
+    // 1. Enforce max 3 sentences (hard structural rule)
     const sentences = s.match(/[^.!?]+[.!?]+/g) || [s];
     if (sentences.length > 3) s = sentences.slice(0, 3).join(' ');
 
-    // 7. Hard word cap: 65 words — trim trailing words if over
-    const words = s.split(/\s+/).filter(Boolean);
-    if (words.length > 65) s = words.slice(0, 65).join(' ').replace(/[,\s]+$/, '') + '.';
+    // 2. Hard word cap: 65 words — trim trailing words if over
+    // Count words ignoring ** markers so bold tokens don't inflate the count
+    const stripped = s.replace(/\*\*/g, '');
+    const words = stripped.split(/\s+/).filter(Boolean);
+    if (words.length > 65) {
+      // Rebuild the trimmed sentence preserving ** markers
+      let count = 0;
+      let cutIdx = s.length;
+      let inMarker = false;
+      const tokens = s.split(/(\*\*|\s+)/);
+      let rebuilt = '';
+      for (const token of tokens) {
+        if (token === '**') { rebuilt += token; inMarker = !inMarker; continue; }
+        if (/^\s+$/.test(token)) { rebuilt += token; continue; }
+        if (count >= 65) { cutIdx = rebuilt.length; break; }
+        rebuilt += token;
+        count++;
+      }
+      s = rebuilt.slice(0, cutIdx).replace(/[,\s*]+$/, '') + '.';
+    }
 
-    // 8. Clean up artifacts from replacements
-    s = s.replace(/ {2,}/g, ' ').replace(/ ,/g, ',').replace(/^[,\s]+/, '').trim();
+    // 3. Clean up spacing artifacts
+    s = s.replace(/ {2,}/g, ' ').replace(/ ,/g, ',').trim();
+
+    // 4. Build LaTeX version: convert **text** -> \textbf{text}
+    parsed.mod1_summary_latex = s.replace(/\*\*([^*]+)\*\*/g, '\\textbf{$1}');
 
     parsed.mod1_summary = s;
   }
