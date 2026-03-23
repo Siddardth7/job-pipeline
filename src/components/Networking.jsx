@@ -216,14 +216,16 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
     setLoading(true);
     setErr("");
     try {
-      const res = await fetch('/.netlify/functions/find-contacts', {
+      const res = await fetch('/api/find-contacts', {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
         body: JSON.stringify({company: co, role, count: totalCount, serperKey})
       });
       if (!res.ok) {
-        const errData = await res.json();
-        throw new Error(errData.error || `HTTP ${res.status}`);
+        const txt = await res.text();
+        let msg = `HTTP ${res.status}`;
+        try { msg = JSON.parse(txt).error || msg; } catch { /* non-JSON error body */ }
+        throw new Error(msg);
       }
       const contacts = await res.json();
       if (!Array.isArray(contacts) || contacts.length === 0) {

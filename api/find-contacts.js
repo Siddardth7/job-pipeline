@@ -3,12 +3,12 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const apiKey = process.env.SERPER_API_KEY;
-  if (!apiKey) {
-    return res.status(500).json({ error: 'SERPER_API_KEY not configured' });
-  }
+  const { company, role, count = 5, serperKey } = req.body || {};
 
-  const { company, role, count = 5 } = req.body || {};
+  const apiKey = process.env.SERPER_API_KEY || serperKey;
+  if (!apiKey) {
+    return res.status(500).json({ error: 'No Serper API key — add it in Settings or set SERPER_API_KEY env var' });
+  }
   if (!company) {
     return res.status(400).json({ error: 'company is required' });
   }
