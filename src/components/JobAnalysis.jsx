@@ -571,16 +571,26 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
     setPage("pipeline");
   };
 
-  // Render **bold** markers as <strong> spans
+  // Render bold markers as <strong> spans.
+  // Defensive: normalises stale stored results that may contain \textbf{} instead of **.
   function renderBoldMarkers(text) {
     if (!text) return null;
-    const parts = text.split(/\*\*([^*]+)\*\*/g);
+    const normalised = text
+      .replace(/\\textbf\{([^}]*)\}/g, '**$1**')   // \textbf{x}  → **x**
+      .replace(/\\[a-zA-Z]+\{([^}]*)\}/g, '$1');    // other \cmd{x} → x
+    const parts = normalised.split(/\*\*([^*]+)\*\*/g);
     return parts.map((p, i) =>
       i % 2 === 1
         ? <strong key={i} style={{color: t.tx, fontWeight: 800}}>{p}</strong>
         : <span key={i}>{p}</span>
     );
   }
+
+  // "Copy Text" gives clean plain text; "Copy LaTeX" gives the \textbf{} version for Overleaf
+  const mod1PlainText = (result?.mod1_summary || '')
+    .replace(/\\textbf\{([^}]*)\}/g, '$1')
+    .replace(/\\[a-zA-Z]+\{([^}]*)\}/g, '$1')
+    .replace(/\*\*/g, '');
 
   const mod1LaTeX = result?.mod1_summary_latex ?? result?.mod1_summary?.replace(/\*\*/g, '') ?? "";
 
@@ -738,7 +748,7 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
                     <div style={{fontSize:11,color:t.muted}}>Paste inside \textbf{"{...}"} in Overleaf</div>
                   </div>
                 </div>
-                <Btn size="sm" variant="green" onClick={() => copyText("mod1", result.mod1_summary)} t={t}>
+                <Btn size="sm" variant="green" onClick={() => copyText("mod1", mod1PlainText)} t={t}>
                   {copied === "mod1" ? <><Check size={11}/> Copied</> : <><Copy size={11}/> Copy Text</>}
                 </Btn>
               </div>

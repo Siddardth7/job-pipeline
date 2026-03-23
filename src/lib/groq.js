@@ -76,120 +76,90 @@ export async function analyzeJobWithGroq(jd, variant, apiKey) {
   const baseLines = BASE_SKILLLINES[variant] || BASE_SKILLLINES.A;
   const baseLinesJson = JSON.stringify(baseLines, null, 2);
 
-  const system = `You are a resume optimization expert for an aerospace engineering job applicant.
+  // Variant → structure skeleton. Picked deterministically — no model choice.
+  const STRUCTURE_SKELETONS = {
+    A: { // Manufacturing & Plant Ops
+      s1: '[JOB_TITLE] with hands-on [KW1] and [KW2] experience at [COMPANY].',
+      s2: 'Delivered [KW3] and [KW4] results using [TOOL_A] and [TOOL_B].',
+      s3: '[SOFT_CLOSE_WITH_KW5].'
+    },
+    B: { // Process & CI
+      s1: '[JOB_TITLE] specializing in [KW1] and [KW2], with direct exposure at [COMPANY].',
+      s2: 'Built a track record of [KW3] and [KW4] improvements using [TOOL_A] and [TOOL_B].',
+      s3: '[SOFT_CLOSE_WITH_KW5].'
+    },
+    C: { // Quality & Materials
+      s1: '[JOB_TITLE] built on [KW1] and [KW2] work at [COMPANY].',
+      s2: 'Validated [KW3] and [KW4] programs using [TOOL_A] and [TOOL_B].',
+      s3: '[SOFT_CLOSE_WITH_KW5].'
+    },
+    D: { // Equipment & NPI
+      s1: '[JOB_TITLE] combining [KW1] depth with [KW2] execution at [COMPANY].',
+      s2: 'Delivers [KW3] and [KW4] milestones using [TOOL_A] and [TOOL_B].',
+      s3: '[SOFT_CLOSE_WITH_KW5].'
+    }
+  };
+  const skeleton = STRUCTURE_SKELETONS[variant] || STRUCTURE_SKELETONS.A;
 
-CANDIDATE: Siddardth Pathipaka
-- MS Aerospace Engineering, UIUC (Dec 2025)
-- STEM OPT, 3 years, no sponsorship cost to employer
+  const system = `You are a resume optimizer for Siddardth Pathipaka (MS Aerospace Engineering, UIUC Dec 2025).
+
+CANDIDATE FACTS — use only these, never invent:
 - Tata Boeing: reduced defect rates 15% to 3% using SPC and 8D methodology
-- SAMPE: led fabrication of 24-inch composite fuselage, 2% void content via autoclave at 275F and 40 psi
+- SAMPE: fabricated 24-inch composite fuselage, 2% void content, autoclave at 275F and 40 psi
 - Beckman Institute: reduced cure cycle from 8 hours to 5 minutes
+- Candidate tools: SPC, 8D methodology, FMEA, GD&T, CMM inspection, ABAQUS, SolidWorks, PFMEA, DOE, autoclave processing
 - Resume variant: ${variant} — ${RESUMES[variant]?.name}
 
-STRICT RULES:
-1. Only TWO modifications: Summary (mod1_summary) and Skills (mod2_skilllines)
-2. Experience and project bullet points are LOCKED — never modify them
-3. No em-dashes in output
-4. Output must be valid JSON only — no markdown fences
+OUTPUT RULES:
+1. Return valid JSON only — no markdown fences, no extra text before or after
+2. mod1_summary: PLAIN TEXT ONLY — zero bold markers, zero LaTeX, zero backslashes, zero curly braces
+3. top5_jd_skills: all 5 must be DIFFERENT from each other — no duplicates
+4. Skills and experience bullet points are LOCKED — do not modify them
 
-SUMMARY RULES — HARD CONSTRAINTS:
+KEYWORD QUALITY — extract SPECIFIC technical terms only:
+  GOOD: "SPC", "FMEA", "autoclave processing", "GD&T", "CMM inspection", "lean manufacturing",
+        "defect reduction", "AS9100", "NADCAP", "NDT", "CAPA", "PFMEA", "APQP", "DMAIC", "8D root cause"
+  BAD — never extract: "problem solving", "communication", "computer skills", "teamwork",
+        "attention to detail", "years of experience", "fast learner", "process improvements"`;
 
-STEP 1 — EXTRACT KEYWORDS AND TITLE
-- summary_title: the exact job title from the JD, or closest match to the resume variant name
-- top5_jd_skills: the 5 most specific, ATS-searchable technical skills the JD requires
-
-KEYWORD QUALITY — only extract specific technical terms. Examples:
-  GOOD: "autoclave processing", "SPC", "FMEA", "GD&T", "composite layup", "CMM inspection",
-        "8D root cause analysis", "DMAIC", "APQP", "AS9100", "NADCAP", "NDT", "PFMEA",
-        "process validation", "defect reduction", "lean manufacturing", "dimensional inspection"
-  BAD — do not extract these: "computer programming", "computer skills", "communication",
-        "teamwork", "problem solving", "attention to detail", "Microsoft Office",
-        "bachelor's degree", "years of experience", "fast learner"
-  If only a generic term exists, make it specific: "Python scripting" not "computer programming"
-
-STEP 2 — PICK ONE STRUCTURE based on what the JD primarily emphasizes:
-  Structure 1: Manufacturing execution, plant ops, quality ops
-  Structure 2: Quality systems, inspection, audits, AS9100, compliance
-  Structure 3: R&D to production, process development, cure cycle, materials science
-  Structure 4: NPI, tooling, product launch, APQP, commissioning
-  Structure 5: Composites, NDT, structural validation, advanced materials
-
-STEP 3 — WRITE 3 NATURAL SENTENCES
-The structures below are sentence PATTERN GUIDES — write naturally. Do NOT fill in blanks
-mechanically. The connecting words are your choice. Keywords must appear verbatim.
-
-  Structure 1 pattern:
-    S1: [Title as subject] + hands-on [Kw1] and [Kw2] experience + [company/project reference]
-    S2: Delivered [Kw3] and [Kw4] outcomes using [2-3 tools from candidate background]
-    S3: Soft close that naturally incorporates [Kw5]
-
-  Structure 2 pattern:
-    S1: [Title as subject] + specializing in [Kw1] and [Kw2] + [company/project reference]
-    S2: Track record of [Kw3] and [Kw4] improvements using [2-3 tools from candidate background]
-    S3: Soft close that naturally incorporates [Kw5]
-
-  Structure 3 pattern:
-    S1: [Title as subject] + end-to-end [Kw1] exposure + [experience range]
-    S2: Applies [Kw2] and [Kw3] to achieve [Kw4] using [2-3 tools from candidate background]
-    S3: Soft close that naturally incorporates [Kw5]
-
-  Structure 4 pattern:
-    S1: [Title as subject] + [Kw1] depth + [Kw2] execution + [company/project reference]
-    S2: Delivers [Kw3] and [Kw4] milestones using [2-3 tools from candidate background]
-    S3: Soft close that naturally incorporates [Kw5]
-
-  Structure 5 pattern:
-    S1: [Title as subject] + built on [Kw1] and [Kw2] + [company/project reference]
-    S2: Validated [Kw3] and [Kw4] outcomes using [2-3 tools from candidate background]
-    S3: Soft close that naturally incorporates [Kw5]
-
-WRITING RULES:
-  - [company/project]: Tata Boeing (quality/manufacturing), SAMPE (composites/fabrication),
-    Beckman Institute (R&D/materials/cure cycle) — pick the most relevant one
-  - [tools from candidate background] ONLY: SPC, 8D methodology, FMEA, GD&T, CMM inspection,
-    ABAQUS, SolidWorks, PFMEA, DOE, autoclave processing — NEVER use top5_jd_skills as tools
-  - Soft close options (adapt wording — do NOT copy verbatim):
-    A. Adapts quickly from lab scale to production floor, applies [Kw5] from day one.
-    B. Detail-oriented with a root-cause bias, brings [Kw5] discipline to every program.
-    C. Brings structured problem-solving to cross-functional [Kw5] environments.
-    D. Drives [Kw5] alignment between engineering and production teams.
-    E. Consistently delivers zero-escape quality through rigorous [Kw5] practices.
-  - Write as human professional prose. AVOID mechanical patterns like
-    "Proven ability to drive X results" or "Consistent delivery of X outcomes" — these read as AI
-  - No first-person, no passive voice, no filler words
-
-STEP 4 — COMPLIANCE:
-  - All 5 keywords appear verbatim in the summary
-  - summary_title appears verbatim as the first phrase of sentence 1
-  - Kw5 in sentence 3 only
-  - Exactly 3 sentences, one period each
-  - 60 words or under
-  - Do NOT add ** bold markers — the system applies bold automatically from top5_jd_skills
-
-SKILLS RULES:
-- You are given the 5 base skilllines for this variant. You must return all 5 lines, modified
-- Within each line, rearrange the skills order so JD-relevant skills appear FIRST
-- For missing skills that appear in top5_jd_skills: add to the relevant line
-  - Industry-adjacent skill the candidate could learn: append with (Learning) label
-  - Transferable skill from related experience: append with (Transferable) label
-  - Completely unrelated to aerospace/manufacturing: do NOT add at all
-- Never add skills without a label if Siddardth has never used them
-- Keep the same 5 label categories — do not rename or remove any line`;
-
-  const user = `Analyze this JD and return the JSON object below.
-
-BASE SKILLLINES FOR RESUME ${variant} (you must return all 5, modified):
-${baseLinesJson}
-
-JD:
+  const user = `JD:
 ${jd.slice(0, 3500)}
 
-Return ONLY this JSON (no markdown, no code fences):
+BASE SKILLLINES FOR RESUME ${variant}:
+${baseLinesJson}
+
+STEP 1 — Extract top5_jd_skills: 5 specific technical keywords from the JD, all different.
+STEP 2 — Extract summary_title: exact job title from the JD.
+STEP 3 — Fill this summary skeleton (replace each [SLOT] with the specified value):
+
+${skeleton.s1}
+${skeleton.s2}
+${skeleton.s3}
+
+SLOT RULES:
+- [JOB_TITLE] = summary_title (verbatim)
+- [KW1] = top5_jd_skills[0] verbatim
+- [KW2] = top5_jd_skills[1] verbatim
+- [KW3] = top5_jd_skills[2] verbatim
+- [KW4] = top5_jd_skills[3] verbatim
+- [KW5] = top5_jd_skills[4] verbatim — appears ONLY in sentence 3
+- [COMPANY] = "Tata Boeing" or "SAMPE" or "Beckman Institute" — pick the most relevant
+- [TOOL_A], [TOOL_B] = pick 2 from candidate tools list: SPC, 8D methodology, FMEA, GD&T, CMM inspection, ABAQUS, SolidWorks
+- [SOFT_CLOSE_WITH_KW5] = one 10-15 word sentence that naturally uses KW5 as a topic
+- Total summary: 60 words or fewer — count carefully
+- mod1_summary value must be plain text only — no ** markers, no backslashes, no curly braces
+
+EXAMPLE (for a composites QA role — use your own keywords for the actual JD):
+  top5_jd_skills: ["autoclave processing", "defect inspection", "SPC-driven quality", "CAPA closure", "AS9100 compliance"]
+  summary_title: "Quality Engineer"
+  mod1_summary: "Quality Engineer built on autoclave processing and defect inspection work at Tata Boeing. Validated SPC-driven quality and CAPA closure programs using 8D methodology and CMM inspection. Brings rigorous AS9100 compliance discipline to every manufacturing program."
+
+Now return ONLY this JSON for the actual JD:
 {
-  "top5_jd_skills": ["specific-technical-skill-1", "specific-technical-skill-2", "specific-technical-skill-3", "specific-technical-skill-4", "specific-technical-skill-5"],
-  "summary_title": "exact job title from JD or closest variant match",
-  "summary_structure_used": 1,
-  "mod1_summary": "3 natural sentences, plain text, no ** markers, no LaTeX, keywords verbatim, 60 words max.",
+  "top5_jd_skills": ["kw1", "kw2", "kw3", "kw4", "kw5"],
+  "summary_title": "exact job title from JD",
+  "summary_structure_used": ${variant === 'A' ? 1 : variant === 'B' ? 2 : variant === 'C' ? 5 : 4},
+  "mod1_summary": "3 sentences, plain text, no formatting, 60 words max",
   "mod2_skilllines": [
     {"label": "same label as base line 1", "skills": "reordered skills, added (Learning) if needed"},
     {"label": "same label as base line 2", "skills": "reordered skills"},
