@@ -1,16 +1,16 @@
 {
-  "generated_utc": "2026-03-22T13:40:05.189231Z",
+  "generated_utc": "2026-03-23T14:13:24.382122Z",
   "stats": {
-    "total_raw": 116,
+    "total_raw": 113,
     "schema_rejected": 0,
     "f3_aggregator": 0,
-    "f4_age": 100,
-    "f5_duplicates": 2,
+    "f4_age": 107,
+    "f5_duplicates": 1,
     "f6_seniority": 0,
-    "f7_role": 9,
-    "f8_itar": 4,
+    "f7_role": 3,
+    "f8_itar": 0,
     "f9_blacklist": 0,
-    "final_count": 1
+    "final_count": 2
   },
   "jobs": [
     {
@@ -18,13 +18,27 @@
       "company_name": "Redwood Materials",
       "job_url": "https://boards.greenhouse.io/redwoodmaterials/jobs/5823614004?gh_jid=5823614004",
       "location": "San Francisco, California, United States",
-      "posted_date": "2026-03-22",
+      "posted_date": "2026-03-23",
       "description": "<div class=&quot;content-intro&quot;><div class=&quot;page&quot;> <div class=&quot;section&quot;> <div class=&quot;layoutArea&quot;> <div class=&quot;column&quot;> <p><span style=&quot;font-family: helvetica, arial, sans-serif; font-size: 12pt;&quot;><strong>About Redwood Materials</strong></span></p> <div> <p><strong>Redwood is localizing a global battery supply chain that seamlessly integrates recovery, reuse, and recycling&nbsp;</strong><strong>\u2014&nbsp;</strong><strong>keeping critical mineral",
       "source": "ats_greenhouse",
       "cluster": "quality",
       "itar_flag": false,
       "itar_detail": "",
       "relevance_score": 52,
+      "boost_tags": []
+    },
+    {
+      "job_title": "Intern, Industrial Engineering, Summer 2026",
+      "company_name": "Lucid Motors",
+      "job_url": "https://job-boards.greenhouse.io/lucidmotors/jobs/4953758007",
+      "location": "Casa Grande, AZ",
+      "posted_date": "2026-03-23",
+      "description": "<div class=&quot;content-intro&quot;><div><u><strong>Leading the future in luxury electric and mobility</strong></u></div> <div>At Lucid, we set out to introduce the most captivating, luxury electric vehicles that elevate the human experience and transcend the perceived limitations of space, performance, and intelligence. Vehicles that are intuitive, liberating, and designed for the future of mobility.</div> <div>&nbsp;</div> <div>We plan to lead in this new era of luxury electric by returning t",
+      "source": "ats_greenhouse",
+      "cluster": "industrial",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 50,
       "boost_tags": []
     }
   ]
