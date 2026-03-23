@@ -180,23 +180,35 @@ export default function JobAgent() {
     setPageRaw(pg);
   }, []);
 
+  // Discrete pipeline mutations save immediately — do NOT use debouncedSave here.
+  // debouncedSave uses a single shared timer: rapid successive adds cancel each
+  // other so only the last job would persist. Direct saves ensure every job lands.
   const addToPipeline = useCallback((job) => {
     const newJob = {...job, status:"active", addedAt:Date.now(), in_pipeline: true};
     setPipeline(p => p.find(j => j.id === job.id) ? p : [...p, newJob]);
-    debouncedSave(() => Storage.upsertJob(newJob));
-  }, [debouncedSave]);
+    setSyncStatus("saving");
+    Storage.upsertJob(newJob)
+      .then(() => { setSyncStatus("saved"); setTimeout(() => setSyncStatus(""), 3000); })
+      .catch(e => { setSyncStatus("error"); console.error("addToPipeline save error:", e); });
+  }, []);
 
   const removePipeline = useCallback((id) => {
     setPipeline(p => p.filter(j => j.id !== id));
-    debouncedSave(() => Storage.deleteJob(id));
-  }, [debouncedSave]);
+    setSyncStatus("saving");
+    Storage.deleteJob(id)
+      .then(() => { setSyncStatus("saved"); setTimeout(() => setSyncStatus(""), 3000); })
+      .catch(e => { setSyncStatus("error"); console.error("removePipeline save error:", e); });
+  }, []);
 
   const completePipeline = useCallback((id) => {
     setPipeline(p => p.map(j => j.id === id ? {...j, status:"completed"} : j));
-    debouncedSave(() => Storage.upsertJob(
-      {...stateRef.current.pipeline.find(j => j.id === id), status:"completed"}
-    ));
-  }, [debouncedSave]);
+    const job = stateRef.current.pipeline.find(j => j.id === id);
+    if (!job) return;
+    setSyncStatus("saving");
+    Storage.upsertJob({...job, status:"completed"})
+      .then(() => { setSyncStatus("saved"); setTimeout(() => setSyncStatus(""), 3000); })
+      .catch(e => { setSyncStatus("error"); console.error("completePipeline save error:", e); });
+  }, []);
 
   const updatePipelineJob = useCallback((id, updates) => {
     setPipeline(p => p.map(j => j.id === id ? {...j, ...updates} : j));
