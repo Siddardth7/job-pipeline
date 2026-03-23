@@ -70,3 +70,41 @@ describe('matchPipelineJob', () => {
     expect(matchPipelineJob('https://careers.google.com/jobs/1', pipeline)).toBeNull();
   });
 });
+
+import { detect as ghDetect, extractSlug as ghExtractSlug } from '../extension/adapters/greenhouse.js';
+
+describe('greenhouse adapter detect()', () => {
+  it('detects boards.greenhouse.io', () => {
+    expect(ghDetect('https://boards.greenhouse.io/rocketlab/jobs/7883012')).toBe(true);
+  });
+
+  it('detects job-boards.greenhouse.io', () => {
+    expect(ghDetect('https://job-boards.greenhouse.io/axiomspace/jobs/4045617007')).toBe(true);
+  });
+
+  it('detects jobs.greenhouse.io numeric', () => {
+    expect(ghDetect('https://jobs.greenhouse.io/7883012')).toBe(true);
+  });
+
+  it('rejects lever', () => {
+    expect(ghDetect('https://jobs.lever.co/shieldai/abc')).toBe(false);
+  });
+
+  it('rejects generic URL', () => {
+    expect(ghDetect('https://careers.google.com/jobs/1')).toBe(false);
+  });
+});
+
+describe('greenhouse adapter extractSlug()', () => {
+  it('extracts slug from boards.greenhouse.io', () => {
+    expect(ghExtractSlug('https://boards.greenhouse.io/rocketlab/jobs/7883012')).toBe('rocketlab');
+  });
+
+  it('extracts slug from job-boards.greenhouse.io', () => {
+    expect(ghExtractSlug('https://job-boards.greenhouse.io/axiomspace/jobs/999')).toBe('axiomspace');
+  });
+
+  it('returns null for jobs.greenhouse.io (no slug)', () => {
+    expect(ghExtractSlug('https://jobs.greenhouse.io/7883012')).toBeNull();
+  });
+});
