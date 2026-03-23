@@ -92,55 +92,79 @@ STRICT RULES:
 3. No em-dashes in output
 4. Output must be valid JSON only — no markdown fences
 
-SUMMARY RULES — HARD CONSTRAINTS (violating any rule means the output is rejected):
+SUMMARY RULES — HARD CONSTRAINTS:
 
-STEP 1 — IDENTIFY KEYWORDS
-Put the top 5 JD duties/skills in top5_jd_skills as [Kw1, Kw2, Kw3, Kw4, Kw5].
-These must appear VERBATIM in the summary. No synonyms, no paraphrasing.
+STEP 1 — EXTRACT KEYWORDS AND TITLE
+- summary_title: the exact job title from the JD, or closest match to the resume variant name
+- top5_jd_skills: the 5 most specific, ATS-searchable technical skills the JD requires
 
-STEP 2 — PICK ONE STRUCTURE based on what the JD emphasizes:
-  Structure 1 (manufacturing execution, plant ops, quality ops):
-    **[Title]** with hands-on **[Kw1]** and **[Kw2]** experience at [company/project]. Proven ability to drive **[Kw3]** and **[Kw4]** results using [skills]. [Soft close with **[Kw5]**].
+KEYWORD QUALITY — only extract specific technical terms. Examples:
+  GOOD: "autoclave processing", "SPC", "FMEA", "GD&T", "composite layup", "CMM inspection",
+        "8D root cause analysis", "DMAIC", "APQP", "AS9100", "NADCAP", "NDT", "PFMEA",
+        "process validation", "defect reduction", "lean manufacturing", "dimensional inspection"
+  BAD — do not extract these: "computer programming", "computer skills", "communication",
+        "teamwork", "problem solving", "attention to detail", "Microsoft Office",
+        "bachelor's degree", "years of experience", "fast learner"
+  If only a generic term exists, make it specific: "Python scripting" not "computer programming"
 
-  Structure 2 (quality systems, inspection, audits, AS9100):
-    **[Title]** specializing in **[Kw1]** and **[Kw2]**, with direct industry exposure at [company/project]. Built a track record of **[Kw3]** improvements and **[Kw4]** delivery using [skills]. [Soft close with **[Kw5]**].
+STEP 2 — PICK ONE STRUCTURE based on what the JD primarily emphasizes:
+  Structure 1: Manufacturing execution, plant ops, quality ops
+  Structure 2: Quality systems, inspection, audits, AS9100, compliance
+  Structure 3: R&D to production, process development, cure cycle, materials science
+  Structure 4: NPI, tooling, product launch, APQP, commissioning
+  Structure 5: Composites, NDT, structural validation, advanced materials
 
-  Structure 3 (R&D to production, process development, cure cycle, materials):
-    **[Title]** with end-to-end **[Kw1]** exposure from [experience1] to [experience2]. Applies **[Kw2]** and **[Kw3]** methods to deliver **[Kw4]** outcomes. [Soft close with **[Kw5]**].
+STEP 3 — WRITE 3 NATURAL SENTENCES
+The structures below are sentence PATTERN GUIDES — write naturally. Do NOT fill in blanks
+mechanically. The connecting words are your choice. Keywords must appear verbatim.
 
-  Structure 4 (NPI, tooling, product launch, APQP, commissioning):
-    **[Title]** combining **[Kw1]** depth with **[Kw2]** execution at [company/project]. Consistently delivers **[Kw3]** and **[Kw4]** outcomes through disciplined [skills]. [Soft close with **[Kw5]**].
+  Structure 1 pattern:
+    S1: [Title as subject] + hands-on [Kw1] and [Kw2] experience + [company/project reference]
+    S2: Delivered [Kw3] and [Kw4] outcomes using [2-3 tools from candidate background]
+    S3: Soft close that naturally incorporates [Kw5]
 
-  Structure 5 (composites, NDT, validation, structural analysis, materials):
-    **[Title]** built on **[Kw1]** and **[Kw2]** work at [company/project]. Validated through **[Kw3]** and **[Kw4]** projects that directly map to production environments. [Soft close with **[Kw5]**].
+  Structure 2 pattern:
+    S1: [Title as subject] + specializing in [Kw1] and [Kw2] + [company/project reference]
+    S2: Track record of [Kw3] and [Kw4] improvements using [2-3 tools from candidate background]
+    S3: Soft close that naturally incorporates [Kw5]
 
-STEP 3 — FILL THE SLOTS:
-  [Title]           -> JD job title if specific, else resume variant focus name.
-                      Examples: "Composites Manufacturing Engineer", "NPI & Tooling Engineer", "Quality Systems Engineer"
-  [Kw1]..[Kw5]     -> top5_jd_skills verbatim, each wrapped in ** bold markers
-  [company/project] -> most relevant from: Tata Boeing (quality/manufacturing),
-                      SAMPE (composites/fabrication), Beckman Institute (R&D/materials/cure cycle)
-  [skills]          -> 2-3 specific tools/methods Siddardth actually used, relevant to the JD
-  [Soft close]      -> pick from bank below, weave Kw5 in naturally
+  Structure 3 pattern:
+    S1: [Title as subject] + end-to-end [Kw1] exposure + [experience range]
+    S2: Applies [Kw2] and [Kw3] to achieve [Kw4] using [2-3 tools from candidate background]
+    S3: Soft close that naturally incorporates [Kw5]
 
-SOFT CLOSE BANK:
-  A. Adapts quickly from lab scale to production floor, ready to apply **[Kw5]** from day one.
-  B. Detail-oriented with a root-cause bias across **[Kw5]** workflows.
-  C. Brings structured problem-solving to cross-functional **[Kw5]** environments.
-  D. Comfortable driving alignment between engineering and production on **[Kw5]** initiatives.
-  E. Consistently delivers zero-escape quality at the component level across **[Kw5]** programs.
+  Structure 4 pattern:
+    S1: [Title as subject] + [Kw1] depth + [Kw2] execution + [company/project reference]
+    S2: Delivers [Kw3] and [Kw4] milestones using [2-3 tools from candidate background]
+    S3: Soft close that naturally incorporates [Kw5]
 
-STEP 4 — COMPLIANCE CHECK before finalizing:
-  - All 5 keywords present verbatim in the summary
-  - ** markers on: [Title] + all 5 keywords — nothing else bolded
-  - Kw5 appears ONLY in the soft close sentence (S3) — never use Kw5 in the [skills] slot of S2
-  - [skills] in S2 must use tools/methods from the candidate background, NOT keywords from top5_jd_skills
-  - Exactly 3 sentences — one period each, no semicolons
-  - Total word count 60 or under
-  - No first-person: no "I am", "I have", "I bring", "I hold"
-  - No passive voice: no "is applied", "has been", "was implemented", "are utilized"
-  - No filler: no "passionate", "dynamic", "well-equipped", "excited to", "results-driven"
-  - CRITICAL: Use ONLY ** markers for bold — never write \textbf{} or any LaTeX syntax in mod1_summary
+  Structure 5 pattern:
+    S1: [Title as subject] + built on [Kw1] and [Kw2] + [company/project reference]
+    S2: Validated [Kw3] and [Kw4] outcomes using [2-3 tools from candidate background]
+    S3: Soft close that naturally incorporates [Kw5]
+
+WRITING RULES:
+  - [company/project]: Tata Boeing (quality/manufacturing), SAMPE (composites/fabrication),
+    Beckman Institute (R&D/materials/cure cycle) — pick the most relevant one
+  - [tools from candidate background] ONLY: SPC, 8D methodology, FMEA, GD&T, CMM inspection,
+    ABAQUS, SolidWorks, PFMEA, DOE, autoclave processing — NEVER use top5_jd_skills as tools
+  - Soft close options (adapt wording — do NOT copy verbatim):
+    A. Adapts quickly from lab scale to production floor, applies [Kw5] from day one.
+    B. Detail-oriented with a root-cause bias, brings [Kw5] discipline to every program.
+    C. Brings structured problem-solving to cross-functional [Kw5] environments.
+    D. Drives [Kw5] alignment between engineering and production teams.
+    E. Consistently delivers zero-escape quality through rigorous [Kw5] practices.
+  - Write as human professional prose. AVOID mechanical patterns like
+    "Proven ability to drive X results" or "Consistent delivery of X outcomes" — these read as AI
+  - No first-person, no passive voice, no filler words
+
+STEP 4 — COMPLIANCE:
+  - All 5 keywords appear verbatim in the summary
+  - summary_title appears verbatim as the first phrase of sentence 1
+  - Kw5 in sentence 3 only
+  - Exactly 3 sentences, one period each
+  - 60 words or under
+  - Do NOT add ** bold markers — the system applies bold automatically from top5_jd_skills
 
 SKILLS RULES:
 - You are given the 5 base skilllines for this variant. You must return all 5 lines, modified
@@ -162,9 +186,10 @@ ${jd.slice(0, 3500)}
 
 Return ONLY this JSON (no markdown, no code fences):
 {
-  "top5_jd_skills": ["skill1", "skill2", "skill3", "skill4", "skill5"],
+  "top5_jd_skills": ["specific-technical-skill-1", "specific-technical-skill-2", "specific-technical-skill-3", "specific-technical-skill-4", "specific-technical-skill-5"],
+  "summary_title": "exact job title from JD or closest variant match",
   "summary_structure_used": 1,
-  "mod1_summary": "EXACTLY 3 sentences. Use ** bold markers on Title and all 5 keywords. No I/me pronouns.",
+  "mod1_summary": "3 natural sentences, plain text, no ** markers, no LaTeX, keywords verbatim, 60 words max.",
   "mod2_skilllines": [
     {"label": "same label as base line 1", "skills": "reordered skills, added (Learning) if needed"},
     {"label": "same label as base line 2", "skills": "reordered skills"},
@@ -198,8 +223,8 @@ Return ONLY this JSON (no markdown, no code fences):
 }
 
 // ── QC BARRIER — applied to every parsed Groq result ────────────────────────
-// Enforces hard structural rules. Does NOT strip individual words —
-// word-level removal breaks sentence grammar. Prompt handles content quality.
+// Bold is applied HERE deterministically — never trusted from Groq output.
+// Groq writes plain text. We bold the title + all 5 keywords reliably.
 function applyQCBarriers(parsed) {
   if (parsed.mod2_skilllines && Array.isArray(parsed.mod2_skilllines)) {
     parsed.mod2_skills = parsed.mod2_skilllines
@@ -214,37 +239,43 @@ function applyQCBarriers(parsed) {
   if (parsed.mod1_summary) {
     let s = parsed.mod1_summary;
 
-    // 1. Enforce max 3 sentences (hard structural rule)
+    // 1. Strip any ** or \textbf{} Groq may have added — we re-apply deterministically
+    s = s.replace(/\*\*([^*]+)\*\*/g, '$1');
+    s = s.replace(/\\textbf\{([^}]+)\}/g, '$1');
+
+    // 2. Enforce max 3 sentences
     const sentences = s.match(/[^.!?]+[.!?]+/g) || [s];
     if (sentences.length > 3) s = sentences.slice(0, 3).join(' ');
 
-    // 2. Hard word cap: 65 words — trim trailing words if over
-    // Count words ignoring ** markers so bold tokens don't inflate the count
-    const stripped = s.replace(/\*\*/g, '');
-    const words = stripped.split(/\s+/).filter(Boolean);
+    // 3. Hard word cap: 65 words
+    const words = s.split(/\s+/).filter(Boolean);
     if (words.length > 65) {
-      // Rebuild the trimmed sentence preserving ** markers
-      let count = 0;
-      let cutIdx = s.length;
-      let inMarker = false;
-      const tokens = s.split(/(\*\*|\s+)/);
-      let rebuilt = '';
-      for (const token of tokens) {
-        if (token === '**') { rebuilt += token; inMarker = !inMarker; continue; }
-        if (/^\s+$/.test(token)) { rebuilt += token; continue; }
-        if (count >= 65) { cutIdx = rebuilt.length; break; }
-        rebuilt += token;
-        count++;
-      }
-      s = rebuilt.slice(0, cutIdx).replace(/[,\s*]+$/, '') + '.';
+      s = words.slice(0, 65).join(' ').replace(/[,\s]+$/, '') + '.';
     }
 
-    // 3. Clean up spacing artifacts
+    // 4. Clean up spacing
     s = s.replace(/ {2,}/g, ' ').replace(/ ,/g, ',').trim();
 
-    // 4. Build LaTeX version: convert **text** -> \textbf{text}
-    parsed.mod1_summary_latex = s.replace(/\*\*([^*]+)\*\*/g, '\\textbf{$1}');
+    // 5. Deterministic bold — sort by length descending to avoid partial overlaps
+    const title = (parsed.summary_title || '').trim();
+    const keywords = [...(parsed.top5_jd_skills || [])].sort((a, b) => b.length - a.length);
 
+    // Bold the title (first occurrence only)
+    if (title) {
+      const esc = title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      s = s.replace(new RegExp(esc, 'i'), `**${title}**`);
+    }
+
+    // Bold each keyword (first occurrence, skip if already inside **)
+    for (const kw of keywords) {
+      if (!kw) continue;
+      const esc = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      // Only match if not already wrapped in **
+      s = s.replace(new RegExp(`(?<!\\*)\\b${esc}\\b(?!\\*)`, 'i'), `**${kw}**`);
+    }
+
+    // 6. Build LaTeX version: **text** -> \textbf{text}
+    parsed.mod1_summary_latex = s.replace(/\*\*([^*]+)\*\*/g, '\\textbf{$1}');
     parsed.mod1_summary = s;
   }
 
