@@ -53,9 +53,18 @@ export default function Dashboard({apps, pipeline, searchResults, networkingLog,
   });
   const topIndustries = Object.entries(indMap).sort((a,b) => b[1]-a[1]).slice(0, 5);
 
-  const weekAgo = new Date(Date.now() - 7*86400000);
-  const recentApps = apps.filter(a => { try { return new Date(a.date) >= weekAgo; } catch { return false; } }).length;
-  const recentNet = networkingLog.filter(c => { try { return new Date(c.date) >= weekAgo; } catch { return false; } }).length;
+  // Calendar week: resets every Monday at 00:00 local time
+  const weekStart = (() => {
+    const d = new Date();
+    const day = d.getDay(); // 0=Sun, 1=Mon … 6=Sat
+    d.setDate(d.getDate() - (day === 0 ? 6 : day - 1));
+    d.setHours(0, 0, 0, 0);
+    return d;
+  })();
+  const weekLabel = weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+  const recentApps = apps.filter(a => { try { return new Date(a.date) >= weekStart; } catch { return false; } }).length;
+  const recentNet = networkingLog.filter(c => { try { return new Date(c.date) >= weekStart; } catch { return false; } }).length;
 
   // ── Networking analytics ──────────────────────────────────────────────────
   const todayStr = new Date().toISOString().split('T')[0];
@@ -82,7 +91,7 @@ export default function Dashboard({apps, pipeline, searchResults, networkingLog,
     <div>
       <div style={{marginBottom:28}}>
         <h2 style={{margin:"0 0 4px",fontSize:24,fontWeight:700,color:t.tx}}>Dashboard</h2>
-        <p style={{margin:0,fontSize:14,color:t.sub}}>Your job search command center</p>
+        <p style={{margin:0,fontSize:14,color:t.sub}}>Your job search command center &nbsp;<span style={{fontWeight:600,color:t.muted}}>· Week of {weekLabel}</span></p>
       </div>
 
       {/* Top metric cards */}
@@ -277,7 +286,7 @@ export default function Dashboard({apps, pipeline, searchResults, networkingLog,
               ))}
               <div style={{marginTop:14,paddingTop:12,borderTop:`1px solid ${t.border}`,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
                 <div>
-                  <div style={{fontSize:12,color:t.muted}}>This week</div>
+                  <div style={{fontSize:12,color:t.muted}}>Since {weekLabel}</div>
                   <div style={{fontSize:17,fontWeight:800,color:t.tx}}>{recentNet} <span style={{fontSize:12,fontWeight:500,color:t.sub}}>contacts</span></div>
                 </div>
                 <div style={{textAlign:"right"}}>
