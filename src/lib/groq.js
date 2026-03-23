@@ -413,3 +413,44 @@ Return ONLY the cover letter body starting from Paragraph 1. No preamble, no "He
 
   return callGroq(system, user, apiKey, 900);
 }
+
+// ─── Application Q&A ──────────────────────────────────────────────────────────
+// Answers open-ended application form questions with full job context.
+// question: the form question the user is filling in (e.g. "Message to the hiring team")
+// ctx: { company, role, jd, summary, top5Skills }
+export async function answerApplicationQuestion(question, { company, role, jd, summary, top5Skills }, apiKey) {
+  const skillsList = (top5Skills || []).join(', ');
+
+  const system = `You are writing application form answers for Siddardth Pathipaka, an aerospace engineering candidate. Answer naturally in first person, as Siddardth.
+
+CANDIDATE FACTS (use these — do not invent):
+- MS Aerospace Engineering, UIUC, December 2025
+- STEM OPT eligible — 3 years, zero sponsorship cost to employer
+- Tata Boeing: cut defect rate from 15% to 3% using SPC and 8D methodology
+- SAMPE: fabricated 24-inch composite fuselage, 2% void content, autoclave at 275°F and 40 psi
+- Beckman Institute: reduced cure cycle from 8 hours to 5 minutes
+- Tools: SolidWorks, CATIA, ABAQUS, ANSYS, MATLAB, Python, GD&T, CMM, PFMEA, DOE, Lean/Six Sigma
+
+ROLE CONTEXT:
+- Company: ${company || 'the company'}
+- Role: ${role || 'the position'}
+- Key JD requirements targeted: ${skillsList || 'aerospace manufacturing, quality, composites'}
+- Resume summary tailored for this role: ${summary || ''}
+
+RULES:
+- Answer ONLY the question asked. Do not pad, do not add disclaimers.
+- Use at least one specific metric or achievement from the candidate facts above
+- Tie the answer directly to the role and company when possible
+- NO filler: no "passionate", "excited to", "dynamic", "hands-on individual"
+- Tone: direct, confident, specific
+- Length: match the question type — short form questions get 2-3 sentences, longer prompts get a short paragraph
+- Return ONLY the answer text. No "Here is my answer:" preamble.`;
+
+  const user = `JD SNIPPET (for context, first 2000 chars):
+${(jd || '').slice(0, 2000)}
+
+QUESTION TO ANSWER:
+${question}`;
+
+  return callGroq(system, user, apiKey, 400);
+}

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
-import { BarChart2, CheckCircle, Users, Copy, Check, Briefcase, Zap, SlidersHorizontal, Edit3, Sparkles, FileText, Download, RefreshCw, ChevronDown, ChevronUp } from 'lucide-react';
+import { BarChart2, CheckCircle, Users, Copy, Check, Briefcase, Zap, SlidersHorizontal, Edit3, Sparkles, FileText, Download, RefreshCw, ChevronDown, ChevronUp, MessageSquare } from 'lucide-react';
 import { analyzeJob } from '../lib/scoring.js';
-import { analyzeJobWithGroq, generateCoverLetterWithGroq } from '../lib/groq.js';
+import { analyzeJobWithGroq, generateCoverLetterWithGroq, answerApplicationQuestion } from '../lib/groq.js';
 import { buildCoverLetterPayload } from '../lib/coverLetter.js';
 
 const RESUMES = {
@@ -69,6 +69,137 @@ const TONES = [
   { value: 'technical',      label: 'Technical' },
   { value: 'conversational', label: 'Conversational' },
 ];
+
+// ─── Application Q&A ──────────────────────────────────────────────────────────
+const QUICK_PROMPTS = [
+  "Write a message to the hiring team",
+  "Why do you want to work at [company]?",
+  "Why are you interested in this role?",
+  "Tell us about yourself in 2-3 sentences",
+  "What is your greatest strength relevant to this role?",
+  "Describe a challenge you solved using data or analysis",
+];
+
+function ApplicationQA({ company, role, jd, summary, top5Skills, groqKey, t }) {
+  const [open, setOpen]       = useState(false);
+  const [question, setQuestion] = useState('');
+  const [answer, setAnswer]   = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError]     = useState('');
+  const [copied, setCopied]   = useState(false);
+
+  const handleGenerate = async () => {
+    if (!question.trim()) return;
+    setLoading(true); setError(''); setAnswer('');
+    try {
+      const text = await answerApplicationQuestion(
+        question,
+        { company, role, jd, summary, top5Skills },
+        groqKey
+      );
+      setAnswer(text);
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCopy = () => {
+    robustCopy(answer).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2200); });
+  };
+
+  const applyQuick = (prompt) => {
+    setQuestion(prompt.replace('[company]', company || 'the company'));
+    setAnswer('');
+  };
+
+  return (
+    <Card t={t} style={{marginBottom:16}}>
+      <button
+        onClick={() => setOpen(o => !o)}
+        style={{width:"100%",background:"none",border:"none",cursor:"pointer",padding:0,textAlign:"left"}}
+      >
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+          <div style={{display:"flex",alignItems:"center",gap:8}}>
+            <div style={{width:28,height:28,borderRadius:7,background:t.priL,display:"flex",alignItems:"center",justifyContent:"center"}}>
+              <MessageSquare size={14} color={t.pri}/>
+            </div>
+            <div>
+              <div style={{fontSize:13.5,fontWeight:700,color:t.tx}}>Application Q&amp;A</div>
+              <div style={{fontSize:11,color:t.muted}}>Answer form questions — "message to hiring team", short essays, etc.</div>
+            </div>
+          </div>
+          {open ? <ChevronUp size={16} color={t.muted}/> : <ChevronDown size={16} color={t.muted}/>}
+        </div>
+      </button>
+
+      {open && (
+        <div style={{marginTop:16}}>
+          {/* Quick prompts */}
+          <div style={{marginBottom:10}}>
+            <div style={{fontSize:10.5,fontWeight:700,color:t.muted,textTransform:"uppercase",letterSpacing:1,marginBottom:8}}>Quick Prompts</div>
+            <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+              {QUICK_PROMPTS.map(p => (
+                <button key={p} onClick={() => applyQuick(p)}
+                  style={{fontSize:11.5,padding:"4px 11px",borderRadius:20,border:`1px solid ${t.border}`,
+                    background: question === p.replace('[company]', company||'the company') ? t.priL : t.hover,
+                    color: question === p.replace('[company]', company||'the company') ? t.pri : t.sub,
+                    cursor:"pointer",fontFamily:"inherit",fontWeight:600,transition:"all .1s"}}>
+                  {p.replace('[company]', company || 'the company')}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Question input */}
+          <div style={{marginBottom:10}}>
+            <div style={{fontSize:10.5,fontWeight:700,color:t.muted,textTransform:"uppercase",letterSpacing:1,marginBottom:6}}>Your Question / Prompt</div>
+            <textarea
+              value={question}
+              onChange={e => setQuestion(e.target.value)}
+              placeholder="Paste the form question here, e.g. 'Tell us something unique about yourself'"
+              rows={3}
+              style={{width:"100%",background:t.bg,border:`1px solid ${t.border}`,borderRadius:8,
+                padding:"9px 13px",color:t.tx,fontSize:13,outline:"none",
+                boxSizing:"border-box",fontFamily:"inherit",lineHeight:1.6,resize:"vertical"}}
+            />
+          </div>
+
+          <Btn onClick={handleGenerate} disabled={loading || !question.trim()} t={t}>
+            {loading ? <><RefreshCw size={13} style={{animation:"spin 1s linear infinite"}}/> Generating…</> : <><Sparkles size={13}/> Generate Answer</>}
+          </Btn>
+
+          {error && (
+            <div style={{marginTop:10,padding:"8px 12px",background:t.redL,border:`1px solid ${t.redBd}`,borderRadius:8,fontSize:12.5,color:t.red}}>
+              {error}
+            </div>
+          )}
+
+          {answer && (
+            <div style={{marginTop:14}}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
+                <div style={{fontSize:10.5,fontWeight:700,color:t.muted,textTransform:"uppercase",letterSpacing:1}}>Answer</div>
+                <div style={{display:"flex",gap:8}}>
+                  <Btn size="sm" variant="green" onClick={handleCopy} t={t}>
+                    {copied ? <><Check size={12}/> Copied!</> : <><Copy size={12}/> Copy</>}
+                  </Btn>
+                  <Btn size="sm" variant="ghost" onClick={handleGenerate} t={t}>
+                    <RefreshCw size={12}/> Regen
+                  </Btn>
+                </div>
+              </div>
+              <div style={{background:t.bg,border:`1px solid ${t.border}`,borderRadius:8,
+                padding:"14px 16px",fontSize:13,lineHeight:1.8,color:t.sub,whiteSpace:"pre-wrap"}}>
+                {answer}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </Card>
+  );
+}
 
 // ─── AI Cover Letter Section ───────────────────────────────────────────────────
 function CoverLetterSection({ role, company, jd, analysis, groqKey, t }) {
@@ -730,6 +861,14 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
             analysis={result}
             groqKey={groqKey}
             t={t}
+          />
+
+          {/* Application Q&A */}
+          <ApplicationQA
+            company={co} role={role} jd={jd}
+            summary={result.mod1_summary}
+            top5Skills={result.top5_jd_skills}
+            groqKey={groqKey} t={t}
           />
 
           {/* Action buttons */}
