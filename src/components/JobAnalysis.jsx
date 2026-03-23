@@ -486,7 +486,7 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
       a.href = url;
       const cd = response.headers.get("Content-Disposition") ?? "";
       const nameMatch = cd.match(/filename="?([^";\n]+)"?/);
-      a.download = nameMatch ? nameMatch[1] : fallbackFilename;
+      a.download = fallbackFilename || (nameMatch ? nameMatch[1] : 'resume.pdf');
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);

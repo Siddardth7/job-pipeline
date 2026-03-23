@@ -239,9 +239,14 @@ function applyQCBarriers(parsed) {
   if (parsed.mod1_summary) {
     let s = parsed.mod1_summary;
 
-    // 1. Strip any ** or \textbf{} Groq may have added — we re-apply deterministically
-    s = s.replace(/\*\*([^*]+)\*\*/g, '$1');
-    s = s.replace(/\\textbf\{([^}]+)\}/g, '$1');
+    // 1. Nuclear strip — Groq may output \textbf{} with unescaped backslash in JSON,
+    //    which JSON.parse turns into [TAB]extbf{} (\t = tab). Handle both variants.
+    s = s.replace(/\\[a-zA-Z]+\{([^}]*)\}/g, '$1');   // proper \cmd{content} → content
+    s = s.replace(/\t[a-zA-Z]+\{([^}]*)\}/g, '$1');   // tab-corrupted [TAB]cmd{content} → content
+    s = s.replace(/\*\*([^*]+)\*\*/g, '$1');            // **bold** → plain
+    s = s.replace(/\*\*/g, '');                         // orphaned **
+    s = s.replace(/[{}\\]/g, '');                       // remaining LaTeX chars
+    s = s.replace(/\t/g, ' ').replace(/\s+/g, ' ').trim(); // normalize whitespace
 
     // 2. Enforce max 3 sentences
     const sentences = s.match(/[^.!?]+[.!?]+/g) || [s];
@@ -274,7 +279,12 @@ function applyQCBarriers(parsed) {
       s = s.replace(new RegExp(`(?<!\\*)\\b${esc}\\b(?!\\*)`, 'i'), `**${kw}**`);
     }
 
-    // 6. Build LaTeX version: **text** -> \textbf{text}
+    // 6. Final safety check — if any LaTeX chars survived, strip them
+    if (/[{}\\]/.test(s)) {
+      s = s.replace(/[{}\\]/g, '').replace(/\s+/g, ' ').trim();
+    }
+
+    // 7. Build LaTeX version: **text** -> \textbf{text}
     parsed.mod1_summary_latex = s.replace(/\*\*([^*]+)\*\*/g, '\\textbf{$1}');
     parsed.mod1_summary = s;
   }
