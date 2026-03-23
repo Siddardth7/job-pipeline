@@ -92,17 +92,18 @@ STRICT RULES:
 3. No dashes or em-dashes in output
 4. Output must be valid JSON only — no markdown fences
 
-SUMMARY RULES:
+SUMMARY RULES — HARD CONSTRAINTS (violating any rule means the output is rejected):
 - Identify the top 5 duties/responsibilities/skills the JD is primarily asking for (put these in top5_jd_skills)
-- Write EXACTLY 3 sentences. No more, no less. Count them before finalizing.
-- Each sentence must be dense and specific — pack in JD keywords naturally, no padding
-- Sentence 1: Role + domain expertise + 1-2 top JD keywords from Siddardth's real background
-- Sentence 2: Strongest quantified achievement that maps directly to what this role needs
-- Sentence 3: What he brings operationally — embed remaining JD keywords, end with impact or scope
-- NO first-person pronouns (no "I am", "I have", "I bring", "I am excited"). Use declarative construction.
-- NO filler: no "passionate", "dynamic", "hands-on", "independent", "excited to bring", "well-equipped"
-- Only embed keywords that connect to Siddardth's real background. Skip any keyword with no honest tie-in
-- Do NOT use ** or any markdown in the summary — plain text only
+- EXACTLY 3 sentences. Count them. One period per sentence — no semicolons to sneak in a 4th clause.
+- HARD WORD LIMIT: 60 words total across all 3 sentences. Count every word. Stay under 60.
+- Sentence 1 (≤18 words): Degree/title + domain + 1 top JD keyword. No verbs like "is applied" or "brings". Example structure: "MS Aerospace Engineering, UIUC. Composites manufacturing and defect-reduction specialist with direct [keyword] experience."
+- Sentence 2 (≤20 words): ONE quantified achievement with real numbers that directly maps to this role's core need. Must contain at least one number.
+- Sentence 3 (≤18 words): 2-3 specific tools or methods from Siddardth's background + one JD keyword. No vague claims.
+- FORBIDDEN — passive voice: no "is applied", "has been", "was implemented", "are utilized", "is leveraged", "has led to"
+- FORBIDDEN — vague qualifiers: no "notable", "impactful", "significant", "strong", "various", "areas like", "ability to", "such as", "contributions to"
+- FORBIDDEN — first-person: no "I am", "I have", "I bring", "I hold"
+- FORBIDDEN — filler: no "passionate", "dynamic", "hands-on", "well-equipped", "excited to", "results-driven"
+- Plain text only. No ** markdown. No em-dashes.
 
 SKILLS RULES:
 - You are given the 5 base skilllines for this variant. You must return all 5 lines, modified
@@ -177,8 +178,8 @@ function applyQCBarriers(parsed) {
     // 1. Strip ** markdown markers
     s = s.replace(/\*\*/g, '');
 
-    // 2. Strip first-person openers
-    s = s.replace(/\b(I am|I have|I bring|I hold|I possess|I offer|I am excited|I am confident|I am well-equipped)\b/g, '');
+    // 2. Strip first-person pronouns
+    s = s.replace(/\b(I am|I have|I bring|I hold|I possess|I offer|I am excited|I am confident|I am well-equipped)\b/gi, '');
 
     // 3. Kill filler phrases
     [
@@ -187,11 +188,29 @@ function applyQCBarriers(parsed) {
       /\bwell-equipped\b/gi, /\bresults-driven\b/gi, /\bself-starter\b/gi,
     ].forEach(f => { s = s.replace(f, ''); });
 
-    // 4. Enforce max 3 sentences
+    // 4. Kill vague qualifiers that signal AI padding
+    [
+      /\bnotable\b/gi, /\bimpactful\b/gi, /\bsignificant\b/gi,
+      /\bareas like\b/gi, /\bsuch as\b/gi, /\bability to\b/gi,
+      /\bcontributions to\b/gi, /\bvarious\b/gi,
+    ].forEach(f => { s = s.replace(f, ''); });
+
+    // 5. Kill passive voice constructions
+    [
+      /\bis applied\b/gi, /\bhas been\b/gi, /\bwas implemented\b/gi,
+      /\bare utilized\b/gi, /\bis leveraged\b/gi, /\bhas led to\b/gi,
+      /\bwere reduced\b/gi, /\bcan be\b/gi, /\bwill be\b/gi,
+    ].forEach(f => { s = s.replace(f, ''); });
+
+    // 6. Enforce max 3 sentences
     const sentences = s.match(/[^.!?]+[.!?]+/g) || [s];
     if (sentences.length > 3) s = sentences.slice(0, 3).join(' ');
 
-    // 5. Clean up artifacts from replacements
+    // 7. Hard word cap: 65 words — trim trailing words if over
+    const words = s.split(/\s+/).filter(Boolean);
+    if (words.length > 65) s = words.slice(0, 65).join(' ').replace(/[,\s]+$/, '') + '.';
+
+    // 8. Clean up artifacts from replacements
     s = s.replace(/ {2,}/g, ' ').replace(/ ,/g, ',').replace(/^[,\s]+/, '').trim();
 
     parsed.mod1_summary = s;
