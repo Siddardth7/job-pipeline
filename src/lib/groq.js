@@ -178,8 +178,17 @@ Return ONLY this JSON (no markdown, no code fences):
 // intent:  'job_application_ask' | 'cold_outreach'
 // format:  'connection_note' | 'followup' | 'cold_email'
 export async function draftMessageWithGroq(persona, intent, format, contact, job, apiKey, regenNote = '') {
-  const role = job?.role || 'engineering position';
-  const company = contact.company || job?.company || '';
+  const role     = job?.role || 'engineering position';
+  const company  = contact.company || job?.company || '';
+  const jobId    = job?.id || job?.jobId || job?.job_id || '';
+  const location = job?.location || job?.city || '';
+
+  // Job reference line — always include role + company; add ID and location when available
+  const jobRef = [
+    `the ${role} role at ${company}`,
+    jobId    ? `(Job ID: ${jobId})`    : '',
+    location ? `based in ${location}`  : '',
+  ].filter(Boolean).join(' ');
 
   const intentSummary = intent === 'job_application_ask'
     ? `applied for the ${role} role at ${company} and found this contact while searching for people at the company`
@@ -196,22 +205,28 @@ export async function draftMessageWithGroq(persona, intent, format, contact, job
 
   // Persona-specific angle for the connection note's one clause
   const connectionNoteAngle = {
-    'Recruiter':       intent === 'job_application_ask'
-      ? `I applied for the ${role} role at ${company} and wanted to flag my background directly to someone on the recruiting team.`
-      : `I am exploring roles in composites and aerospace manufacturing at ${company} and wanted to connect with the right person on the recruiting side.`,
-    'Hiring Manager':  intent === 'job_application_ask'
-      ? `I applied for the ${role} role at ${company} and wanted to introduce myself directly to the team.`
-      : `I have been following ${company}'s work in aerospace manufacturing and wanted to connect with the engineering leadership.`,
-    'Peer Engineer':   intent === 'job_application_ask'
-      ? `I applied for the ${role} role at ${company} and would love to hear what the engineering work looks like day to day.`
+    'Recruiter': intent === 'job_application_ask'
+      ? `I applied for ${jobRef} and am looking for the right person to connect with so my application gets the right visibility. I want to make sure it reaches the right hiring contact or team.`
+      : `I am exploring composites and aerospace manufacturing roles at ${company} and wanted to connect with the right person on the recruiting side.`,
+
+    'Hiring Manager': intent === 'job_application_ask'
+      ? `I applied for ${jobRef} and wanted to introduce myself directly to the team. I am looking for the right direction to put my application in front of the people making the hiring decision.`
+      : `I have been following ${company}'s work in aerospace manufacturing and wanted to connect with the engineering leadership directly.`,
+
+    'Peer Engineer': intent === 'job_application_ask'
+      ? `I applied for ${jobRef} and would love to hear what the engineering work looks like day to day from someone on the team.`
       : `I am a composites and manufacturing engineer exploring opportunities at ${company} and wanted to connect with someone doing the hands-on engineering work.`,
-    'Executive':       intent === 'job_application_ask'
-      ? `I applied for the ${role} role at ${company} and wanted to introduce my background to the team's leadership.`
-      : `I have been following ${company}'s direction in aerospace and advanced manufacturing and wanted to introduce myself.`,
-    'UIUC Alumni':     `Fellow Illini, I saw you are at ${company} and as a current M.S. Aerospace student at UIUC I would love to hear your perspective on the team and work there.`,
+
+    'Executive': intent === 'job_application_ask'
+      ? `I applied for ${jobRef} and wanted to introduce my background directly to someone in the leadership team who can point me in the right direction.`
+      : `I have been following ${company}'s direction in aerospace and advanced manufacturing and wanted to introduce myself to the leadership.`,
+
+    'UIUC Alumni':
+      `Fellow Illini, I saw you are at ${company}${intent === 'job_application_ask' ? ` and I applied for ${jobRef}` : ''}. As a current M.S. Aerospace student at UIUC I would love to hear your perspective on the team and work there.`,
+
     'Senior Engineer': intent === 'job_application_ask'
-      ? `I applied for the ${role} role at ${company} and wanted to connect with a senior engineer who could give me a real sense of what the team works on.`
-      : `I am a composites and manufacturing engineer with experience in autoclave processing and quality systems and wanted to connect with someone doing similar work at ${company}.`,
+      ? `I applied for ${jobRef} and wanted to connect with a senior engineer on the team who can give me a real sense of what the work involves and whether my composites background is a strong fit.`
+      : `I am a composites and manufacturing engineer with autoclave processing and quality systems experience and wanted to connect with someone doing similar work at ${company}.`,
   }[persona] || `I am interested in ${company}'s work and wanted to connect.`;
 
   const formatRules = {
@@ -221,11 +236,15 @@ HARD LIMIT: 300 characters total. Count every character including spaces. Trim i
 STRUCTURE (exactly this):
   Hi [FirstName], I am Siddardth, M.S. Aerospace from UIUC. [One clause drawn from THE ANGLE below]. Would love to connect.
 
-THE ANGLE — use this exact context to write the one clause (adapt the wording naturally, do not copy verbatim):
+THE ANGLE — use this as the basis for the one clause (adapt wording to fit 300 chars, do not copy verbatim):
 ${connectionNoteAngle}
 
+REFERENCE REQUIREMENT:
+- The note MUST mention at least one of: the role title, the company name, or the job location. The reader must immediately know what specific opportunity this is about.
+${jobId ? `- Job ID to reference if space allows: ${jobId}` : ''}
+
 CONNECTION NOTE RULES — ABSOLUTE, NO EXCEPTIONS:
-- CONTEXT ONLY. The only job of this note is to tell the reader WHY you are connecting. Nothing else.
+- CONTEXT ONLY. The only job of this note is to tell the reader WHY you are connecting and WHAT role you are talking about. Nothing else.
 - The "one clause" must reflect THE ANGLE above — different personas get meaningfully different reasons for connecting.
 - ZERO metrics. ZERO numbers. ZERO stats. Not "15% to 3%". Not "2% void content". Not "defect rates". Not "autoclave at 275F". Not "8 hours to 5 minutes". Not any achievement number whatsoever.
 - ZERO achievement statements. "At Tata Boeing I reduced..." is FORBIDDEN here. So is any variant of it.
