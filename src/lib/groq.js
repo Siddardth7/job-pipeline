@@ -194,15 +194,39 @@ export async function draftMessageWithGroq(persona, intent, format, contact, job
     'Senior Engineer':  'share your perspective on how composites manufacturing experience fits the team',
   }[persona] || 'have a brief conversation';
 
+  // Persona-specific angle for the connection note's one clause
+  const connectionNoteAngle = {
+    'Recruiter':       intent === 'job_application_ask'
+      ? `I applied for the ${role} role at ${company} and wanted to flag my background directly to someone on the recruiting team.`
+      : `I am exploring roles in composites and aerospace manufacturing at ${company} and wanted to connect with the right person on the recruiting side.`,
+    'Hiring Manager':  intent === 'job_application_ask'
+      ? `I applied for the ${role} role at ${company} and wanted to introduce myself directly to the team.`
+      : `I have been following ${company}'s work in aerospace manufacturing and wanted to connect with the engineering leadership.`,
+    'Peer Engineer':   intent === 'job_application_ask'
+      ? `I applied for the ${role} role at ${company} and would love to hear what the engineering work looks like day to day.`
+      : `I am a composites and manufacturing engineer exploring opportunities at ${company} and wanted to connect with someone doing the hands-on engineering work.`,
+    'Executive':       intent === 'job_application_ask'
+      ? `I applied for the ${role} role at ${company} and wanted to introduce my background to the team's leadership.`
+      : `I have been following ${company}'s direction in aerospace and advanced manufacturing and wanted to introduce myself.`,
+    'UIUC Alumni':     `Fellow Illini, I saw you are at ${company} and as a current M.S. Aerospace student at UIUC I would love to hear your perspective on the team and work there.`,
+    'Senior Engineer': intent === 'job_application_ask'
+      ? `I applied for the ${role} role at ${company} and wanted to connect with a senior engineer who could give me a real sense of what the team works on.`
+      : `I am a composites and manufacturing engineer with experience in autoclave processing and quality systems and wanted to connect with someone doing similar work at ${company}.`,
+  }[persona] || `I am interested in ${company}'s work and wanted to connect.`;
+
   const formatRules = {
     connection_note:
 `TASK: Write a LinkedIn Connection Note.
 HARD LIMIT: 300 characters total. Count every character including spaces. Trim if over.
 STRUCTURE (exactly this):
-  Hi [FirstName], I am Siddardth, M.S. Aerospace from UIUC. [One clause: WHY you are reaching out, drawn from the OUTREACH INTENT below]. Would love to connect.
+  Hi [FirstName], I am Siddardth, M.S. Aerospace from UIUC. [One clause drawn from THE ANGLE below]. Would love to connect.
+
+THE ANGLE — use this exact context to write the one clause (adapt the wording naturally, do not copy verbatim):
+${connectionNoteAngle}
 
 CONNECTION NOTE RULES — ABSOLUTE, NO EXCEPTIONS:
 - CONTEXT ONLY. The only job of this note is to tell the reader WHY you are connecting. Nothing else.
+- The "one clause" must reflect THE ANGLE above — different personas get meaningfully different reasons for connecting.
 - ZERO metrics. ZERO numbers. ZERO stats. Not "15% to 3%". Not "2% void content". Not "defect rates". Not "autoclave at 275F". Not "8 hours to 5 minutes". Not any achievement number whatsoever.
 - ZERO achievement statements. "At Tata Boeing I reduced..." is FORBIDDEN here. So is any variant of it.
 - The reader decides whether to accept based on your context and intent, not your resume. Save the resume for the follow-up.
