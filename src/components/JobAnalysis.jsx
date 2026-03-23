@@ -367,29 +367,36 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
     }
   }, []);
 
+  const toFileSlug = (s) =>
+    (s || '').trim().replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+
   const downloadResume = useCallback(() => {
     if (!result) return;
+    const company = toFileSlug(co) || 'Company';
+    const roleSlug = toFileSlug(role) || 'Engineer';
     downloadFile(
       "/generate",
       {
         variant: result.recommendedResume,
-        summary: result.mod1_summary,
+        summary: result.mod1_summary?.replace(/\*\*/g, ''),
         skills_latex: result.mod2_skills,
         company: co,
         role: role,
       },
-      `Resume_${result.recommendedResume}_${co || "Company"}.pdf`,
+      `Siddardth_Pathipaka_Resume_${company}_${roleSlug}.pdf`,
       "resume"
     );
   }, [result, co, role, downloadFile]);
 
   const downloadCoverLetter = useCallback(() => {
     if (!result) return;
+    const company = toFileSlug(co) || 'Company';
+    const roleSlug = toFileSlug(role) || 'Engineer';
     const payload = buildCoverLetterPayload({ result, company: co, role });
     downloadFile(
       "/generate-cover-letter",
       payload,
-      `CoverLetter_${co || "Company"}.pdf`,
+      `Siddardth_Pathipaka_CoverLetter_${company}_${roleSlug}.pdf`,
       "coverletter"
     );
   }, [result, co, role, downloadFile]);

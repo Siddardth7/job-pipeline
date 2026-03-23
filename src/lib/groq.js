@@ -94,10 +94,15 @@ STRICT RULES:
 
 SUMMARY RULES:
 - Identify the top 5 duties/responsibilities/skills the JD is primarily asking for (put these in top5_jd_skills)
-- Write a 3 to 4 sentence professional summary that embeds all 5 naturally
-- Wrap each of the 5 keywords with **double asterisks** for bolding, e.g. **composite manufacturing**
-- Only include keywords that connect to Siddardth's real background. If a keyword has no connection, skip it
-- Tone: confident, direct, specific. No "passionate", "dynamic", or filler
+- Write EXACTLY 3 sentences. No more, no less. Count them before finalizing.
+- Each sentence must be dense and specific — pack in JD keywords naturally, no padding
+- Sentence 1: Role + domain expertise + 1-2 top JD keywords from Siddardth's real background
+- Sentence 2: Strongest quantified achievement that maps directly to what this role needs
+- Sentence 3: What he brings operationally — embed remaining JD keywords, end with impact or scope
+- NO first-person pronouns (no "I am", "I have", "I bring", "I am excited"). Use declarative construction.
+- NO filler: no "passionate", "dynamic", "hands-on", "independent", "excited to bring", "well-equipped"
+- Only embed keywords that connect to Siddardth's real background. Skip any keyword with no honest tie-in
+- Do NOT use ** or any markdown in the summary — plain text only
 
 SKILLS RULES:
 - You are given the 5 base skilllines for this variant. You must return all 5 lines, modified
@@ -120,7 +125,7 @@ ${jd.slice(0, 3500)}
 Return ONLY this JSON (no markdown, no code fences):
 {
   "top5_jd_skills": ["skill1", "skill2", "skill3", "skill4", "skill5"],
-  "mod1_summary": "3-4 sentence summary with **bold** around top 5 keywords",
+  "mod1_summary": "EXACTLY 3 sentences, plain text, no markdown, no ** markers, no I/me pronouns",
   "mod2_skilllines": [
     {"label": "same label as base line 1", "skills": "reordered skills, added (Learning) if needed"},
     {"label": "same label as base line 2", "skills": "reordered skills"},
@@ -142,35 +147,57 @@ Return ONLY this JSON (no markdown, no code fences):
   try {
     const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
     const parsed = JSON.parse(cleaned);
-
-    // Convert mod2_skilllines array → LaTeX string for the rest of the app
-    if (parsed.mod2_skilllines && Array.isArray(parsed.mod2_skilllines)) {
-      parsed.mod2_skills = parsed.mod2_skilllines
-        .map(row => {
-          // Escape & for LaTeX
-          const label = row.label.replace(/&/g, '\\&');
-          const skills = row.skills.replace(/&/g, '\\&');
-          return `\\skillline{${label}}{${skills}}`;
-        })
-        .join('\n');
-    }
-
-    return parsed;
+    return applyQCBarriers(parsed);
   } catch {
     const match = text.match(/\{[\s\S]*\}/);
     if (match) {
-      try {
-        const parsed = JSON.parse(match[0]);
-        if (parsed.mod2_skilllines && Array.isArray(parsed.mod2_skilllines)) {
-          parsed.mod2_skills = parsed.mod2_skilllines
-            .map(row => `\\skillline{${row.label.replace(/&/g, '\\&')}}{${row.skills.replace(/&/g, '\\&')}}`)
-            .join('\n');
-        }
-        return parsed;
-      } catch { /* fall through */ }
+      try { return applyQCBarriers(JSON.parse(match[0])); }
+      catch { /* fall through */ }
     }
     throw new Error('Could not parse Groq response. Try again.');
   }
+}
+
+// ── QC BARRIER — applied to every parsed Groq result ────────────────────────
+// Deterministically enforces summary rules regardless of what the model outputs.
+function applyQCBarriers(parsed) {
+  if (parsed.mod2_skilllines && Array.isArray(parsed.mod2_skilllines)) {
+    parsed.mod2_skills = parsed.mod2_skilllines
+      .map(row => {
+        const label = row.label.replace(/&/g, '\\&');
+        const skills = row.skills.replace(/&/g, '\\&');
+        return `\\skillline{${label}}{${skills}}`;
+      })
+      .join('\n');
+  }
+
+  if (parsed.mod1_summary) {
+    let s = parsed.mod1_summary;
+
+    // 1. Strip ** markdown markers
+    s = s.replace(/\*\*/g, '');
+
+    // 2. Strip first-person openers
+    s = s.replace(/\b(I am|I have|I bring|I hold|I possess|I offer|I am excited|I am confident|I am well-equipped)\b/g, '');
+
+    // 3. Kill filler phrases
+    [
+      /\bpassionate\b/gi, /\bdynamic\b/gi, /\bhands-on\b/gi,
+      /\bindependent individual\b/gi, /\bexcited to bring\b/gi,
+      /\bwell-equipped\b/gi, /\bresults-driven\b/gi, /\bself-starter\b/gi,
+    ].forEach(f => { s = s.replace(f, ''); });
+
+    // 4. Enforce max 3 sentences
+    const sentences = s.match(/[^.!?]+[.!?]+/g) || [s];
+    if (sentences.length > 3) s = sentences.slice(0, 3).join(' ');
+
+    // 5. Clean up artifacts from replacements
+    s = s.replace(/ {2,}/g, ' ').replace(/ ,/g, ',').replace(/^[,\s]+/, '').trim();
+
+    parsed.mod1_summary = s;
+  }
+
+  return parsed;
 }
 
 // ─── Message Drafting ─────────────────────────────────────────────────────────
