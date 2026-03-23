@@ -232,7 +232,19 @@ function applyQCBarriers(parsed) {
     s = s.replace(/ {2,}/g, ' ').replace(/ ,/g, ',').trim();
 
     // 5. Deterministic bold — sort by length descending to avoid partial overlaps
-    const title = (parsed.summary_title || '').trim();
+    const GENERIC_TITLES = new Set(['intern', 'engineer', 'technician', 'specialist', 'analyst', 'associate', 'coordinator']);
+    const VARIANT_TITLES = { A: 'Manufacturing Engineer', B: 'Process Engineer', C: 'Quality Engineer', D: 'Equipment Engineer' };
+    const rawTitle = (parsed.summary_title || '').trim();
+    let title = rawTitle;
+    if (!title || GENERIC_TITLES.has(title.toLowerCase()) || title.split(/\s+/).length < 2) {
+      title = VARIANT_TITLES[variant] || 'Manufacturing Engineer';
+      parsed.summary_title = title;
+      // Replace old generic title at start of summary with corrected title
+      if (rawTitle) {
+        const escOld = rawTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        s = s.replace(new RegExp(`^${escOld}\\b`, 'i'), title);
+      }
+    }
     const keywords = [...(parsed.top5_jd_skills || [])].sort((a, b) => b.length - a.length);
 
     // Bold the title (first occurrence only)

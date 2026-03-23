@@ -384,7 +384,6 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
   const [loading, setLoading] = useState(false);
   const [checks, setChecks] = useState(null);
   const [copied, setCopied] = useState("");
-  const [showRaw1, setShowRaw1] = useState(false);
   const [showRaw2, setShowRaw2] = useState(false);
   const [genLoading, setGenLoading] = useState(null); // null | "resume" | "coverletter"
   const [genError, setGenError] = useState(null);
@@ -773,21 +772,10 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
                 </div>
               </div>
 
-              {/* Raw LaTeX toggle */}
-              <button onClick={() => setShowRaw1(!showRaw1)} style={{background:"none",border:"none",cursor:"pointer",fontSize:11,color:t.muted,fontWeight:600,padding:0,marginBottom:showRaw1?8:0}}>
-                {showRaw1 ? "▼" : "▶"} Raw LaTeX
-              </button>
-              {showRaw1 && (
-                <div style={{position:"relative"}}>
-                  <div style={{background:t.hover,border:`1px solid ${t.border}`,borderRadius:6,padding:"10px 12px",fontSize:11,lineHeight:1.7,color:t.sub,fontFamily:"monospace",whiteSpace:"pre-wrap",maxHeight:120,overflowY:"auto"}}>
-                    {mod1LaTeX}
-                  </div>
-                  <Btn size="sm" variant="ghost" onClick={() => copyText("mod1latex", mod1LaTeX)} t={t}
-                    style={{position:"absolute",top:6,right:6,fontSize:10}}>
-                    {copied==="mod1latex"?<><Check size={10}/> Copied</>:<><Copy size={10}/> Copy LaTeX</>}
-                  </Btn>
-                </div>
-              )}
+              <Btn size="sm" variant="ghost" onClick={() => copyText("mod1latex", mod1LaTeX)} t={t}
+                style={{fontSize:10}}>
+                {copied==="mod1latex"?<><Check size={10}/> Copied</>:<><Copy size={10}/> Copy LaTeX</>}
+              </Btn>
             </Card>
 
             {/* MOD 2: Skills */}
