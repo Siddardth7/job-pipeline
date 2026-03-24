@@ -63,8 +63,9 @@ export default function Dashboard({apps, pipeline, searchResults, networkingLog,
   })();
   const weekLabel = weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
-  const recentApps = apps.filter(a => { try { return new Date(a.date) >= weekStart; } catch { return false; } }).length;
-  const recentNet = networkingLog.filter(c => { try { return new Date(c.date) >= weekStart; } catch { return false; } }).length;
+  // Use created_at (timestamptz from Supabase) — avoids locale-string parsing bugs
+  const recentApps = apps.filter(a => { try { return new Date(a.created_at || a.date) >= weekStart; } catch { return false; } }).length;
+  const recentNet = networkingLog.filter(c => { try { return new Date(c.created_at || c.date) >= weekStart; } catch { return false; } }).length;
 
   // ── Networking analytics ──────────────────────────────────────────────────
   const todayStr = new Date().toISOString().split('T')[0];
@@ -93,6 +94,37 @@ export default function Dashboard({apps, pipeline, searchResults, networkingLog,
         <h2 style={{margin:"0 0 4px",fontSize:24,fontWeight:700,color:t.tx}}>Dashboard</h2>
         <p style={{margin:0,fontSize:14,color:t.sub}}>Your job search command center &nbsp;<span style={{fontWeight:600,color:t.muted}}>· Week of {weekLabel}</span></p>
       </div>
+
+      {/* Weekly Goals */}
+      {(() => {
+        const APP_TARGET = 5, NET_TARGET = 10;
+        const appPct = Math.min(100, Math.round((recentApps / APP_TARGET) * 100));
+        const netPct = Math.min(100, Math.round((recentNet / NET_TARGET) * 100));
+        return (
+          <Card t={t} style={{marginBottom:20,padding:"16px 24px"}}>
+            <div style={{display:"flex",alignItems:"center",gap:24,flexWrap:"wrap"}}>
+              <div style={{fontSize:11,fontWeight:700,color:t.muted,textTransform:"uppercase",letterSpacing:1.5,whiteSpace:"nowrap"}}>
+                Week of {weekLabel}
+              </div>
+              {[
+                {label:"Applications",cur:recentApps,target:APP_TARGET,pct:appPct,color:t.green},
+                {label:"Contacts",cur:recentNet,target:NET_TARGET,pct:netPct,color:"#7c3aed"},
+              ].map(({label,cur,target,pct,color}) => (
+                <div key={label} style={{flex:1,minWidth:160}}>
+                  <div style={{display:"flex",justifyContent:"space-between",marginBottom:5}}>
+                    <span style={{fontSize:12.5,fontWeight:600,color:t.sub}}>{label}</span>
+                    <span style={{fontSize:12.5,fontWeight:700,color:pct>=100?color:t.tx}}>{cur} / {target}</span>
+                  </div>
+                  <div style={{height:6,background:t.border,borderRadius:3,overflow:"hidden"}}>
+                    <div style={{width:`${pct}%`,height:"100%",background:color,borderRadius:3,transition:"width .4s ease"}}/>
+                  </div>
+                  {pct >= 100 && <div style={{fontSize:10.5,color,fontWeight:700,marginTop:3}}>Goal reached!</div>}
+                </div>
+              ))}
+            </div>
+          </Card>
+        );
+      })()}
 
       {/* Top metric cards */}
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:16,marginBottom:24}}>

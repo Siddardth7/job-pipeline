@@ -133,6 +133,8 @@ export default function FindJobs({searchResults, setSearchResults, pipeline, add
     setError("");
   };
 
+  const todayStr = new Date().toISOString().split('T')[0];
+
   const fetchFeed = async (url, silent=false) => {
     if (!silent) setLoading(true);
     setError("");
@@ -144,6 +146,8 @@ export default function FindJobs({searchResults, setSearchResults, pipeline, add
       if (!arr.length) throw new Error("No jobs found in feed.");
       loadJobs(arr);
       setLastUpdated(data.generated_utc || new Date().toISOString());
+      // Mark feed as fresh for today so stale-check doesn't re-fetch every render
+      localStorage.setItem('lastFeedDate', todayStr);
     } catch(e) {
       if (!silent) setError(e.message);
     }
@@ -151,7 +155,10 @@ export default function FindJobs({searchResults, setSearchResults, pipeline, add
   };
 
   useEffect(() => {
-    if (!autoLoaded && searchResults.length === 0) {
+    const lastFeedDate = localStorage.getItem('lastFeedDate');
+    const feedIsStale = lastFeedDate !== todayStr;
+    // Auto-fetch if no jobs loaded yet, OR if the last feed is from a previous day
+    if (!autoLoaded && (searchResults.length === 0 || feedIsStale)) {
       setAutoLoaded(true);
       const tm = setTimeout(() => fetchFeed(feedUrl, true), 500);
       return () => clearTimeout(tm);

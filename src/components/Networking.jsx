@@ -191,6 +191,7 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
   const [totalCount, setTotalCount] = useState(5);
   const [tab, setTab]     = useState("find");
   const [logFilter, setLogFilter] = useState("All");
+  const [logSearch, setLogSearch] = useState("");
 
   useEffect(() => {
     if (currentJob) {
@@ -208,9 +209,13 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
     return meta?.status === 'Pending' && meta?.followUpDate && meta.followUpDate < today;
   }).length;
 
-  const filteredLog = logFilter === 'All'
-    ? networkingLog
-    : networkingLog.filter(c => (netlogMeta?.[c.id]?.status || 'Pending') === logFilter);
+  const filteredLog = networkingLog
+    .filter(c => logFilter === 'All' || (netlogMeta?.[c.id]?.status || 'Pending') === logFilter)
+    .filter(c => {
+      if (!logSearch.trim()) return true;
+      const q = logSearch.toLowerCase();
+      return (c.name||'').toLowerCase().includes(q) || (c.company||'').toLowerCase().includes(q) || (c.role||'').toLowerCase().includes(q);
+    });
 
   const findContacts = async () => {
     setLoading(true);
@@ -241,7 +246,7 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
   const handleConnectionSent = (c) => {
     addToNetworkingLog({
       id: c.id,
-      date: new Date().toLocaleDateString(),
+      date: new Date().toISOString(),
       name: c.name || "Unknown",
       type: c.type || "Peer",
       company: c.company || co,
@@ -345,7 +350,18 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
 
       {tab === "log" && (
         <div>
-          {/* Status filter row */}
+          {/* Search + Status filter row */}
+          <div style={{display:"flex",gap:8,marginBottom:12,alignItems:"center"}}>
+            <input
+              value={logSearch}
+              onChange={e => setLogSearch(e.target.value)}
+              placeholder="Search by name, company, or role..."
+              style={{flex:1,background:t.bg,border:`1px solid ${t.border}`,borderRadius:8,padding:"8px 13px",color:t.tx,fontSize:13,fontFamily:"inherit",outline:"none"}}
+            />
+            {logSearch && (
+              <Btn size="sm" variant="secondary" onClick={() => setLogSearch("")} t={t}>Clear</Btn>
+            )}
+          </div>
           <div style={{display:"flex",gap:8,marginBottom:16,flexWrap:"wrap",alignItems:"center"}}>
             {['All', ...STATUS_OPTS].map(s => (
               <Chip key={s} active={logFilter===s} onClick={() => setLogFilter(s)} t={t}
@@ -392,7 +408,7 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
                     const sc = getStatusStyle(status);
                     return (
                       <tr key={c.id||i} style={{borderBottom:`1px solid ${t.border}`,background:isOverdue?t.redL+"88":undefined}}>
-                        <td style={{padding:"10px 12px",color:t.tx,whiteSpace:"nowrap"}}>{c.date}</td>
+                        <td style={{padding:"10px 12px",color:t.tx,whiteSpace:"nowrap"}}>{c.date ? new Date(c.date).toLocaleDateString(undefined,{month:"short",day:"numeric"}) : "—"}</td>
                         <td style={{padding:"10px 12px",color:t.tx,fontWeight:600,whiteSpace:"nowrap"}}>{c.name}</td>
                         <td style={{padding:"10px 12px",whiteSpace:"nowrap"}}>
                           <span style={{fontSize:11,fontWeight:700,padding:"2px 8px",borderRadius:10,background:t.priL,color:t.pri}}>{c.type}</span>
@@ -408,10 +424,15 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
                           </select>
                         </td>
                         <td style={{padding:"10px 12px",whiteSpace:"nowrap"}}>
-                          <span style={{fontSize:12,fontWeight:600,color:isOverdue?t.red:t.sub,display:"flex",alignItems:"center",gap:4}}>
-                            {followUpDate || '—'}
+                          <div style={{display:"flex",alignItems:"center",gap:4}}>
+                            <input
+                              type="date"
+                              value={followUpDate || ''}
+                              onChange={e => updateNetlogMeta(c.id, {followUpDate: e.target.value})}
+                              style={{background:isOverdue?t.redL:t.bg,border:`1px solid ${isOverdue?t.redBd:t.border}`,borderRadius:6,padding:"3px 6px",color:isOverdue?t.red:t.tx,fontSize:12,fontFamily:"inherit",outline:"none"}}
+                            />
                             {isOverdue && <AlertTriangle size={12} color={t.red}/>}
-                          </span>
+                          </div>
                         </td>
                         <td style={{padding:"10px 12px"}}>
                           {c.linkedinUrl && (
