@@ -186,6 +186,8 @@ export default function JobAgent() {
   const addToPipeline = useCallback((job) => {
     const newJob = {...job, status:"active", addedAt:Date.now(), in_pipeline: true};
     setPipeline(p => p.find(j => j.id === job.id) ? p : [...p, newJob]);
+    // Phase 3: remove from Find Jobs immediately so it doesn't stay visible in-session
+    setSearchResults(p => p.filter(j => j.id !== job.id));
     setSyncStatus("saving");
     Storage.upsertJob(newJob)
       .then(() => { setSyncStatus("saved"); setTimeout(() => setSyncStatus(""), 3000); })
@@ -210,13 +212,19 @@ export default function JobAgent() {
       .catch(e => { setSyncStatus("error"); console.error("completePipeline save error:", e); });
   }, []);
 
+  // Phase 4: save directly (not debounced) — the shared debounce timer caused
+  // race conditions where a later save (e.g. logApplication) cancelled an
+  // in-flight pipeline status update, causing rollback on page reload.
   const updatePipelineJob = useCallback((id, updates) => {
     setPipeline(p => p.map(j => j.id === id ? {...j, ...updates} : j));
-    debouncedSave(() => {
-      const job = stateRef.current.pipeline.find(j => j.id === id);
-      if (job) return Storage.upsertJob({...job, ...updates});
-    });
-  }, [debouncedSave]);
+    setSyncStatus("saving");
+    const job = stateRef.current.pipeline.find(j => j.id === id);
+    if (job) {
+      Storage.upsertJob({...job, ...updates})
+        .then(() => { setSyncStatus("saved"); setTimeout(() => setSyncStatus(""), 3000); })
+        .catch(e => { setSyncStatus("error"); console.error("updatePipelineJob save error:", e); });
+    }
+  }, []);
 
   const updateNetlogMeta = useCallback((contactId, updates) => {
     setNetlogMeta(prev => {

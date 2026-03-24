@@ -355,6 +355,11 @@ def _write_output(
     FINAL_OUTPUT_PATH.write_text(json.dumps(payload, indent=2))
     log.info(f"Wrote final output → {FINAL_OUTPUT_PATH}")
 
+    # Phase 2: write dated snapshot so Past Runs panel can list historical runs
+    dated_path = OUTPUT_DIR / f"jobs_clean_{date.today()}.json"
+    dated_path.write_text(json.dumps(payload, indent=2))
+    log.info(f"Wrote dated snapshot → {dated_path}")
+
 
 # ── CLI ───────────────────────────────────────────────────────────────────────
 
