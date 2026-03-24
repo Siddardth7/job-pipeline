@@ -1,19 +1,19 @@
 // ─── Groq AI Helper ───────────────────────────────────────────────────────────
 // Uses Groq's free API (llama-3.3-70b) for tailored analysis and drafting
 
-const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
+// Route through /api/groq (Vercel serverless proxy) to avoid CORS —
+// browser → same-origin proxy → api.groq.com (server-side, no CORS).
+const GROQ_PROXY_URL = '/api/groq';
 const MODEL = 'llama-3.3-70b-versatile';
 
 export async function callGroq(systemPrompt, userPrompt, apiKey, maxTokens = 1000) {
   if (!apiKey) throw new Error('No Groq API key configured. Add it in Settings → Groq AI.');
 
-  const res = await fetch(GROQ_API_URL, {
+  const res = await fetch(GROQ_PROXY_URL, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
+      apiKey,
       model: MODEL,
       max_tokens: maxTokens,
       messages: [
