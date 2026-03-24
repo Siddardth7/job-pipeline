@@ -1329,6 +1329,46 @@
       "name": "Elanco",
       "domain": "",
       "industry": "Auto-promoted"
+    },
+    {
+      "name": "Terex Corporation",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Power Integrations",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Granite Construction",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Epredia",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Ardurra",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "VulcanForms Inc.",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "General Mills",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Alstom",
+      "domain": "",
+      "industry": "Auto-promoted"
     }
   ],
   "promotion_tracking": {
@@ -1515,7 +1555,8 @@
     ],
     "Terex Corporation": [
       "2026-03-11",
-      "2026-03-23"
+      "2026-03-23",
+      "2026-03-24"
     ],
     "Detroit Thermal Systems, LLC - Tier 1 Automotive Supplier": [
       "2026-03-11"
@@ -1546,7 +1587,8 @@
       "2026-03-11"
     ],
     "VirtualVocations": [
-      "2026-03-11"
+      "2026-03-11",
+      "2026-03-24"
     ],
     "TD Bank": [
       "2026-03-11"
@@ -2795,7 +2837,8 @@
     ],
     "Power Integrations": [
       "2026-03-22",
-      "2026-03-23"
+      "2026-03-23",
+      "2026-03-24"
     ],
     "Midmark Corporation": [
       "2026-03-22",
@@ -2815,23 +2858,28 @@
     ],
     "Granite Construction": [
       "2026-03-22",
-      "2026-03-23"
+      "2026-03-23",
+      "2026-03-24"
     ],
     "Epredia": [
       "2026-03-22",
-      "2026-03-23"
+      "2026-03-23",
+      "2026-03-24"
     ],
     "Ardurra": [
       "2026-03-22",
-      "2026-03-23"
+      "2026-03-23",
+      "2026-03-24"
     ],
     "VulcanForms Inc.": [
       "2026-03-22",
-      "2026-03-23"
+      "2026-03-23",
+      "2026-03-24"
     ],
     "General Mills": [
       "2026-03-22",
-      "2026-03-23"
+      "2026-03-23",
+      "2026-03-24"
     ],
     "Papa Johns": [
       "2026-03-22",
@@ -2843,7 +2891,8 @@
     ],
     "Alstom": [
       "2026-03-22",
-      "2026-03-23"
+      "2026-03-23",
+      "2026-03-24"
     ],
     "Headway Technologies": [
       "2026-03-22",
@@ -2854,25 +2903,98 @@
       "2026-03-23"
     ],
     "Packaging Corporation of America": [
-      "2026-03-23"
+      "2026-03-23",
+      "2026-03-24"
     ],
     "Holtec International": [
-      "2026-03-23"
+      "2026-03-23",
+      "2026-03-24"
     ],
     "Solar Turbines": [
-      "2026-03-23"
+      "2026-03-23",
+      "2026-03-24"
     ],
     "PharmEng Technology": [
-      "2026-03-23"
+      "2026-03-23",
+      "2026-03-24"
     ],
     "SSi People": [
-      "2026-03-23"
+      "2026-03-23",
+      "2026-03-24"
     ],
     "VERINGER ENGINEERING": [
-      "2026-03-23"
+      "2026-03-23",
+      "2026-03-24"
     ],
     "GHD": [
-      "2026-03-23"
+      "2026-03-23",
+      "2026-03-24"
+    ],
+    "Harvard Integrations": [
+      "2026-03-24"
+    ],
+    "ICU Medical": [
+      "2026-03-24"
+    ],
+    "Lancesoft": [
+      "2026-03-24"
+    ],
+    "TalentBurst, an Inc 5000 company": [
+      "2026-03-24"
+    ],
+    "Sunrise Systems, Inc.": [
+      "2026-03-24"
+    ],
+    "Komatsu": [
+      "2026-03-24"
+    ],
+    "Werfen North America": [
+      "2026-03-24"
+    ],
+    "Hayward Holdings, Inc.": [
+      "2026-03-24"
+    ],
+    "Austin Allen Company, LLC": [
+      "2026-03-24"
+    ],
+    "Audubon Companies": [
+      "2026-03-24"
+    ],
+    "Werfenlife SA.": [
+      "2026-03-24"
+    ],
+    "Centrus Energy Corp.": [
+      "2026-03-24"
+    ],
+    "EPTA GROUP": [
+      "2026-03-24"
+    ],
+    "Voith Paper": [
+      "2026-03-24"
+    ],
+    "3P Partners": [
+      "2026-03-24"
+    ],
+    "Foxconn Industrial Internet - FII": [
+      "2026-03-24"
+    ],
+    "HTC Global Services": [
+      "2026-03-24"
+    ],
+    "MAS HVAC": [
+      "2026-03-24"
+    ],
+    "W. R. Grace": [
+      "2026-03-24"
+    ],
+    "Ahlstrom": [
+      "2026-03-24"
+    ],
+    "US Conec": [
+      "2026-03-24"
+    ],
+    "MilliporeSigma": [
+      "2026-03-24"
     ]
   },
   "rejected_companies": [],
