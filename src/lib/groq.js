@@ -267,7 +267,11 @@ function applyQCBarriers(parsed, variant) {
     }
 
     // 7. Build LaTeX version: **text** -> \textbf{text}
-    parsed.mod1_summary_latex = s.replace(/\*\*([^*]+)\*\*/g, '\\textbf{$1}');
+    //    Also escape bare & (e.g. GD&T → GD\&T) — LaTeX-only; mod1_summary
+    //    keeps the readable form for UI display.
+    parsed.mod1_summary_latex = s
+      .replace(/\*\*([^*]+)\*\*/g, '\\textbf{$1}')
+      .replace(/&/g, '\\&');
     parsed.mod1_summary = s;
   }
 

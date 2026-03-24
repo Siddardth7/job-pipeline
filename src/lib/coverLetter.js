@@ -11,6 +11,8 @@ export function buildCoverLetterPayload({ result, company, role }) {
     company,
     role,
     variant_focus: variantFocus,
-    summary: result.mod1_summary,
+    // Strip **bold** UI markers — backend sanitizes this as plain text and
+    // injects into %%SUMMARY_SENTENCE%%; asterisks would appear literally in PDF.
+    summary: (result.mod1_summary || '').replace(/\*\*/g, ''),
   };
 }
