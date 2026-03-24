@@ -591,7 +591,6 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
     .replace(/\\[a-zA-Z]+\{([^}]*)\}/g, '$1')
     .replace(/\*\*/g, '');
 
-  const mod1LaTeX = result?.mod1_summary_latex ?? result?.mod1_summary?.replace(/\*\*/g, '') ?? "";
 
   return (
     <div>
@@ -744,7 +743,7 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
                   </div>
                   <div>
                     <div style={{fontSize:13.5,fontWeight:700,color:t.tx}}>Mod 1 — Summary</div>
-                    <div style={{fontSize:11,color:t.muted}}>Paste inside \textbf{"{...}"} in Overleaf</div>
+                    <div style={{fontSize:11,color:t.muted}}>Auto-injected into your resume PDF download</div>
                   </div>
                 </div>
                 <Btn size="sm" variant="green" onClick={() => copyText("mod1", mod1PlainText)} t={t}>
@@ -772,10 +771,6 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
                 </div>
               </div>
 
-              <Btn size="sm" variant="ghost" onClick={() => copyText("mod1latex", mod1LaTeX)} t={t}
-                style={{fontSize:10}}>
-                {copied==="mod1latex"?<><Check size={10}/> Copied</>:<><Copy size={10}/> Copy LaTeX</>}
-              </Btn>
             </Card>
 
             {/* MOD 2: Skills */}

@@ -181,11 +181,11 @@ Now return ONLY this JSON for the actual JD:
   try {
     const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
     const parsed = JSON.parse(cleaned);
-    return applyQCBarriers(parsed);
+    return applyQCBarriers(parsed, variant);
   } catch {
     const match = text.match(/\{[\s\S]*\}/);
     if (match) {
-      try { return applyQCBarriers(JSON.parse(match[0])); }
+      try { return applyQCBarriers(JSON.parse(match[0]), variant); }
       catch { /* fall through */ }
     }
     throw new Error('Could not parse Groq response. Try again.');
@@ -195,7 +195,7 @@ Now return ONLY this JSON for the actual JD:
 // ── QC BARRIER — applied to every parsed Groq result ────────────────────────
 // Bold is applied HERE deterministically — never trusted from Groq output.
 // Groq writes plain text. We bold the title + all 5 keywords reliably.
-function applyQCBarriers(parsed) {
+function applyQCBarriers(parsed, variant) {
   if (parsed.mod2_skilllines && Array.isArray(parsed.mod2_skilllines)) {
     parsed.mod2_skills = parsed.mod2_skilllines
       .map(row => {
