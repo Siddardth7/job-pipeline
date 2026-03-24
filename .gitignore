@@ -1,6 +1,17 @@
 .env
+.env.local
 *.log
 .DS_Store
 .venv/
 .ven/
 output/
+node_modules/
+dist/
+dist-ssr/
+*.local
+.vscode/*
+.idea
+**/__pycache__/
+*.pyc
+.vercel
+.netlify
