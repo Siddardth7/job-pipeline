@@ -120,7 +120,11 @@ KEYWORD QUALITY — extract SPECIFIC technical terms only:
   GOOD: "SPC", "FMEA", "autoclave processing", "GD&T", "CMM inspection", "lean manufacturing",
         "defect reduction", "AS9100", "NADCAP", "NDT", "CAPA", "PFMEA", "APQP", "DMAIC", "8D root cause"
   BAD — never extract: "problem solving", "communication", "computer skills", "teamwork",
-        "attention to detail", "years of experience", "fast learner", "process improvements"`;
+        "attention to detail", "years of experience", "fast learner", "process improvements"
+
+RULE 4 CLARIFIED — mod2_skilllines: keep every label exactly as given. You may reorder
+the skills within each line to front-load JD-relevant ones, and append (Learning) to
+skills not yet mastered. Do not add or remove skill lines, do not rename labels.`;
 
   const user = `JD:
 ${jd.slice(0, 3500)}
@@ -144,21 +148,36 @@ SLOT RULES:
 - [KW4] = top5_jd_skills[3] verbatim
 - [KW5] = top5_jd_skills[4] verbatim — appears ONLY in sentence 3
 - [COMPANY] = "Tata Boeing" or "SAMPE" or "Beckman Institute" — pick the most relevant
-- [TOOL_A], [TOOL_B] = pick 2 from candidate tools list: SPC, 8D methodology, FMEA, GD&T, CMM inspection, ABAQUS, SolidWorks
+- [TOOL_A], [TOOL_B] = pick the 2 most JD-relevant tools from the full candidate tools list:
+    SPC, 8D methodology, FMEA, GD&T, CMM inspection, ABAQUS, SolidWorks, PFMEA, DOE, autoclave processing
 - [SOFT_CLOSE_WITH_KW5] = one 10-15 word sentence that naturally uses KW5 as a topic
 - Total summary: 60 words or fewer — count carefully
 - mod1_summary value must be plain text only — no ** markers, no backslashes, no curly braces
 
-EXAMPLE (for a composites QA role — use your own keywords for the actual JD):
-  top5_jd_skills: ["autoclave processing", "defect inspection", "SPC-driven quality", "CAPA closure", "AS9100 compliance"]
+EXAMPLE for this variant's skeleton (adapt keywords to the actual JD — do NOT copy this):
+${
+  variant === 'A'
+    ? `  top5_jd_skills: ["lean manufacturing", "CNC machining", "PPAP", "defect reduction", "First Article Inspection"]
+  summary_title: "Manufacturing Engineer"
+  mod1_summary: "Manufacturing Engineer with hands-on lean manufacturing and CNC machining experience at Tata Boeing. Delivered PPAP and defect reduction results using SPC and CMM inspection. Applies First Article Inspection standards to every production program."`
+  : variant === 'B'
+    ? `  top5_jd_skills: ["DMAIC", "8D root cause analysis", "CAPA", "defect reduction", "Kaizen"]
+  summary_title: "Process Engineer"
+  mod1_summary: "Process Engineer specializing in DMAIC and 8D root cause analysis, with direct exposure at Tata Boeing. Built a track record of CAPA and defect reduction improvements using SPC and Minitab. Brings continuous improvement discipline through Kaizen and Value Stream Mapping."`
+  : variant === 'C'
+    ? `  top5_jd_skills: ["autoclave processing", "defect inspection", "SPC-driven quality", "CAPA closure", "AS9100 compliance"]
   summary_title: "Quality Engineer"
-  mod1_summary: "Quality Engineer built on autoclave processing and defect inspection work at Tata Boeing. Validated SPC-driven quality and CAPA closure programs using 8D methodology and CMM inspection. Brings rigorous AS9100 compliance discipline to every manufacturing program."
+  mod1_summary: "Quality Engineer built on autoclave processing and defect inspection work at Tata Boeing. Validated SPC-driven quality and CAPA closure programs using 8D methodology and CMM inspection. Brings rigorous AS9100 compliance discipline to every manufacturing program."`
+  : `  top5_jd_skills: ["PFMEA", "process validation", "DOE", "commissioning", "IQ/OQ/PQ"]
+  summary_title: "Equipment Engineer"
+  mod1_summary: "Equipment Engineer combining PFMEA depth with process validation execution at Beckman Institute. Delivers DOE and commissioning milestones using SolidWorks and ABAQUS. Ensures manufacturing readiness through IQ/OQ/PQ protocols on every NPI program."`
+}
 
 Now return ONLY this JSON for the actual JD:
 {
   "top5_jd_skills": ["kw1", "kw2", "kw3", "kw4", "kw5"],
   "summary_title": "exact job title from JD",
-  "summary_structure_used": ${variant === 'A' ? 1 : variant === 'B' ? 2 : variant === 'C' ? 5 : 4},
+  "summary_structure_used": ${variant === 'A' ? 1 : variant === 'B' ? 2 : variant === 'C' ? 3 : 4},
   "mod1_summary": "3 sentences, plain text, no formatting, 60 words max",
   "mod2_skilllines": [
     {"label": "same label as base line 1", "skills": "reordered skills, added (Learning) if needed"},
