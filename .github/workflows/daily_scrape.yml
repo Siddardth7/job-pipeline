@@ -53,6 +53,16 @@ jobs:
         continue-on-error: true
         run: python pipeline/company_intelligence.py
 
+      # ── STEP 3b: Fallback — if company_intelligence failed, promote intermediate ─
+      - name: Fallback output if company_intelligence failed
+        if: always()
+        run: |
+          if [ ! -f output/jobs_clean_latest.json ] && [ -f temp/jobs_clean_intermediate.json ]; then
+            mkdir -p output
+            cp temp/jobs_clean_intermediate.json output/jobs_clean_latest.json
+            echo "WARNING: Used intermediate file as fallback for output/jobs_clean_latest.json"
+          fi
+
       # ── STEP 4: Commit results ────────────────────────────────────────────
       - name: Commit and push results
         run: |

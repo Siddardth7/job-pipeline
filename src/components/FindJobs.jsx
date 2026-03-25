@@ -68,7 +68,7 @@ function parseFileDate(name) {
 const FILTERS = ["All","Visa Sponsor","Remote","90%+ Match","ITAR-Free"];
 
 export default function FindJobs({searchResults, setSearchResults, pipeline, addToPipeline, setPage, findCompany, normalizeJob, isBlacklisted, checkITAR, customCompanies, setCustomCompanies, t}) {
-  const DEFAULT_FEED = "https://raw.githubusercontent.com/Siddardth7/jobagent-web/main/output/jobs_clean_latest.json";
+  const DEFAULT_FEED = "/api/jobs-feed";
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [feedUrl, setFeedUrl] = useState(DEFAULT_FEED);
