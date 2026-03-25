@@ -175,3 +175,58 @@ export async function loadCurrentJob() {
   if (error || !data) return null;
   try { return JSON.parse(data.value); } catch { return null; }
 }
+
+// ── LinkedIn DM Contacts ───────────────────────────────────────────────────────
+export async function fetchLinkedInContacts() {
+  const { data, error } = await supabase
+    .from('linkedin_dm_contacts')
+    .select('*')
+    .order('priority', { ascending: false })
+    .order('last_contact', { ascending: false });
+  if (error) throw error;
+  return data || [];
+}
+
+export async function fetchLinkedInFollowups() {
+  const { data, error } = await supabase
+    .from('linkedin_dm_contacts')
+    .select('*')
+    .eq('follow_up', true)
+    .order('priority', { ascending: false });
+  if (error) throw error;
+  return data || [];
+}
+
+export async function upsertLinkedInContact(contact) {
+  const row = {
+    id:            contact.id,
+    name:          contact.name,
+    company:       contact.company,
+    position:      contact.position,
+    role_type:     contact.role_type,
+    conv_status:   contact.conv_status,
+    last_contact:  contact.last_contact,
+    days_since:    contact.days_since,
+    message_count: contact.message_count,
+    follow_up:     contact.follow_up,
+    priority:      contact.priority,
+    next_action:   contact.next_action,
+    summary:       contact.summary,
+    notes:         contact.notes,
+    linkedin_url:  contact.linkedin_url,
+    email:         contact.email,
+    updated_at:    new Date().toISOString(),
+  };
+  const { error } = await supabase
+    .from('linkedin_dm_contacts')
+    .upsert(row, { onConflict: 'id' });
+  if (error) throw error;
+}
+
+export async function updateLinkedInContactNotes(id, notes) {
+  const { error } = await supabase
+    .from('linkedin_dm_contacts')
+    .update({ notes, updated_at: new Date().toISOString() })
+    .eq('id', id);
+  if (error) throw error;
+}
