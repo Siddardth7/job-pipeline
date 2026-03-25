@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Users, Send, Linkedin, Mail, Copy, Check, MessageSquare, Sparkles, RefreshCw, AlertTriangle } from 'lucide-react';
+import { fetchLinkedInContacts, updateLinkedInContactNotes } from '../lib/storage.js';
 import { draftMessageWithGroq } from '../lib/groq.js';
 
 function Card({children, t, style, onClick}) {
@@ -169,6 +170,188 @@ function ContactDraftSection({contact, currentJob, groqKey, t}) {
           </div>
         </div>
       )}
+      {tab === "dms" && (
+        <div>
+          {/* ── Stats row ── */}
+          {dmContacts.length > 0 && (() => {
+            const followUps  = dmContacts.filter(c => c.follow_up).length;
+            const active     = dmContacts.filter(c => c.conv_status === 'Opportunity Active').length;
+            const recruiters = dmContacts.filter(c => c.role_type === 'Recruiter').length;
+            const statStyle  = (bg, color) => ({
+              padding:"8px 16px", borderRadius:10, fontSize:13, fontWeight:700,
+              background:bg, color
+            });
+            return (
+              <div style={{display:"flex",gap:10,flexWrap:"wrap",marginBottom:18}}>
+                <div style={statStyle(t.card, t.tx)}>{dmContacts.length} total</div>
+                <div style={statStyle(t.yellowL, t.yellow)}>{followUps} follow-ups</div>
+                <div style={statStyle(t.greenL, t.green)}>{active} active opportunities</div>
+                <div style={statStyle(t.priL, t.pri)}>{recruiters} recruiters</div>
+              </div>
+            );
+          })()}
+
+          {/* ── Filter bar ── */}
+          {dmContacts.length > 0 && (() => {
+            const sel = {background:t.bg,border:`1px solid ${t.border}`,borderRadius:8,padding:'8px 11px',color:t.tx,fontSize:12.5,fontFamily:'inherit',outline:'none'};
+            return (
+              <div style={{display:"flex",gap:10,flexWrap:"wrap",marginBottom:18,alignItems:"center"}}>
+                <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)} style={sel}>
+                  {['All','Recruiter','Hiring Manager','Executive','Referral Contact','Alumni','Peer Engineer','Unknown'].map(v =>
+                    <option key={v} value={v}>{v === 'All' ? 'All Roles' : v}</option>
+                  )}
+                </select>
+                <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={sel}>
+                  {['All','Opportunity Active','Follow-Up Needed','Awaiting Reply','Replied','Cold / No Action'].map(v =>
+                    <option key={v} value={v}>{v === 'All' ? 'All Statuses' : v}</option>
+                  )}
+                </select>
+                <select value={showFollowupOnly ? 'followup' : 'all'} onChange={e => setShowFollowupOnly(e.target.value === 'followup')} style={sel}>
+                  <option value="all">All Contacts</option>
+                  <option value="followup">Follow-Up Only</option>
+                </select>
+              </div>
+            );
+          })()}
+
+          {/* ── Loading ── */}
+          {dmLoading && (
+            <div style={{display:"flex",gap:6,alignItems:"center",padding:"20px 0"}}>
+              {[0,1,2].map(i => <div key={i} style={{width:7,height:7,borderRadius:"50%",background:t.pri,animation:`lp-dot .8s ${i*.15}s ease-in-out infinite`,opacity:.3}}/>)}
+            </div>
+          )}
+
+          {/* ── Error ── */}
+          {dmError && <div style={{color:t.red,fontSize:13,fontWeight:600,marginBottom:12}}>{dmError}</div>}
+
+          {/* ── Empty state ── */}
+          {!dmLoading && !dmError && dmContacts.length === 0 && (
+            <Card t={t} style={{textAlign:"center",padding:"60px 24px"}}>
+              <Users size={32} color={t.muted} style={{marginBottom:12}}/>
+              <div style={{fontSize:14,fontWeight:600,color:t.sub,marginBottom:12}}>No LinkedIn DM contacts yet.</div>
+              <div style={{fontSize:13,color:t.muted,marginBottom:12}}>Run the import script to get started:</div>
+              <div style={{background:t.hover,borderRadius:6,padding:"8px 14px",fontSize:12,fontFamily:"monospace",color:t.tx,display:"inline-block",textAlign:"left"}}>
+                python linkedin_crm_import.py --csv ~/Desktop/linkedin-crm/output/contacts_export.csv
+              </div>
+            </Card>
+          )}
+
+          {/* ── Contact cards ── */}
+          {!dmLoading && (() => {
+            const ROLE_COLORS = {
+              'Recruiter':        {bg:t.priL,   tx:t.pri},
+              'Hiring Manager':   {bg:'#fee2e2', tx:'#dc2626'},
+              'Executive':        {bg:'#ede9fe', tx:'#7c3aed'},
+              'Referral Contact': {bg:'#ffedd5', tx:'#ea580c'},
+              'Alumni':           {bg:'#ccfbf1', tx:'#0d9488'},
+              'Peer Engineer':    {bg:t.greenL,  tx:t.green},
+            };
+            const STATUS_COLORS_DM = {
+              'Opportunity Active': {bg:t.greenL,  tx:t.green},
+              'Follow-Up Needed':   {bg:t.yellowL, tx:t.yellow},
+              'Awaiting Reply':     {bg:t.priL,    tx:t.pri},
+            };
+            const priorityColor = (p) => {
+              if (p >= 8) return {bg:'#fee2e2', tx:'#dc2626'};
+              if (p >= 6) return {bg:'#ffedd5', tx:'#ea580c'};
+              if (p >= 4) return {bg:t.yellowL,  tx:t.yellow};
+              return {bg:t.hover, tx:t.muted};
+            };
+
+            const filtered = dmContacts
+              .filter(c => roleFilter === 'All'   || c.role_type === roleFilter)
+              .filter(c => statusFilter === 'All' || c.conv_status === statusFilter)
+              .filter(c => !showFollowupOnly      || c.follow_up === true);
+
+            return filtered.map(c => {
+              const roleCl    = ROLE_COLORS[c.role_type] || {bg:t.hover, tx:t.muted};
+              const statusCl  = STATUS_COLORS_DM[c.conv_status] || {bg:t.hover, tx:t.muted};
+              const priCl     = priorityColor(c.priority);
+              const isExpanded = expandedSummaries.has(c.id);
+              const noteVal   = (editedNotes[c.id] ?? c.notes) ?? '';
+
+              // Live days since contact (computed from last_contact YYYY-MM-DD)
+              let daysText = null;
+              if (c.last_contact) {
+                const days = Math.floor((Date.now() - new Date(c.last_contact)) / 86400000);
+                daysText = `${days} day${days !== 1 ? 's' : ''} ago`;
+              } else if (c.days_since != null) {
+                daysText = `${c.days_since} days ago`;
+              }
+
+              const toggleSummary = () => setExpandedSummaries(prev => {
+                const next = new Set(prev);
+                next.has(c.id) ? next.delete(c.id) : next.add(c.id);
+                return next;
+              });
+
+              const handleNoteBlur = () => {
+                if (editedNotes[c.id] !== undefined && editedNotes[c.id] !== (c.notes || '')) {
+                  updateLinkedInContactNotes(c.id, editedNotes[c.id]).catch(() => {});
+                }
+              };
+
+              return (
+                <Card key={c.id} t={t} style={{
+                  marginBottom:12,
+                  borderLeft: c.follow_up ? '4px solid #ea580c' : undefined,
+                }}>
+                  <div style={{display:"flex",alignItems:"flex-start",gap:12}}>
+                    <Avatar name={c.name} size={42} t={t}/>
+                    <div style={{flex:1,minWidth:0}}>
+                      {/* Header row */}
+                      <div style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap",marginBottom:3}}>
+                        {c.linkedin_url
+                          ? <a href={c.linkedin_url} target="_blank" rel="noreferrer" style={{fontSize:14.5,fontWeight:700,color:t.tx,textDecoration:"none"}}>{c.name}</a>
+                          : <span style={{fontSize:14.5,fontWeight:700,color:t.tx}}>{c.name}</span>
+                        }
+                        {c.follow_up && <span title="Follow-up needed">🔔</span>}
+                        <span style={{fontSize:10.5,fontWeight:700,padding:"2px 8px",borderRadius:10,background:roleCl.bg,color:roleCl.tx}}>{c.role_type||'Unknown'}</span>
+                        <span style={{fontSize:10.5,fontWeight:700,padding:"2px 8px",borderRadius:10,background:statusCl.bg,color:statusCl.tx}}>{c.conv_status}</span>
+                        {c.priority != null && (
+                          <span style={{marginLeft:'auto',fontSize:11,fontWeight:800,padding:"2px 8px",borderRadius:10,background:priCl.bg,color:priCl.tx}}>P{c.priority}</span>
+                        )}
+                      </div>
+                      {/* Subtitle */}
+                      <div style={{fontSize:13,color:t.muted,marginBottom:4}}>
+                        {[c.company,c.position].filter(Boolean).join(' · ')}
+                      </div>
+                      {/* Days since */}
+                      {daysText && <div style={{fontSize:12,color:t.muted,marginBottom:6}}>{daysText}</div>}
+                      {/* Next action */}
+                      {c.next_action && (
+                        <div style={{fontSize:12,color:t.sub,background:t.hover,borderRadius:6,padding:"5px 10px",marginBottom:8}}>
+                          <span style={{fontWeight:700}}>Next: </span>{c.next_action}
+                        </div>
+                      )}
+                      {/* Expandable summary */}
+                      {c.summary && (
+                        <div style={{marginBottom:8}}>
+                          <button onClick={toggleSummary} style={{fontSize:11.5,color:t.pri,background:"none",border:"none",padding:0,cursor:"pointer",fontFamily:"inherit",fontWeight:600}}>
+                            {isExpanded ? 'Hide summary ▴' : 'Show summary ▾'}
+                          </button>
+                          {isExpanded && (
+                            <div style={{fontSize:12.5,color:t.sub,marginTop:6,lineHeight:1.6}}>{c.summary}</div>
+                          )}
+                        </div>
+                      )}
+                      {/* Notes textarea — auto-saves on blur */}
+                      <textarea
+                        value={noteVal}
+                        rows={2}
+                        placeholder="Add notes..."
+                        onChange={e => setEditedNotes(prev => ({...prev, [c.id]: e.target.value}))}
+                        onBlur={handleNoteBlur}
+                        style={{width:"100%",background:t.bg,border:`1px solid ${t.border}`,borderRadius:8,padding:"7px 10px",color:t.tx,fontSize:12.5,fontFamily:"inherit",resize:"vertical",boxSizing:"border-box",outline:"none"}}
+                      />
+                    </div>
+                  </div>
+                </Card>
+              );
+            });
+          })()}
+        </div>
+      )}
     </div>
   );
 }
@@ -191,6 +374,15 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
   const [totalCount, setTotalCount] = useState(5);
   const [tab, setTab]     = useState("find");
   const [logFilter, setLogFilter] = useState("All");
+  const dmLoaded = useRef(false);
+  const [dmContacts, setDmContacts]           = useState([]);
+  const [dmLoading, setDmLoading]             = useState(false);
+  const [dmError, setDmError]                 = useState('');
+  const [roleFilter, setRoleFilter]           = useState('All');
+  const [statusFilter, setStatusFilter]       = useState('All');
+  const [showFollowupOnly, setShowFollowupOnly] = useState(false);
+  const [expandedSummaries, setExpandedSummaries] = useState(new Set());
+  const [editedNotes, setEditedNotes]         = useState({});
 
   useEffect(() => {
     if (currentJob) {
@@ -199,6 +391,16 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
       setLoc(currentJob.location || "");
     }
   }, [currentJob?.id]);
+
+  useEffect(() => {
+    if (tab === 'dms' && !dmLoaded.current) {
+      dmLoaded.current = true;
+      setDmLoading(true);
+      fetchLinkedInContacts()
+        .then(data => { setEditedNotes({}); setDmContacts(data); setDmLoading(false); })
+        .catch(e  => { setDmError(e.message); setDmLoading(false); });
+    }
+  }, [tab]);
 
   const sentIds = new Set(networkingLog.map(c => c.id));
   const today = new Date().toISOString().split('T')[0];
@@ -260,12 +462,13 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
           <h2 style={{margin:"0 0 4px",fontSize:24,fontWeight:700,color:t.tx}}>Networking</h2>
           <p style={{margin:0,fontSize:14,color:t.sub}}>{co ? `Contacts at ${co}` : "Find contacts at target companies"}</p>
         </div>
-        <div style={{display:"flex",gap:8}}>
+        <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
           <Chip active={tab==="find"} onClick={() => setTab("find")} t={t}>Find Contacts</Chip>
           <Chip active={tab==="log"} onClick={() => setTab("log")} t={t}>
             Networking Log ({networkingLog.length})
             {overdueCount > 0 && <span style={{marginLeft:6,fontSize:11,fontWeight:800,padding:"1px 6px",borderRadius:10,background:"#dc262622",color:"#dc2626"}}>{overdueCount}</span>}
           </Chip>
+          <Chip active={tab==="dms"} onClick={() => setTab("dms")} t={t}>LinkedIn DMs</Chip>
         </div>
       </div>
 
