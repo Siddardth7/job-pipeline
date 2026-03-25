@@ -112,3 +112,28 @@ alter table settings disable row level security;
 -- alter table jobs enable row level security;
 -- create policy "anon_all" on jobs for all using (true) with check (true);
 -- (repeat for all tables)
+
+-- ── LinkedIn DM Contacts ───────────────────────────────────────────────────────
+create table if not exists linkedin_dm_contacts (
+  id              text primary key,
+  name            text,
+  company         text,
+  position        text,
+  role_type       text,
+  conv_status     text,
+  last_contact    text,        -- ISO date: YYYY-MM-DD
+  days_since      integer,     -- stale after import; UI computes live from last_contact
+  message_count   integer,
+  follow_up       boolean default false,
+  priority        integer,
+  next_action     text,
+  summary         text,
+  notes           text,
+  linkedin_url    text,
+  email           text,
+  source          text default 'linkedin_dm',
+  created_at      timestamptz default now(),
+  updated_at      timestamptz default now()
+);
+
+alter table linkedin_dm_contacts disable row level security;
