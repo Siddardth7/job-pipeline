@@ -187,6 +187,7 @@ export async function fetchLinkedInContacts() {
   return data || [];
 }
 
+// Used by external callers (e.g. future notification badge); also available for follow-up-only views.
 export async function fetchLinkedInFollowups() {
   const { data, error } = await supabase
     .from('linkedin_dm_contacts')
@@ -198,6 +199,7 @@ export async function fetchLinkedInFollowups() {
 }
 
 export async function upsertLinkedInContact(contact) {
+  if (!contact.id) throw new Error('upsertLinkedInContact: contact.id is required');
   const row = {
     id:            contact.id,
     name:          contact.name,
@@ -224,6 +226,7 @@ export async function upsertLinkedInContact(contact) {
 }
 
 export async function updateLinkedInContactNotes(id, notes) {
+  if (!id) throw new Error('updateLinkedInContactNotes: id is required');
   const { error } = await supabase
     .from('linkedin_dm_contacts')
     .update({ notes, updated_at: new Date().toISOString() })
