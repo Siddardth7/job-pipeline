@@ -1369,6 +1369,31 @@
       "name": "Alstom",
       "domain": "",
       "industry": "Auto-promoted"
+    },
+    {
+      "name": "VirtualVocations",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Holtec International",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "SSi People",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "GHD",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Komatsu",
+      "domain": "",
+      "industry": "Auto-promoted"
     }
   ],
   "promotion_tracking": {
@@ -1588,7 +1613,8 @@
     ],
     "VirtualVocations": [
       "2026-03-11",
-      "2026-03-24"
+      "2026-03-24",
+      "2026-03-25"
     ],
     "TD Bank": [
       "2026-03-11"
@@ -2908,7 +2934,8 @@
     ],
     "Holtec International": [
       "2026-03-23",
-      "2026-03-24"
+      "2026-03-24",
+      "2026-03-25"
     ],
     "Solar Turbines": [
       "2026-03-23",
@@ -2920,7 +2947,8 @@
     ],
     "SSi People": [
       "2026-03-23",
-      "2026-03-24"
+      "2026-03-24",
+      "2026-03-25"
     ],
     "VERINGER ENGINEERING": [
       "2026-03-23",
@@ -2928,13 +2956,16 @@
     ],
     "GHD": [
       "2026-03-23",
-      "2026-03-24"
+      "2026-03-24",
+      "2026-03-25"
     ],
     "Harvard Integrations": [
-      "2026-03-24"
+      "2026-03-24",
+      "2026-03-25"
     ],
     "ICU Medical": [
-      "2026-03-24"
+      "2026-03-24",
+      "2026-03-25"
     ],
     "Lancesoft": [
       "2026-03-24"
@@ -2946,13 +2977,17 @@
       "2026-03-24"
     ],
     "Komatsu": [
-      "2026-03-24"
+      "2026-03-24",
+      "2026-03-25",
+      "2026-03-25"
     ],
     "Werfen North America": [
-      "2026-03-24"
+      "2026-03-24",
+      "2026-03-25"
     ],
     "Hayward Holdings, Inc.": [
-      "2026-03-24"
+      "2026-03-24",
+      "2026-03-25"
     ],
     "Austin Allen Company, LLC": [
       "2026-03-24"
@@ -2964,37 +2999,90 @@
       "2026-03-24"
     ],
     "Centrus Energy Corp.": [
-      "2026-03-24"
+      "2026-03-24",
+      "2026-03-25"
     ],
     "EPTA GROUP": [
-      "2026-03-24"
+      "2026-03-24",
+      "2026-03-25"
     ],
     "Voith Paper": [
-      "2026-03-24"
+      "2026-03-24",
+      "2026-03-25"
     ],
     "3P Partners": [
-      "2026-03-24"
+      "2026-03-24",
+      "2026-03-25"
     ],
     "Foxconn Industrial Internet - FII": [
-      "2026-03-24"
+      "2026-03-24",
+      "2026-03-25"
     ],
     "HTC Global Services": [
-      "2026-03-24"
+      "2026-03-24",
+      "2026-03-25"
     ],
     "MAS HVAC": [
-      "2026-03-24"
+      "2026-03-24",
+      "2026-03-25"
     ],
     "W. R. Grace": [
-      "2026-03-24"
+      "2026-03-24",
+      "2026-03-25"
     ],
     "Ahlstrom": [
-      "2026-03-24"
+      "2026-03-24",
+      "2026-03-25"
     ],
     "US Conec": [
-      "2026-03-24"
+      "2026-03-24",
+      "2026-03-25"
     ],
     "MilliporeSigma": [
-      "2026-03-24"
+      "2026-03-24",
+      "2026-03-25"
+    ],
+    "Yamaha Motor Corporation, USA": [
+      "2026-03-25"
+    ],
+    "Tiffany & Co.": [
+      "2026-03-25"
+    ],
+    "Northern Tool + Equipment": [
+      "2026-03-25"
+    ],
+    "Mitsubishi Electric Power Products, Inc.": [
+      "2026-03-25"
+    ],
+    "AbbVie": [
+      "2026-03-25"
+    ],
+    "Imerys": [
+      "2026-03-25"
+    ],
+    "Delek US": [
+      "2026-03-25"
+    ],
+    "Schaeffler": [
+      "2026-03-25"
+    ],
+    "Emerson": [
+      "2026-03-25"
+    ],
+    "Hollister-Whitney": [
+      "2026-03-25"
+    ],
+    "Quikrete": [
+      "2026-03-25"
+    ],
+    "TruCut Incorporated": [
+      "2026-03-25"
+    ],
+    "Alliance Laundry Systems LLC": [
+      "2026-03-25"
+    ],
+    "The Magnum Ice Cream Company": [
+      "2026-03-25"
     ]
   },
   "rejected_companies": [],
