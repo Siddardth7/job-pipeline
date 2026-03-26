@@ -1394,6 +1394,86 @@
       "name": "Komatsu",
       "domain": "",
       "industry": "Auto-promoted"
+    },
+    {
+      "name": "TE Connectivity",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Harvard Integrations",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "ICU Medical",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Werfen North America",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Hayward Holdings, Inc.",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Centrus Energy Corp.",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "EPTA GROUP",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Voith Paper",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Foxconn Industrial Internet - FII",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "HTC Global Services",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "MAS HVAC",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "W. R. Grace",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Ahlstrom",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "US Conec",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "MilliporeSigma",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Hyve Solutions",
+      "domain": "",
+      "industry": "Auto-promoted"
     }
   ],
   "promotion_tracking": {
@@ -1865,7 +1945,8 @@
     ],
     "TE Connectivity": [
       "2026-03-14",
-      "2026-03-15"
+      "2026-03-15",
+      "2026-03-26"
     ],
     "Hoshizaki America": [
       "2026-03-14",
@@ -2961,11 +3042,13 @@
     ],
     "Harvard Integrations": [
       "2026-03-24",
-      "2026-03-25"
+      "2026-03-25",
+      "2026-03-26"
     ],
     "ICU Medical": [
       "2026-03-24",
-      "2026-03-25"
+      "2026-03-25",
+      "2026-03-26"
     ],
     "Lancesoft": [
       "2026-03-24"
@@ -2983,11 +3066,13 @@
     ],
     "Werfen North America": [
       "2026-03-24",
-      "2026-03-25"
+      "2026-03-25",
+      "2026-03-26"
     ],
     "Hayward Holdings, Inc.": [
       "2026-03-24",
-      "2026-03-25"
+      "2026-03-25",
+      "2026-03-26"
     ],
     "Austin Allen Company, LLC": [
       "2026-03-24"
@@ -3000,15 +3085,18 @@
     ],
     "Centrus Energy Corp.": [
       "2026-03-24",
-      "2026-03-25"
+      "2026-03-25",
+      "2026-03-26"
     ],
     "EPTA GROUP": [
       "2026-03-24",
-      "2026-03-25"
+      "2026-03-25",
+      "2026-03-26"
     ],
     "Voith Paper": [
       "2026-03-24",
-      "2026-03-25"
+      "2026-03-25",
+      "2026-03-26"
     ],
     "3P Partners": [
       "2026-03-24",
@@ -3016,73 +3104,168 @@
     ],
     "Foxconn Industrial Internet - FII": [
       "2026-03-24",
-      "2026-03-25"
+      "2026-03-25",
+      "2026-03-26"
     ],
     "HTC Global Services": [
       "2026-03-24",
-      "2026-03-25"
+      "2026-03-25",
+      "2026-03-26"
     ],
     "MAS HVAC": [
       "2026-03-24",
-      "2026-03-25"
+      "2026-03-25",
+      "2026-03-26"
     ],
     "W. R. Grace": [
       "2026-03-24",
-      "2026-03-25"
+      "2026-03-25",
+      "2026-03-26"
     ],
     "Ahlstrom": [
       "2026-03-24",
-      "2026-03-25"
+      "2026-03-25",
+      "2026-03-26"
     ],
     "US Conec": [
       "2026-03-24",
-      "2026-03-25"
+      "2026-03-25",
+      "2026-03-26"
     ],
     "MilliporeSigma": [
       "2026-03-24",
-      "2026-03-25"
+      "2026-03-25",
+      "2026-03-26"
     ],
     "Yamaha Motor Corporation, USA": [
-      "2026-03-25"
+      "2026-03-25",
+      "2026-03-26"
     ],
     "Tiffany & Co.": [
-      "2026-03-25"
+      "2026-03-25",
+      "2026-03-26"
     ],
     "Northern Tool + Equipment": [
-      "2026-03-25"
+      "2026-03-25",
+      "2026-03-26"
     ],
     "Mitsubishi Electric Power Products, Inc.": [
-      "2026-03-25"
+      "2026-03-25",
+      "2026-03-26"
     ],
     "AbbVie": [
-      "2026-03-25"
+      "2026-03-25",
+      "2026-03-26"
     ],
     "Imerys": [
-      "2026-03-25"
+      "2026-03-25",
+      "2026-03-26"
     ],
     "Delek US": [
-      "2026-03-25"
+      "2026-03-25",
+      "2026-03-26"
     ],
     "Schaeffler": [
-      "2026-03-25"
+      "2026-03-25",
+      "2026-03-26"
     ],
     "Emerson": [
-      "2026-03-25"
+      "2026-03-25",
+      "2026-03-26"
     ],
     "Hollister-Whitney": [
-      "2026-03-25"
+      "2026-03-25",
+      "2026-03-26"
     ],
     "Quikrete": [
-      "2026-03-25"
+      "2026-03-25",
+      "2026-03-26"
     ],
     "TruCut Incorporated": [
-      "2026-03-25"
+      "2026-03-25",
+      "2026-03-26"
     ],
     "Alliance Laundry Systems LLC": [
-      "2026-03-25"
+      "2026-03-25",
+      "2026-03-26"
     ],
     "The Magnum Ice Cream Company": [
-      "2026-03-25"
+      "2026-03-25",
+      "2026-03-26"
+    ],
+    "Knowles Corporation": [
+      "2026-03-26"
+    ],
+    "CONMED Corporation": [
+      "2026-03-26"
+    ],
+    "Corning Incorporated": [
+      "2026-03-26"
+    ],
+    "Generac": [
+      "2026-03-26"
+    ],
+    "Hadrian": [
+      "2026-03-26"
+    ],
+    "Crane Aerospace & Electronics": [
+      "2026-03-26"
+    ],
+    "Nortek Air Solutions": [
+      "2026-03-26"
+    ],
+    "SupportFinity\u2122": [
+      "2026-03-26"
+    ],
+    "Sentry Equipment": [
+      "2026-03-26"
+    ],
+    "REV Group, Inc": [
+      "2026-03-26"
+    ],
+    "Valeo": [
+      "2026-03-26"
+    ],
+    "TOPTICA Photonics": [
+      "2026-03-26"
+    ],
+    "RealTruck, Inc.": [
+      "2026-03-26"
+    ],
+    "Hyve Solutions": [
+      "2026-03-26",
+      "2026-03-26",
+      "2026-03-26"
+    ],
+    "AAM - American Axle & Manufacturing": [
+      "2026-03-26"
+    ],
+    "Optimal Inc.": [
+      "2026-03-26"
+    ],
+    "Jabil": [
+      "2026-03-26"
+    ],
+    "Rohde & Schwarz": [
+      "2026-03-26"
+    ],
+    "NSK": [
+      "2026-03-26"
+    ],
+    "Siegfried": [
+      "2026-03-26"
+    ],
+    "ASSA ABLOY Group": [
+      "2026-03-26"
+    ],
+    "Nestl\u00e9 Health Science": [
+      "2026-03-26"
+    ],
+    "Sandvik": [
+      "2026-03-26"
+    ],
+    "Control Devices, LLC": [
+      "2026-03-26"
     ]
   },
   "rejected_companies": [],
