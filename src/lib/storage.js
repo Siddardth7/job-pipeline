@@ -198,6 +198,7 @@ export async function fetchLinkedInFollowups() {
   return data || [];
 }
 
+// Forward-looking export for a future edit-contact feature. Not currently called by the UI.
 export async function upsertLinkedInContact(contact) {
   if (!contact.id) throw new Error('upsertLinkedInContact: contact.id is required');
   const row = {

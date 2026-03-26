@@ -196,6 +196,7 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
   const [dmContacts, setDmContacts]           = useState([]);
   const [dmLoading, setDmLoading]             = useState(false);
   const [dmError, setDmError]                 = useState('');
+  const [dmNoteError, setDmNoteError]         = useState('');
   const [roleFilter, setRoleFilter]           = useState('All');
   const [statusFilter, setStatusFilter]       = useState('All');
   const [showFollowupOnly, setShowFollowupOnly] = useState(false);
@@ -505,6 +506,8 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
           {/* ── Error ── */}
           {dmError && <div style={{color:t.red,fontSize:13,fontWeight:600,marginBottom:12}}>{dmError}</div>}
 
+          {dmNoteError && <div style={{color:t.red,fontSize:12,fontWeight:600,marginBottom:8}}>{dmNoteError}</div>}
+
           {/* ── Empty state ── */}
           {!dmLoading && !dmError && dmContacts.length === 0 && (
             <Card t={t} style={{textAlign:"center",padding:"60px 24px"}}>
@@ -568,7 +571,7 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
 
               const handleNoteBlur = () => {
                 if (editedNotes[c.id] !== undefined && editedNotes[c.id] !== (c.notes || '')) {
-                  updateLinkedInContactNotes(c.id, editedNotes[c.id]).catch(e => setDmError('Note save failed: ' + e.message));
+                  updateLinkedInContactNotes(c.id, editedNotes[c.id]).catch(e => setDmNoteError('Note save failed: ' + e.message));
                 }
               };
 

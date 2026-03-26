@@ -173,12 +173,15 @@ The workflow:
 
 ## Supabase Schema
 
-The schema is defined in `supabase_schema.sql`. Key tables:
+Key tables in `supabase_schema.sql`:
 
-- `settings` — stores user API keys (Groq, Serper) and preferences
-- `jobs` — pipeline tracker state (applied, interview, offer)
-- `networking` — CRM contacts and outreach log
-- `company_intel` — company research notes
+- `jobs` — scraped job listings
+- `applications` — application tracking
+- `contacts` — networking contacts
+- `netlog` — outreach activity log
+- `templates` — email/cover letter templates
+- `settings` — user preferences
+- `linkedin_dm_contacts` — imported LinkedIn DM conversation contacts
 
 ---
 
