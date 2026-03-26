@@ -195,6 +195,47 @@ LaTeX templates live in `resume-compiler/templates/`. The AI analysis step rewri
 
 ---
 
+## LinkedIn DM CRM Integration
+
+This app integrates with a local LinkedIn CRM tool that parses your LinkedIn message export and classifies conversations. The output is stored in Supabase and displayed in the Networking → LinkedIn DMs tab.
+
+### Setup
+
+**1. Export your LinkedIn data**
+1. Go to LinkedIn → Settings → Data privacy → Get a copy of your data
+2. Select "Messages" (and optionally Connections)
+3. Download the `.zip` when ready (can take up to 24 hours)
+
+**2. Run the LinkedIn CRM tool**
+```
+cd ~/Desktop/linkedin-crm
+python main.py --input ~/Downloads/Basic_LinkedInDataExport_*.zip
+```
+This produces `output/contacts_export.csv`.
+
+**3. Import contacts to Supabase**
+```
+cd /path/to/jobagent-web
+pip install supabase python-dotenv
+python linkedin_crm_import.py --csv ~/Desktop/linkedin-crm/output/contacts_export.csv
+```
+Output: `Imported N contacts. Y follow-ups. Z active opportunities.`
+
+**4. View in the UI**
+Open the app → Networking → **LinkedIn DMs** tab.
+
+You'll see:
+- Summary stats (total contacts, follow-ups, active opportunities, recruiters)
+- Filterable contact cards with role/status badges and priority scoring
+- Expandable conversation summaries
+- Editable notes (auto-saved on blur)
+- Orange left border + 🔔 for contacts needing follow-up
+
+**5. Re-sync after a new LinkedIn export**
+Re-run step 3. The import is fully idempotent — it upserts by contact ID (name slug + LinkedIn URL hash).
+
+---
+
 ## Credits
 
 Built by Siddardth Pathipaka. AI assistance from Claude (Anthropic).
