@@ -518,7 +518,7 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
           )}
 
           {/* ── Contact cards ── */}
-          {!dmLoading && (() => {
+          {!dmLoading && !dmError && (() => {
             const ROLE_COLORS = {
               'Recruiter':        {bg:t.priL,   tx:t.pri},
               'Hiring Manager':   {bg:'#fee2e2', tx:'#dc2626'},
@@ -554,7 +554,7 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
               // Live days since contact (computed from last_contact YYYY-MM-DD)
               let daysText = null;
               if (c.last_contact) {
-                const days = Math.floor((Date.now() - new Date(c.last_contact)) / 86400000);
+                const days = Math.floor((Date.now() - new Date(c.last_contact + 'T00:00:00')) / 86400000);
                 daysText = `${days} day${days !== 1 ? 's' : ''} ago`;
               } else if (c.days_since != null) {
                 daysText = `${c.days_since} days ago`;
@@ -568,7 +568,7 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
 
               const handleNoteBlur = () => {
                 if (editedNotes[c.id] !== undefined && editedNotes[c.id] !== (c.notes || '')) {
-                  updateLinkedInContactNotes(c.id, editedNotes[c.id]).catch(() => {});
+                  updateLinkedInContactNotes(c.id, editedNotes[c.id]).catch(e => setDmError('Note save failed: ' + e.message));
                 }
               };
 
