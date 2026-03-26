@@ -1,20 +1,24 @@
 import { useState } from 'react';
-import { Briefcase, Users, Download, CheckCircle, ExternalLink, Linkedin } from 'lucide-react';
+import { Briefcase, Users, Download, ExternalLink, Linkedin, Search } from 'lucide-react';
 
 const TODAY_STR = new Date().toISOString().split("T")[0];
 
-function Card({children, t, style, onClick}) {
-  return <div onClick={onClick} style={{background:t.card,border:`1px solid ${t.border}`,borderRadius:12,padding:20,boxShadow:t.shadow,cursor:onClick?"pointer":"default",...style}}>{children}</div>;
+const STATUS_OPTIONS = ["Applied", "Interviewing", "Final Stage", "Offer Received", "Rejected"];
+const STATUS_COLORS = {
+  "Applied":       { bg: "#dcfce7", bd: "#86efac", tx: "#16a34a" },
+  "Interviewing":  { bg: "#e0f2fe", bd: "#bae6fd", tx: "#0284c7" },
+  "Final Stage":   { bg: "#fef3c7", bd: "#fcd34d", tx: "#d97706" },
+  "Offer Received":{ bg: "#ede9fe", bd: "#c4b5fd", tx: "#7c3aed" },
+  "Rejected":      { bg: "#fee2e2", bd: "#fca5a5", tx: "#dc2626" },
+};
+
+function Card({children, t, style}) {
+  return <div style={{background:t.card,border:`1px solid ${t.border}`,borderRadius:12,padding:20,boxShadow:t.shadow,...style}}>{children}</div>;
 }
 function Btn({children, onClick, disabled, variant="primary", size="md", t, style:xs}) {
   const V={primary:{bg:t.pri,c:"#fff",b:"none"},secondary:{bg:"transparent",c:t.sub,b:`1px solid ${t.border}`},green:{bg:t.greenL,c:t.green,b:`1px solid ${t.greenBd}`}};
   const s=V[variant]||V.primary; const p=size==="sm"?"5px 14px":"10px 20px"; const fs=size==="sm"?12.5:13.5;
   return <button onClick={onClick} disabled={disabled} style={{background:s.bg,color:s.c,border:s.b,padding:p,borderRadius:8,fontSize:fs,fontWeight:600,cursor:disabled?"not-allowed":"pointer",opacity:disabled?.4:1,fontFamily:"inherit",whiteSpace:"nowrap",display:"inline-flex",alignItems:"center",gap:6,...xs}}>{children}</button>;
-}
-function StatusBadge({status, t}) {
-  const map={Applied:{bg:t.greenL,c:t.green,Icon:CheckCircle},"In Progress":{bg:t.yellowL,c:t.yellow},Interview:{bg:t.priL,c:t.pri}};
-  const s=map[status]||{bg:t.hover,c:t.sub};
-  return <span style={{display:"inline-flex",alignItems:"center",gap:4,padding:"4px 10px",borderRadius:20,fontSize:11.5,fontWeight:700,background:s.bg,color:s.c}}>{s.Icon&&<s.Icon size={11}/>}{status}</span>;
 }
 const matchColor=(v,t)=>v>=90?t.green:v>=75?t.yellow:t.red;
 
@@ -27,9 +31,12 @@ function downloadCSV(rows, headers, filename) {
   URL.revokeObjectURL(url);
 }
 
-export default function Applied({apps, networkingLog, setPage, t}) {
+export default function Applied({apps, networkingLog, setPage, updateApplicationStatus, t}) {
   const [activeTab, setActiveTab] = useState("apps");
   const [dateRange, setDateRange] = useState("all");
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [sortBy, setSortBy] = useState("date_desc");
 
   const filterByDate = (items, dateField="date") => {
     if (dateRange === "all") return items;
@@ -44,7 +51,7 @@ export default function Applied({apps, networkingLog, setPage, t}) {
   };
 
   const DateRangeBar = () => (
-    <div style={{display:"flex",gap:6,alignItems:"center",marginRight:12}}>
+    <div style={{display:"flex",gap:6,alignItems:"center"}}>
       <span style={{fontSize:11,fontWeight:700,color:t.muted,textTransform:"uppercase",letterSpacing:1}}>Range:</span>
       {[{id:"all",label:"All"},{id:"today",label:"Today"},{id:"week",label:"This Week"},{id:"month",label:"This Month"}].map(({id,label}) => (
         <button key={id} onClick={() => setDateRange(id)} style={{padding:"5px 12px",borderRadius:6,fontSize:12,fontWeight:dateRange===id?700:500,cursor:"pointer",fontFamily:"inherit",background:dateRange===id?t.pri+"18":"transparent",border:`1px solid ${dateRange===id?t.pri:t.border}`,color:dateRange===id?t.pri:t.sub}}>{label}</button>
@@ -52,7 +59,23 @@ export default function Applied({apps, networkingLog, setPage, t}) {
     </div>
   );
 
-  const filteredApps = filterByDate(apps);
+  // Build filtered + sorted apps
+  let filteredApps = filterByDate(apps);
+  if (search.trim()) {
+    const q = search.toLowerCase();
+    filteredApps = filteredApps.filter(a => a.role?.toLowerCase().includes(q) || a.company?.toLowerCase().includes(q));
+  }
+  if (statusFilter !== "All") {
+    filteredApps = filteredApps.filter(a => (a.status || "Applied") === statusFilter);
+  }
+  if (sortBy === "date_asc") {
+    filteredApps = [...filteredApps].sort((a,b) => new Date(a.date||0) - new Date(b.date||0));
+  } else if (sortBy === "date_desc") {
+    filteredApps = [...filteredApps].sort((a,b) => new Date(b.date||0) - new Date(a.date||0));
+  } else if (sortBy === "match") {
+    filteredApps = [...filteredApps].sort((a,b) => (Number(b.match)||0) - (Number(a.match)||0));
+  }
+
   const filteredNet = filterByDate(networkingLog);
 
   const downloadAppCSV = () => {
@@ -68,6 +91,13 @@ export default function Applied({apps, networkingLog, setPage, t}) {
     const suffix = dateRange !== "all" ? `_${dateRange}` : "";
     downloadCSV(rows, headers, `networking${suffix}_${TODAY_STR}.csv`);
   };
+
+  // Status counts for badges
+  const statusCounts = apps.reduce((acc, a) => {
+    const s = a.status || "Applied";
+    acc[s] = (acc[s] || 0) + 1;
+    return acc;
+  }, {});
 
   return (
     <div>
@@ -89,14 +119,6 @@ export default function Applied({apps, networkingLog, setPage, t}) {
 
       {activeTab === "apps" && (
         <div>
-          {apps.length > 0 && (
-            <div style={{display:"flex",justifyContent:"flex-end",marginBottom:12,alignItems:"center",flexWrap:"wrap",gap:8}}>
-              <DateRangeBar/>
-              <Btn size="sm" variant="green" onClick={downloadAppCSV} disabled={filteredApps.length===0} t={t}>
-                <Download size={13}/> Download CSV{dateRange!=="all"?` (${filteredApps.length})`:""}
-              </Btn>
-            </div>
-          )}
           {apps.length === 0 && (
             <Card t={t} style={{textAlign:"center",padding:"60px 24px"}}>
               <Briefcase size={32} color={t.muted} style={{marginBottom:12}}/>
@@ -105,43 +127,105 @@ export default function Applied({apps, networkingLog, setPage, t}) {
             </Card>
           )}
           {apps.length > 0 && (
-            <div style={{overflowX:"auto"}}>
-              <table style={{width:"100%",borderCollapse:"collapse",fontSize:12.5,borderSpacing:0}}>
-                <thead>
-                  <tr style={{borderBottom:`2px solid ${t.border}`}}>
-                    {["Date","Role","Status","Company","Location","Match","Fit","Loc Type","Emp Type","Salary","Resume","Link"].map(h => (
-                      <th key={h} style={{textAlign:"left",padding:"8px 10px",fontSize:10.5,fontWeight:700,color:t.muted,textTransform:"uppercase",letterSpacing:.8,whiteSpace:"nowrap"}}>{h}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredApps.map((a,i) => (
-                    <tr key={a.id||i} style={{borderBottom:`1px solid ${t.border}`}}>
-                      <td style={{padding:"8px 10px",color:t.tx,whiteSpace:"nowrap"}}>{a.date}</td>
-                      <td style={{padding:"8px 10px",color:t.tx,fontWeight:600,maxWidth:200,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{a.role}</td>
-                      <td style={{padding:"8px 10px"}}><StatusBadge status={a.status||"Applied"} t={t}/></td>
-                      <td style={{padding:"8px 10px",color:t.sub}}>
-                        {a.company}
-                        {a.companyLink && <a href={a.companyLink} target="_blank" rel="noreferrer" style={{marginLeft:4,color:t.muted}}><ExternalLink size={10}/></a>}
-                      </td>
-                      <td style={{padding:"8px 10px",color:t.sub,fontSize:12}}>{a.location}</td>
-                      <td style={{padding:"8px 10px",fontWeight:700,color:a.match?matchColor(Number(a.match),t):t.muted}}>{a.match?`${a.match}%`:""}</td>
-                      <td style={{padding:"8px 10px"}}>
-                        {a.fitLevel && <span style={{fontSize:10.5,fontWeight:700,padding:"2px 7px",borderRadius:10,background:a.fitLevel==="Green"?t.greenL:a.fitLevel==="Yellow"?t.yellowL:t.redL,color:a.fitLevel==="Green"?t.green:a.fitLevel==="Yellow"?t.yellow:t.red}}>{a.fitLevel}</span>}
-                      </td>
-                      <td style={{padding:"8px 10px",color:t.muted,fontSize:11.5}}>{a.locationType||""}</td>
-                      <td style={{padding:"8px 10px",color:t.muted,fontSize:11.5}}>{a.type||""}</td>
-                      <td style={{padding:"8px 10px",color:t.muted,fontSize:11.5}}>{a.salary||""}</td>
-                      <td style={{padding:"8px 10px"}}>
-                        {a.resumeVariant && <span style={{fontSize:11,fontWeight:700,padding:"2px 8px",borderRadius:6,background:t.priL,color:t.pri}}>{a.resumeVariant}</span>}
-                      </td>
-                      <td style={{padding:"8px 10px"}}>
-                        {a.link && <a href={a.link} target="_blank" rel="noreferrer" style={{color:t.pri}}><ExternalLink size={13}/></a>}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div>
+              {/* Status filter chips */}
+              <div style={{display:"flex",gap:6,flexWrap:"wrap",marginBottom:12}}>
+                {["All", ...STATUS_OPTIONS].map(s => {
+                  const col = STATUS_COLORS[s];
+                  const isActive = statusFilter === s;
+                  const count = s === "All" ? apps.length : (statusCounts[s] || 0);
+                  return (
+                    <button key={s} onClick={() => setStatusFilter(s)} style={{
+                      padding:"5px 12px",borderRadius:20,fontSize:12,fontWeight:isActive?700:500,
+                      cursor:"pointer",fontFamily:"inherit",
+                      background: isActive ? (col ? col.bg : t.priL) : t.card,
+                      border: `1px solid ${isActive ? (col ? col.bd : t.pri) : t.border}`,
+                      color: isActive ? (col ? col.tx : t.pri) : t.sub
+                    }}>
+                      {s} {count > 0 && <span style={{fontSize:10,fontWeight:800,marginLeft:3}}>({count})</span>}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Search + sort + date controls */}
+              <div style={{display:"flex",gap:8,marginBottom:12,alignItems:"center",flexWrap:"wrap"}}>
+                <div style={{flex:1,minWidth:160,position:"relative",display:"flex",alignItems:"center"}}>
+                  <Search size={13} style={{position:"absolute",left:10,color:t.muted,pointerEvents:"none"}}/>
+                  <input
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                    placeholder="Search role or company…"
+                    style={{width:"100%",paddingLeft:30,padding:"7px 10px 7px 30px",background:t.bg,border:`1px solid ${t.border}`,borderRadius:8,color:t.tx,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box"}}
+                  />
+                </div>
+                <select value={sortBy} onChange={e => setSortBy(e.target.value)} style={{background:t.bg,border:`1px solid ${t.border}`,borderRadius:8,padding:"7px 10px",color:t.tx,fontSize:12.5,fontFamily:"inherit",outline:"none"}}>
+                  <option value="date_desc">Newest First</option>
+                  <option value="date_asc">Oldest First</option>
+                  <option value="match">Match Score</option>
+                </select>
+                <DateRangeBar/>
+                <Btn size="sm" variant="green" onClick={downloadAppCSV} disabled={filteredApps.length===0} t={t}>
+                  <Download size={13}/> CSV {filteredApps.length !== apps.length ? `(${filteredApps.length})` : ""}
+                </Btn>
+              </div>
+
+              {filteredApps.length === 0 && (
+                <div style={{textAlign:"center",padding:"40px 0",color:t.muted,fontSize:13}}>No applications match your filters.</div>
+              )}
+
+              {filteredApps.length > 0 && (
+                <div style={{overflowX:"auto"}}>
+                  <table style={{width:"100%",borderCollapse:"collapse",fontSize:12.5,borderSpacing:0}}>
+                    <thead>
+                      <tr style={{borderBottom:`2px solid ${t.border}`}}>
+                        {["Date","Role","Status","Company","Location","Match","Fit","Loc Type","Emp Type","Salary","Resume","Link"].map(h => (
+                          <th key={h} style={{textAlign:"left",padding:"8px 10px",fontSize:10.5,fontWeight:700,color:t.muted,textTransform:"uppercase",letterSpacing:.8,whiteSpace:"nowrap"}}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredApps.map((a,i) => {
+                        const status = a.status || "Applied";
+                        const sc = STATUS_COLORS[status] || STATUS_COLORS["Applied"];
+                        return (
+                          <tr key={a.id||i} style={{borderBottom:`1px solid ${t.border}`}}>
+                            <td style={{padding:"8px 10px",color:t.tx,whiteSpace:"nowrap"}}>{a.date}</td>
+                            <td style={{padding:"8px 10px",color:t.tx,fontWeight:600,maxWidth:200,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{a.role}</td>
+                            <td style={{padding:"8px 10px"}}>
+                              <select
+                                value={status}
+                                onChange={e => updateApplicationStatus && updateApplicationStatus(a.id, e.target.value)}
+                                style={{background:sc.bg,border:`1px solid ${sc.bd}`,color:sc.tx,borderRadius:20,padding:"3px 8px",fontSize:11.5,fontWeight:700,fontFamily:"inherit",cursor:"pointer",outline:"none"}}
+                              >
+                                {STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
+                              </select>
+                            </td>
+                            <td style={{padding:"8px 10px",color:t.sub}}>
+                              {a.company}
+                              {a.companyLink && <a href={a.companyLink} target="_blank" rel="noreferrer" style={{marginLeft:4,color:t.muted}}><ExternalLink size={10}/></a>}
+                            </td>
+                            <td style={{padding:"8px 10px",color:t.sub,fontSize:12}}>{a.location}</td>
+                            <td style={{padding:"8px 10px",fontWeight:700,color:a.match?matchColor(Number(a.match),t):t.muted}}>{a.match?`${a.match}%`:""}</td>
+                            <td style={{padding:"8px 10px"}}>
+                              {a.fitLevel && <span style={{fontSize:10.5,fontWeight:700,padding:"2px 7px",borderRadius:10,background:a.fitLevel==="Green"?t.greenL:a.fitLevel==="Yellow"?t.yellowL:t.redL,color:a.fitLevel==="Green"?t.green:a.fitLevel==="Yellow"?t.yellow:t.red}}>{a.fitLevel}</span>}
+                            </td>
+                            <td style={{padding:"8px 10px",color:t.muted,fontSize:11.5}}>{a.locationType||""}</td>
+                            <td style={{padding:"8px 10px",color:t.muted,fontSize:11.5}}>{a.type||""}</td>
+                            <td style={{padding:"8px 10px",color:t.muted,fontSize:11.5}}>{a.salary||""}</td>
+                            <td style={{padding:"8px 10px"}}>
+                              {a.resumeVariant && <span style={{fontSize:11,fontWeight:700,padding:"2px 8px",borderRadius:6,background:t.priL,color:t.pri}}>{a.resumeVariant}</span>}
+                            </td>
+                            <td style={{padding:"8px 10px"}}>
+                              {a.link && <a href={a.link} target="_blank" rel="noreferrer" style={{color:t.pri}}><ExternalLink size={13}/></a>}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           )}
         </div>

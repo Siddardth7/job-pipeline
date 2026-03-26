@@ -215,9 +215,10 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
     if (tab === 'dms' && !dmLoaded.current) {
       dmLoaded.current = true;
       setDmLoading(true);
+      setDmError('');
       fetchLinkedInContacts()
         .then(data => { setEditedNotes({}); setDmContacts(data); setDmLoading(false); })
-        .catch(e  => { setDmError(e.message); setDmLoading(false); });
+        .catch(e  => { setDmError(e.message); setDmLoading(false); dmLoaded.current = false; });
     }
   }, [tab]);
 
@@ -288,6 +289,9 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
             {overdueCount > 0 && <span style={{marginLeft:6,fontSize:11,fontWeight:800,padding:"1px 6px",borderRadius:10,background:"#dc262622",color:"#dc2626"}}>{overdueCount}</span>}
           </Chip>
           <Chip active={tab==="dms"} onClick={() => setTab("dms")} t={t}>LinkedIn DMs</Chip>
+          <Chip active={tab==="followups"} onClick={() => setTab("followups")} t={t} color={overdueCount > 0 ? "#dc2626" : undefined}>
+            Follow-ups {overdueCount > 0 && <span style={{marginLeft:5,fontSize:11,fontWeight:800,padding:"1px 6px",borderRadius:10,background:"#dc262622",color:"#dc2626"}}>{overdueCount}</span>}
+          </Chip>
         </div>
       </div>
 
@@ -504,7 +508,15 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
           )}
 
           {/* ── Error ── */}
-          {dmError && <div style={{color:t.red,fontSize:13,fontWeight:600,marginBottom:12}}>{dmError}</div>}
+          {dmError && (
+            <div style={{textAlign:"center",padding:"40px 24px"}}>
+              <div style={{fontSize:13,color:t.red,marginBottom:12,fontWeight:600}}>{dmError}</div>
+              <button onClick={() => { dmLoaded.current = false; setDmError(''); setTab('find'); setTimeout(() => setTab('dms'), 50); }}
+                style={{padding:"8px 18px",borderRadius:8,background:t.pri,color:"#fff",border:"none",fontWeight:600,cursor:"pointer",fontFamily:"inherit",fontSize:13}}>
+                Retry
+              </button>
+            </div>
+          )}
 
           {dmNoteError && <div style={{color:t.red,fontSize:12,fontWeight:600,marginBottom:8}}>{dmNoteError}</div>}
 
@@ -633,6 +645,105 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
                 </Card>
               );
             });
+          })()}
+        </div>
+      )}
+
+      {tab === "followups" && (
+        <div>
+          <div style={{marginBottom:16,padding:"10px 14px",borderRadius:8,background:t.yellowL,border:`1px solid ${t.yellowBd}`,fontSize:12.5,color:t.yellow,fontWeight:600}}>
+            ⚠️ LinkedIn only allows messaging 1st-degree connections. For pending requests, copy the message and send manually after they accept.
+          </div>
+
+          {networkingLog.length === 0 && (
+            <Card t={t} style={{textAlign:"center",padding:"60px 24px"}}>
+              <Users size={32} color={t.muted} style={{marginBottom:12}}/>
+              <div style={{fontSize:14,fontWeight:600,color:t.sub}}>No networking contacts yet. Add contacts from Find Contacts.</div>
+            </Card>
+          )}
+
+          {networkingLog.length > 0 && (() => {
+            const withMeta = networkingLog.map(c => ({...c, meta: netlogMeta?.[c.id] || {status:'Pending'}}));
+            const overdue  = withMeta.filter(c => c.meta.status === 'Pending' && c.meta.followUpDate && c.meta.followUpDate < today);
+            const upcoming = withMeta.filter(c => c.meta.status === 'Pending' && (!c.meta.followUpDate || c.meta.followUpDate >= today));
+            const done     = withMeta.filter(c => c.meta.status !== 'Pending');
+
+            const FUCard = ({c, isOverdue}) => {
+              const meta = c.meta;
+              const daysOverdue = meta.followUpDate && meta.followUpDate < today ? Math.floor((new Date(today) - new Date(meta.followUpDate)) / 86400000) : null;
+              const daysUntil   = meta.followUpDate && meta.followUpDate >= today ? Math.floor((new Date(meta.followUpDate) - new Date(today)) / 86400000) : null;
+              const isPending   = meta.connectionType === 'pending';
+              const sc = STATUS_COLORS[meta.status] || {bg:t.hover,bd:t.border,tx:t.sub};
+              return (
+                <Card t={t} style={{marginBottom:10,padding:14,borderLeft:isOverdue?`3px solid ${t.red}`:undefined}}>
+                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",flexWrap:"wrap",gap:8}}>
+                    <div>
+                      <div style={{fontWeight:700,fontSize:14,color:t.tx}}>{c.name}</div>
+                      <div style={{fontSize:12.5,color:t.sub,marginTop:2}}>{c.role} {c.company ? `at ${c.company}` : ""}</div>
+                      <div style={{display:"flex",gap:6,marginTop:6,flexWrap:"wrap",alignItems:"center"}}>
+                        <span style={{fontSize:11,fontWeight:700,padding:"2px 8px",borderRadius:10,background:sc.bg,border:`1px solid ${sc.bd}`,color:sc.tx}}>{meta.status}</span>
+                        {isPending
+                          ? <span style={{fontSize:11,fontWeight:700,padding:"2px 8px",borderRadius:10,background:t.yellowL,border:`1px solid ${t.yellowBd}`,color:t.yellow}}>⏳ Pending Request</span>
+                          : <span style={{fontSize:11,fontWeight:700,padding:"2px 8px",borderRadius:10,background:t.greenL,border:`1px solid ${t.greenBd}`,color:t.green}}>✅ Connected</span>
+                        }
+                        {isOverdue && daysOverdue > 0 && <span style={{fontSize:11,fontWeight:700,color:t.red}}>{daysOverdue}d overdue</span>}
+                        {daysUntil !== null && <span style={{fontSize:11,fontWeight:600,color:t.sub}}>in {daysUntil}d</span>}
+                      </div>
+                    </div>
+                    <div style={{display:"flex",gap:6,flexWrap:"wrap",alignItems:"center"}}>
+                      {c.linkedinUrl && (
+                        <a href={c.linkedinUrl} target="_blank" rel="noreferrer" style={{display:"inline-flex",alignItems:"center",gap:4,padding:"5px 10px",borderRadius:6,background:"#0077B5",color:"#fff",fontWeight:600,fontSize:12,textDecoration:"none"}}>
+                          <Linkedin size={12}/> {isPending ? "Open" : "Message"}
+                        </a>
+                      )}
+                      {meta.status === 'Pending' && (
+                        <>
+                          <button onClick={() => updateNetlogMeta(c.id, {status:'Replied'})} style={{padding:"5px 10px",borderRadius:6,background:t.greenL,border:`1px solid ${t.greenBd}`,color:t.green,fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>✓ Replied</button>
+                          <button onClick={() => updateNetlogMeta(c.id, {status:'No Response'})} style={{padding:"5px 10px",borderRadius:6,background:t.redL,border:`1px solid ${t.redBd}`,color:t.red,fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>✗ No Response</button>
+                        </>
+                      )}
+                      {meta.status !== 'Pending' && (
+                        <button onClick={() => updateNetlogMeta(c.id, {status:'Pending'})} style={{padding:"5px 10px",borderRadius:6,background:t.hover,border:`1px solid ${t.border}`,color:t.sub,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>↺ Reset</button>
+                      )}
+                    </div>
+                  </div>
+                  {meta.status === 'Pending' && (
+                    <div style={{marginTop:10,display:"flex",alignItems:"center",gap:8}}>
+                      <span style={{fontSize:11.5,color:t.muted,fontWeight:600}}>Follow-up date:</span>
+                      <input type="date" value={meta.followUpDate||""} onChange={e => updateNetlogMeta(c.id, {followUpDate:e.target.value})}
+                        style={{background:t.bg,border:`1px solid ${t.border}`,borderRadius:6,padding:"4px 8px",color:t.tx,fontSize:12,fontFamily:"inherit",outline:"none"}}
+                      />
+                    </div>
+                  )}
+                </Card>
+              );
+            };
+
+            return (
+              <div>
+                {overdue.length > 0 && (
+                  <div style={{marginBottom:20}}>
+                    <div style={{fontSize:12,fontWeight:700,color:t.red,textTransform:"uppercase",letterSpacing:1.5,marginBottom:10}}>🔴 Overdue ({overdue.length})</div>
+                    {overdue.map(c => <FUCard key={c.id} c={c} isOverdue={true}/>)}
+                  </div>
+                )}
+                {upcoming.length > 0 && (
+                  <div style={{marginBottom:20}}>
+                    <div style={{fontSize:12,fontWeight:700,color:t.yellow,textTransform:"uppercase",letterSpacing:1.5,marginBottom:10}}>🟡 Pending ({upcoming.length})</div>
+                    {upcoming.map(c => <FUCard key={c.id} c={c} isOverdue={false}/>)}
+                  </div>
+                )}
+                {done.length > 0 && (
+                  <div style={{marginBottom:20}}>
+                    <div style={{fontSize:12,fontWeight:700,color:t.green,textTransform:"uppercase",letterSpacing:1.5,marginBottom:10}}>✅ Done / Replied ({done.length})</div>
+                    {done.map(c => <FUCard key={c.id} c={c} isOverdue={false}/>)}
+                  </div>
+                )}
+                {overdue.length === 0 && upcoming.length === 0 && done.length === 0 && (
+                  <div style={{textAlign:"center",padding:"40px",color:t.muted,fontSize:13}}>No follow-ups tracked yet. Contacts appear here after you add them from Find Contacts.</div>
+                )}
+              </div>
+            );
           })()}
         </div>
       )}

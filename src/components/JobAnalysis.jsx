@@ -398,7 +398,7 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
       setJd(currentJob.jd || "");
       setResult(currentJob.analysisResult || null);
     }
-  }, [currentJob?.id, currentJob?.location, currentJob?.company, currentJob?.role]);
+  }, [currentJob?.id, currentJob?.location, currentJob?.company, currentJob?.role, currentJob?.jd]);
 
   // Persist JD and form fields back to currentJob so they survive page switches
   const syncToParent = useCallback((updates) => {

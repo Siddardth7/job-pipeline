@@ -127,7 +127,7 @@ export default function JobAgent() {
           Storage.loadCurrentJob(),
         ]);
 
-        const pipelineJobs = dbJobs.filter(j => j.in_pipeline);
+        const pipelineJobs = dbJobs.filter(j => j.in_pipeline && j.status !== 'completed');
         const searchJobs = dbJobs.filter(j => !j.in_pipeline);
 
         setApps(dbApps);
@@ -205,7 +205,7 @@ export default function JobAgent() {
     const job = stateRef.current.pipeline.find(j => j.id === id);
     if (!job) return;
     setSyncStatus("saving");
-    Storage.upsertJob({...job, status:"completed"})
+    Storage.upsertJob({...job, status:"completed", in_pipeline: false})
       .then(() => { setSyncStatus("saved"); setTimeout(() => setSyncStatus(""), 3000); })
       .catch(e => { setSyncStatus("error"); console.error("completePipeline save error:", e); });
   }, []);
@@ -243,6 +243,14 @@ export default function JobAgent() {
     setApps(p => [...p, app]);
     debouncedSave(() => Storage.upsertApplication(app));
   }, [debouncedSave]);
+
+  const updateApplicationStatus = useCallback((id, status) => {
+    setApps(p => p.map(a => a.id === id ? {...a, status} : a));
+    setSyncStatus("saving");
+    Storage.upsertApplication({...stateRef.current.apps.find(a => a.id === id), status})
+      .then(() => { setSyncStatus("saved"); setTimeout(() => setSyncStatus(""), 3000); })
+      .catch(e => { setSyncStatus("error"); console.error("updateApplicationStatus error:", e); });
+  }, []);
 
   const setSearchResultsWithSave = useCallback((updater) => {
     setSearchResults(prev => {
@@ -312,7 +320,7 @@ export default function JobAgent() {
       />
     ),
     applied: (
-      <Applied apps={apps} networkingLog={networkingLog} setPage={setPage} t={t}/>
+      <Applied apps={apps} networkingLog={networkingLog} setPage={setPage} updateApplicationStatus={updateApplicationStatus} t={t}/>
     ),
     intel: (
       <CompanyIntel
