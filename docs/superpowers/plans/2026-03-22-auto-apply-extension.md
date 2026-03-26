@@ -59,23 +59,21 @@ tests/                             ← Vitest unit tests (pure logic only)
 - [ ] **Step 1: Check Railway CORS headers**
 
 ```bash
-curl -si -X POST https://jobagent-compiler.up.railway.app/compile \
-  -H "Content-Type: application/json" \
-  -d '{"template":"resume_A"}' \
+curl -si -X OPTIONS https://resume-compiler-production.up.railway.app/generate \
+  -H "Origin: chrome-extension://test" \
+  -H "Access-Control-Request-Method: POST" \
   | grep -i "access-control"
 ```
 
 Expected: `access-control-allow-origin: *`
 
-If missing, open `resume-compiler/app.py` and add to Flask/FastAPI response headers:
-```python
-# Flask example
-from flask_cors import CORS
-CORS(app)
-# or manually:
-response.headers['Access-Control-Allow-Origin'] = '*'
-```
-Deploy to Railway before continuing.
+**Status: ✅ PASS** — Confirmed `access-control-allow-origin: *` on `resume-compiler-production.up.railway.app`.
+CORS is set globally in `resume-compiler/app.py` via `@app.after_request`. No changes needed.
+
+**Railway endpoint ground truth** (from `resume-compiler/app.py`):
+- Resume: `POST /generate` with `{ variant, summary, skills_latex, company?, role? }` — all of `variant`, `summary`, `skills_latex` are **required**
+- Cover letter: `POST /generate-cover-letter` with `{ company, role, summary?, variant_focus? }`
+- `summary` and `skills_latex` must be stored in the extension profile (options page) — user fills once at setup
 
 - [ ] **Step 2: Test DataTransfer on a real Greenhouse page**
 
@@ -179,20 +177,39 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     handleFetchPdf(msg, sendResponse);
     return true; // keep message channel open for async response
   }
+  if (msg.type === 'FETCH_COVER_LETTER') {
+    handleFetchCoverLetter(msg, sendResponse);
+    return true;
+  }
   if (msg.type === 'MARK_APPLIED') {
     handleMarkApplied(msg, sendResponse);
     return true;
   }
 });
 
-async function handleFetchPdf({ railwayUrl, template }, sendResponse) {
+async function handleFetchPdf({ railwayUrl, variant, summary, skills_latex, company, role }, sendResponse) {
   try {
-    const res = await fetch(`${railwayUrl}/compile`, {
+    const res = await fetch(`${railwayUrl}/generate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ template }),
+      body: JSON.stringify({ variant, summary, skills_latex, company, role }),
     });
     if (!res.ok) throw new Error(`Railway ${res.status}`);
+    const buffer = await res.arrayBuffer();
+    sendResponse({ ok: true, buffer });
+  } catch (e) {
+    sendResponse({ ok: false, error: e.message });
+  }
+}
+
+async function handleFetchCoverLetter({ railwayUrl, company, role, summary, variant_focus }, sendResponse) {
+  try {
+    const res = await fetch(`${railwayUrl}/generate-cover-letter`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ company, role, summary, variant_focus }),
+    });
+    if (!res.ok) throw new Error(`Railway CL ${res.status}`);
     const buffer = await res.arrayBuffer();
     sendResponse({ ok: true, buffer });
   } catch (e) {
@@ -341,7 +358,9 @@ const DEFAULT_PROFILE = {
   workAuth: 'authorized',       // 'authorized' | 'not_authorized'
   needsSponsorship: true,
   visaStatus: 'F-1 OPT STEM',
-  railwayUrl: 'https://jobagent-compiler.up.railway.app',
+  summary: '',           // resume summary paragraph (plain text) — required for /generate
+  skills_latex: '',      // LaTeX skills block — required for /generate
+  railwayUrl: 'https://resume-compiler-production.up.railway.app',
   supabaseUrl: 'https://wefcbqfxzvvgremxhubi.supabase.co',
   supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlZmNicWZ4enZ2Z3JlbXhodWJpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNTI1NjUsImV4cCI6MjA4ODkyODU2NX0.vXTs_vh0dMvEt83FR589vKY9JfcMBFVgN82QblQH6OU',
 };
@@ -435,6 +454,18 @@ export async function saveProfile(updates) {
     </div>
   </div>
 
+  <h2>Resume Content</h2>
+  <div class="field">
+    <label>Resume Summary <span class="required">*</span></label>
+    <textarea id="summary" rows="4" placeholder="Mechanical engineer with 3+ years experience in..."></textarea>
+    <small>Plain text — injected into your resume PDF at %%SUMMARY%%</small>
+  </div>
+  <div class="field">
+    <label>Skills Block (LaTeX) <span class="required">*</span></label>
+    <textarea id="skills_latex" rows="6" placeholder="\textbf{CAD:} SolidWorks, CATIA ..."></textarea>
+    <small>Raw LaTeX between %%SKILLS_BLOCK_START%% and %%SKILLS_BLOCK_END%% in your template</small>
+  </div>
+
   <h2>Service URLs</h2>
   <div class="field"><label>Railway Compiler URL</label><input id="railwayUrl" class="mono"></div>
   <div class="field"><label>Supabase URL</label><input id="supabaseUrl" class="mono"></div>
@@ -454,7 +485,8 @@ export async function saveProfile(updates) {
 import { getProfile, saveProfile } from '../lib/profile.js';
 
 const FIELDS = ['firstName','lastName','email','phone','linkedinUrl','city','state',
-                 'visaStatus','workAuth','railwayUrl','supabaseUrl','supabaseAnonKey'];
+                 'visaStatus','workAuth','summary','skills_latex',
+                 'railwayUrl','supabaseUrl','supabaseAnonKey'];
 
 async function init() {
   const profile = await getProfile();
@@ -814,15 +846,22 @@ async function triggerFill(tabId, job, ats) {
   btn.disabled = true;
   $('fill-status').textContent = 'Fetching resume PDF...';
 
-  // Read profile to get railwayUrl (not from job — it's a profile setting)
+  // Read profile to get railwayUrl, summary, skills_latex (profile settings, not from job)
   const { jobagent_profile: profile } = await chrome.storage.local.get('jobagent_profile');
-  const railwayUrl = profile?.railwayUrl || 'https://jobagent-compiler.up.railway.app';
+  const railwayUrl = profile?.railwayUrl || 'https://resume-compiler-production.up.railway.app';
+  const summary = profile?.summary || '';
+  const skills_latex = profile?.skills_latex || '';
 
   // Ask background to fetch PDF (runs in service worker — no CORS restriction)
+  // /generate requires: variant (A/B/C/D), summary (plain text), skills_latex (raw LaTeX)
   const response = await chrome.runtime.sendMessage({
     type: 'FETCH_PDF',
     railwayUrl,
-    template: variant,
+    variant,          // e.g. 'A' (not 'resume_A' — the server uppercases and validates)
+    summary,
+    skills_latex,
+    company: job.company,
+    role: job.role,
   });
 
   if (!response.ok) {

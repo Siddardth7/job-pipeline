@@ -96,22 +96,20 @@ create table if not exists settings (
 );
 
 -- ── Row Level Security (RLS) ──────────────────────────────────────────────────
--- For a single-user app, you can either:
--- (a) Disable RLS entirely (simpler, fine for personal use)
--- (b) Enable RLS with anon policies
+-- RLS enabled with permissive anon policies (single-user app, no auth)
+alter table jobs enable row level security;
+alter table applications enable row level security;
+alter table contacts enable row level security;
+alter table netlog enable row level security;
+alter table templates enable row level security;
+alter table settings enable row level security;
 
--- Option A: Disable RLS (simplest — just use the anon key, no auth needed)
-alter table jobs disable row level security;
-alter table applications disable row level security;
-alter table contacts disable row level security;
-alter table netlog disable row level security;
-alter table templates disable row level security;
-alter table settings disable row level security;
-
--- Option B: If you want RLS, uncomment below and use Supabase Auth
--- alter table jobs enable row level security;
--- create policy "anon_all" on jobs for all using (true) with check (true);
--- (repeat for all tables)
+create policy "anon_all" on jobs for all to anon using (true) with check (true);
+create policy "anon_all" on applications for all to anon using (true) with check (true);
+create policy "anon_all" on contacts for all to anon using (true) with check (true);
+create policy "anon_all" on netlog for all to anon using (true) with check (true);
+create policy "anon_all" on templates for all to anon using (true) with check (true);
+create policy "anon_all" on settings for all to anon using (true) with check (true);
 
 -- ── LinkedIn DM Contacts ───────────────────────────────────────────────────────
 create table if not exists linkedin_dm_contacts (
@@ -136,4 +134,5 @@ create table if not exists linkedin_dm_contacts (
   updated_at      timestamptz default now()
 );
 
-alter table linkedin_dm_contacts disable row level security;
+alter table linkedin_dm_contacts enable row level security;
+create policy "anon_all" on linkedin_dm_contacts for all to anon using (true) with check (true);
