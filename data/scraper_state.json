@@ -1,7 +1,7 @@
 {
   "jsearch": {
     "queries_today": 10,
-    "queries_this_month": 40
+    "queries_this_month": 50
   },
   "serpapi": {
     "queries_today": 0
@@ -12,6 +12,6 @@
   "theirstack": {
     "activations_today": 0
   },
-  "last_reset": "2026-03-23",
+  "last_reset": "2026-03-27",
   "month_year": "2026-03"
 }

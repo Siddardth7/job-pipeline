@@ -309,6 +309,21 @@
       "name": "Placer.ai",
       "domain": "",
       "industry": "Auto-promoted"
+    },
+    {
+      "name": "Ford Motor Company",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Michael Page",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "CIRCOR International, Inc.",
+      "domain": "",
+      "industry": "Auto-promoted"
     }
   ],
   "promotion_tracking": {
@@ -622,7 +637,8 @@
     ],
     "Ford Motor Company": [
       "2026-03-13",
-      "2026-03-14"
+      "2026-03-14",
+      "2026-03-27"
     ],
     "Kindeva Drug Delivery": [
       "2026-03-13",
@@ -670,11 +686,13 @@
     ],
     "Michael Page": [
       "2026-03-13",
-      "2026-03-14"
+      "2026-03-14",
+      "2026-03-27"
     ],
     "CIRCOR International, Inc.": [
       "2026-03-13",
-      "2026-03-14"
+      "2026-03-14",
+      "2026-03-27"
     ],
     "Module X Solutions LLC": [
       "2026-03-13",
@@ -715,6 +733,75 @@
     "Factorial": [
       "2026-03-13",
       "2026-03-14"
+    ],
+    "Owens Corning": [
+      "2026-03-27"
+    ],
+    "Rochester Electronics, LLC": [
+      "2026-03-27"
+    ],
+    "Mativ": [
+      "2026-03-27"
+    ],
+    "Haas Automation, Inc.": [
+      "2026-03-27"
+    ],
+    "Medtronic": [
+      "2026-03-27"
+    ],
+    "S&ME": [
+      "2026-03-27"
+    ],
+    "Superior Industries Inc": [
+      "2026-03-27"
+    ],
+    "BuildASign": [
+      "2026-03-27"
+    ],
+    "EPITEC": [
+      "2026-03-27"
+    ],
+    "Giesecke+Devrient": [
+      "2026-03-27"
+    ],
+    "Abbott": [
+      "2026-03-27"
+    ],
+    "Dexter Magnetic Technologies": [
+      "2026-03-27"
+    ],
+    "Kelly Science, Engineering, Technology & Telecom": [
+      "2026-03-27"
+    ],
+    "W3Global": [
+      "2026-03-27"
+    ],
+    "Emerson": [
+      "2026-03-27"
+    ],
+    "ASSA ABLOY Group": [
+      "2026-03-27"
+    ],
+    "StandardAero": [
+      "2026-03-27"
+    ],
+    "Jobs via Dice": [
+      "2026-03-27"
+    ],
+    "Nebraska Medicine": [
+      "2026-03-27"
+    ],
+    "Atkore": [
+      "2026-03-27"
+    ],
+    "Jobot": [
+      "2026-03-27"
+    ],
+    "BioSpace": [
+      "2026-03-27"
+    ],
+    "Evonik": [
+      "2026-03-27"
     ]
   },
   "rejected_companies": [],
