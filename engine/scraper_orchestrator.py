@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 """
-engine/scraper_orchestrator.py — JobAgent v4.2
+engine/scraper_orchestrator.py — JobAgent v4.3
 Scraper Orchestrator
 
 Coordinates query generation, quota management, and sequential execution
-of all 5 scrapers. Continues if any individual scraper fails.
+of all scrapers. Continues if any individual scraper fails.
 
 Scraper stack (in execution order):
     1. ats_scraper       — Direct Greenhouse + Lever APIs (no quota, FREE, priority)
     2. jsearch_scraper   — JSearch/RapidAPI broad search (200 req/month)
     3. apify_scraper     — LinkedIn via harvestapi actor (Pay-per-event, ~$0.20/mo)
     4. serpapi_scraper   — Google Jobs via SerpAPI (100 searches/month, alternate days)
-    5. theirstack_scraper— TheirStack daily (200 credits/month, fixed budget)
+    5. theirstack_scraper— DISABLED (free tier exhausted structurally: 402 on every run)
 
 Quota notes:
     jsearch:    200 req/month → 6/day budget. Monthly cap tracked in state file
@@ -20,13 +20,15 @@ Quota notes:
                 (not limited to 2 queries) to maximise jobs per run.
     serpapi:    100 searches/month. 5/day; scraper internally alternates days.
                 Even-day skips are logged as 'skipped', not 'zero_results'.
-    theirstack: 200 credits/month. Runs daily; budget managed internally.
+    theirstack: DISABLED. Free tier = 200 credits/month at 25/run = 8 days coverage.
+                Returns 402 Payment Required for remaining ~22 days. Not worth the
+                noise. Replaced by ATS company list expansion.
 
-Changes from v4.1:
-    - JSearch monthly quota tracking (queries_this_month in state file)
-    - Apify now passes ALL queries (not batch[:2]) so all 8 cluster titles are used
-    - SerpAPI even-day skip now reports status='skipped' (not 'zero_results')
-    - Version bumped to v4.2
+Changes from v4.2:
+    - TheirStack permanently disabled (free tier structurally insufficient)
+    - Added industrial_operations and mechanical_thermal query clusters (query_engine)
+    - Added 12 industrial/thermal ATS companies to ats_companies.json
+    - Version bumped to v4.3
 """
 
 import json
@@ -45,7 +47,7 @@ from scrapers.ats_scraper              import AtsScraper
 from scrapers.jsearch_scraper          import JSearchScraper
 from scrapers.apify_scraper            import ApifyScraper
 from scrapers.serpapi_scraper          import SerpApiScraper
-from scrapers.theirstack_scraper       import TheirStackScraper
+# TheirStackScraper import removed — scraper permanently disabled (v4.3)
 
 DATA_DIR     = ROOT / "data"
 TEMP_DIR     = ROOT / "temp"
@@ -90,7 +92,7 @@ def load_state() -> Dict:
             state["jsearch"].update({"queries_today": 0})
             state.setdefault("serpapi",    {})["queries_today"]     = 0
             state.setdefault("apify",      {})["runs_today"]        = 0
-            state.setdefault("theirstack", {})["activations_today"] = 0
+            # theirstack removed in v4.3 — no daily reset needed
             state["last_reset"] = today
 
         # Monthly reset — only affects jsearch monthly counter
@@ -108,7 +110,7 @@ def _fresh_state(today: str) -> Dict:
         "jsearch":    {"queries_today": 0, "queries_this_month": 0},
         "serpapi":    {"queries_today": 0},
         "apify":      {"runs_today":    0},
-        "theirstack": {"activations_today": 0},
+        # theirstack removed in v4.3
         "last_reset": today,
         "month_year": today[:7],
     }
@@ -338,41 +340,15 @@ def run():
                 "status": "error", "error": str(exc), "jobs_found": 0
             }
 
-    # ── Step 5: TheirStack — daily always-on ──────────────────────────────────
-    log.info(f"[theirstack] Running daily. Primary scrapers found {total_primary_jobs} jobs.")
+    # ── Step 5: TheirStack — DISABLED (v4.3) ─────────────────────────────────
+    # Free tier = 200 credits/month at 25/run = 8 days coverage, 402 for the
+    # remaining ~22 days. Replaced by ATS company list expansion (free, no quota).
+    log.info("[theirstack] Disabled — free tier exhausted structurally. Skipping.")
     theirstack_output = TEMP_DIR / "jobs_theirstack.json"
-    try:
-        ts_scraper = TheirStackScraper()
-        ts_jobs    = ts_scraper.run(
-            queries=all_queries,
-            total_primary_jobs=0,  # 0 = daily always-on mode
-        )
-        ts_count = len(ts_jobs)
-        _write_output(theirstack_output, "theirstack", ts_jobs)
-
-        if ts_count > 0:
-            state.setdefault("theirstack", {})
-            state["theirstack"]["activations_today"] = (
-                state["theirstack"].get("activations_today", 0) + 1
-            )
-            log.info(f"[theirstack] ✓ {ts_count} backup jobs added")
-            run_record["scrapers"]["theirstack"] = {
-                "status":    "activated",
-                "triggered": True,
-                "jobs_found": ts_count,
-            }
-        else:
-            run_record["scrapers"]["theirstack"] = {
-                "status": "zero_results", "jobs_found": 0
-            }
-
-    except Exception as exc:
-        log.error(f"[theirstack] Scraper raised an exception: {exc}")
-        log.warning(f"[theirstack] Full traceback:\n{traceback.format_exc()}")
-        _write_empty(theirstack_output, "theirstack", str(exc))
-        run_record["scrapers"]["theirstack"] = {
-            "status": "error", "error": str(exc), "jobs_found": 0
-        }
+    _write_empty(theirstack_output, "theirstack", "disabled")
+    run_record["scrapers"]["theirstack"] = {
+        "status": "skipped", "reason": "disabled_free_tier_exhausted", "jobs_found": 0
+    }
 
     # ── Finalise ──────────────────────────────────────────────────────────────
     save_state(state)
@@ -395,7 +371,7 @@ def _print_health_summary(scrapers: Dict):
     log.info("-" * 48)
 
     any_warning    = False
-    display_order  = ["ats", "jsearch", "apify", "serpapi", "theirstack"]
+    display_order  = ["ats", "jsearch", "apify", "serpapi", "theirstack"]  # theirstack shown as skipped
 
     for name in display_order:
         info    = scrapers.get(name, {})
@@ -424,7 +400,7 @@ def _print_health_summary(scrapers: Dict):
     if any_warning:
         log.warning(
             "  ⚠ One or more scrapers had issues. Check GitHub Secrets:\n"
-            "    JSEARCH_API_KEY, SERPAPI_KEY, APIFY_TOKEN, THEIRSTACK_API_KEY"
+            "    JSEARCH_API_KEY, SERPAPI_KEY, APIFY_TOKEN"
         )
     log.info("")
 
