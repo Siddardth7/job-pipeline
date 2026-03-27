@@ -55,6 +55,28 @@
       "Manufacturing Prototype Engineer",
       "Manufacturing NPI Engineer",
       "Manufacturing Scale-Up Engineer"
+    ],
+    "industrial_operations": [
+      "Industrial Engineer",
+      "Industrial Engineer I",
+      "Industrial Engineer II",
+      "Operations Engineer",
+      "Lean Engineer",
+      "Manufacturing Industrial Engineer",
+      "Production Systems Engineer",
+      "Work Measurement Engineer"
+    ],
+    "mechanical_thermal": [
+      "Mechanical Engineer",
+      "Mechanical Engineer I",
+      "Mechanical Engineer II",
+      "Thermal Engineer",
+      "Thermal Systems Engineer",
+      "Heat Transfer Engineer",
+      "HVAC Engineer",
+      "CFD Engineer",
+      "Thermodynamics Engineer",
+      "Energy Systems Engineer"
     ]
   },
   "entry_level_modifiers": [
@@ -74,7 +96,12 @@
     "Director",
     "Software",
     "Controls",
-    "Systems Engineer"
+    "Systems Engineer",
+    "HVAC Technician",
+    "Data Center",
+    "Electrical Engineer",
+    "Civil Engineer",
+    "Chemical Engineer"
   ],
   "query_template": "({titles}) AND ({modifiers}) NOT ({exclusions})"
 }
