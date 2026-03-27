@@ -188,7 +188,7 @@ def generate():
 
     patched_tex = inject_placeholders(
         base_tex,
-        summary=sanitize_latex(summary),
+        summary=summary,          # already valid LaTeX (\textbf{} etc.) — do NOT sanitize
         skills_latex=skills_latex,
     )
 
