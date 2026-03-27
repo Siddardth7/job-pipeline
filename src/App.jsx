@@ -9,6 +9,7 @@ import * as Storage from "./lib/storage.js";
 import { DEFAULT_TEMPLATES } from "./lib/templates.js";
 import { useAuth, signOut } from "./lib/auth.js";
 import Login from "./components/Login.jsx";
+import Onboarding from "./components/Onboarding.jsx";
 
 import Dashboard from "./components/Dashboard.jsx";
 import FindJobs from "./components/FindJobs.jsx";
@@ -91,6 +92,7 @@ function normalizeJob(j, idx) {
 // ─── MAIN APP ─────────────────────────────────────────────────────────────────
 export default function JobAgent() {
   const { user, loading: authLoading } = useAuth();
+  const [profile, setProfile] = useState(undefined); // undefined=not loaded, null=no profile, object=loaded
   const [dark, setDark] = useState(false);
   const t = dark ? DARK : LIGHT;
   const [syncStatus, setSyncStatus] = useState(""); // "saving"|"saved"|"error"|""
@@ -116,6 +118,12 @@ export default function JobAgent() {
   useEffect(() => {
     stateRef.current = {apps, pipeline, searchResults, contactResults, networkingLog, dark, currentJob, customCompanies, templates};
   });
+
+  // Load user profile to gate onboarding wizard
+  useEffect(() => {
+    if (!user) return;
+    Storage.fetchUserProfile().then(p => setProfile(p || null)).catch(() => setProfile(null));
+  }, [user]);
 
   // Load all data from Supabase on mount
   useEffect(() => {
@@ -350,12 +358,13 @@ export default function JobAgent() {
   };
 
   // ── Auth gate ────────────────────────────────────────────────────────────────
-  if (authLoading) return (
+  if (authLoading || (user && profile === undefined)) return (
     <div style={{minHeight:"100vh",background:t.bg,display:"flex",alignItems:"center",justifyContent:"center"}}>
       <span style={{color:t.sub,fontSize:14}}>Loading…</span>
     </div>
   );
   if (!user) return <Login t={t} />;
+  if (profile === null) return <Onboarding t={t} onComplete={() => Storage.fetchUserProfile().then(p => setProfile(p))} />;
 
   return (
     <div style={{display:"flex",height:"100vh",background:t.bg,color:t.tx,fontFamily:"'DM Sans','Inter',system-ui,sans-serif",overflow:"hidden"}}>
