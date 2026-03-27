@@ -10,10 +10,13 @@ permissions:
 
 # ── All API keys injected as env vars so every script can read them ──────────
 env:
-  JSEARCH_API_KEY:    ${{ secrets.JSEARCH_API_KEY }}
-  APIFY_TOKEN:        ${{ secrets.APIFY_TOKEN }}
-  SERPAPI_KEY:        ${{ secrets.SERPAPI_KEY }}
-  THEIRSTACK_API_KEY: ${{ secrets.THEIRSTACK_API_KEY }}
+  JSEARCH_API_KEY:      ${{ secrets.JSEARCH_API_KEY }}
+  APIFY_TOKEN:          ${{ secrets.APIFY_TOKEN }}
+  SERPAPI_KEY:          ${{ secrets.SERPAPI_KEY }}
+  ADZUNA_APP_ID:        ${{ secrets.ADZUNA_APP_ID }}
+  ADZUNA_APP_KEY:       ${{ secrets.ADZUNA_APP_KEY }}
+  SUPABASE_URL:         ${{ secrets.SUPABASE_URL }}
+  SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
 
 jobs:
   scrape:
@@ -30,10 +33,10 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
-        run: pip install requests apify-client python-dotenv
+        run: pip install requests apify-client python-dotenv supabase
 
       # ── STEP 1: Run all scrapers via orchestrator ─────────────────────────
-      # Runs ATS → JSearch → Apify → SerpAPI → TheirStack in order.
+      # Runs ATS → JSearch → Apify → SerpAPI → Adzuna in order.
       # Each scraper isolated in try/except — one failure never blocks others.
       # Outputs written to temp/jobs_*.json for the merge step.
       - name: Run scraper orchestrator
@@ -62,6 +65,13 @@ jobs:
             cp temp/jobs_clean_intermediate.json output/jobs_clean_latest.json
             echo "WARNING: Used intermediate file as fallback for output/jobs_clean_latest.json"
           fi
+
+      # ── STEP 3c: Distribute jobs to per-user feeds ───────────────────────
+      # Upserts all pipeline jobs into normalized_jobs, then scores and writes
+      # user_job_feed rows for each registered user based on their role_targets.
+      - name: Distribute feed to users
+        continue-on-error: true
+        run: python pipeline/distribute_feed.py
 
       # ── STEP 4: Commit results ────────────────────────────────────────────
       - name: Commit and push results

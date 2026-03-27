@@ -139,8 +139,16 @@ export default function JobAgent() {
         setNetworkingLog(dbNetlog);
         if (dbTemplates.length > 0) setTemplates(dbTemplates);
         if (dbSettings.dark) setDark(dbSettings.dark === 'true');
-        if (dbSettings.groq_api_key) setGroqKey(dbSettings.groq_api_key);
-        if (dbSettings.serper_api_key) setSerperKey(dbSettings.serper_api_key);
+        // Load API keys from per-user integrations table (falls back to settings for migration period)
+        Storage.fetchUserIntegrations().then(integrations => {
+          if (integrations.groq)   setGroqKey(integrations.groq);
+          else if (dbSettings.groq_api_key) setGroqKey(dbSettings.groq_api_key);
+          if (integrations.serper) setSerperKey(integrations.serper);
+          else if (dbSettings.serper_api_key) setSerperKey(dbSettings.serper_api_key);
+        }).catch(() => {
+          if (dbSettings.groq_api_key)   setGroqKey(dbSettings.groq_api_key);
+          if (dbSettings.serper_api_key) setSerperKey(dbSettings.serper_api_key);
+        });
         if (dbSettings.netlog_meta) {
           try { setNetlogMeta(JSON.parse(dbSettings.netlog_meta)); } catch { /* ignore */ }
         }

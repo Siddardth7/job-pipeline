@@ -349,3 +349,111 @@ export async function updateLinkedInContactNotes(id, notes) {
     .eq('id', id);
   if (error) throw error;
 }
+
+// ── User Profile ───────────────────────────────────────────────────────────────
+export async function fetchUserProfile() {
+  const userId = await getUserId();
+  const { data, error } = await supabase
+    .from('user_profiles')
+    .select('*')
+    .eq('user_id', userId)
+    .maybeSingle();
+  if (error) throw error;
+  return data;
+}
+
+export async function upsertUserProfile(profile) {
+  const userId = await getUserId();
+  const { error } = await supabase
+    .from('user_profiles')
+    .upsert(
+      { ...profile, user_id: userId, updated_at: new Date().toISOString() },
+      { onConflict: 'user_id' }
+    );
+  if (error) throw error;
+}
+
+// ── Role Targets ───────────────────────────────────────────────────────────────
+export async function fetchRoleTargets() {
+  const userId = await getUserId();
+  const { data, error } = await supabase
+    .from('role_targets')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('active', true)
+    .order('priority');
+  if (error) throw error;
+  return data || [];
+}
+
+export async function upsertRoleTarget(target) {
+  const userId = await getUserId();
+  const { error } = await supabase
+    .from('role_targets')
+    .upsert({ ...target, user_id: userId }, { onConflict: 'id' });
+  if (error) throw error;
+}
+
+export async function deleteRoleTarget(id) {
+  const userId = await getUserId();
+  const { error } = await supabase
+    .from('role_targets')
+    .delete()
+    .eq('id', id)
+    .eq('user_id', userId);
+  if (error) throw error;
+}
+
+// ── Resume Variants ────────────────────────────────────────────────────────────
+export async function fetchResumeVariants() {
+  const userId = await getUserId();
+  const { data, error } = await supabase
+    .from('resume_variants')
+    .select('*')
+    .eq('user_id', userId)
+    .order('variant_key');
+  if (error) throw error;
+  return data || [];
+}
+
+export async function upsertResumeVariant(variant) {
+  const userId = await getUserId();
+  const { error } = await supabase
+    .from('resume_variants')
+    .upsert({ ...variant, user_id: userId }, { onConflict: 'user_id,variant_key' });
+  if (error) throw error;
+}
+
+// ── User Company Targets ───────────────────────────────────────────────────────
+export async function fetchUserCompanyTargets() {
+  const userId = await getUserId();
+  const { data, error } = await supabase
+    .from('user_company_targets')
+    .select('*, company:company_intelligence(*)')
+    .eq('user_id', userId)
+    .order('priority');
+  if (error) throw error;
+  return data || [];
+}
+
+export async function addUserCompanyTarget(companyId, isPrimary = false) {
+  const userId = await getUserId();
+  const { error } = await supabase
+    .from('user_company_targets')
+    .upsert(
+      { user_id: userId, company_id: companyId, is_primary: isPrimary },
+      { onConflict: 'user_id,company_id' }
+    );
+  if (error) throw error;
+}
+
+export async function addCompanyToIntelligence(company) {
+  const userId = await getUserId();
+  const { data, error } = await supabase
+    .from('company_intelligence')
+    .insert({ ...company, added_by: userId })
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+}

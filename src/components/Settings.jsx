@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Database, Zap, RefreshCw, Plus, Trash2, Edit3, Check, X, ChevronDown, Sparkles } from 'lucide-react';
 import { DEFAULT_TEMPLATES } from '../lib/templates.js';
 import * as Storage from '../lib/storage.js';
@@ -26,6 +26,51 @@ export default function AppSettings({templates, setTemplates, groqKey, setGroqKe
   const [gistMigrateToken, setGistMigrateToken] = useState("");
   const [migrating, setMigrating] = useState(false);
   const [migrateStatus, setMigrateStatus] = useState("");
+
+  // ── User Profile state ───────────────────────────────────────────────────────
+  const [profile, setProfile] = useState({
+    full_name: '', degree: '', graduation_year: '', visa_status: '',
+    visa_years_remaining: '', domain_family: '',
+  });
+  const [profileSaving, setProfileSaving] = useState('');
+  const [roleTargets, setRoleTargets] = useState([]);
+  const [newRole, setNewRole] = useState({ title: '', cluster: 'manufacturing', priority: 1 });
+
+  useEffect(() => {
+    Storage.fetchUserProfile().then(p => { if (p) setProfile(p); }).catch(() => {});
+    Storage.fetchRoleTargets().then(setRoleTargets).catch(() => {});
+  }, []);
+
+  const saveProfile = async () => {
+    setProfileSaving('Saving...');
+    try {
+      await Storage.upsertUserProfile({
+        full_name:            profile.full_name,
+        degree:               profile.degree,
+        graduation_year:      profile.graduation_year ? parseInt(profile.graduation_year) : null,
+        visa_status:          profile.visa_status,
+        visa_years_remaining: profile.visa_years_remaining ? parseInt(profile.visa_years_remaining) : null,
+        domain_family:        profile.domain_family,
+      });
+      setProfileSaving('Saved!');
+      setTimeout(() => setProfileSaving(''), 3000);
+    } catch(e) {
+      setProfileSaving('Error: ' + e.message);
+    }
+  };
+
+  const addRoleTarget = async () => {
+    if (!newRole.title.trim()) return;
+    await Storage.upsertRoleTarget({ ...newRole, id: crypto.randomUUID() });
+    const updated = await Storage.fetchRoleTargets();
+    setRoleTargets(updated);
+    setNewRole({ title: '', cluster: 'manufacturing', priority: 1 });
+  };
+
+  const removeRoleTarget = async (id) => {
+    await Storage.deleteRoleTarget(id);
+    setRoleTargets(prev => prev.filter(r => r.id !== id));
+  };
 
   const saveSerperKey = async () => {
     try {
@@ -92,7 +137,7 @@ export default function AppSettings({templates, setTemplates, groqKey, setGroqKe
   const saveGroqKey = async () => {
     try {
       setGroqSaveStatus("Saving...");
-      await Storage.saveSetting('groq_api_key', groqInput.trim());
+      await Storage.saveUserIntegration('groq', groqInput.trim());
       setGroqKey(groqInput.trim());
       setGroqSaveStatus(groqInput.trim() ? "Saved! Groq AI is now active." : "Key cleared.");
       setTimeout(() => setGroqSaveStatus(""), 3000);
@@ -339,6 +384,76 @@ export default function AppSettings({templates, setTemplates, groqKey, setGroqKe
           {migrateStatus && (
             <span style={{fontSize:12.5,fontWeight:600,color:migrateStatus.includes("complete")?t.green:migrateStatus.includes("fail")?t.red:t.sub,maxWidth:500,lineHeight:1.4}}>{migrateStatus}</span>
           )}
+        </div>
+      </Card>
+
+      {/* ── User Profile ──────────────────────────────────────────────────── */}
+      <Card t={t} style={{marginBottom:16}}>
+        <h3 style={{color:t.tx,fontSize:15,fontWeight:700,margin:'0 0 16px'}}>Your Profile</h3>
+        {[
+          ['Full Name',       'full_name',           'text',   'e.g. Siddardth Pathipaka'],
+          ['Degree',          'degree',              'text',   'e.g. M.S. Aerospace Engineering'],
+          ['Graduation Year', 'graduation_year',     'number', '2025'],
+          ['Visa Status',     'visa_status',         'text',   'e.g. STEM OPT, H1B, US Citizen'],
+          ['Domain Family',   'domain_family',       'text',   'aerospace_manufacturing / industrial_engineering / mechanical_thermal'],
+        ].map(([label, key, type, placeholder]) => (
+          <div key={key} style={{marginBottom:12}}>
+            <label style={{display:'block',color:t.sub,fontSize:11.5,fontWeight:600,marginBottom:4,textTransform:'uppercase',letterSpacing:.5}}>{label}</label>
+            <input
+              type={type}
+              value={profile[key] || ''}
+              onChange={e => setProfile(p => ({...p, [key]: e.target.value}))}
+              placeholder={placeholder}
+              style={{width:'100%',padding:'8px 10px',borderRadius:7,border:`1px solid ${t.border}`,
+                background:t.bg,color:t.tx,fontSize:13,boxSizing:'border-box',fontFamily:'inherit',outline:'none'}}
+            />
+          </div>
+        ))}
+        <Btn onClick={saveProfile} t={t} size="sm" style={{marginTop:4}}>
+          {profileSaving || 'Save Profile'}
+        </Btn>
+      </Card>
+
+      {/* ── Target Roles ──────────────────────────────────────────────────── */}
+      <Card t={t} style={{marginBottom:16}}>
+        <h3 style={{color:t.tx,fontSize:15,fontWeight:700,margin:'0 0 16px'}}>Target Roles</h3>
+        <p style={{color:t.sub,fontSize:12.5,margin:'0 0 12px'}}>
+          Roles the feed distribution script uses to score jobs for you. Add one per target title.
+        </p>
+
+        {roleTargets.length === 0 && (
+          <p style={{color:t.muted,fontSize:12.5,marginBottom:12}}>No role targets yet — add some below.</p>
+        )}
+        {roleTargets.map(rt => (
+          <div key={rt.id} style={{display:'flex',alignItems:'center',gap:8,marginBottom:8,padding:'7px 10px',borderRadius:7,background:t.hover}}>
+            <span style={{flex:1,color:t.tx,fontSize:13}}>{rt.title}</span>
+            <span style={{color:t.sub,fontSize:11.5,background:t.priL,padding:'2px 8px',borderRadius:12}}>{rt.cluster}</span>
+            <Btn onClick={() => removeRoleTarget(rt.id)} variant="ghost" size="sm" t={t}>Remove</Btn>
+          </div>
+        ))}
+
+        <div style={{display:'flex',gap:8,marginTop:12,flexWrap:'wrap'}}>
+          <input
+            value={newRole.title}
+            onChange={e => setNewRole(p => ({...p, title: e.target.value}))}
+            onKeyDown={e => e.key === 'Enter' && addRoleTarget()}
+            placeholder="Role title (e.g. Process Engineer)"
+            style={{flex:2,minWidth:180,padding:'7px 10px',borderRadius:7,border:`1px solid ${t.border}`,
+              background:t.bg,color:t.tx,fontSize:13,fontFamily:'inherit',outline:'none'}}
+          />
+          <select
+            value={newRole.cluster}
+            onChange={e => setNewRole(p => ({...p, cluster: e.target.value}))}
+            style={{flex:1,minWidth:140,padding:'7px 10px',borderRadius:7,border:`1px solid ${t.border}`,
+              background:t.bg,color:t.tx,fontSize:13,fontFamily:'inherit'}}
+          >
+            {['manufacturing','process','quality','composites','materials',
+              'industrial','industrial_operations','mechanical_thermal',
+              'tooling_inspection','startup_manufacturing'].map(c => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+          <Btn onClick={addRoleTarget} t={t} size="sm">Add</Btn>
         </div>
       </Card>
     </div>
