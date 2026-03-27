@@ -12,7 +12,7 @@ function Btn({children, onClick, disabled, variant="primary", size="md", t, styl
   return <button onClick={onClick} disabled={disabled} style={{background:s.bg,color:s.c,border:s.b,padding:p,borderRadius:8,fontSize:fs,fontWeight:600,cursor:disabled?"not-allowed":"pointer",opacity:disabled?.4:1,fontFamily:"inherit",whiteSpace:"nowrap",display:"inline-flex",alignItems:"center",gap:6,...xs}}>{children}</button>;
 }
 
-export default function AppSettings({templates, setTemplates, groqKey, setGroqKey, serperKey, setSerperKey, t}) {
+export default function AppSettings({templates, setTemplates, groqKey, setGroqKey, serperKey, setSerperKey, user, onSignOut, t}) {
   const [serperStatus, setSerperStatus] = useState("");
   const [testingSerper, setTestingSerper] = useState(false);
   const [serperInput, setSerperInput] = useState(serperKey || "");
@@ -157,8 +157,22 @@ export default function AppSettings({templates, setTemplates, groqKey, setGroqKe
   return (
     <div>
       <div style={{marginBottom:28}}>
-        <h2 style={{margin:"0 0 4px",fontSize:24,fontWeight:800,color:t.tx}}>Settings</h2>
-        <p style={{margin:0,fontSize:13.5,color:t.sub}}>Manage templates, test integrations, and migrate data.</p>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:16}}>
+          <div>
+            <h2 style={{margin:"0 0 4px",fontSize:24,fontWeight:800,color:t.tx}}>Settings</h2>
+            <p style={{margin:0,fontSize:13.5,color:t.sub}}>Manage templates, test integrations, and migrate data.</p>
+          </div>
+          {user && (
+            <div style={{display:'flex',alignItems:'center',gap:12,marginTop:4}}>
+              <span style={{color:t.sub,fontSize:12.5}}>{user.email}</span>
+              <button onClick={onSignOut} style={{
+                background:t.redL, color:t.red, border:`1px solid ${t.redBd}`,
+                padding:'5px 14px', borderRadius:8, fontSize:12.5, fontWeight:600,
+                cursor:'pointer', fontFamily:'inherit',
+              }}>Sign Out</button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Message Templates */}

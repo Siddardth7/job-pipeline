@@ -7,6 +7,8 @@ import {
 import { M628, ITAR_KEYWORDS, BLACKLIST } from "./data/m628.js";
 import * as Storage from "./lib/storage.js";
 import { DEFAULT_TEMPLATES } from "./lib/templates.js";
+import { useAuth, signOut } from "./lib/auth.js";
+import Login from "./components/Login.jsx";
 
 import Dashboard from "./components/Dashboard.jsx";
 import FindJobs from "./components/FindJobs.jsx";
@@ -88,6 +90,7 @@ function normalizeJob(j, idx) {
 
 // ─── MAIN APP ─────────────────────────────────────────────────────────────────
 export default function JobAgent() {
+  const { user, loading: authLoading } = useAuth();
   const [dark, setDark] = useState(false);
   const t = dark ? DARK : LIGHT;
   const [syncStatus, setSyncStatus] = useState(""); // "saving"|"saved"|"error"|""
@@ -334,9 +337,17 @@ export default function JobAgent() {
       />
     ),
     settings: (
-      <AppSettings templates={templates} setTemplates={setTemplates} groqKey={groqKey} setGroqKey={setGroqKey} serperKey={serperKey} setSerperKey={setSerperKey} t={t}/>
+      <AppSettings templates={templates} setTemplates={setTemplates} groqKey={groqKey} setGroqKey={setGroqKey} serperKey={serperKey} setSerperKey={setSerperKey} user={user} onSignOut={signOut} t={t}/>
     ),
   };
+
+  // ── Auth gate ────────────────────────────────────────────────────────────────
+  if (authLoading) return (
+    <div style={{minHeight:"100vh",background:t.bg,display:"flex",alignItems:"center",justifyContent:"center"}}>
+      <span style={{color:t.sub,fontSize:14}}>Loading…</span>
+    </div>
+  );
+  if (!user) return <Login t={t} />;
 
   return (
     <div style={{display:"flex",height:"100vh",background:t.bg,color:t.tx,fontFamily:"'DM Sans','Inter',system-ui,sans-serif",overflow:"hidden"}}>
