@@ -11,7 +11,7 @@ Scraper stack (in execution order):
     2. jsearch_scraper   — JSearch/RapidAPI broad search (200 req/month)
     3. apify_scraper     — LinkedIn via harvestapi actor (Pay-per-event, ~$0.20/mo)
     4. serpapi_scraper   — Google Jobs via SerpAPI (100 searches/month, alternate days)
-    5. theirstack_scraper— DISABLED (free tier exhausted structurally: 402 on every run)
+    5. adzuna_scraper    — Adzuna US job index (250 req/day free, replaces TheirStack)
 
 Quota notes:
     jsearch:    200 req/month → 6/day budget. Monthly cap tracked in state file
@@ -20,9 +20,8 @@ Quota notes:
                 (not limited to 2 queries) to maximise jobs per run.
     serpapi:    100 searches/month. 5/day; scraper internally alternates days.
                 Even-day skips are logged as 'skipped', not 'zero_results'.
-    theirstack: DISABLED. Free tier = 200 credits/month at 25/run = 8 days coverage.
-                Returns 402 Payment Required for remaining ~22 days. Not worth the
-                noise. Replaced by ATS company list expansion.
+    adzuna:     250 req/day free tier. Runs daily on all queries. Genuine aggregator
+                index — different results from SerpAPI/Apify. No alternation needed.
 
 Changes from v4.2:
     - TheirStack permanently disabled (free tier structurally insufficient)
@@ -47,6 +46,7 @@ from scrapers.ats_scraper              import AtsScraper
 from scrapers.jsearch_scraper          import JSearchScraper
 from scrapers.apify_scraper            import ApifyScraper
 from scrapers.serpapi_scraper          import SerpApiScraper
+from scrapers.adzuna_scraper           import AdzunaScraper
 # TheirStackScraper import removed — scraper permanently disabled (v4.3)
 
 DATA_DIR     = ROOT / "data"
@@ -340,12 +340,28 @@ def run():
                 "status": "error", "error": str(exc), "jobs_found": 0
             }
 
-    # ── Step 5: TheirStack — DISABLED (v4.3) ─────────────────────────────────
-    # Free tier = 200 credits/month at 25/run = 8 days coverage, 402 for the
-    # remaining ~22 days. Replaced by ATS company list expansion (free, no quota).
-    log.info("[theirstack] Disabled — free tier exhausted structurally. Skipping.")
-    theirstack_output = TEMP_DIR / "jobs_theirstack.json"
-    _write_empty(theirstack_output, "theirstack", "disabled")
+    # ── Step 5: Adzuna — daily always-on (250 req/day free tier) ─────────────
+    log.info("[adzuna] Running. Quota: 250 req/day free tier.")
+    adzuna_output = TEMP_DIR / "jobs_adzuna.json"
+    try:
+        adzuna_scraper = AdzunaScraper()
+        adzuna_jobs    = adzuna_scraper.run(queries=all_queries)
+        az_count = len(adzuna_jobs)
+        _write_output(adzuna_output, "adzuna", adzuna_jobs)
+        log.info(f"[adzuna] ✓ {az_count} jobs collected")
+        run_record["scrapers"]["adzuna"] = {
+            "status": "success", "jobs_found": az_count,
+            "queries_used": len(all_queries),
+        }
+    except Exception as exc:
+        log.error(f"[adzuna] Scraper raised an exception: {exc}")
+        log.warning(f"[adzuna] Full traceback:\n{traceback.format_exc()}")
+        _write_empty(adzuna_output, "adzuna", str(exc))
+        run_record["scrapers"]["adzuna"] = {
+            "status": "error", "error": str(exc), "jobs_found": 0
+        }
+
+    # TheirStack permanently disabled — kept as tombstone so run_record stays consistent
     run_record["scrapers"]["theirstack"] = {
         "status": "skipped", "reason": "disabled_free_tier_exhausted", "jobs_found": 0
     }
@@ -367,11 +383,11 @@ def run():
 
 def _print_health_summary(scrapers: Dict):
     log.info("")
-    log.info("SCRAPER HEALTH  (JobAgent v4.2)")
+    log.info("SCRAPER HEALTH  (JobAgent v4.3)")
     log.info("-" * 48)
 
     any_warning    = False
-    display_order  = ["ats", "jsearch", "apify", "serpapi", "theirstack"]  # theirstack shown as skipped
+    display_order  = ["ats", "jsearch", "apify", "serpapi", "adzuna"]
 
     for name in display_order:
         info    = scrapers.get(name, {})
