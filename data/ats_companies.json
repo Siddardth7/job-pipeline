@@ -189,6 +189,76 @@
       "industry": "Aerospace",
       "h1b": "YES",
       "itar": "Partial"
+    },
+    "aptera": {
+      "name": "Aptera Motors",
+      "tier": "Tier 3",
+      "industry": "Automotive",
+      "h1b": "NO",
+      "itar": "NO"
+    },
+    "rivian": {
+      "name": "Rivian",
+      "tier": "Tier 2",
+      "industry": "Automotive",
+      "h1b": "YES",
+      "itar": "NO"
+    },
+    "waymo": {
+      "name": "Waymo",
+      "tier": "Tier 2",
+      "industry": "Automotive",
+      "h1b": "YES",
+      "itar": "NO"
+    },
+    "formlabs": {
+      "name": "Formlabs",
+      "tier": "Tier 2",
+      "industry": "Manufacturing",
+      "h1b": "YES",
+      "itar": "NO"
+    },
+    "carbonrobotics": {
+      "name": "Carbon Robotics",
+      "tier": "Tier 2",
+      "industry": "Manufacturing",
+      "h1b": "YES",
+      "itar": "NO"
+    },
+    "climatepower": {
+      "name": "Climate Power",
+      "tier": "Tier 2",
+      "industry": "Energy",
+      "h1b": "YES",
+      "itar": "NO"
+    },
+    "turntide": {
+      "name": "Turntide Technologies",
+      "tier": "Tier 2",
+      "industry": "Energy",
+      "h1b": "YES",
+      "itar": "NO"
+    },
+    "antora": {
+      "name": "Antora Energy",
+      "tier": "Tier 2",
+      "industry": "Energy",
+      "h1b": "YES",
+      "itar": "NO"
+    },
+    "ascend": {
+      "name": "Ascend Elements",
+      "tier": "Tier 2",
+      "industry": "Energy",
+      "h1b": "YES",
+      "itar": "NO"
+    },
+    "thermavant": {
+      "name": "Thermavant Technologies",
+      "tier": "Tier 2",
+      "industry": "Manufacturing",
+      "h1b": "YES",
+      "itar": "NO"
     }
   },
   "lever": {
@@ -233,6 +303,20 @@
       "industry": "Aerospace",
       "h1b": "LIKELY",
       "itar": "NO"
+    },
+    "machina-labs": {
+      "name": "Machina Labs",
+      "tier": "Tier 2",
+      "industry": "Manufacturing",
+      "h1b": "YES",
+      "itar": "NO"
+    },
+    "varda": {
+      "name": "Varda Space Industries",
+      "tier": "Tier 2",
+      "industry": "Aerospace",
+      "h1b": "LIKELY",
+      "itar": "Partial"
     }
   }
 }
