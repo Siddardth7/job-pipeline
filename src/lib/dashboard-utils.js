@@ -1,3 +1,5 @@
+const MAX_STREAK_LOOKBACK_DAYS = 60;
+
 /**
  * Returns an array of 7 Date objects for the current Mon–Sun week.
  * Each date is midnight local time.
@@ -23,7 +25,7 @@ export function getWeekDays() {
 export function calcStreak(apps, networkingLog) {
   const today = new Date();
   let count = 0;
-  for (let i = 0; i < 60; i++) {
+  for (let i = 0; i < MAX_STREAK_LOOKBACK_DAYS; i++) {
     const d = new Date(today);
     d.setDate(today.getDate() - i);
     const ds = d.toISOString().split('T')[0];

@@ -49,6 +49,11 @@ describe('calcStreak', () => {
     const apps = [{ date: ds(0) }, { date: ds(1) }, { date: ds(4) }];
     expect(calcStreak(apps, [])).toBe(2);
   });
+
+  it('returns streak from yesterday when today has no activity', () => {
+    const apps = [{ date: ds(1) }, { date: ds(2) }];
+    expect(calcStreak(apps, [])).toBe(2);
+  });
 });
 
 describe('buildSparkData', () => {
