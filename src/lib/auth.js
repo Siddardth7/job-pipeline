@@ -1,14 +1,14 @@
 import { supabase } from '../supabase.js';
 import { useState, useEffect } from 'react';
 
-export async function signIn(email, password) {
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+export async function signUp(email, password) {
+  const { data, error } = await supabase.auth.signUp({ email, password });
   if (error) throw error;
   return data.user;
 }
 
-export async function signUp(email, password) {
-  const { data, error } = await supabase.auth.signUp({ email, password });
+export async function signIn(email, password) {
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) throw error;
   return data.user;
 }
