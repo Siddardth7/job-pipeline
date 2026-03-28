@@ -1,24 +1,62 @@
 import { useState } from 'react';
-import { signIn } from '../lib/auth.js';
+import { signIn, signUp } from '../lib/auth.js';
 
 export default function Login({ t }) {
+  const [mode,     setMode]     = useState('signin'); // 'signin' | 'signup'
   const [email,    setEmail]    = useState('');
   const [password, setPassword] = useState('');
+  const [confirm,  setConfirm]  = useState('');
   const [error,    setError]    = useState('');
   const [loading,  setLoading]  = useState(false);
+
+  const switchMode = (next) => {
+    setMode(next);
+    setError('');
+    setPassword('');
+    setConfirm('');
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+
+    if (mode === 'signup') {
+      if (password !== confirm) {
+        setError('Passwords do not match.');
+        return;
+      }
+      if (password.length < 8) {
+        setError('Password must be at least 8 characters.');
+        return;
+      }
+    }
+
     setLoading(true);
     try {
-      await signIn(email.trim(), password);
-      // useAuth in App.jsx picks up the session change via onAuthStateChange
+      if (mode === 'signin') {
+        await signIn(email.trim(), password);
+      } else {
+        await signUp(email.trim(), password);
+        // onAuthStateChange in App.jsx picks up the new session automatically
+        // profile === null → triggers Onboarding wizard
+      }
     } catch (err) {
-      setError(err.message || 'Login failed');
+      setError(err.message || (mode === 'signin' ? 'Login failed.' : 'Sign up failed.'));
     } finally {
       setLoading(false);
     }
+  };
+
+  const inputStyle = {
+    width: '100%', padding: '10px 12px', borderRadius: 8,
+    border: `1px solid ${t.border}`, background: t.bg,
+    color: t.tx, fontSize: 14, boxSizing: 'border-box',
+    marginBottom: 16, fontFamily: 'inherit', outline: 'none',
+  };
+
+  const labelStyle = {
+    display: 'block', color: t.sub, fontSize: 12,
+    fontWeight: 600, marginBottom: 6,
   };
 
   return (
@@ -41,46 +79,75 @@ export default function Login({ t }) {
         <h2 style={{ color: t.tx, margin: '0 0 6px', fontSize: 22, fontWeight: 700 }}>
           JobAgent
         </h2>
-        <p style={{ color: t.sub, margin: '0 0 28px', fontSize: 13 }}>
-          Sign in to your account
+        <p style={{ color: t.sub, margin: '0 0 24px', fontSize: 13 }}>
+          {mode === 'signin' ? 'Sign in to your account' : 'Create your account'}
         </p>
 
+        {/* Mode toggle */}
+        <div style={{
+          display: 'flex', gap: 0, marginBottom: 24,
+          border: `1px solid ${t.border}`, borderRadius: 8, overflow: 'hidden',
+        }}>
+          {['signin', 'signup'].map((m) => (
+            <button
+              key={m}
+              onClick={() => switchMode(m)}
+              style={{
+                flex: 1, padding: '8px 0', border: 'none',
+                background: mode === m ? t.pri : 'transparent',
+                color: mode === m ? '#fff' : t.sub,
+                fontSize: 13, fontWeight: 600,
+                cursor: 'pointer', fontFamily: 'inherit',
+                transition: 'background 0.15s, color 0.15s',
+              }}
+            >
+              {m === 'signin' ? 'Sign In' : 'Create Account'}
+            </button>
+          ))}
+        </div>
+
         <form onSubmit={handleSubmit}>
-          <label style={{ display: 'block', color: t.sub, fontSize: 12, fontWeight: 600, marginBottom: 6 }}>
-            Email
-          </label>
+          <label style={labelStyle}>Email</label>
           <input
             type="email"
             value={email}
             onChange={e => setEmail(e.target.value)}
             required
             autoFocus
-            style={{
-              width: '100%', padding: '10px 12px', borderRadius: 8,
-              border: `1px solid ${t.border}`, background: t.bg,
-              color: t.tx, fontSize: 14, boxSizing: 'border-box',
-              marginBottom: 16, fontFamily: 'inherit', outline: 'none',
-            }}
+            placeholder="you@example.com"
+            style={inputStyle}
           />
 
-          <label style={{ display: 'block', color: t.sub, fontSize: 12, fontWeight: 600, marginBottom: 6 }}>
-            Password
-          </label>
+          <label style={labelStyle}>Password</label>
           <input
             type="password"
             value={password}
             onChange={e => setPassword(e.target.value)}
             required
-            style={{
-              width: '100%', padding: '10px 12px', borderRadius: 8,
-              border: `1px solid ${t.border}`, background: t.bg,
-              color: t.tx, fontSize: 14, boxSizing: 'border-box',
-              marginBottom: 24, fontFamily: 'inherit', outline: 'none',
-            }}
+            placeholder={mode === 'signup' ? 'Min 8 characters' : ''}
+            style={inputStyle}
           />
 
+          {mode === 'signup' && (
+            <>
+              <label style={labelStyle}>Confirm Password</label>
+              <input
+                type="password"
+                value={confirm}
+                onChange={e => setConfirm(e.target.value)}
+                required
+                placeholder="Re-enter password"
+                style={{ ...inputStyle, marginBottom: 24 }}
+              />
+            </>
+          )}
+
+          {mode === 'signin' && (
+            <div style={{ marginBottom: 24 }} />
+          )}
+
           {error && (
-            <p style={{ color: t.red, fontSize: 13, margin: '0 0 16px' }}>{error}</p>
+            <p style={{ color: t.red, fontSize: 13, margin: '-12px 0 16px' }}>{error}</p>
           )}
 
           <button
@@ -95,12 +162,16 @@ export default function Login({ t }) {
               fontFamily: 'inherit',
             }}
           >
-            {loading ? 'Signing in…' : 'Sign In'}
+            {loading
+              ? (mode === 'signin' ? 'Signing in…' : 'Creating account…')
+              : (mode === 'signin' ? 'Sign In' : 'Create Account')}
           </button>
         </form>
 
-        <p style={{ color: t.muted, fontSize: 11, margin: '24px 0 0', textAlign: 'center' }}>
-          Account access is by invitation only.
+        <p style={{ color: t.muted, fontSize: 11, margin: '20px 0 0', textAlign: 'center' }}>
+          {mode === 'signup'
+            ? "After sign-up you'll complete a quick profile setup."
+            : 'Access is by invitation only.'}
         </p>
       </div>
     </div>
