@@ -528,3 +528,75 @@ ${question}`;
 
   return callGroq(system, user, apiKey, 400);
 }
+
+// ─── Resume Analysis ──────────────────────────────────────────────────────────
+// Returns a structured JSON report. Throws if Groq fails or returns malformed JSON.
+export async function analyzeResumeWithGroq(structuredSections, targetRoles, apiKey) {
+  const SYSTEM = `You are a strict, honest resume evaluator for early-career engineering candidates
+(Aerospace, Manufacturing, Industrial, Mechanical). You evaluate resumes for:
+1. Impact: Are bullets quantified? Vague bullets fail.
+2. Skills relevance: Do skills match modern engineering job descriptions?
+3. Formatting clarity: Are sections structured, scannable, consistent?
+4. Experience framing: Is work experience framed around outcomes, not tasks?
+5. Overall readiness for ATS and recruiter review.
+
+You MUST respond with ONLY valid JSON matching this exact shape:
+{
+  "score": "A" | "B" | "C" | "D",
+  "summary": "2-3 sentence overall evaluation",
+  "highlights": [
+    { "section": "Experience | Skills | Education | Summary", "note": "what is working well" }
+  ],
+  "issues": [
+    {
+      "severity": "urgent" | "critical" | "optional",
+      "problem": "specific problem statement",
+      "why": "why this hurts your application",
+      "suggestion": "exact improvement to make"
+    }
+  ]
+}
+Score guide: A = ready to send, B = minor fixes, C = significant work needed, D = major gaps.
+Produce at minimum 3 issues and 2 highlights. Be specific — never generic.
+Do NOT wrap in markdown code fences. Return raw JSON only.`;
+
+  const sections = structuredSections || {};
+  const experience = (sections.experience || [])
+    .map(e => `${e.role} at ${e.company} (${e.start_date}–${e.current ? 'Present' : e.end_date})\n${(e.bullets || []).map(b => `  • ${b}`).join('\n')}`)
+    .join('\n\n');
+  const skills = (sections.skills || [])
+    .map(s => `${s.category}: ${(s.items || []).join(', ')}`)
+    .join('\n');
+  const education = (sections.education || [])
+    .map(e => `${e.degree} in ${e.field}, ${e.school} (${e.end_date})${e.gpa ? `, GPA ${e.gpa}` : ''}`)
+    .join('\n');
+
+  const USER = `Target roles: ${(targetRoles || []).join(', ') || 'Engineering (general)'}
+
+RESUME:
+---
+SUMMARY
+${sections.summary || '(none)'}
+
+EXPERIENCE
+${experience || '(none)'}
+
+EDUCATION
+${education || '(none)'}
+
+SKILLS
+${skills || '(none)'}
+---
+
+Evaluate this resume.`;
+
+  const raw = await callGroq(SYSTEM, USER, apiKey, 1200);
+
+  // Strip any accidental markdown fences
+  const cleaned = raw.replace(/^```json\s*/i, '').replace(/\s*```$/, '').trim();
+  try {
+    return JSON.parse(cleaned);
+  } catch {
+    throw new Error('Resume analysis returned invalid JSON from Groq. Try again.');
+  }
+}
