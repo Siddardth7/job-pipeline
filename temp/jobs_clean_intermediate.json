@@ -1,18 +1,50 @@
 {
-  "generated_utc": "2026-03-27T14:13:44.610257Z",
+  "generated_utc": "2026-03-28T13:52:57.708918Z",
   "stats": {
-    "total_raw": 195,
+    "total_raw": 180,
     "schema_rejected": 0,
-    "f3_aggregator": 11,
-    "f4_age": 97,
-    "f5_duplicates": 4,
+    "f3_aggregator": 5,
+    "f4_age": 117,
+    "f5_duplicates": 3,
     "f6_seniority": 3,
-    "f7_role": 27,
-    "f8_itar": 21,
+    "f7_role": 12,
+    "f8_itar": 7,
     "f9_blacklist": 0,
-    "final_count": 32
+    "final_count": 33
   },
   "jobs": [
+    {
+      "job_title": "Entry-Level Process Engineer, LCORefinery",
+      "company_name": "Western International Gas & Cylinders, Inc.",
+      "job_url": "https://www.learn4good.com/jobs/decatur/illinois/engineering/4973237591/e/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+      "location": "Decatur, IL",
+      "posted_date": "2026-03-26",
+      "description": "Position: Entry-Level Process Engineer, LCO2 Refinery\nA leading gas and cylinder company is seeking a motivated Junior Process Engineer to join its fast-paced engineering team. The successful candidate will assist in overseeing the installation and maintenance of LCO2 refinery equipment, analyze data for improvements, and ensure product quality and efficiency. A BS in Chemical Engineering is required, along with skills in AutoCAD and Lean Six Sigma.\n\nThis is an entry-level position with opportun",
+      "source": "serpapi",
+      "cluster": "process",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 75,
+      "boost_tags": [
+        "entry-level"
+      ]
+    },
+    {
+      "job_title": "Site Junior Quality Engineer \u2014 Manufacturing & ISO",
+      "company_name": "Foxconn Industrial Internet - FII",
+      "job_url": "https://www.learn4good.com/jobs/san-jose/california/quality_control/4973973212/e/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+      "location": "San Jose, CA",
+      "posted_date": "2026-03-26",
+      "description": "Position: On\u2011Site Junior Quality Engineer \u2014 Manufacturing & ISO\nA leading technology manufacturer in San Jose, California, is looking for an Entry-Level Quality Engineer to support quality control and assurance processes. The ideal candidate will contribute to implementing quality initiatives throughout production and ensuring compliance with standards. Responsibilities include monitoring production, conducting inspections, leading quality improvement projects, and documenting quality standards.",
+      "source": "serpapi",
+      "cluster": "quality",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 75,
+      "boost_tags": [
+        "junior"
+      ]
+    },
     {
       "job_title": "Process Engineer II",
       "company_name": "Rochester Electronics, LLC",
@@ -62,6 +94,22 @@
       ]
     },
     {
+      "job_title": "Entry Level Wastewater Process Engineer at Carollo Engineers Inc. Seattle, WA",
+      "company_name": "Carollo Engineers Inc.",
+      "job_url": "https://jobs.digitalhire.com/job-listing/opening/5MsAImeVwOIKGmhXrgAoSv?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+      "location": "Seattle, WA",
+      "posted_date": "2026-03-26",
+      "description": "Position Overview\n\nCarollo Engineers is an internationally recognized environmental engineering firm that specializes in the planning, design, and construction of water and wastewater facilities. We are seeking a Wastewater Process Engineer to assist with projects related to municipal water and wastewater treatment plants, including but not limited to major treatment plant expansions, regional water quality studies, and critical water reuse projects that will create sustainable and resilient wat",
+      "source": "serpapi",
+      "cluster": "process",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 69,
+      "boost_tags": [
+        "entry level"
+      ]
+    },
+    {
       "job_title": "Process Engineer II - Fridley, MN",
       "company_name": "Medtronic",
       "job_url": "https://medtronic.wd1.myworkdayjobs.com/MedtronicCareers/job/Fridley-Minnesota-United-States-of-America/Process-Engineer-II---Fridley--MN_R62369-1?source=LinkedIn",
@@ -78,22 +126,6 @@
       ]
     },
     {
-      "job_title": "Entry-Level Construction Materials Engineer",
-      "company_name": "S&ME",
-      "job_url": "https://smeinc.applicantpro.com/jobs/4008708?value+%28e.g.+src=LinkedIn%29",
-      "location": "",
-      "posted_date": "2026-03-25",
-      "description": "Requisition Number: 2026-1580-09\n\nAre you a motivated early\u2011career professional who brings curiosity, accountability, and a strong desire to learn within a fast\u2011paced project environment? S&ME is looking for an eager and dedicated full-time Entry-Level Construction Materials Engineer to join our Construction Services team in Greensboro, North Carolina.\n\nVisit the Life tab on our LinkedIn profile to learn more about life at S&ME\n\nWhat You Will Do:\n\nAs an Entry-Level Construction Materials Enginee",
-      "source": "apify",
-      "cluster": "materials",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 67,
-      "boost_tags": [
-        "entry-level"
-      ]
-    },
-    {
       "job_title": "Design Engineer I",
       "company_name": "Superior Industries Inc",
       "job_url": "https://superior-ind.com/about/careers?jobId=a0KQl00000Tdckf&sourceId=a0e1U000000c0xLQAQ",
@@ -107,6 +139,22 @@
       "relevance_score": 67,
       "boost_tags": [
         "engineer i"
+      ]
+    },
+    {
+      "job_title": "Entry Level Quality Engineer",
+      "company_name": "Cognizant",
+      "job_url": "https://salutemyjob.com/jobs/entry-level-quality-engineer-cupertino-california/2688692768-2/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+      "location": "Cupertino, CA",
+      "posted_date": "2026-03-28",
+      "description": "Cognizant is a leading professional services company dedicated to helping clients modernize technology, reinvent processes, and transform experiences. We are eager to grow our team!\n\nIf you thrive in a dynamic, fast-paced environment and excel at multitasking, we want to hear from you!\n\nJob Responsibilities:\n\u2022 Triage, debug, and analyze test failures and data sets while authoring new test sets.\n\u2022 Analyze test results to identify defects and troubleshoot scenarios effectively.\n\u2022 Conduct software",
+      "source": "serpapi",
+      "cluster": "quality",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 67,
+      "boost_tags": [
+        "entry level"
       ]
     },
     {
@@ -244,20 +292,6 @@
       "boost_tags": []
     },
     {
-      "job_title": "Materials Engineer \u2013 Supplier Qualification",
-      "company_name": "Emerson",
-      "job_url": "https://hdjq.fa.us2.oraclecloud.com/hcmUI/CandidateExperience/en/job/26002241/?utm_medium=jobboard&utm_source=linkedin",
-      "location": "",
-      "posted_date": "2026-03-25",
-      "description": "Job Description\n\nIf you are a Materials Engineerl looking for an opportunity to grow your career, this role offers the chance to support innovation and product performance on a global scale. You will provide material evaluation, testing, and qualification expertise that ensures our products meet the highest standards of quality, reliability, and compliance. Working closely with cross\u2011functional teams, you will help drive supplier qualification activities, improve testing processes, and support n",
-      "source": "apify",
-      "cluster": "materials",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 56,
-      "boost_tags": []
-    },
-    {
       "job_title": "Plant Manufacturing Engineer",
       "company_name": "ASSA ABLOY Group",
       "job_url": "https://assaabloy.jobs2web.com/job/Williamsport-Plant-Manufacturing-Engineer-MD-21795/1370729933/?utm_source=LINKEDIN&utm_medium=referrer",
@@ -356,6 +390,34 @@
       "boost_tags": []
     },
     {
+      "job_title": "Field Quality Engineer, Energy Storage",
+      "company_name": "Redwood Materials",
+      "job_url": "https://boards.greenhouse.io/redwoodmaterials/jobs/5835346004?gh_jid=5835346004",
+      "location": "San Francisco, California, United States",
+      "posted_date": "2026-03-28",
+      "description": "<div class=&quot;content-intro&quot;><div class=&quot;page&quot;> <div class=&quot;section&quot;> <div class=&quot;layoutArea&quot;> <div class=&quot;column&quot;> <p><span style=&quot;font-family: helvetica, arial, sans-serif; font-size: 12pt;&quot;><strong>About Redwood Materials</strong></span></p> <div> <p><strong>Redwood is localizing a global battery supply chain that seamlessly integrates recovery, reuse, and recycling&nbsp;</strong><strong>\u2014&nbsp;</strong><strong>keeping critical mineral",
+      "source": "ats_greenhouse",
+      "cluster": "quality",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 52,
+      "boost_tags": []
+    },
+    {
+      "job_title": "Manufacturing Quality Engineer, Energy Storage",
+      "company_name": "Redwood Materials",
+      "job_url": "https://boards.greenhouse.io/redwoodmaterials/jobs/5835775004?gh_jid=5835775004",
+      "location": "McCarran, NV",
+      "posted_date": "2026-03-26",
+      "description": "<div class=&quot;content-intro&quot;><div class=&quot;page&quot;> <div class=&quot;section&quot;> <div class=&quot;layoutArea&quot;> <div class=&quot;column&quot;> <p><span style=&quot;font-family: helvetica, arial, sans-serif; font-size: 12pt;&quot;><strong>About Redwood Materials</strong></span></p> <div> <p><strong>Redwood is localizing a global battery supply chain that seamlessly integrates recovery, reuse, and recycling&nbsp;</strong><strong>\u2014&nbsp;</strong><strong>keeping critical mineral",
+      "source": "ats_greenhouse",
+      "cluster": "quality",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 52,
+      "boost_tags": []
+    },
+    {
       "job_title": "Manufacturing Engineer Metal Fabrication Plant",
       "company_name": "Atkore",
       "job_url": "https://recruiting2.ultipro.com/ATK1000ATKOR/JobBoard/18eec16a-a1ec-458b-82c9-cb3af8866255/OpportunityDetail?opportunityId=93df963d-ed83-476c-a5a7-0ff51dee0d48&source=LinkedIn&utm_source=LINKEDIN",
@@ -398,34 +460,6 @@
       "boost_tags": []
     },
     {
-      "job_title": "Field Quality Engineer, Energy Storage",
-      "company_name": "Redwood Materials",
-      "job_url": "https://boards.greenhouse.io/redwoodmaterials/jobs/5835346004?gh_jid=5835346004",
-      "location": "San Francisco, California, United States",
-      "posted_date": "2026-03-27",
-      "description": "<div class=&quot;content-intro&quot;><div class=&quot;page&quot;> <div class=&quot;section&quot;> <div class=&quot;layoutArea&quot;> <div class=&quot;column&quot;> <p><span style=&quot;font-family: helvetica, arial, sans-serif; font-size: 12pt;&quot;><strong>About Redwood Materials</strong></span></p> <div> <p><strong>Redwood is localizing a global battery supply chain that seamlessly integrates recovery, reuse, and recycling&nbsp;</strong><strong>\u2014&nbsp;</strong><strong>keeping critical mineral",
-      "source": "ats_greenhouse",
-      "cluster": "quality",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 52,
-      "boost_tags": []
-    },
-    {
-      "job_title": "Manufacturing Quality Engineer, Energy Storage",
-      "company_name": "Redwood Materials",
-      "job_url": "https://boards.greenhouse.io/redwoodmaterials/jobs/5835775004?gh_jid=5835775004",
-      "location": "McCarran, NV",
-      "posted_date": "2026-03-26",
-      "description": "<div class=&quot;content-intro&quot;><div class=&quot;page&quot;> <div class=&quot;section&quot;> <div class=&quot;layoutArea&quot;> <div class=&quot;column&quot;> <p><span style=&quot;font-family: helvetica, arial, sans-serif; font-size: 12pt;&quot;><strong>About Redwood Materials</strong></span></p> <div> <p><strong>Redwood is localizing a global battery supply chain that seamlessly integrates recovery, reuse, and recycling&nbsp;</strong><strong>\u2014&nbsp;</strong><strong>keeping critical mineral",
-      "source": "ats_greenhouse",
-      "cluster": "quality",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 52,
-      "boost_tags": []
-    },
-    {
       "job_title": "Process Engineer",
       "company_name": "Evonik",
       "job_url": "https://evonik.wd3.myworkdayjobs.com/External_Careers/job/Lafayette-IN/Process-Engineer-145782-_R34421-1",
@@ -462,20 +496,6 @@
       "description": "Lensa is a career site that helps job seekers find great jobs in the US. We are not a staffing firm or agency. Lensa does not hire directly for these jobs, but promotes jobs on LinkedIn on behalf of its direct clients, recruitment ad agencies, and marketing partners. Lensa partners with DirectEmployers to promote this job for Butler America. Clicking \"Apply Now\" or \"Read more\" on Lensa redirects you to the job board/employer site. Any information collected there is subject to their terms and pri",
       "source": "apify",
       "cluster": "materials",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 50,
-      "boost_tags": []
-    },
-    {
-      "job_title": "Intern, Industrial Engineering, Summer 2026",
-      "company_name": "Lucid Motors",
-      "job_url": "https://job-boards.greenhouse.io/lucidmotors/jobs/4953758007",
-      "location": "Casa Grande, AZ",
-      "posted_date": "2026-03-25",
-      "description": "<div class=&quot;content-intro&quot;><div><u><strong>Leading the future in luxury electric and mobility</strong></u></div> <div>At Lucid, we set out to introduce the most captivating, luxury electric vehicles that elevate the human experience and transcend the perceived limitations of space, performance, and intelligence. Vehicles that are intuitive, liberating, and designed for the future of mobility.</div> <div>&nbsp;</div> <div>We plan to lead in this new era of luxury electric by returning t",
-      "source": "ats_greenhouse",
-      "cluster": "industrial",
       "itar_flag": false,
       "itar_detail": "",
       "relevance_score": 50,
