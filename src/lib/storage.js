@@ -464,3 +464,117 @@ export async function addCompanyToIntelligence(company) {
   if (error) throw error;
   return data;
 }
+
+// ── Resumes ────────────────────────────────────────────────────────────────────
+const MAX_RESUMES = 5;
+
+export async function fetchResumes() {
+  const userId = await getUserId();
+  const { data, error } = await supabase
+    .from('resumes')
+    .select('id, name, is_primary, target_roles, last_analyzed_at, created_at, updated_at, analysis_report')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return data || [];
+}
+
+export async function fetchResume(id) {
+  const userId = await getUserId();
+  const { data, error } = await supabase
+    .from('resumes')
+    .select('*')
+    .eq('id', id)
+    .eq('user_id', userId)
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+export async function upsertResume(resume) {
+  const userId = await getUserId();
+  // Enforce max limit on insert (no id = new resume)
+  if (!resume.id) {
+    const existing = await fetchResumes();
+    if (existing.length >= MAX_RESUMES) {
+      throw new Error(`Maximum ${MAX_RESUMES} resumes allowed. Delete one to add another.`);
+    }
+  }
+  const { data, error } = await supabase
+    .from('resumes')
+    .upsert(
+      {
+        ...resume,
+        user_id:    userId,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: 'id' }
+    )
+    .select('id')
+    .single();
+  if (error) throw error;
+  return data.id;
+}
+
+export async function deleteResume(id) {
+  const userId = await getUserId();
+  const { error } = await supabase
+    .from('resumes')
+    .delete()
+    .eq('id', id)
+    .eq('user_id', userId);
+  if (error) throw error;
+}
+
+// Sets is_primary=true for `id`, false for all other user resumes.
+export async function setPrimaryResume(id) {
+  const userId = await getUserId();
+  const { error: clearErr } = await supabase
+    .from('resumes')
+    .update({ is_primary: false })
+    .eq('user_id', userId);
+  if (clearErr) throw clearErr;
+  const { error: setErr } = await supabase
+    .from('resumes')
+    .update({ is_primary: true })
+    .eq('id', id)
+    .eq('user_id', userId);
+  if (setErr) throw setErr;
+}
+
+export async function saveResumeAnalysis(id, report) {
+  const userId = await getUserId();
+  const { error } = await supabase
+    .from('resumes')
+    .update({
+      analysis_report:  report,
+      last_analyzed_at: new Date().toISOString(),
+      updated_at:       new Date().toISOString(),
+    })
+    .eq('id', id)
+    .eq('user_id', userId);
+  if (error) throw error;
+}
+
+// ── User Preferences ───────────────────────────────────────────────────────────
+export async function fetchPreferences() {
+  const userId = await getUserId();
+  const { data, error } = await supabase
+    .from('user_preferences')
+    .select('*')
+    .eq('user_id', userId)
+    .maybeSingle();
+  if (error) throw error;
+  return data || {};
+}
+
+export async function savePreferences(prefs) {
+  const userId = await getUserId();
+  const { error } = await supabase
+    .from('user_preferences')
+    .upsert(
+      { ...prefs, user_id: userId, updated_at: new Date().toISOString() },
+      { onConflict: 'user_id' }
+    );
+  if (error) throw error;
+}
