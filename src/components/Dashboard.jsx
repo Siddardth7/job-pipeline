@@ -1,4 +1,4 @@
-import { CheckCircle, Users, Activity, AlertTriangle, MessageSquare, Coffee, Zap, Circle } from 'lucide-react';
+import { CheckCircle, Users, AlertTriangle, MessageSquare, Coffee, Zap, Circle } from 'lucide-react';
 import { getWeekDays, calcStreak, buildSparkData } from '../lib/dashboard-utils.js';
 
 const DAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -42,7 +42,7 @@ function KpiCard({ label, value, sparkData, color, sub, t }) {
   );
 }
 
-export default function Dashboard({ apps, pipeline, searchResults, networkingLog, netlogMeta, setPage, t }) {
+export default function Dashboard({ apps, pipeline, searchResults: _searchResults, networkingLog, netlogMeta, setPage, t }) {
   const weekDays = getWeekDays();
   const today = new Date();
   const todayIdx = (today.getDay() + 6) % 7; // Mon=0, Sun=6
@@ -55,6 +55,16 @@ export default function Dashboard({ apps, pipeline, searchResults, networkingLog
   const appsSpark  = buildSparkData(apps, 7);
   const netSpark   = buildSparkData(networkingLog, 7);
   const streak     = calcStreak(apps, networkingLog);
+
+  const pipelineSpark = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(today);
+    d.setDate(today.getDate() - (6 - i));
+    const ds = d.toISOString().split('T')[0];
+    return pipeline.filter(j => {
+      if (!j.addedAt) return false;
+      return new Date(j.addedAt).toISOString().split('T')[0] === ds;
+    }).length;
+  });
 
   const activeP        = pipeline.filter(j => j.status === 'active').length;
   const totalApps      = apps.length;
@@ -148,13 +158,13 @@ export default function Dashboard({ apps, pipeline, searchResults, networkingLog
         />
         <KpiCard
           label="Pipeline" value={activeP}
-          sparkData={Array.from({ length: 7 }, (_, i) => Math.max(0, activeP - (6 - i)))}
+          sparkData={pipelineSpark}
           color={t.yellow}
           sub={activeP > 0 ? `${activeP} active` : 'Add jobs to pipeline'} t={t}
         />
         <KpiCard
           label="Response Rate" value={`${responseRate}%`}
-          sparkData={Array.from({ length: 7 }, (_, i) => i === 6 ? responseRate : Math.max(0, responseRate - (6 - i) * 3))}
+          sparkData={Array.from({ length: 7 }, () => responseRate)}
           color={t.green}
           sub={`${statusCounts['Replied'] + statusCounts['Coffee Chat']} of ${totalNetworked} replied`} t={t}
         />
