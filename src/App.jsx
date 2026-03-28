@@ -24,34 +24,45 @@ import Profile from "./components/Profile.jsx";
 
 // ─── THEME ────────────────────────────────────────────────────────────────────
 const LIGHT = {
-  bg:"#f8fafc", sb:"#ffffff", card:"#ffffff", border:"#e2e8f0",
-  tx:"#0f172a", sub:"#64748b", muted:"#94a3b8", pri:"#0284c7", priL:"#e0f2fe", priBd:"#bae6fd",
-  green:"#16a34a", greenL:"#dcfce7", greenBd:"#86efac",
-  yellow:"#d97706", yellowL:"#fef3c7", yellowBd:"#fcd34d",
-  red:"#dc2626", redL:"#fee2e2", redBd:"#fca5a5",
-  hover:"#f1f5f9", shadow:"0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04)"
+  bg:"#f6f8fa", sb:"#ffffff", card:"#ffffff", border:"#d0d7de",
+  tx:"#1f2328", sub:"#636c76", muted:"#9198a1",
+  pri:"#0969da", priL:"#ddf4ff", priBd:"#54aeff",
+  green:"#1a7f37", greenL:"#dafbe1", greenBd:"#82e295",
+  yellow:"#9a6700", yellowL:"#fff8c5", yellowBd:"#d4a72c",
+  red:"#cf222e", redL:"#ffebe9", redBd:"#ff8182",
+  hover:"#f3f4f6", shadow:"0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.04)"
 };
 const DARK = {
-  bg:"#07080f", sb:"#0d0e1a", card:"#111222", border:"#1e2035",
-  tx:"#e8eaf6", sub:"#7880a4", muted:"#3d4168", pri:"#3b82f6", priL:"#1e293b", priBd:"#2d3a5a",
-  green:"#22c55e", greenL:"#14231a", greenBd:"#166534",
-  yellow:"#f59e0b", yellowL:"#1c1a10", yellowBd:"#854d0e",
-  red:"#ef4444", redL:"#1c1010", redBd:"#7f1d1d",
-  hover:"#151628", shadow:"0 1px 3px rgba(0,0,0,.4)"
+  bg:"#0d1117", sb:"#161b22", card:"#1c2128", border:"#30363d",
+  tx:"#e6edf3", sub:"#8b949e", muted:"#484f58",
+  pri:"#58a6ff", priL:"#1f2d3d", priBd:"#2d4a7a",
+  green:"#3fb950", greenL:"#1a2e1a", greenBd:"#2ea043",
+  yellow:"#d29922", yellowL:"#2d2208", yellowBd:"#9e6a03",
+  red:"#f85149", redL:"#3d1a1a", redBd:"#8d1c1c",
+  hover:"#21262d", shadow:"0 1px 3px rgba(0,0,0,.4), 0 1px 2px rgba(0,0,0,.3)"
 };
 
-const NAV_ITEMS = [
-  {id:"dashboard", label:"Dashboard", Icon:LayoutDashboard},
-  {id:"search", label:"Find Jobs", Icon:Search},
-  {id:"pipeline", label:"Pipeline", Icon:Activity},
-  {id:"analyze", label:"Job Analysis", Icon:BarChart2},
-  {id:"networking", label:"Networking", Icon:Users},
-  {id:"applied", label:"Applied", Icon:Briefcase},
-  {id:"intel", label:"Company Intel", Icon:Building2},
-  {id:"resume", label:"Resume", Icon:FileText},
-  {id:"profile", label:"Profile", Icon:UserCircle},
-  {id:"settings", label:"API & Settings", Icon:Settings},
+const NAV_GROUPS = [
+  { label: "Overview", items: [
+    {id:"dashboard", label:"Dashboard", Icon:LayoutDashboard},
+  ]},
+  { label: "Job Search", items: [
+    {id:"search",   label:"Find Jobs",    Icon:Search},
+    {id:"pipeline", label:"Pipeline",     Icon:Activity},
+    {id:"analyze",  label:"Job Analysis", Icon:BarChart2},
+  ]},
+  { label: "Tracking", items: [
+    {id:"applied",    label:"Applied",      Icon:Briefcase},
+    {id:"networking", label:"Networking",   Icon:Users},
+    {id:"intel",      label:"Company Intel",Icon:Building2},
+  ]},
+  { label: "Profile & Tools", items: [
+    {id:"resume",   label:"Resume",        Icon:FileText},
+    {id:"profile",  label:"Profile",       Icon:UserCircle},
+    {id:"settings", label:"API & Settings",Icon:Settings},
+  ]},
 ];
+const NAV_ITEMS_FLAT = NAV_GROUPS.flatMap(g => g.items);
 
 // ─── HELPER FUNCTIONS ─────────────────────────────────────────────────────────
 function findCompany(co) {
@@ -378,9 +389,9 @@ export default function JobAgent() {
   if (profile === null) return <Onboarding t={t} onComplete={() => Storage.fetchUserProfile().then(p => setProfile(p))} />;
 
   return (
-    <div style={{display:"flex",height:"100vh",background:t.bg,color:t.tx,fontFamily:"'DM Sans','Inter',system-ui,sans-serif",overflow:"hidden"}}>
+    <div style={{display:"flex",height:"100vh",background:t.bg,color:t.tx,fontFamily:"'Geist','Inter',system-ui,sans-serif",overflow:"hidden"}}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600&display=swap');
         @keyframes lp-dot{0%,100%{transform:translateY(0);opacity:.25}50%{transform:translateY(-5px);opacity:1}}
         @keyframes lp-spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
         @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
@@ -405,26 +416,29 @@ export default function JobAgent() {
           </div>
         </div>
 
-        <div style={{padding:"16px 20px 8px",fontSize:10.5,fontWeight:700,color:t.muted,textTransform:"uppercase",letterSpacing:2}}>Workflow</div>
-
-        <nav style={{padding:"0 10px",flex:1,overflowY:"auto"}}>
-          {NAV_ITEMS.map(({id, label, Icon}) => {
-            const a = page === id;
-            return (
-              <div key={id} onClick={() => setPage(id)} style={{display:"flex",alignItems:"center",gap:11,padding:"10px 12px",borderRadius:9,marginBottom:2,cursor:"pointer",background:a?t.priL:"transparent",borderLeft:a?`3px solid ${t.pri}`:"3px solid transparent",paddingLeft:a?"9px":"12px",transition:"all .12s"}}
-                onMouseEnter={e => { if(!a) e.currentTarget.style.background=t.hover; }}
-                onMouseLeave={e => { if(!a) e.currentTarget.style.background="transparent"; }}>
-                <Icon size={16} color={a?t.pri:t.muted}/>
-                <span style={{fontSize:13.5,fontWeight:a?700:500,color:a?t.pri:t.sub}}>{label}</span>
-                {id === "pipeline" && pendingPipeline > 0 && (
-                  <span style={{marginLeft:"auto",fontSize:11,fontWeight:800,padding:"1px 7px",borderRadius:10,background:t.pri+"22",color:t.pri}}>{pendingPipeline}</span>
-                )}
-                {id === "networking" && networkingLog.length > 0 && (
-                  <span style={{marginLeft:"auto",fontSize:11,fontWeight:800,padding:"1px 7px",borderRadius:10,background:t.green+"22",color:t.green}}>{networkingLog.length}</span>
-                )}
-              </div>
-            );
-          })}
+        <nav style={{padding:"0 8px",flex:1,overflowY:"auto",paddingTop:8}}>
+          {NAV_GROUPS.map(({label: groupLabel, items}) => (
+            <div key={groupLabel}>
+              <div style={{padding:"12px 10px 5px",fontSize:10,fontWeight:700,color:t.muted,textTransform:"uppercase",letterSpacing:1.8}}>{groupLabel}</div>
+              {items.map(({id, label, Icon}) => {
+                const a = page === id;
+                return (
+                  <div key={id} onClick={() => setPage(id)} style={{display:"flex",alignItems:"center",gap:10,padding:"8px 10px",borderRadius:8,marginBottom:1,cursor:"pointer",background:a?t.priL:"transparent",transition:"all .12s"}}
+                    onMouseEnter={e => { if(!a) e.currentTarget.style.background=t.hover; }}
+                    onMouseLeave={e => { if(!a) e.currentTarget.style.background="transparent"; }}>
+                    <Icon size={15} color={a?t.pri:t.muted}/>
+                    <span style={{fontSize:13,fontWeight:a?600:400,color:a?t.pri:t.sub}}>{label}</span>
+                    {id === "pipeline" && pendingPipeline > 0 && (
+                      <span style={{marginLeft:"auto",fontSize:11,fontWeight:700,padding:"1px 7px",borderRadius:20,background:t.pri+"22",color:t.pri}}>{pendingPipeline}</span>
+                    )}
+                    {id === "networking" && networkingLog.length > 0 && (
+                      <span style={{marginLeft:"auto",fontSize:11,fontWeight:700,padding:"1px 7px",borderRadius:20,background:t.green+"22",color:t.green}}>{networkingLog.length}</span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ))}
         </nav>
 
         {currentJob?.role && (
@@ -449,7 +463,7 @@ export default function JobAgent() {
       <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
         <div style={{height:52,borderBottom:`1px solid ${t.border}`,display:"flex",alignItems:"center",padding:"0 28px",background:t.sb,flexShrink:0}}>
           <div style={{fontSize:13,fontWeight:600,color:t.sub}}>
-            {NAV_ITEMS.find(n => n.id === page)?.label || "Dashboard"}
+            {NAV_ITEMS_FLAT.find(n => n.id === page)?.label || "Dashboard"}
           </div>
         </div>
         <div style={{flex:1,overflowY:"auto",padding:"28px 32px"}}>
