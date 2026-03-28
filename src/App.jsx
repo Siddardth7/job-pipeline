@@ -125,8 +125,9 @@ export default function JobAgent() {
     Storage.fetchUserProfile().then(p => setProfile(p || null)).catch(() => setProfile(null));
   }, [user]);
 
-  // Load all data from Supabase on mount
+  // Load all data from Supabase once the user is confirmed
   useEffect(() => {
+    if (!user) return;
     (async () => {
       try {
         const [dbApps, dbJobs, dbNetlog, dbTemplates, dbSettings, savedJob] = await Promise.all([
@@ -166,7 +167,7 @@ export default function JobAgent() {
       }
       setLoaded(true);
     })();
-  }, []);
+  }, [user?.id]);
 
   // Debounced save helper
   const debouncedSave = useCallback((saveFn) => {

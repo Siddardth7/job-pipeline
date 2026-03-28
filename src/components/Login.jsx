@@ -61,22 +61,17 @@ export default function Login({ t }) {
 
   return (
     <div style={{
-      minHeight: '100vh',
-      background: t.bg,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
+      minHeight: '100vh', background: t.bg,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
       fontFamily: "'DM Sans','Inter',system-ui,sans-serif",
     }}>
       <div style={{
-        background: t.card,
-        border: `1px solid ${t.border}`,
-        borderRadius: 16,
-        padding: '40px 36px',
-        width: 360,
+        background: t.card, border: `1px solid ${t.border}`,
+        borderRadius: 16, padding: '40px 36px', width: 380,
         boxShadow: t.shadow,
       }}>
-        <h2 style={{ color: t.tx, margin: '0 0 6px', fontSize: 22, fontWeight: 700 }}>
+        {/* Header */}
+        <h2 style={{ color: t.tx, margin: '0 0 4px', fontSize: 22, fontWeight: 700 }}>
           JobAgent
         </h2>
         <p style={{ color: t.sub, margin: '0 0 24px', fontSize: 13 }}>
@@ -151,15 +146,13 @@ export default function Login({ t }) {
           )}
 
           <button
-            type="submit"
-            disabled={loading}
+            type="submit" disabled={loading}
             style={{
               width: '100%', padding: '11px', borderRadius: 8,
               background: t.pri, color: '#fff', border: 'none',
               fontSize: 14, fontWeight: 600,
               cursor: loading ? 'not-allowed' : 'pointer',
-              opacity: loading ? 0.6 : 1,
-              fontFamily: 'inherit',
+              opacity: loading ? 0.6 : 1, fontFamily: 'inherit',
             }}
           >
             {loading
@@ -171,7 +164,7 @@ export default function Login({ t }) {
         <p style={{ color: t.muted, fontSize: 11, margin: '20px 0 0', textAlign: 'center' }}>
           {mode === 'signup'
             ? "After sign-up you'll complete a quick profile setup."
-            : 'Access is by invitation only.'}
+            : 'First time? Switch to "Create Account" above.'}
         </p>
       </div>
     </div>

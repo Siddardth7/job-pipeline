@@ -228,36 +228,43 @@ export async function deleteTemplate(id) {
   if (error) throw error;
 }
 
-// ── Settings (global key-value — theme, groq key, serper key) ─────────────────
-// Settings remain global for now; groq/serper keys migrate to user_integrations
-// in Phase D. The settings table is still used during the transition period.
+// ── Settings (per-user key-value — theme, netlog_meta, current_job) ───────────
+// Keys are prefixed with `{userId}:` so each user's settings are isolated.
 export async function fetchSettings() {
-  const { data, error } = await supabase.from('settings').select('*');
+  const userId = await getUserId();
+  const prefix = `${userId}:`;
+  const { data, error } = await supabase
+    .from('settings')
+    .select('*')
+    .like('key', `${prefix}%`);
   if (error) throw error;
   const result = {};
-  (data || []).forEach(row => { result[row.key] = row.value; });
+  (data || []).forEach(row => { result[row.key.slice(prefix.length)] = row.value; });
   return result;
 }
 
 export async function saveSetting(key, value) {
+  const userId = await getUserId();
   const { error } = await supabase
     .from('settings')
-    .upsert({ key, value: String(value) }, { onConflict: 'key' });
+    .upsert({ key: `${userId}:${key}`, value: String(value) }, { onConflict: 'key' });
   if (error) throw error;
 }
 
 export async function saveCurrentJob(job) {
+  const userId = await getUserId();
   const { error } = await supabase
     .from('settings')
-    .upsert({ key: 'current_job', value: JSON.stringify(job) }, { onConflict: 'key' });
+    .upsert({ key: `${userId}:current_job`, value: JSON.stringify(job) }, { onConflict: 'key' });
   if (error) throw error;
 }
 
 export async function loadCurrentJob() {
+  const userId = await getUserId();
   const { data, error } = await supabase
     .from('settings')
     .select('value')
-    .eq('key', 'current_job')
+    .eq('key', `${userId}:current_job`)
     .maybeSingle();
   if (error || !data) return null;
   try { return JSON.parse(data.value); } catch { return null; }
