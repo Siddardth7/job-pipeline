@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import {
   LayoutDashboard, Search, BarChart2, Briefcase, Users, Building2, Settings,
-  Sun, Moon, Zap, Activity
+  Sun, Moon, Zap, Activity, FileText, UserCircle
 } from "lucide-react";
 
 import { M628, ITAR_KEYWORDS, BLACKLIST } from "./data/m628.js";
@@ -19,6 +19,8 @@ import Networking from "./components/Networking.jsx";
 import Applied from "./components/Applied.jsx";
 import CompanyIntel from "./components/CompanyIntel.jsx";
 import AppSettings from "./components/Settings.jsx";
+import Resume from "./components/Resume.jsx";
+import Profile from "./components/Profile.jsx";
 
 // ─── THEME ────────────────────────────────────────────────────────────────────
 const LIGHT = {
@@ -46,6 +48,8 @@ const NAV_ITEMS = [
   {id:"networking", label:"Networking", Icon:Users},
   {id:"applied", label:"Applied", Icon:Briefcase},
   {id:"intel", label:"Company Intel", Icon:Building2},
+  {id:"resume", label:"Resume", Icon:FileText},
+  {id:"profile", label:"Profile", Icon:UserCircle},
   {id:"settings", label:"API & Settings", Icon:Settings},
 ];
 
@@ -352,6 +356,12 @@ export default function JobAgent() {
         }}
         t={t}
       />
+    ),
+    resume: (
+      <Resume profile={profile} groqKey={groqKey} t={t}/>
+    ),
+    profile: (
+      <Profile t={t}/>
     ),
     settings: (
       <AppSettings templates={templates} setTemplates={setTemplates} groqKey={groqKey} setGroqKey={setGroqKey} serperKey={serperKey} setSerperKey={setSerperKey} user={user} onSignOut={signOut} t={t}/>
