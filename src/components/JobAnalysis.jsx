@@ -378,6 +378,7 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
   const [role, setRole] = useState(currentJob?.role || "");
   const [loc, setLoc] = useState(currentJob?.location || "");
   const [link, setLink] = useState(currentJob?.link || "");
+  const [jobId, setJobId] = useState(currentJob?.jobId || "");
   const [jd, setJd] = useState(currentJob?.jd || "");
   const [res, setRes] = useState(null);
   const [result, setResult] = useState(currentJob?.analysisResult || null);
@@ -394,11 +395,12 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
       setCo(currentJob.company || "");
       setRole(currentJob.role || "");
       setLoc(currentJob.location || "");
+      setJobId(currentJob.jobId || "");
       setLink(currentJob.link || "");
       setJd(currentJob.jd || "");
       setResult(currentJob.analysisResult || null);
     }
-  }, [currentJob?.id, currentJob?.location, currentJob?.company, currentJob?.role, currentJob?.jd]);
+  }, [currentJob?.id, currentJob?.location, currentJob?.company, currentJob?.role, currentJob?.jd, currentJob?.jobId]);
 
   // Persist JD and form fields back to currentJob so they survive page switches
   const syncToParent = useCallback((updates) => {
@@ -610,10 +612,11 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
       {(currentJob?.role || co) && (
         <Card t={t} style={{marginBottom:16}}>
           <SectionLabel t={t}>Job Details</SectionLabel>
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:12,marginBottom:12}}>
+          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr 1fr",gap:12,marginBottom:12}}>
             <Input label="Company" value={co} onChange={handleCoChange} t={t}/>
             <Input label="Role" value={role} onChange={handleRoleChange} t={t}/>
             <Input label="Location" value={loc} onChange={handleLocChange} t={t}/>
+            <Input label="Job ID" value={jobId} onChange={e => { setJobId(e.target.value); syncToParent({ jobId: e.target.value }); }} placeholder="Job ID (optional)" t={t}/>
             <Input label="Link" value={link} onChange={handleLinkChange} t={t}/>
           </div>
           <Input
@@ -879,7 +882,7 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
 
           {/* Action buttons */}
           <div style={{display:"flex",gap:10}}>
-            <Btn onClick={() => { syncToParent({company:co,role,location:loc,link,jd}); setPage("networking"); }} t={t}>
+            <Btn onClick={() => { syncToParent({company:co,role,location:loc,link,jd,jobId}); setPage("networking"); }} t={t}>
               <Users size={14}/> Find Contacts
             </Btn>
             <Btn variant="green" onClick={handleCompleteAndLog} t={t}>
