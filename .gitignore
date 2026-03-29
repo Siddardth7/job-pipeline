@@ -37,3 +37,6 @@ resume-compiler/venv/
 # Python cache
 **/__pycache__/
 *.pyc
+
+# Git worktrees
+.worktrees/
