@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getCurrentUser } from '../lib/auth.js';
 import { Search, Plus, X, ExternalLink, Rocket } from 'lucide-react';
 import { M628 } from '../data/m628.js';
 
@@ -36,6 +37,12 @@ export default function CompanyIntel({customCompanies, setCustomCompanies, onSta
   const [outreachCo, setOutreachCo] = useState(null); // company object for modal
   const [orPersonas, setOrPersonas] = useState(['Recruiter','Hiring Manager']);
   const [orCount, setOrCount]       = useState(5);
+  const [contributorFilter, setContributorFilter] = useState('all'); // 'all' | 'mine'
+  const [currentUserId, setCurrentUserId]         = useState(null);
+
+  useEffect(() => {
+    getCurrentUser().then(u => { if (u) setCurrentUserId(u.id); }).catch(() => {});
+  }, []);
 
   const allCos = [...M628, ...(customCompanies||[]).filter(c => !M628.find(m => m.name === c.name))];
 
@@ -43,6 +50,11 @@ export default function CompanyIntel({customCompanies, setCustomCompanies, onSta
     if (query.trim() && !c.name.toLowerCase().includes(query.toLowerCase()) && !(c.industry||'').toLowerCase().includes(query.toLowerCase())) return false;
     if (tierFilter !== 'all' && c.tier !== parseInt(tierFilter)) return false;
     if (filterVisa && c.h1b !== 'YES') return false;
+    // 'mine' = only companies the current user added (customCompanies list)
+    if (contributorFilter === 'mine') {
+      const isCustom = (customCompanies||[]).find(x => x.name === c.name);
+      if (!isCustom) return false;
+    }
     return true;
   });
 
@@ -89,6 +101,26 @@ export default function CompanyIntel({customCompanies, setCustomCompanies, onSta
         <Btn onClick={() => setShowAdd(true)} t={t}>
           <Plus size={15}/> Add Company
         </Btn>
+      </div>
+
+      {/* Contributor filter — shows All Companies or user's custom additions */}
+      <div style={{display:'flex',gap:8,marginBottom:14,flexWrap:'wrap'}}>
+        {[
+          { key: 'all',  label: 'All Companies' },
+          { key: 'mine', label: 'My Additions' },
+        ].map(opt => (
+          <button
+            key={opt.key}
+            onClick={() => setContributorFilter(opt.key)}
+            style={{
+              padding:'5px 14px', borderRadius:20, fontSize:12.5, fontWeight:600,
+              cursor:'pointer', fontFamily:'inherit',
+              background: contributorFilter === opt.key ? t.pri : t.card,
+              color:       contributorFilter === opt.key ? '#fff' : t.sub,
+              border:      `1px solid ${contributorFilter === opt.key ? t.pri : t.border}`,
+            }}
+          >{opt.label}</button>
+        ))}
       </div>
 
       <div style={{display:"flex",gap:10,marginBottom:20,flexWrap:"wrap"}}>

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Database, Zap, RefreshCw, Plus, Trash2, Edit3, Check, X, ChevronDown, Sparkles } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Database, Zap, RefreshCw, Plus, Trash2, Edit3, Check, X, ChevronDown, Sparkles, Info } from 'lucide-react';
 import { DEFAULT_TEMPLATES } from '../lib/templates.js';
 import * as Storage from '../lib/storage.js';
 
@@ -12,7 +12,7 @@ function Btn({children, onClick, disabled, variant="primary", size="md", t, styl
   return <button onClick={onClick} disabled={disabled} style={{background:s.bg,color:s.c,border:s.b,padding:p,borderRadius:8,fontSize:fs,fontWeight:600,cursor:disabled?"not-allowed":"pointer",opacity:disabled?.4:1,fontFamily:"inherit",whiteSpace:"nowrap",display:"inline-flex",alignItems:"center",gap:6,...xs}}>{children}</button>;
 }
 
-export default function AppSettings({templates, setTemplates, groqKey, setGroqKey, serperKey, setSerperKey, t}) {
+export default function AppSettings({templates, setTemplates, groqKey, setGroqKey, serperKey, setSerperKey, user, onSignOut, t}) {
   const [serperStatus, setSerperStatus] = useState("");
   const [testingSerper, setTestingSerper] = useState(false);
   const [serperInput, setSerperInput] = useState(serperKey || "");
@@ -27,10 +27,28 @@ export default function AppSettings({templates, setTemplates, groqKey, setGroqKe
   const [migrating, setMigrating] = useState(false);
   const [migrateStatus, setMigrateStatus] = useState("");
 
+  const [prefs, setPrefs]           = useState({});
+  const [prefSaving, setPrefSaving] = useState('');
+
+  useEffect(() => {
+    Storage.fetchPreferences().then(p => setPrefs(p || {})).catch(() => {});
+  }, []);
+
+  const savePreferences = async () => {
+    setPrefSaving('Saving...');
+    try {
+      await Storage.savePreferences(prefs);
+      setPrefSaving('Saved!');
+      setTimeout(() => setPrefSaving(''), 3000);
+    } catch(e) {
+      setPrefSaving('Error: ' + e.message);
+    }
+  };
+
   const saveSerperKey = async () => {
     try {
       setSerperSaveStatus("Saving...");
-      await Storage.saveSetting('serper_api_key', serperInput.trim());
+      await Storage.saveUserIntegration('serper', serperInput.trim());
       setSerperKey(serperInput.trim());
       setSerperSaveStatus(serperInput.trim() ? "Saved!" : "Key cleared.");
       setTimeout(() => setSerperSaveStatus(""), 3000);
@@ -92,7 +110,7 @@ export default function AppSettings({templates, setTemplates, groqKey, setGroqKe
   const saveGroqKey = async () => {
     try {
       setGroqSaveStatus("Saving...");
-      await Storage.saveSetting('groq_api_key', groqInput.trim());
+      await Storage.saveUserIntegration('groq', groqInput.trim());
       setGroqKey(groqInput.trim());
       setGroqSaveStatus(groqInput.trim() ? "Saved! Groq AI is now active." : "Key cleared.");
       setTimeout(() => setGroqSaveStatus(""), 3000);
@@ -157,9 +175,48 @@ export default function AppSettings({templates, setTemplates, groqKey, setGroqKe
   return (
     <div>
       <div style={{marginBottom:28}}>
-        <h2 style={{margin:"0 0 4px",fontSize:24,fontWeight:800,color:t.tx}}>Settings</h2>
-        <p style={{margin:0,fontSize:13.5,color:t.sub}}>Manage templates, test integrations, and migrate data.</p>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:16}}>
+          <div>
+            <h2 style={{margin:"0 0 4px",fontSize:24,fontWeight:800,color:t.tx}}>Settings</h2>
+            <p style={{margin:0,fontSize:13.5,color:t.sub}}>Manage templates, test integrations, and migrate data.</p>
+          </div>
+          {user && (
+            <div style={{display:'flex',alignItems:'center',gap:12,marginTop:4}}>
+              <span style={{color:t.sub,fontSize:12.5}}>{user.email}</span>
+              <button onClick={onSignOut} style={{
+                background:t.redL, color:t.red, border:`1px solid ${t.redBd}`,
+                padding:'5px 14px', borderRadius:8, fontSize:12.5, fontWeight:600,
+                cursor:'pointer', fontFamily:'inherit',
+              }}>Sign Out</button>
+            </div>
+          )}
+        </div>
       </div>
+
+      {/* Getting Started */}
+      <Card t={t} style={{marginBottom:20}}>
+        <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:16}}>
+          <div style={{width:34,height:34,borderRadius:9,background:t.priL,display:'flex',alignItems:'center',justifyContent:'center'}}>
+            <Info size={16} color={t.pri}/>
+          </div>
+          <div>
+            <div style={{fontSize:14.5,fontWeight:700,color:t.tx}}>Getting Started</div>
+            <div style={{fontSize:12,color:t.muted}}>How JobAgent works</div>
+          </div>
+        </div>
+        {[
+          ['Job Feed',    'Scrapers run daily via GitHub Actions. Jobs are matched against your target roles set in Profile. New jobs appear in Find Jobs.'],
+          ['Pipeline',   'Add jobs to Pipeline from Find Jobs. Use Job Analysis to analyze a JD against your resume variant. Log applications from the Pipeline view.'],
+          ['Resume',     'Create structured resumes in the Resume section. Run AI analysis (requires Groq key) for scoring and improvement suggestions. Primary resume is used in Job Analysis.'],
+          ['Networking', 'Add contacts from Find Contacts. Compose messages using templates. Track conversation status and follow-ups in the Networking log.'],
+          ['API Keys',   'Groq (free at console.groq.com) enables AI analysis and message drafting. Serper (free at serper.dev) enables LinkedIn contact search.'],
+        ].map(([title, desc]) => (
+          <div key={title} style={{display:'flex',gap:12,marginBottom:12}}>
+            <div style={{width:90,fontSize:12,fontWeight:700,color:t.sub,flexShrink:0,paddingTop:1}}>{title}</div>
+            <div style={{fontSize:12.5,color:t.tx,lineHeight:1.6}}>{desc}</div>
+          </div>
+        ))}
+      </Card>
 
       {/* Message Templates */}
       <Card t={t} style={{marginBottom:20}}>
@@ -291,6 +348,61 @@ export default function AppSettings({templates, setTemplates, groqKey, setGroqKe
         )}
       </Card>
 
+      {/* Job Preferences */}
+      <Card t={t} style={{marginBottom:20}}>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16}}>
+          <div style={{display:'flex',alignItems:'center',gap:10}}>
+            <div style={{width:34,height:34,borderRadius:9,background:t.yellowL,display:'flex',alignItems:'center',justifyContent:'center'}}>
+              <Zap size={16} color={t.yellow}/>
+            </div>
+            <div>
+              <div style={{fontSize:14.5,fontWeight:700,color:t.tx}}>Job Preferences</div>
+              <div style={{fontSize:12,color:t.muted}}>Controls feed filtering.</div>
+            </div>
+          </div>
+          <div style={{display:'flex',alignItems:'center',gap:10}}>
+            {prefSaving && <span style={{fontSize:12,fontWeight:600,color:prefSaving.includes('Error')?t.red:t.green}}>{prefSaving}</span>}
+            <Btn size="sm" onClick={savePreferences} t={t}>Save Preferences</Btn>
+          </div>
+        </div>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+          <div>
+            <label style={{display:'block',fontSize:11,fontWeight:700,color:t.sub,marginBottom:5,textTransform:'uppercase',letterSpacing:1}}>Location Preferences (comma-separated)</label>
+            <input
+              value={(prefs.location_preference||[]).join(', ')}
+              onChange={e => setPrefs(p => ({...p, location_preference: e.target.value.split(',').map(x=>x.trim()).filter(Boolean)}))}
+              placeholder="Los Angeles, Seattle, Remote"
+              style={{width:'100%',background:t.bg,border:`1px solid ${t.border}`,borderRadius:8,padding:'9px 13px',color:t.tx,fontSize:13,fontFamily:'inherit',outline:'none',boxSizing:'border-box'}}
+            />
+          </div>
+          <div>
+            <label style={{display:'block',fontSize:11,fontWeight:700,color:t.sub,marginBottom:5,textTransform:'uppercase',letterSpacing:1}}>Exclude These Role Types</label>
+            <input
+              value={(prefs.exclude_roles||[]).join(', ')}
+              onChange={e => setPrefs(p => ({...p, exclude_roles: e.target.value.split(',').map(x=>x.trim()).filter(Boolean)}))}
+              placeholder="software engineer, data scientist"
+              style={{width:'100%',background:t.bg,border:`1px solid ${t.border}`,borderRadius:8,padding:'9px 13px',color:t.tx,fontSize:13,fontFamily:'inherit',outline:'none',boxSizing:'border-box'}}
+            />
+          </div>
+          <div>
+            <label style={{display:'block',fontSize:11,fontWeight:700,color:t.sub,marginBottom:5,textTransform:'uppercase',letterSpacing:1}}>Min Feed Score (0–100)</label>
+            <input
+              type="number" min="0" max="100"
+              value={prefs.feed_min_score ?? 30}
+              onChange={e => setPrefs(p => ({...p, feed_min_score: parseInt(e.target.value)||0}))}
+              style={{width:'100%',background:t.bg,border:`1px solid ${t.border}`,borderRadius:8,padding:'9px 13px',color:t.tx,fontSize:13,fontFamily:'inherit',outline:'none',boxSizing:'border-box'}}
+            />
+          </div>
+          <div>
+            <label style={{display:'block',fontSize:11,fontWeight:700,color:t.sub,marginBottom:5,textTransform:'uppercase',letterSpacing:1}}>H1B / Visa Filter</label>
+            <label style={{display:'flex',alignItems:'center',gap:8,marginTop:10,fontSize:13,color:t.tx,cursor:'pointer'}}>
+              <input type="checkbox" checked={!!prefs.h1b_filter} onChange={e => setPrefs(p => ({...p, h1b_filter: e.target.checked}))} />
+              Only show H1B-sponsoring companies
+            </label>
+          </div>
+        </div>
+      </Card>
+
       {/* Import from GitHub Gist */}
       <Card t={t}>
         <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16}}>
@@ -327,6 +439,7 @@ export default function AppSettings({templates, setTemplates, groqKey, setGroqKe
           )}
         </div>
       </Card>
+
     </div>
   );
 }
