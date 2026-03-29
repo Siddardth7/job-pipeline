@@ -410,7 +410,7 @@ export default function JobAgent() {
           <div style={{flex:1,minWidth:0}}>
             <div style={{fontSize:15,fontWeight:800,color:t.tx}}>JobAgent</div>
             <div style={{fontSize:10.5,fontWeight:600,color:t.muted,display:"flex",alignItems:"center",gap:5}}>
-              <span>v6.0 · Supabase</span>
+              <span>v6.1 · Supabase</span>
               {loaded && renderSyncStatus()}
             </div>
           </div>
