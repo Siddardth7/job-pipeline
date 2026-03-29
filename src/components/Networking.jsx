@@ -189,7 +189,8 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
   const [loc, setLoc]     = useState(currentJob?.location || "");
   const [loading, setLoading] = useState(false);
   const [err, setErr]     = useState("");
-  const [totalCount, setTotalCount] = useState(5);
+  const [selectedPersonas, setSelectedPersonas] = useState(['Recruiter', 'Hiring Manager', 'Peer Engineer', 'UIUC Alumni']);
+  const [personasOpen, setPersonasOpen] = useState(false);
   const [tab, setTab]     = useState("find");
   const [logFilter, setLogFilter] = useState("All");
   const dmLoaded = useRef(false);
@@ -241,7 +242,7 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
       const res = await fetch('/api/find-contacts', {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({company: co, role, count: totalCount, serperKey})
+        body: JSON.stringify({ company: co, role, location: loc, personas: selectedPersonas, serperKey })
       });
       if (!res.ok) {
         const txt = await res.text();
@@ -299,17 +300,43 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
         <div>
           <Card t={t} style={{marginBottom:20}}>
             <SectionLabel t={t}>Find Contacts</SectionLabel>
-            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:12,marginBottom:12}}>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:16}}>
               <Input label="Company" value={co} onChange={e => setCo(e.target.value)} t={t}/>
               <Input label="Role" value={role} onChange={e => setRole(e.target.value)} t={t}/>
               <Input label="Location" value={loc} onChange={e => setLoc(e.target.value)} t={t}/>
+              <div style={{marginBottom:14}}>
+                <label style={{fontSize:11,fontWeight:700,color:t.sub,display:"block",marginBottom:5,textTransform:"uppercase",letterSpacing:1}}>Target Personas</label>
+                <div style={{position:"relative"}}>
+                  <button
+                    onClick={() => setPersonasOpen(p => !p)}
+                    style={{width:"100%",background:t.bg,border:`1px solid ${t.border}`,borderRadius:8,padding:"9px 13px",color:selectedPersonas.length?t.tx:t.muted,fontSize:13,outline:"none",boxSizing:"border-box",fontFamily:"inherit",cursor:"pointer",textAlign:"left",display:"flex",justifyContent:"space-between",alignItems:"center"}}
+                  >
+                    <span style={{overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",maxWidth:"85%"}}>
+                      {selectedPersonas.length ? selectedPersonas.join(", ") : "Select personas"}
+                    </span>
+                    <span style={{fontSize:10,flexShrink:0}}>▾</span>
+                  </button>
+                  {personasOpen && (
+                    <div style={{position:"absolute",top:"calc(100% + 4px)",left:0,right:0,background:t.card,border:`1px solid ${t.border}`,borderRadius:8,zIndex:100,padding:8,boxShadow:t.shadow}}>
+                      {PERSONAS.map(p => (
+                        <label key={p} style={{display:"flex",alignItems:"center",gap:8,padding:"6px 8px",cursor:"pointer",fontSize:13,color:t.tx,borderRadius:6,background:selectedPersonas.includes(p)?t.hover:"transparent"}}>
+                          <input
+                            type="checkbox"
+                            checked={selectedPersonas.includes(p)}
+                            onChange={e => setSelectedPersonas(prev => e.target.checked ? [...prev, p] : prev.filter(x => x !== p))}
+                            style={{accentColor:t.pri}}
+                          />
+                          {p}
+                        </label>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
-            <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16}}>
-              <span style={{fontSize:13.5,color:t.sub}}>Find</span>
-              <input type="number" min={3} max={10} value={totalCount} onChange={e => setTotalCount(Math.max(3,Math.min(10,+e.target.value)))} style={{width:50,background:t.bg,border:`1px solid ${t.border}`,borderRadius:7,padding:"7px 10px",color:t.tx,fontSize:14,fontWeight:700,textAlign:"center",fontFamily:"inherit",outline:"none"}}/>
-              <span style={{fontSize:13.5,color:t.sub}}>contacts</span>
-            </div>
-            <Btn onClick={findContacts} disabled={loading||!co} t={t}>{loading?"Searching...":"Find Contacts"}</Btn>
+            <Btn onClick={() => { setPersonasOpen(false); findContacts(); }} disabled={loading||!co||selectedPersonas.length===0} t={t}>
+              {loading ? "Searching..." : `Find ${selectedPersonas.length} Contact${selectedPersonas.length !== 1 ? 's' : ''}`}
+            </Btn>
             {loading && (
               <div style={{display:"flex",gap:6,alignItems:"center",padding:"20px 0"}}>
                 {[0,1,2].map(i => <div key={i} style={{width:7,height:7,borderRadius:"50%",background:t.pri,animation:`lp-dot .8s ${i*.15}s ease-in-out infinite`,opacity:.3}}/>)}
@@ -332,7 +359,7 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
                       <div style={{flex:1,minWidth:0}}>
                         <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:2,flexWrap:"wrap"}}>
                           <span style={{fontSize:14.5,fontWeight:700,color:t.tx}}>{c.name||c.type}</span>
-                          <span style={{fontSize:10.5,fontWeight:700,padding:"2px 8px",borderRadius:10,background:t.priL,color:t.pri}}>{c.type}</span>
+                          <span style={{fontSize:10.5,fontWeight:700,padding:"2px 8px",borderRadius:10,background:t.priL,color:t.pri}}>{c.personaSlot || c.type}</span>
                           {c.uiuc && <span style={{fontSize:10.5,fontWeight:700,padding:"2px 8px",borderRadius:10,background:t.greenL,color:t.green}}>UIUC Alumni</span>}
                           {isSent && <span style={{fontSize:10.5,fontWeight:700,padding:"2px 8px",borderRadius:10,background:t.greenL,color:t.green}}>Sent</span>}
                         </div>
