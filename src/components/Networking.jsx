@@ -348,6 +348,8 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
     return false;
   }).length;
 
+  const pocCount = networkingLog.filter(c => migrateStatus(netlogMeta?.[c.id]?.status) === 'Referral Secured').length;
+
   const filteredLog = logFilter === 'All'
     ? networkingLog
     : networkingLog.filter(c => migrateStatus(netlogMeta?.[c.id]?.status) === logFilter);
@@ -409,6 +411,9 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
           <Chip active={tab==="dms"} onClick={() => setTab("dms")} t={t}>LinkedIn DMs</Chip>
           <Chip active={tab==="followups"} onClick={() => setTab("followups")} t={t} color={overdueCount > 0 ? "#dc2626" : undefined}>
             Follow-ups {overdueCount > 0 && <span style={{marginLeft:5,fontSize:11,fontWeight:800,padding:"1px 6px",borderRadius:10,background:"#dc262622",color:"#dc2626"}}>{overdueCount}</span>}
+          </Chip>
+          <Chip active={tab==="poc"} onClick={() => setTab("poc")} t={t} color={pocCount > 0 ? "#db2777" : undefined}>
+            POC List {pocCount > 0 && <span style={{marginLeft:5,fontSize:11,fontWeight:800,padding:"1px 6px",borderRadius:10,background:"#db277722",color:"#db2777"}}>{pocCount}</span>}
           </Chip>
         </div>
       </div>
@@ -856,6 +861,67 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
                 )}
               </div>
             );
+          })()}
+        </div>
+      )}
+
+      {tab === "poc" && (
+        <div>
+          <div style={{marginBottom:20}}>
+            <h3 style={{margin:"0 0 4px",fontSize:16,fontWeight:700,color:t.tx}}>Your Referral Network</h3>
+            <p style={{margin:0,fontSize:13,color:t.sub}}>One POC per company — contacts who secured a referral for you.</p>
+          </div>
+
+          {(() => {
+            const pocs = networkingLog
+              .map(c => ({...c, meta: netlogMeta?.[c.id] || {}}))
+              .filter(c => migrateStatus(c.meta.status) === 'Referral Secured')
+              .sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            if (pocs.length === 0) {
+              return (
+                <Card t={t} style={{textAlign:"center",padding:"60px 24px"}}>
+                  <Users size={32} color={t.muted} style={{marginBottom:12}}/>
+                  <div style={{fontSize:14,fontWeight:600,color:t.sub,marginBottom:8}}>No POCs yet.</div>
+                  <div style={{fontSize:13,color:t.muted}}>When a contact secures a referral, mark them as "Referral Secured" in the Networking Log.</div>
+                </Card>
+              );
+            }
+
+            const byCompany = {};
+            for (const c of pocs) {
+              const key = (c.company || 'Unknown').toLowerCase();
+              if (!byCompany[key]) byCompany[key] = { company: c.company || 'Unknown', contacts: [] };
+              byCompany[key].contacts.push(c);
+            }
+
+            return Object.values(byCompany).map(group => (
+              <div key={group.company} style={{marginBottom:24}}>
+                <div style={{fontSize:11,fontWeight:700,color:t.muted,textTransform:"uppercase",letterSpacing:1.5,marginBottom:10,paddingBottom:6,borderBottom:`1px solid ${t.border}`}}>{group.company}</div>
+                {group.contacts.map((c, i) => (
+                  <Card key={c.id} t={t} style={{marginBottom:8,padding:14,borderLeft:i===0?`3px solid #db2777`:undefined}}>
+                    <div style={{display:"flex",alignItems:"center",gap:12}}>
+                      <Avatar name={c.name} size={38} t={t}/>
+                      <div style={{flex:1,minWidth:0}}>
+                        <div style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
+                          <span style={{fontWeight:700,fontSize:14,color:t.tx}}>{c.name}</span>
+                          {i === 0 && <span style={{fontSize:10.5,fontWeight:700,padding:"2px 8px",borderRadius:10,background:t.greenL,color:t.green}}>Active POC</span>}
+                          <span style={{fontSize:10.5,fontWeight:700,padding:"2px 8px",borderRadius:10,background:'#fce7f3',color:'#db2777'}}>Referral Secured</span>
+                        </div>
+                        <div style={{fontSize:12.5,color:t.muted,marginTop:2}}>{c.role}</div>
+                        <div style={{fontSize:12,color:t.sub,marginTop:2}}>Secured {c.date}</div>
+                      </div>
+                      {c.linkedinUrl && (
+                        <a href={c.linkedinUrl} target="_blank" rel="noreferrer"
+                          style={{display:"inline-flex",alignItems:"center",gap:4,padding:"5px 10px",borderRadius:6,background:"#0077B5",color:"#fff",fontWeight:600,fontSize:12,textDecoration:"none",flexShrink:0}}>
+                          <Linkedin size={12}/> LinkedIn
+                        </a>
+                      )}
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            ));
           })()}
         </div>
       )}
