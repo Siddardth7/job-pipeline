@@ -189,6 +189,108 @@ function migrateStatus(s) {
   return s;
 }
 
+function FollowUpCard({ c, meta, groqKey, updateNetlogMeta, t }) {
+  const [draft, setDraft]       = useState('');
+  const [drafting, setDrafting] = useState(false);
+  const [draftErr, setDraftErr] = useState('');
+  const [copied, setCopied]     = useState(false);
+
+  const status = migrateStatus(meta.status);
+  const sc     = STATUS_COLORS[status] || { bg: t.hover, bd: t.border, tx: t.sub };
+
+  const daysAgo = (() => {
+    if (status === 'Accepted') {
+      const d = c.date ? new Date(c.date) : null;
+      return d ? Math.floor((Date.now() - d) / 86400000) : null;
+    }
+    if (status === 'Replied') {
+      const d = meta.statusChangedAt ? new Date(meta.statusChangedAt) : null;
+      return d ? Math.floor((Date.now() - d) / 86400000) : null;
+    }
+    return null;
+  })();
+
+  const draftFollowUp = async () => {
+    if (!groqKey) { setDraftErr('Add Groq API key in Settings.'); return; }
+    setDrafting(true);
+    setDraftErr('');
+    try {
+      const contact = { name: c.name, title: c.role, company: c.company, why: '', uiuc: false, type: c.type };
+      const job     = { role: c.role, company: c.company, location: '' };
+      const result  = await draftMessageWithGroq(c.type || 'Recruiter', 'job_application_ask', 'followup', contact, job, groqKey, '');
+      setDraft(result);
+    } catch (e) {
+      setDraftErr('Draft failed: ' + e.message);
+    }
+    setDrafting(false);
+  };
+
+  const handleCopy = () => {
+    robustCopy(draft).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); }).catch(() => {});
+  };
+
+  return (
+    <Card t={t} style={{ marginBottom: 10, padding: 14, borderLeft: daysAgo >= 7 ? `3px solid ${t.yellow}` : undefined }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 8 }}>
+        <div>
+          <div style={{ fontWeight: 700, fontSize: 14, color: t.tx }}>{c.name}</div>
+          <div style={{ fontSize: 12.5, color: t.sub, marginTop: 2 }}>{c.role}{c.company ? ` at ${c.company}` : ""}</div>
+          <div style={{ display: "flex", gap: 6, marginTop: 6, flexWrap: "wrap", alignItems: "center" }}>
+            <span style={{ fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 10, background: sc.bg, border: `1px solid ${sc.bd}`, color: sc.tx }}>{status}</span>
+            {daysAgo !== null && (
+              <span style={{ fontSize: 11, fontWeight: 600, color: daysAgo >= 7 ? t.red : t.sub }}>
+                {daysAgo}d {daysAgo >= 7 ? '— follow up now' : 'ago'}
+              </span>
+            )}
+          </div>
+        </div>
+        <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}>
+          {c.linkedinUrl && (
+            <a href={c.linkedinUrl} target="_blank" rel="noreferrer"
+              style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "5px 10px", borderRadius: 6, background: "#0077B5", color: "#fff", fontWeight: 600, fontSize: 12, textDecoration: "none" }}>
+              <Linkedin size={12} /> Message
+            </a>
+          )}
+          <Btn size="sm" variant="secondary" onClick={draftFollowUp} disabled={drafting} t={t}>
+            {drafting
+              ? <><RefreshCw size={11} style={{ animation: "lp-spin 1s linear infinite" }} /> Drafting...</>
+              : <><Sparkles size={11} /> Draft Follow-up</>}
+          </Btn>
+          <select
+            value={status}
+            onChange={e => updateNetlogMeta(c.id, { status: e.target.value, statusChangedAt: new Date().toISOString() })}
+            style={{ background: sc.bg, border: `1px solid ${sc.bd}`, borderRadius: 7, padding: "4px 8px", color: sc.tx, fontSize: 12, fontWeight: 700, fontFamily: "inherit", outline: "none", cursor: "pointer" }}
+          >
+            {STATUS_OPTS.map(s => <option key={s} value={s}>{s}</option>)}
+          </select>
+        </div>
+      </div>
+
+      {draftErr && <div style={{ fontSize: 12, color: t.red, marginTop: 8, fontWeight: 600 }}>{draftErr}</div>}
+      {!groqKey && !draft && (
+        <div style={{ fontSize: 11.5, color: t.yellow, marginTop: 8, padding: "5px 10px", background: t.yellowL, borderRadius: 6 }}>
+          Add Groq API key in Settings to enable AI drafting.
+        </div>
+      )}
+      {draft && (
+        <div style={{ marginTop: 12 }}>
+          <textarea
+            value={draft}
+            onChange={e => setDraft(e.target.value)}
+            rows={5}
+            style={{ width: "100%", background: t.bg, border: `1px solid ${t.border}`, borderRadius: 8, padding: "10px 14px", color: t.tx, fontSize: 13, fontFamily: "inherit", resize: "vertical", boxSizing: "border-box", outline: "none", lineHeight: 1.6 }}
+          />
+          <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 6 }}>
+            <Btn size="sm" variant="green" onClick={handleCopy} t={t}>
+              {copied ? <><Check size={12} /> Copied!</> : <><Copy size={12} /> Copy</>}
+            </Btn>
+          </div>
+        </div>
+      )}
+    </Card>
+  );
+}
+
 export default function Networking({currentJob, setCurrentJob, contactResults, setContactResults, networkingLog, addToNetworkingLog, netlogMeta, updateNetlogMeta, setPage, templates, groqKey, serperKey, t}) {
   const [co, setCo]       = useState(currentJob?.company || "");
   const [role, setRole]   = useState(currentJob?.role || "");
@@ -697,95 +799,60 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
       {tab === "followups" && (
         <div>
           <div style={{marginBottom:16,padding:"10px 14px",borderRadius:8,background:t.yellowL,border:`1px solid ${t.yellowBd}`,fontSize:12.5,color:t.yellow,fontWeight:600}}>
-            ⚠️ LinkedIn only allows messaging 1st-degree connections. For pending requests, copy the message and send manually after they accept.
+            ⚠️ Only contacts who accepted your request appear here. Draft a follow-up and send via LinkedIn.
           </div>
 
           {networkingLog.length === 0 && (
             <Card t={t} style={{textAlign:"center",padding:"60px 24px"}}>
               <Users size={32} color={t.muted} style={{marginBottom:12}}/>
-              <div style={{fontSize:14,fontWeight:600,color:t.sub}}>No networking contacts yet. Add contacts from Find Contacts.</div>
+              <div style={{fontSize:14,fontWeight:600,color:t.sub}}>No networking contacts yet.</div>
             </Card>
           )}
 
           {networkingLog.length > 0 && (() => {
-            const withMeta = networkingLog.map(c => ({...c, meta: netlogMeta?.[c.id] || {status:'Pending'}}));
-            const overdue  = withMeta.filter(c => c.meta.status === 'Pending' && c.meta.followUpDate && c.meta.followUpDate < today);
-            const upcoming = withMeta.filter(c => c.meta.status === 'Pending' && (!c.meta.followUpDate || c.meta.followUpDate >= today));
-            const done     = withMeta.filter(c => c.meta.status !== 'Pending');
+            const withMeta = networkingLog
+              .map(c => ({...c, meta: netlogMeta?.[c.id] || {}}))
+              .filter(c => { const s = migrateStatus(c.meta.status); return s === 'Accepted' || s === 'Replied'; });
 
-            const FUCard = ({c, isOverdue}) => {
-              const meta = c.meta;
-              const daysOverdue = meta.followUpDate && meta.followUpDate < today ? Math.floor((new Date(today) - new Date(meta.followUpDate)) / 86400000) : null;
-              const daysUntil   = meta.followUpDate && meta.followUpDate >= today ? Math.floor((new Date(meta.followUpDate) - new Date(today)) / 86400000) : null;
-              const isPending   = meta.connectionType === 'pending';
-              const sc = STATUS_COLORS[meta.status] || {bg:t.hover,bd:t.border,tx:t.sub};
+            const daysFor = (c) => {
+              const s = migrateStatus(c.meta.status);
+              if (s === 'Accepted') {
+                const d = c.date ? new Date(c.date) : null;
+                return d ? Math.floor((Date.now() - d) / 86400000) : 0;
+              }
+              if (s === 'Replied') {
+                const d = c.meta.statusChangedAt ? new Date(c.meta.statusChangedAt) : null;
+                return d ? Math.floor((Date.now() - d) / 86400000) : 0;
+              }
+              return 0;
+            };
+
+            const due      = withMeta.filter(c => daysFor(c) >= 7);
+            const upcoming = withMeta.filter(c => daysFor(c) < 7);
+
+            if (withMeta.length === 0) {
               return (
-                <Card t={t} style={{marginBottom:10,padding:14,borderLeft:isOverdue?`3px solid ${t.red}`:undefined}}>
-                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",flexWrap:"wrap",gap:8}}>
-                    <div>
-                      <div style={{fontWeight:700,fontSize:14,color:t.tx}}>{c.name}</div>
-                      <div style={{fontSize:12.5,color:t.sub,marginTop:2}}>{c.role} {c.company ? `at ${c.company}` : ""}</div>
-                      <div style={{display:"flex",gap:6,marginTop:6,flexWrap:"wrap",alignItems:"center"}}>
-                        <span style={{fontSize:11,fontWeight:700,padding:"2px 8px",borderRadius:10,background:sc.bg,border:`1px solid ${sc.bd}`,color:sc.tx}}>{meta.status}</span>
-                        {isPending
-                          ? <span style={{fontSize:11,fontWeight:700,padding:"2px 8px",borderRadius:10,background:t.yellowL,border:`1px solid ${t.yellowBd}`,color:t.yellow}}>⏳ Pending Request</span>
-                          : <span style={{fontSize:11,fontWeight:700,padding:"2px 8px",borderRadius:10,background:t.greenL,border:`1px solid ${t.greenBd}`,color:t.green}}>✅ Connected</span>
-                        }
-                        {isOverdue && daysOverdue > 0 && <span style={{fontSize:11,fontWeight:700,color:t.red}}>{daysOverdue}d overdue</span>}
-                        {daysUntil !== null && <span style={{fontSize:11,fontWeight:600,color:t.sub}}>in {daysUntil}d</span>}
-                      </div>
-                    </div>
-                    <div style={{display:"flex",gap:6,flexWrap:"wrap",alignItems:"center"}}>
-                      {c.linkedinUrl && (
-                        <a href={c.linkedinUrl} target="_blank" rel="noreferrer" style={{display:"inline-flex",alignItems:"center",gap:4,padding:"5px 10px",borderRadius:6,background:"#0077B5",color:"#fff",fontWeight:600,fontSize:12,textDecoration:"none"}}>
-                          <Linkedin size={12}/> {isPending ? "Open" : "Message"}
-                        </a>
-                      )}
-                      {meta.status === 'Pending' && (
-                        <>
-                          <button onClick={() => updateNetlogMeta(c.id, {status:'Replied'})} style={{padding:"5px 10px",borderRadius:6,background:t.greenL,border:`1px solid ${t.greenBd}`,color:t.green,fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>✓ Replied</button>
-                          <button onClick={() => updateNetlogMeta(c.id, {status:'No Response'})} style={{padding:"5px 10px",borderRadius:6,background:t.redL,border:`1px solid ${t.redBd}`,color:t.red,fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>✗ No Response</button>
-                        </>
-                      )}
-                      {meta.status !== 'Pending' && (
-                        <button onClick={() => updateNetlogMeta(c.id, {status:'Pending'})} style={{padding:"5px 10px",borderRadius:6,background:t.hover,border:`1px solid ${t.border}`,color:t.sub,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}>↺ Reset</button>
-                      )}
-                    </div>
-                  </div>
-                  {meta.status === 'Pending' && (
-                    <div style={{marginTop:10,display:"flex",alignItems:"center",gap:8}}>
-                      <span style={{fontSize:11.5,color:t.muted,fontWeight:600}}>Follow-up date:</span>
-                      <input type="date" value={meta.followUpDate||""} onChange={e => updateNetlogMeta(c.id, {followUpDate:e.target.value})}
-                        style={{background:t.bg,border:`1px solid ${t.border}`,borderRadius:6,padding:"4px 8px",color:t.tx,fontSize:12,fontFamily:"inherit",outline:"none"}}
-                      />
-                    </div>
-                  )}
+                <Card t={t} style={{textAlign:"center",padding:"60px 24px"}}>
+                  <Users size={32} color={t.muted} style={{marginBottom:12}}/>
+                  <div style={{fontSize:14,fontWeight:600,color:t.sub,marginBottom:8}}>No accepted contacts yet.</div>
+                  <div style={{fontSize:13,color:t.muted}}>Mark contacts as "Accepted" in the Networking Log when they accept your request.</div>
                 </Card>
               );
-            };
+            }
 
             return (
               <div>
-                {overdue.length > 0 && (
+                {due.length > 0 && (
                   <div style={{marginBottom:20}}>
-                    <div style={{fontSize:12,fontWeight:700,color:t.red,textTransform:"uppercase",letterSpacing:1.5,marginBottom:10}}>🔴 Overdue ({overdue.length})</div>
-                    {overdue.map(c => <FUCard key={c.id} c={c} isOverdue={true}/>)}
+                    <div style={{fontSize:12,fontWeight:700,color:t.yellow,textTransform:"uppercase",letterSpacing:1.5,marginBottom:10}}>🟡 Follow-up Due ({due.length})</div>
+                    {due.map(c => <FollowUpCard key={c.id} c={c} meta={c.meta} groqKey={groqKey} updateNetlogMeta={updateNetlogMeta} t={t}/>)}
                   </div>
                 )}
                 {upcoming.length > 0 && (
                   <div style={{marginBottom:20}}>
-                    <div style={{fontSize:12,fontWeight:700,color:t.yellow,textTransform:"uppercase",letterSpacing:1.5,marginBottom:10}}>🟡 Pending ({upcoming.length})</div>
-                    {upcoming.map(c => <FUCard key={c.id} c={c} isOverdue={false}/>)}
+                    <div style={{fontSize:12,fontWeight:700,color:t.green,textTransform:"uppercase",letterSpacing:1.5,marginBottom:10}}>✅ Recently Connected ({upcoming.length})</div>
+                    {upcoming.map(c => <FollowUpCard key={c.id} c={c} meta={c.meta} groqKey={groqKey} updateNetlogMeta={updateNetlogMeta} t={t}/>)}
                   </div>
-                )}
-                {done.length > 0 && (
-                  <div style={{marginBottom:20}}>
-                    <div style={{fontSize:12,fontWeight:700,color:t.green,textTransform:"uppercase",letterSpacing:1.5,marginBottom:10}}>✅ Done / Replied ({done.length})</div>
-                    {done.map(c => <FUCard key={c.id} c={c} isOverdue={false}/>)}
-                  </div>
-                )}
-                {overdue.length === 0 && upcoming.length === 0 && done.length === 0 && (
-                  <div style={{textAlign:"center",padding:"40px",color:t.muted,fontSize:13}}>No follow-ups tracked yet. Contacts appear here after you add them from Find Contacts.</div>
                 )}
               </div>
             );
