@@ -112,6 +112,75 @@ export async function fetchJobs() {
   }));
 }
 
+// Returns sorted unique date strings (YYYY-MM-DD) for the last 7 days that have feed rows
+export async function fetchFeedDates() {
+  const userId = await getUserId();
+  const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const { data, error } = await supabase
+    .from('user_job_feed')
+    .select('created_at')
+    .eq('user_id', userId)
+    .gte('created_at', since)
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+
+  const seen = new Set();
+  const dates = [];
+  for (const row of (data || [])) {
+    const d = row.created_at.slice(0, 10);
+    if (!seen.has(d)) { seen.add(d); dates.push(d); }
+  }
+  return dates;
+}
+
+// Returns jobs for a specific date in YYYY-MM-DD format (same shape as fetchJobs())
+export async function fetchJobsByDate(dateStr) {
+  const userId = await getUserId();
+  const start  = `${dateStr}T00:00:00.000Z`;
+  const end    = new Date(new Date(start).getTime() + 24 * 60 * 60 * 1000).toISOString();
+  const { data, error } = await supabase
+    .from('user_job_feed')
+    .select(`
+      *,
+      job:normalized_jobs (
+        id, job_title, company_name, job_url, location, posted_date,
+        description, source, itar_flag, tier, h1b, industry,
+        verdict, relevance_score, boost_tags
+      )
+    `)
+    .eq('user_id', userId)
+    .gte('created_at', start)
+    .lt('created_at', end)
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+
+  return (data || []).map(row => ({
+    id:               row.job_id,
+    role:             row.job?.job_title       ?? null,
+    company:          row.job?.company_name    ?? null,
+    link:             row.job?.job_url         ?? null,
+    location:         row.job?.location        ?? null,
+    posted:           row.job?.posted_date     ?? null,
+    jd:               row.job?.description     ?? null,
+    source:           row.job?.source          ?? null,
+    itar_flag:        row.job?.itar_flag       ?? false,
+    tier:             row.job?.tier            ?? null,
+    h1b:              row.job?.h1b             ?? null,
+    industry:         row.job?.industry        ?? null,
+    verdict:          row.job?.verdict         ?? null,
+    match:            row.user_relevance_score ?? row.job?.relevance_score ?? null,
+    in_pipeline:      row.in_pipeline,
+    pipeline_added_at: row.pipeline_added_at,
+    analysis_result:  row.analysis_result,
+    analysisResult:   row.analysis_result,
+    resume_variant:   row.resume_variant,
+    resumeVariant:    row.resume_variant,
+    status:           row.status,
+    locationType:     null,
+    _feedId:          row.id,
+  }));
+}
+
 // Updates per-user fields on a job's feed row (in_pipeline, analysis, variant, etc.)
 // Does NOT write to normalized_jobs — pipeline owns that table.
 export async function upsertJob(job) {
