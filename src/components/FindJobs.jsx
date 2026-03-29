@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
-import { Search, RefreshCw, Plus, Check, ExternalLink, Upload, PenTool, Globe, CheckCircle, UserPlus, History, ChevronDown, ChevronUp } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { Search, RefreshCw, Plus, Check, ExternalLink, Upload, PenTool, Database, CheckCircle, UserPlus } from 'lucide-react';
+import { fetchJobs } from '../lib/storage.js';
 
 function Card({children, t, style, onClick}) {
   return <div onClick={onClick} style={{background:t.card,border:`1px solid ${t.border}`,borderRadius:12,padding:20,boxShadow:t.shadow,cursor:onClick?"pointer":"default",...style}}>{children}</div>;
@@ -42,38 +43,13 @@ function universalParse(data) {
   return [];
 }
 
-const PIPELINE_REPO = "Siddardth7/job-pipeline";
-const OUTPUT_DIR   = "output";
-
-async function fetchHistoryFiles() {
-  const res = await fetch(`https://api.github.com/repos/${PIPELINE_REPO}/contents/${OUTPUT_DIR}`, {
-    headers: { Accept: "application/vnd.github.v3+json" }
-  });
-  if (!res.ok) throw new Error(`GitHub API ${res.status}`);
-  const files = await res.json();
-  return files
-    .filter(f => f.name.endsWith(".json") && f.name !== "jobs_clean_latest.json")
-    .sort((a, b) => b.name.localeCompare(a.name)); // newest first
-}
-
-function parseFileDate(name) {
-  // Matches: jobs_clean_2025-03-15.json or jobs_clean_20250315.json or any _YYYY-MM-DD pattern
-  const m = name.match(/(\d{4}-\d{2}-\d{2})/);
-  if (m) return new Date(m[1]).toLocaleDateString(undefined, {year:"numeric",month:"short",day:"numeric"});
-  const m2 = name.match(/(\d{8})/);
-  if (m2) { const s=m2[1]; return new Date(`${s.slice(0,4)}-${s.slice(4,6)}-${s.slice(6,8)}`).toLocaleDateString(undefined,{year:"numeric",month:"short",day:"numeric"}); }
-  return name.replace(/jobs_clean_?|\.json/g,"") || name;
-}
 
 const FILTERS = ["All","Visa Sponsor","Remote","90%+ Match","ITAR-Free"];
 
 export default function FindJobs({searchResults, setSearchResults, pipeline, addToPipeline, setPage, findCompany, normalizeJob, isBlacklisted, checkITAR, customCompanies, setCustomCompanies, t}) {
-  const DEFAULT_FEED = "https://raw.githubusercontent.com/Siddardth7/job-pipeline/main/output/jobs_clean_latest.json";
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [feedUrl, setFeedUrl] = useState(DEFAULT_FEED);
   const [lastUpdated, setLastUpdated] = useState("");
-  const [autoLoaded, setAutoLoaded] = useState(false);
   const [query, setQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
   const [tab, setTab] = useState("feed");
@@ -81,46 +57,20 @@ export default function FindJobs({searchResults, setSearchResults, pipeline, add
   const [ext, setExt] = useState({role:"",company:"",location:"",link:"",type:"Full-time",description:""});
   const [addToIntel, setAddToIntel] = useState(false);
   const [extIntel, setExtIntel] = useState({industry:"",h1b:"LIKELY",itar:"NO"});
-  const [showHistory, setShowHistory] = useState(false);
-  const [historyFiles, setHistoryFiles] = useState([]);
-  const [historyLoading, setHistoryLoading] = useState(false);
-  const [historyError, setHistoryError] = useState("");
-  const [loadingFile, setLoadingFile] = useState("");
   const fileRef = useRef(null);
   const pipeIds = new Set(pipeline.map(j => j.id));
 
-  const openHistory = async () => {
-    if (showHistory) { setShowHistory(false); return; }
-    setShowHistory(true);
-    if (historyFiles.length > 0) return; // already loaded
-    setHistoryLoading(true);
-    setHistoryError("");
-    try {
-      const files = await fetchHistoryFiles();
-      setHistoryFiles(files);
-      if (files.length === 0) setHistoryError("No historical runs found in the repo output folder.");
-    } catch(e) {
-      setHistoryError("Could not fetch history: " + e.message);
-    }
-    setHistoryLoading(false);
-  };
-
-  const loadHistoryFile = async (file) => {
-    setLoadingFile(file.name);
+  const handleRefresh = async () => {
+    setLoading(true);
     setError("");
     try {
-      const r = await fetch(file.download_url, {cache:"no-store"});
-      if (!r.ok) throw new Error(`HTTP ${r.status}`);
-      const data = JSON.parse(await r.text());
-      const arr = universalParse(data);
-      if (!arr.length) throw new Error("No jobs found in this file.");
-      loadJobs(arr);
-      setLastUpdated(data.generated_utc || file.name);
-      setShowHistory(false);
+      const jobs = await fetchJobs();
+      setSearchResults(jobs.filter(j => !j.in_pipeline));
+      setLastUpdated(new Date().toISOString());
     } catch(e) {
-      setError(`Failed to load ${file.name}: ${e.message}`);
+      setError("Failed to load feed: " + e.message);
     }
-    setLoadingFile("");
+    setLoading(false);
   };
 
   const loadJobs = (arr, append=false) => {
@@ -132,31 +82,6 @@ export default function FindJobs({searchResults, setSearchResults, pipeline, add
     }
     setError("");
   };
-
-  const fetchFeed = async (url, silent=false) => {
-    if (!silent) setLoading(true);
-    setError("");
-    try {
-      const r = await fetch(url||feedUrl, {cache:"no-store"});
-      if (!r.ok) throw new Error(`HTTP ${r.status}`);
-      const data = JSON.parse(await r.text());
-      const arr = universalParse(data);
-      if (!arr.length) throw new Error("No jobs found in feed.");
-      loadJobs(arr);
-      setLastUpdated(data.generated_utc || new Date().toISOString());
-    } catch(e) {
-      if (!silent) setError(e.message);
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    if (!autoLoaded && searchResults.length === 0) {
-      setAutoLoaded(true);
-      const tm = setTimeout(() => fetchFeed(feedUrl, true), 500);
-      return () => clearTimeout(tm);
-    }
-  }, [autoLoaded]);
 
   const handleFileUpload = e => {
     const file = e.target.files?.[0];
@@ -217,19 +142,19 @@ export default function FindJobs({searchResults, setSearchResults, pipeline, add
     <div>
       <div style={{marginBottom:24}}>
         <h2 style={{margin:"0 0 4px",fontSize:24,fontWeight:700,color:t.tx}}>Find Jobs</h2>
-        <p style={{margin:0,fontSize:14,color:t.sub}}>Three ways to discover opportunities</p>
+        <p style={{margin:0,fontSize:14,color:t.sub}}>Jobs scored and distributed to your feed by the daily pipeline</p>
       </div>
 
       {/* Tab bar */}
       <div style={{display:"flex",gap:0,marginBottom:20,borderBottom:`2px solid ${t.border}`}}>
-        {[{id:"feed",label:"GitHub Feed",Icon:Globe},{id:"upload",label:"Upload JSON",Icon:Upload},{id:"external",label:"Add External Job",Icon:PenTool}].map(({id,label,Icon}) => (
+        {[{id:"feed",label:"Your Feed",Icon:Database},{id:"upload",label:"Upload JSON",Icon:Upload},{id:"external",label:"Add External Job",Icon:PenTool}].map(({id,label,Icon}) => (
           <button key={id} onClick={() => setTab(id)} style={{padding:"10px 20px",fontSize:13.5,fontWeight:tab===id?700:500,color:tab===id?t.pri:t.sub,background:"transparent",border:"none",borderBottom:tab===id?`2px solid ${t.pri}`:"2px solid transparent",cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",gap:7,marginBottom:-2}}>
             <Icon size={15}/>{label}
           </button>
         ))}
       </div>
 
-      {/* TAB: GitHub Feed */}
+      {/* TAB: Your Feed (Supabase user_job_feed) */}
       {tab === "feed" && (
         <div>
           <div style={{display:"flex",gap:10,marginBottom:16}}>
@@ -237,58 +162,11 @@ export default function FindJobs({searchResults, setSearchResults, pipeline, add
               <Search size={16} color={t.muted} style={{position:"absolute",left:14,top:"50%",transform:"translateY(-50%)"}}/>
               <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search roles, companies..." style={{width:"100%",background:t.card,border:`1px solid ${t.border}`,borderRadius:10,padding:"11px 14px 11px 42px",color:t.tx,fontSize:14,outline:"none",fontFamily:"inherit",boxSizing:"border-box"}}/>
             </div>
-            <button onClick={() => fetchFeed(feedUrl)} disabled={loading} style={{padding:"0 16px",background:t.card,border:`1px solid ${t.border}`,borderRadius:10,cursor:loading?"not-allowed":"pointer",color:t.sub,display:"flex",alignItems:"center",gap:6,fontSize:13,fontWeight:600,fontFamily:"inherit",opacity:loading?.5:1}}>
+            <button onClick={handleRefresh} disabled={loading} style={{padding:"0 16px",background:t.card,border:`1px solid ${t.border}`,borderRadius:10,cursor:loading?"not-allowed":"pointer",color:t.sub,display:"flex",alignItems:"center",gap:6,fontSize:13,fontWeight:600,fontFamily:"inherit",opacity:loading?.5:1}}>
               <RefreshCw size={14} style={{animation:loading?"lp-spin 1s linear infinite":"none"}}/>{loading?"Loading":"Refresh"}
             </button>
           </div>
-          <div style={{display:"flex",gap:8,marginBottom:6,alignItems:"center"}}>
-            <span style={{fontSize:11,color:t.muted,flexShrink:0}}>Feed URL:</span>
-            <input value={feedUrl} onChange={e => setFeedUrl(e.target.value)} style={{flex:1,background:t.bg,border:`1px solid ${t.border}`,borderRadius:6,padding:"5px 10px",color:t.tx,fontSize:11.5,fontFamily:"monospace",outline:"none"}}/>
-            <button onClick={openHistory}
-              style={{display:"flex",alignItems:"center",gap:6,padding:"6px 14px",borderRadius:8,background:showHistory?t.priL:t.card,border:`1px solid ${showHistory?t.pri:t.border}`,color:showHistory?t.pri:t.sub,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",flexShrink:0,whiteSpace:"nowrap"}}>
-              <History size={14}/> Past Runs {showHistory ? <ChevronUp size={13}/> : <ChevronDown size={13}/>}
-            </button>
-          </div>
-
-          {/* Historical runs panel */}
-          {showHistory && (
-            <div style={{marginBottom:14,border:`1px solid ${t.priBd}`,borderRadius:10,overflow:"hidden"}}>
-              <div style={{padding:"10px 16px",background:t.priL,borderBottom:`1px solid ${t.priBd}`,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                <div style={{fontSize:12.5,fontWeight:700,color:t.pri}}>Select a Past Run to Load</div>
-                <div style={{fontSize:11.5,color:t.sub}}>Results replace current feed</div>
-              </div>
-              {historyLoading && (
-                <div style={{padding:"20px",display:"flex",gap:6,alignItems:"center",justifyContent:"center"}}>
-                  {[0,1,2].map(i=><div key={i} style={{width:6,height:6,borderRadius:"50%",background:t.pri,animation:`lp-dot .8s ${i*.15}s ease-in-out infinite`,opacity:.3}}/>)}
-                </div>
-              )}
-              {historyError && <div style={{padding:"14px 16px",color:t.red,fontSize:13}}>{historyError}</div>}
-              {!historyLoading && historyFiles.length > 0 && (
-                <div style={{maxHeight:280,overflowY:"auto"}}>
-                  {historyFiles.map(file => {
-                    const dateLabel = parseFileDate(file.name);
-                    const isLoading = loadingFile === file.name;
-                    return (
-                      <div key={file.name} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 16px",borderBottom:`1px solid ${t.border}`,background:t.card}}>
-                        <div>
-                          <div style={{fontSize:13.5,fontWeight:600,color:t.tx}}>{dateLabel}</div>
-                          <div style={{fontSize:11,color:t.muted,fontFamily:"monospace",marginTop:1}}>{file.name}</div>
-                        </div>
-                        <Btn size="sm" variant="secondary" onClick={() => loadHistoryFile(file)} disabled={isLoading} t={t}>
-                          {isLoading ? <><RefreshCw size={11} style={{animation:"spin 1s linear infinite"}}/> Loading...</> : "Load"}
-                        </Btn>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-              {!historyLoading && !historyError && historyFiles.length === 0 && (
-                <div style={{padding:"20px 16px",textAlign:"center",color:t.muted,fontSize:13}}>No historical runs found.</div>
-              )}
-            </div>
-          )}
-
-          <div style={{display:"flex",gap:8,marginBottom:16,marginTop:8,flexWrap:"wrap"}}>
+          <div style={{display:"flex",gap:8,marginBottom:16,flexWrap:"wrap"}}>
             {FILTERS.map(f => <Chip key={f} active={activeFilter===f} onClick={() => setActiveFilter(f)} t={t}>{f}</Chip>)}
           </div>
         </div>
@@ -403,7 +281,11 @@ export default function FindJobs({searchResults, setSearchResults, pipeline, add
       {searchResults.length === 0 && !loading && (
         <Card t={t} style={{textAlign:"center",padding:"60px 24px"}}>
           <Search size={32} color={t.muted} style={{marginBottom:12}}/>
-          <div style={{fontSize:14,fontWeight:600,color:t.sub}}>No jobs loaded yet. Use the tabs above to load jobs.</div>
+          <div style={{fontSize:14,fontWeight:600,color:t.sub,marginBottom:8}}>Your feed is empty.</div>
+          <div style={{fontSize:13,color:t.muted,marginBottom:16}}>The daily pipeline populates this automatically. You can also upload a JSON file or add jobs manually.</div>
+          <button onClick={handleRefresh} disabled={loading} style={{padding:"9px 20px",background:t.priL,border:`1px solid ${t.priBd}`,borderRadius:8,color:t.pri,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit",display:"inline-flex",alignItems:"center",gap:6}}>
+            <RefreshCw size={14}/> Check for new jobs
+          </button>
         </Card>
       )}
     </div>
