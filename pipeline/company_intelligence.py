@@ -28,7 +28,6 @@ TEMP_DIR.mkdir(exist_ok=True)
 
 INTERMEDIATE_PATH = TEMP_DIR / "jobs_clean_intermediate.json"
 COMPANY_DB_PATH = DATA_DIR / "company_database.json"
-JOB_HISTORY_PATH = DATA_DIR / "job_history.json"
 FINAL_OUTPUT_PATH = OUTPUT_DIR / "jobs_clean_latest.json"
 
 sys.path.insert(0, str(ROOT))
@@ -49,11 +48,10 @@ def run():
     # Load inputs
     db = _load_db()
     intermediate = _load_intermediate()
-    history = _load_history()
 
     if not intermediate:
         log.warning("No intermediate jobs found. Writing empty output.")
-        _write_output([], [], {}, history, db)
+        _write_output([], [], {}, db)
         return
 
     log.info(f"Classifying {len(intermediate)} jobs...")
@@ -123,24 +121,14 @@ def run():
     # Save updated database
     _save_db(db)
 
-    # Remove duplicates against historical job URLs
-    green_jobs, yellow_jobs, history_dupes = _filter_history(
-        green_jobs, yellow_jobs, history
-    )
-    log.info(f"  Removed {history_dupes} jobs already seen in history")
-
-    # Add today's jobs to history
-    _update_history(history, green_jobs + yellow_jobs)
-
     # Write final output
     _write_output(green_jobs, yellow_jobs,
                   {
                       "total_input": len(intermediate),
                       "dropped_red": dropped,
-                      "history_dupes": history_dupes,
                       "promoted_companies": promoted,
                   },
-                  history, db)
+                  db)
 
     log.info(f"Final output: {len(green_jobs)} GREEN + {len(yellow_jobs)} YELLOW jobs")
 
@@ -169,10 +157,9 @@ def run():
                       {
                           "total_input": len(intermediate),
                           "dropped_red": dropped + len(itar_violations),
-                          "history_dupes": history_dupes,
                           "promoted_companies": promoted,
                       },
-                      history, db)
+                      db)
         log.error(
             f"Output rewritten. {len(itar_violations)} ITAR violation(s) removed. "
             f"Final clean counts: {len(green_jobs)} GREEN + {len(yellow_jobs)} YELLOW."
@@ -261,43 +248,6 @@ def _parse_date(d):
     return datetime.strptime(str(d)[:10], "%Y-%m-%d").date()
 
 
-# ── History deduplication ─────────────────────────────────────────────────────
-
-def _filter_history(
-    green: List[Dict], yellow: List[Dict], history: List[Dict]
-) -> Tuple[List[Dict], List[Dict], int]:
-    seen_urls = {entry["job_url"] for entry in history if "job_url" in entry}
-    dupes = 0
-
-    def clean(jobs):
-        nonlocal dupes
-        out = []
-        for j in jobs:
-            if j["job_url"] in seen_urls:
-                dupes += 1
-            else:
-                out.append(j)
-                seen_urls.add(j["job_url"])
-        return out
-
-    return clean(green), clean(yellow), dupes
-
-
-def _update_history(history: List[Dict], new_jobs: List[Dict]):
-    today = str(date.today())
-    for job in new_jobs:
-        history.append({
-            "job_url": job["job_url"],
-            "company_name": job["company_name"],
-            "job_title": job["job_title"],
-            "seen_date": today,
-        })
-    # Keep last 90 days of history
-    cutoff = str(date.today() - timedelta(days=90))
-    history[:] = [e for e in history if e.get("seen_date", "9999") >= cutoff]
-    JOB_HISTORY_PATH.write_text(json.dumps(history, indent=2))
-
-
 # ── I/O helpers ───────────────────────────────────────────────────────────────
 
 def _load_intermediate() -> List[Dict]:
@@ -321,25 +271,16 @@ def _save_db(db: Dict):
     COMPANY_DB_PATH.write_text(json.dumps(db, indent=2))
 
 
-def _load_history() -> List[Dict]:
-    if not JOB_HISTORY_PATH.exists():
-        return []
-    try:
-        return json.loads(JOB_HISTORY_PATH.read_text())
-    except Exception:
-        return []
-
-
 def _write_output(
     green: List[Dict], yellow: List[Dict],
-    stats: Dict, history: List[Dict], db: Dict
+    stats: Dict, db: Dict
 ):
     total_scraped = stats.get("total_input", 0)
     summary = {
         "run_date": str(date.today()),
         "generated_utc": datetime.utcnow().isoformat() + "Z",
         "total_scraped": total_scraped,
-        "duplicates_removed": stats.get("history_dupes", 0),
+        "duplicates_removed": 0,
         "filtered_jobs": stats.get("dropped_red", 0),
         "green_jobs": len(green),
         "yellow_jobs": len(yellow),
