@@ -187,7 +187,7 @@ export default function FindJobs({searchResults, setSearchResults, pipeline, add
               <Search size={16} color={t.muted} style={{position:"absolute",left:14,top:"50%",transform:"translateY(-50%)"}}/>
               <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search roles, companies..." style={{width:"100%",background:t.card,border:`1px solid ${t.border}`,borderRadius:10,padding:"11px 14px 11px 42px",color:t.tx,fontSize:14,outline:"none",fontFamily:"inherit",boxSizing:"border-box"}}/>
             </div>
-            {feedDates.length > 1 && (
+            {feedDates.length > 0 && (
               <select
                 value={selectedDate}
                 onChange={e => handleDateChange(e.target.value)}
