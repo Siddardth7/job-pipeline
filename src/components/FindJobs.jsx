@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { Search, RefreshCw, Plus, Check, ExternalLink, Upload, PenTool, Database, CheckCircle, UserPlus } from 'lucide-react';
-import { fetchJobs } from '../lib/storage.js';
+import { fetchJobs, fetchFeedDates, fetchJobsByDate } from '../lib/storage.js';
 
 function Card({children, t, style, onClick}) {
   return <div onClick={onClick} style={{background:t.card,border:`1px solid ${t.border}`,borderRadius:12,padding:20,boxShadow:t.shadow,cursor:onClick?"pointer":"default",...style}}>{children}</div>;
@@ -53,6 +53,8 @@ export default function FindJobs({searchResults, setSearchResults, pipeline, add
   const [query, setQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
   const [tab, setTab] = useState("feed");
+  const [feedDates, setFeedDates]       = useState([]);
+  const [selectedDate, setSelectedDate] = useState('');
   const [localJson, setLocalJson] = useState("");
   const [ext, setExt] = useState({role:"",company:"",location:"",link:"",type:"Full-time",description:""});
   const [addToIntel, setAddToIntel] = useState(false);
@@ -64,13 +66,36 @@ export default function FindJobs({searchResults, setSearchResults, pipeline, add
     setLoading(true);
     setError("");
     try {
-      const jobs = await fetchJobs();
+      const [jobs, dates] = await Promise.all([fetchJobs(), fetchFeedDates()]);
       setSearchResults(jobs.filter(j => !j.in_pipeline));
+      setFeedDates(dates);
+      setSelectedDate(dates[0] || '');
       setLastUpdated(new Date().toISOString());
     } catch(e) {
       setError("Failed to load feed: " + e.message);
     }
     setLoading(false);
+  };
+
+  const handleDateChange = async (dateStr) => {
+    setSelectedDate(dateStr);
+    setLoading(true);
+    setError("");
+    try {
+      const jobs = await fetchJobsByDate(dateStr);
+      setSearchResults(jobs.filter(j => !j.in_pipeline));
+    } catch(e) {
+      setError("Failed to load feed for date: " + e.message);
+    }
+    setLoading(false);
+  };
+
+  const formatDateLabel = (d) => {
+    const today = new Date().toISOString().slice(0, 10);
+    const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+    if (d === today)     return `Today (${d})`;
+    if (d === yesterday) return `Yesterday (${d})`;
+    return d;
   };
 
   const loadJobs = (arr, append=false) => {
@@ -162,6 +187,17 @@ export default function FindJobs({searchResults, setSearchResults, pipeline, add
               <Search size={16} color={t.muted} style={{position:"absolute",left:14,top:"50%",transform:"translateY(-50%)"}}/>
               <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search roles, companies..." style={{width:"100%",background:t.card,border:`1px solid ${t.border}`,borderRadius:10,padding:"11px 14px 11px 42px",color:t.tx,fontSize:14,outline:"none",fontFamily:"inherit",boxSizing:"border-box"}}/>
             </div>
+            {feedDates.length > 1 && (
+              <select
+                value={selectedDate}
+                onChange={e => handleDateChange(e.target.value)}
+                style={{background:t.card,border:`1px solid ${t.border}`,borderRadius:8,padding:"6px 10px",color:t.tx,fontSize:13,fontFamily:"inherit",cursor:"pointer",outline:"none"}}
+              >
+                {feedDates.map(d => (
+                  <option key={d} value={d}>{formatDateLabel(d)}</option>
+                ))}
+              </select>
+            )}
             <button onClick={handleRefresh} disabled={loading} style={{padding:"0 16px",background:t.card,border:`1px solid ${t.border}`,borderRadius:10,cursor:loading?"not-allowed":"pointer",color:t.sub,display:"flex",alignItems:"center",gap:6,fontSize:13,fontWeight:600,fontFamily:"inherit",opacity:loading?.5:1}}>
               <RefreshCw size={14} style={{animation:loading?"lp-spin 1s linear infinite":"none"}}/>{loading?"Loading":"Refresh"}
             </button>
