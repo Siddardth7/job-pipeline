@@ -131,6 +131,58 @@ def score_job_for_user(job, user):
     return min(max(score, 0), 100), matched_clusters
 
 
+# ── Applied-list filter ───────────────────────────────────────────────────────
+
+def build_applied_set(rows: list) -> set:
+    """
+    Convert a list of application rows into a set of normalized tuples.
+    Each tuple is (company_lower, location_lower, role_lower).
+    """
+    result = set()
+    for row in rows:
+        company  = (row.get("company")  or "").lower().strip()
+        location = (row.get("location") or "").lower().strip()
+        role     = (row.get("role")     or "").lower().strip()
+        result.add((company, location, role))
+    return result
+
+
+def is_applied(job: dict, applied_set: set) -> bool:
+    """
+    Return True if all three of (company_name, location, job_title) match
+    an entry in applied_set (after normalization). Empty fields never match.
+    """
+    company  = (job.get("company_name") or "").lower().strip()
+    location = (job.get("location")     or "").lower().strip()
+    title    = (job.get("job_title")    or "").lower().strip()
+    if not company or not location or not title:
+        return False
+    return (company, location, title) in applied_set
+
+
+def load_applied_by_user(sb_client) -> dict:
+    """
+    Fetch all application rows from Supabase.
+    Returns dict[user_id -> set of (company, location, role) tuples].
+    Fails open: returns empty dict on error.
+    """
+    try:
+        result = sb_client.table("applications").select("user_id, company, location, role").execute()
+        rows   = result.data or []
+    except Exception as exc:
+        log.warning(f"Could not fetch applied jobs — proceeding with empty set: {exc}")
+        return {}
+
+    by_user = {}
+    for row in rows:
+        uid = row.get("user_id")
+        if not uid:
+            continue
+        by_user.setdefault(uid, []).append(row)
+
+    return {uid: build_applied_set(rows) for uid, rows in by_user.items()}
+
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def run():
@@ -139,6 +191,10 @@ def run():
 
     jobs  = load_jobs()
     users = load_users()
+
+    # Load applied jobs for all users (used to skip already-applied jobs in feed)
+    applied_by_user = load_applied_by_user(sb)
+    log.info(f"Loaded applied sets for {len(applied_by_user)} users")
 
     if not jobs:
         log.warning("No jobs to distribute. Exiting.")
@@ -193,6 +249,11 @@ def run():
         for job in jobs:
             job_id = job.get("id") or job.get("job_url", "")[:100]
             if not job_id:
+                continue
+
+            # Skip jobs already in the user's Applied list
+            applied_set = applied_by_user.get(user["user_id"], set())
+            if is_applied(job, applied_set):
                 continue
 
             score, matched = score_job_for_user(job, user)
