@@ -1,83 +1,35 @@
 {
   "green_jobs": [],
-  "yellow_jobs": [
-    {
-      "job_title": "Entry-Level Process Engineer, LCORefinery",
-      "company_name": "Western International Gas & Cylinders, Inc.",
-      "job_url": "https://www.learn4good.com/jobs/decatur/illinois/engineering/4973237591/e/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
-      "location": "Decatur, IL",
-      "posted_date": "2026-03-26",
-      "description": "Position: Entry-Level Process Engineer, LCO2 Refinery\nA leading gas and cylinder company is seeking a motivated Junior Process Engineer to join its fast-paced engineering team. The successful candidate will assist in overseeing the installation and maintenance of LCO2 refinery equipment, analyze data for improvements, and ensure product quality and efficiency. A BS in Chemical Engineering is required, along with skills in AutoCAD and Lean Six Sigma.\n\nThis is an entry-level position with opportun",
-      "source": "serpapi",
-      "cluster": "process",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 75,
-      "boost_tags": [
-        "entry-level"
-      ],
-      "verdict": "YELLOW"
-    },
-    {
-      "job_title": "Site Junior Quality Engineer \u2014 Manufacturing & ISO",
-      "company_name": "Foxconn Industrial Internet - FII",
-      "job_url": "https://www.learn4good.com/jobs/san-jose/california/quality_control/4973973212/e/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
-      "location": "San Jose, CA",
-      "posted_date": "2026-03-26",
-      "description": "Position: On\u2011Site Junior Quality Engineer \u2014 Manufacturing & ISO\nA leading technology manufacturer in San Jose, California, is looking for an Entry-Level Quality Engineer to support quality control and assurance processes. The ideal candidate will contribute to implementing quality initiatives throughout production and ensuring compliance with standards. Responsibilities include monitoring production, conducting inspections, leading quality improvement projects, and documenting quality standards.",
-      "source": "serpapi",
-      "cluster": "quality",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 75,
-      "boost_tags": [
-        "junior"
-      ],
-      "verdict": "YELLOW"
-    },
-    {
-      "job_title": "Entry Level Wastewater Process Engineer at Carollo Engineers Inc. Seattle, WA",
-      "company_name": "Carollo Engineers Inc.",
-      "job_url": "https://jobs.digitalhire.com/job-listing/opening/5MsAImeVwOIKGmhXrgAoSv?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
-      "location": "Seattle, WA",
-      "posted_date": "2026-03-26",
-      "description": "Position Overview\n\nCarollo Engineers is an internationally recognized environmental engineering firm that specializes in the planning, design, and construction of water and wastewater facilities. We are seeking a Wastewater Process Engineer to assist with projects related to municipal water and wastewater treatment plants, including but not limited to major treatment plant expansions, regional water quality studies, and critical water reuse projects that will create sustainable and resilient wat",
-      "source": "serpapi",
-      "cluster": "process",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 69,
-      "boost_tags": [
-        "entry level"
-      ],
-      "verdict": "YELLOW"
-    },
-    {
-      "job_title": "Entry Level Quality Engineer",
-      "company_name": "Cognizant",
-      "job_url": "https://salutemyjob.com/jobs/entry-level-quality-engineer-cupertino-california/2688692768-2/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
-      "location": "Cupertino, CA",
-      "posted_date": "2026-03-28",
-      "description": "Cognizant is a leading professional services company dedicated to helping clients modernize technology, reinvent processes, and transform experiences. We are eager to grow our team!\n\nIf you thrive in a dynamic, fast-paced environment and excel at multitasking, we want to hear from you!\n\nJob Responsibilities:\n\u2022 Triage, debug, and analyze test failures and data sets while authoring new test sets.\n\u2022 Analyze test results to identify defects and troubleshoot scenarios effectively.\n\u2022 Conduct software",
-      "source": "serpapi",
-      "cluster": "quality",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 67,
-      "boost_tags": [
-        "entry level"
-      ],
-      "verdict": "YELLOW"
-    }
-  ],
+  "yellow_jobs": [],
   "summary": {
-    "run_date": "2026-03-28",
-    "generated_utc": "2026-03-28T13:52:57.767191Z",
-    "total_scraped": 33,
-    "duplicates_removed": 27,
+    "run_date": "2026-03-29",
+    "generated_utc": "2026-03-29T13:54:22.575001Z",
+    "total_scraped": 26,
+    "duplicates_removed": 24,
     "filtered_jobs": 2,
     "green_jobs": 0,
-    "yellow_jobs": 4,
-    "promoted_companies": []
+    "yellow_jobs": 0,
+    "promoted_companies": [
+      "Owens Corning",
+      "Rochester Electronics, LLC",
+      "Mativ",
+      "Haas Automation, Inc.",
+      "Medtronic",
+      "Superior Industries Inc",
+      "BuildASign",
+      "EPITEC",
+      "Giesecke+Devrient",
+      "Abbott",
+      "Dexter Magnetic Technologies",
+      "Kelly Science, Engineering, Technology & Telecom",
+      "W3Global",
+      "ASSA ABLOY Group",
+      "StandardAero",
+      "Nebraska Medicine",
+      "Atkore",
+      "Jobot",
+      "BioSpace",
+      "Evonik"
+    ]
   }
 }

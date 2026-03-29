@@ -1,50 +1,18 @@
 {
-  "generated_utc": "2026-03-28T13:52:57.708918Z",
+  "generated_utc": "2026-03-29T13:54:22.513888Z",
   "stats": {
-    "total_raw": 180,
+    "total_raw": 152,
     "schema_rejected": 0,
-    "f3_aggregator": 5,
-    "f4_age": 117,
-    "f5_duplicates": 3,
-    "f6_seniority": 3,
-    "f7_role": 12,
-    "f8_itar": 7,
+    "f3_aggregator": 0,
+    "f4_age": 107,
+    "f5_duplicates": 2,
+    "f6_seniority": 2,
+    "f7_role": 9,
+    "f8_itar": 6,
     "f9_blacklist": 0,
-    "final_count": 33
+    "final_count": 26
   },
   "jobs": [
-    {
-      "job_title": "Entry-Level Process Engineer, LCORefinery",
-      "company_name": "Western International Gas & Cylinders, Inc.",
-      "job_url": "https://www.learn4good.com/jobs/decatur/illinois/engineering/4973237591/e/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
-      "location": "Decatur, IL",
-      "posted_date": "2026-03-26",
-      "description": "Position: Entry-Level Process Engineer, LCO2 Refinery\nA leading gas and cylinder company is seeking a motivated Junior Process Engineer to join its fast-paced engineering team. The successful candidate will assist in overseeing the installation and maintenance of LCO2 refinery equipment, analyze data for improvements, and ensure product quality and efficiency. A BS in Chemical Engineering is required, along with skills in AutoCAD and Lean Six Sigma.\n\nThis is an entry-level position with opportun",
-      "source": "serpapi",
-      "cluster": "process",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 75,
-      "boost_tags": [
-        "entry-level"
-      ]
-    },
-    {
-      "job_title": "Site Junior Quality Engineer \u2014 Manufacturing & ISO",
-      "company_name": "Foxconn Industrial Internet - FII",
-      "job_url": "https://www.learn4good.com/jobs/san-jose/california/quality_control/4973973212/e/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
-      "location": "San Jose, CA",
-      "posted_date": "2026-03-26",
-      "description": "Position: On\u2011Site Junior Quality Engineer \u2014 Manufacturing & ISO\nA leading technology manufacturer in San Jose, California, is looking for an Entry-Level Quality Engineer to support quality control and assurance processes. The ideal candidate will contribute to implementing quality initiatives throughout production and ensuring compliance with standards. Responsibilities include monitoring production, conducting inspections, leading quality improvement projects, and documenting quality standards.",
-      "source": "serpapi",
-      "cluster": "quality",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 75,
-      "boost_tags": [
-        "junior"
-      ]
-    },
     {
       "job_title": "Process Engineer II",
       "company_name": "Rochester Electronics, LLC",
@@ -91,22 +59,6 @@
       "relevance_score": 69,
       "boost_tags": [
         "engineer 2"
-      ]
-    },
-    {
-      "job_title": "Entry Level Wastewater Process Engineer at Carollo Engineers Inc. Seattle, WA",
-      "company_name": "Carollo Engineers Inc.",
-      "job_url": "https://jobs.digitalhire.com/job-listing/opening/5MsAImeVwOIKGmhXrgAoSv?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
-      "location": "Seattle, WA",
-      "posted_date": "2026-03-26",
-      "description": "Position Overview\n\nCarollo Engineers is an internationally recognized environmental engineering firm that specializes in the planning, design, and construction of water and wastewater facilities. We are seeking a Wastewater Process Engineer to assist with projects related to municipal water and wastewater treatment plants, including but not limited to major treatment plant expansions, regional water quality studies, and critical water reuse projects that will create sustainable and resilient wat",
-      "source": "serpapi",
-      "cluster": "process",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 69,
-      "boost_tags": [
-        "entry level"
       ]
     },
     {
@@ -222,20 +174,6 @@
       ]
     },
     {
-      "job_title": "Process Engineer - Aerospace - Springfield, MA",
-      "company_name": "Michael Page",
-      "job_url": "https://www.aplitrak.com/?adid=cnlhbmh1cmQuNDU3MjguMTU1MEBwYWdldXNhLmFwbGl0cmFrLmNvbQ",
-      "location": "",
-      "posted_date": "2026-03-26",
-      "description": "The Process Engineer is responsible for designing, optimizing, and supporting manufacturing processes to improve efficiency, reduce cost, and ensure high-quality aerospace production. The role requires strong analytical, technical, and communication skills, along with hands\u2011on involvement in process documentation, continuous improvement, and resolving shop floor issues.\n  Client DetailsThe company is a well-established, mid-sized organization within the industrial and manufacturing industry, kno",
-      "source": "apify",
-      "cluster": "process",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 62,
-      "boost_tags": []
-    },
-    {
       "job_title": "Manufacturing Engineer",
       "company_name": "Dexter Magnetic Technologies",
       "job_url": "https://recruiting2.ultipro.com/DEX1001DMTEC/JobBoard/3f145a6a-609d-4524-8c55-f78d4edcd325/OpportunityDetail?opportunityId=cf593c5d-05af-4718-9dac-d5df90d36065",
@@ -348,20 +286,6 @@
       "boost_tags": []
     },
     {
-      "job_title": "Polymer Process Engineer",
-      "company_name": "Jobs via Dice",
-      "job_url": "https://click.appcast.io/t/EiSJb350Di07wuOpS9rJsRHaKV_GsA1-GoIeFYKT0n0=",
-      "location": "",
-      "posted_date": "2026-03-26",
-      "description": "Work Schedule\n\nStandard (Mon-Fri)\n\nEnvironmental Conditions\n\nAdherence to all Good Manufacturing Practices (GMP) Safety Standards, Laboratory Setting, Office, Some degree of PPE (Personal Protective Equipment) required (safety glasses, gowning, gloves, lab coat, ear plugs etc.), Strong Odors (chemical, lubricants, biological products etc.), Will work with hazardotoxic materials\n\nJob Description\n\nAs part of the Thermo Fisher Scientific team, you'll discover meaningful work that makes a positive i",
-      "source": "apify",
-      "cluster": "process",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 54,
-      "boost_tags": []
-    },
-    {
       "job_title": "Process Engineer - Financial",
       "company_name": "Nebraska Medicine",
       "job_url": "https://nebraskamed.wd5.myworkdayjobs.com/NM/job/Omaha-NE/Process-Engineer---Financial_REQ-35281?source=APPLICANT_SOURCE-6-30",
@@ -376,39 +300,11 @@
       "boost_tags": []
     },
     {
-      "job_title": "Materials Engineer",
-      "company_name": "CIRCOR International, Inc.",
-      "job_url": "https://recruiting2.ultipro.com/CIR1001CIRCR/JobBoard/5545d8b0-2410-46b9-a6df-dec8f891b6ee/OpportunityDetail?opportunityId=32a6f1c0-7ba9-4594-8ae8-064a4d8ccc23&source=LinkedIn",
-      "location": "",
-      "posted_date": "2026-03-26",
-      "description": "Key Responsibilities\n\nSustains and retains internal material specifications.\n\nReview contracts to assist in proper factory\n\nflow done for material requirements.\n\nDetermine proper material and NDT\n\nrequirements for applicable parts and assist\n\nin helping place information on drawings.\n\nContribute to failure analysis and product\n\nissues dealing with materials\n\nHelp produce new material processes\n\nAssist in determining material disposition\n\nand rework operations for material issues.\n\nSee expanded J",
-      "source": "apify",
-      "cluster": "materials",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 54,
-      "boost_tags": []
-    },
-    {
       "job_title": "Field Quality Engineer, Energy Storage",
       "company_name": "Redwood Materials",
       "job_url": "https://boards.greenhouse.io/redwoodmaterials/jobs/5835346004?gh_jid=5835346004",
       "location": "San Francisco, California, United States",
-      "posted_date": "2026-03-28",
-      "description": "<div class=&quot;content-intro&quot;><div class=&quot;page&quot;> <div class=&quot;section&quot;> <div class=&quot;layoutArea&quot;> <div class=&quot;column&quot;> <p><span style=&quot;font-family: helvetica, arial, sans-serif; font-size: 12pt;&quot;><strong>About Redwood Materials</strong></span></p> <div> <p><strong>Redwood is localizing a global battery supply chain that seamlessly integrates recovery, reuse, and recycling&nbsp;</strong><strong>\u2014&nbsp;</strong><strong>keeping critical mineral",
-      "source": "ats_greenhouse",
-      "cluster": "quality",
-      "itar_flag": false,
-      "itar_detail": "",
-      "relevance_score": 52,
-      "boost_tags": []
-    },
-    {
-      "job_title": "Manufacturing Quality Engineer, Energy Storage",
-      "company_name": "Redwood Materials",
-      "job_url": "https://boards.greenhouse.io/redwoodmaterials/jobs/5835775004?gh_jid=5835775004",
-      "location": "McCarran, NV",
-      "posted_date": "2026-03-26",
+      "posted_date": "2026-03-29",
       "description": "<div class=&quot;content-intro&quot;><div class=&quot;page&quot;> <div class=&quot;section&quot;> <div class=&quot;layoutArea&quot;> <div class=&quot;column&quot;> <p><span style=&quot;font-family: helvetica, arial, sans-serif; font-size: 12pt;&quot;><strong>About Redwood Materials</strong></span></p> <div> <p><strong>Redwood is localizing a global battery supply chain that seamlessly integrates recovery, reuse, and recycling&nbsp;</strong><strong>\u2014&nbsp;</strong><strong>keeping critical mineral",
       "source": "ats_greenhouse",
       "cluster": "quality",

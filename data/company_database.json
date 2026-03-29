@@ -324,6 +324,106 @@
       "name": "CIRCOR International, Inc.",
       "domain": "",
       "industry": "Auto-promoted"
+    },
+    {
+      "name": "Owens Corning",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Rochester Electronics, LLC",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Mativ",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Haas Automation, Inc.",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Medtronic",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Superior Industries Inc",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "BuildASign",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "EPITEC",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Giesecke+Devrient",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Abbott",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Dexter Magnetic Technologies",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Kelly Science, Engineering, Technology & Telecom",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "W3Global",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "ASSA ABLOY Group",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "StandardAero",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Nebraska Medicine",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Atkore",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Jobot",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "BioSpace",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Evonik",
+      "domain": "",
+      "industry": "Auto-promoted"
     }
   ],
   "promotion_tracking": {
@@ -736,69 +836,84 @@
     ],
     "Owens Corning": [
       "2026-03-27",
-      "2026-03-28"
+      "2026-03-28",
+      "2026-03-29"
     ],
     "Rochester Electronics, LLC": [
       "2026-03-27",
-      "2026-03-28"
+      "2026-03-28",
+      "2026-03-29"
     ],
     "Mativ": [
       "2026-03-27",
-      "2026-03-28"
+      "2026-03-28",
+      "2026-03-29"
     ],
     "Haas Automation, Inc.": [
       "2026-03-27",
-      "2026-03-28"
+      "2026-03-28",
+      "2026-03-29"
     ],
     "Medtronic": [
       "2026-03-27",
-      "2026-03-28"
+      "2026-03-28",
+      "2026-03-29"
     ],
     "S&ME": [
       "2026-03-27"
     ],
     "Superior Industries Inc": [
       "2026-03-27",
-      "2026-03-28"
+      "2026-03-28",
+      "2026-03-29"
     ],
     "BuildASign": [
       "2026-03-27",
-      "2026-03-28"
+      "2026-03-28",
+      "2026-03-29"
     ],
     "EPITEC": [
       "2026-03-27",
-      "2026-03-28"
+      "2026-03-28",
+      "2026-03-29"
     ],
     "Giesecke+Devrient": [
       "2026-03-27",
-      "2026-03-28"
+      "2026-03-28",
+      "2026-03-29"
     ],
     "Abbott": [
       "2026-03-27",
-      "2026-03-28"
+      "2026-03-28",
+      "2026-03-29"
     ],
     "Dexter Magnetic Technologies": [
       "2026-03-27",
-      "2026-03-28"
+      "2026-03-28",
+      "2026-03-29"
     ],
     "Kelly Science, Engineering, Technology & Telecom": [
       "2026-03-27",
-      "2026-03-28"
+      "2026-03-28",
+      "2026-03-29"
     ],
     "W3Global": [
       "2026-03-27",
-      "2026-03-28"
+      "2026-03-28",
+      "2026-03-29"
     ],
     "Emerson": [
       "2026-03-27"
     ],
     "ASSA ABLOY Group": [
       "2026-03-27",
-      "2026-03-28"
+      "2026-03-28",
+      "2026-03-29"
     ],
     "StandardAero": [
       "2026-03-27",
-      "2026-03-28"
+      "2026-03-28",
+      "2026-03-29"
     ],
     "Jobs via Dice": [
       "2026-03-27",
@@ -806,23 +921,28 @@
     ],
     "Nebraska Medicine": [
       "2026-03-27",
-      "2026-03-28"
+      "2026-03-28",
+      "2026-03-29"
     ],
     "Atkore": [
       "2026-03-27",
-      "2026-03-28"
+      "2026-03-28",
+      "2026-03-29"
     ],
     "Jobot": [
       "2026-03-27",
-      "2026-03-28"
+      "2026-03-28",
+      "2026-03-29"
     ],
     "BioSpace": [
       "2026-03-27",
-      "2026-03-28"
+      "2026-03-28",
+      "2026-03-29"
     ],
     "Evonik": [
       "2026-03-27",
-      "2026-03-28"
+      "2026-03-28",
+      "2026-03-29"
     ],
     "Western International Gas & Cylinders, Inc.": [
       "2026-03-28"
@@ -834,7 +954,8 @@
       "2026-03-28"
     ],
     "Cognizant": [
-      "2026-03-28"
+      "2026-03-28",
+      "2026-03-29"
     ]
   },
   "rejected_companies": [],
