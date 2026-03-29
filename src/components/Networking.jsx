@@ -175,13 +175,19 @@ function ContactDraftSection({contact, currentJob, groqKey, t}) {
 }
 
 // Status configuration
-const STATUS_OPTS = ['Pending', 'Replied', 'Coffee Chat', 'No Response'];
+const STATUS_OPTS = ['Sent', 'Accepted', 'Replied', 'Coffee Chat', 'Referral Secured'];
 const STATUS_COLORS = {
-  'Pending':     { bg: '#fef3c7', bd: '#fcd34d', tx: '#d97706' },
-  'Replied':     { bg: '#dcfce7', bd: '#86efac', tx: '#16a34a' },
-  'Coffee Chat': { bg: '#ede9fe', bd: '#c4b5fd', tx: '#7c3aed' },
-  'No Response': { bg: '#fee2e2', bd: '#fca5a5', tx: '#dc2626' },
+  'Sent':             { bg: '#f1f5f9', bd: '#cbd5e1', tx: '#64748b' },
+  'Accepted':         { bg: '#fef3c7', bd: '#fcd34d', tx: '#d97706' },
+  'Replied':          { bg: '#dcfce7', bd: '#86efac', tx: '#16a34a' },
+  'Coffee Chat':      { bg: '#ede9fe', bd: '#c4b5fd', tx: '#7c3aed' },
+  'Referral Secured': { bg: '#fce7f3', bd: '#f9a8d4', tx: '#db2777' },
 };
+
+function migrateStatus(s) {
+  if (s === 'Pending' || s === 'No Response' || !s) return 'Sent';
+  return s;
+}
 
 export default function Networking({currentJob, setCurrentJob, contactResults, setContactResults, networkingLog, addToNetworkingLog, netlogMeta, updateNetlogMeta, setPage, templates, groqKey, serperKey, t}) {
   const [co, setCo]       = useState(currentJob?.company || "");
@@ -227,13 +233,22 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
   const today = new Date().toISOString().split('T')[0];
 
   const overdueCount = networkingLog.filter(c => {
-    const meta = netlogMeta?.[c.id];
-    return meta?.status === 'Pending' && meta?.followUpDate && meta.followUpDate < today;
+    const meta   = netlogMeta?.[c.id] || {};
+    const status = migrateStatus(meta.status);
+    if (status === 'Accepted') {
+      const d = c.date ? new Date(c.date) : null;
+      return d && Math.floor((Date.now() - d) / 86400000) >= 7;
+    }
+    if (status === 'Replied') {
+      const d = meta.statusChangedAt ? new Date(meta.statusChangedAt) : null;
+      return d && Math.floor((Date.now() - d) / 86400000) >= 7;
+    }
+    return false;
   }).length;
 
   const filteredLog = logFilter === 'All'
     ? networkingLog
-    : networkingLog.filter(c => (netlogMeta?.[c.id]?.status || 'Pending') === logFilter);
+    : networkingLog.filter(c => migrateStatus(netlogMeta?.[c.id]?.status) === logFilter);
 
   const findContacts = async () => {
     setLoading(true);
@@ -431,7 +446,7 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
               <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
                 <thead>
                   <tr style={{borderBottom:`2px solid ${t.border}`}}>
-                    {["Date","Name","Type","Company","Status","Follow-up","LinkedIn"].map(h => (
+                    {["Date","Name","Type","Company","Status","LinkedIn"].map(h => (
                       <th key={h} style={{textAlign:"left",padding:"10px 12px",fontSize:11,fontWeight:700,color:t.muted,textTransform:"uppercase",letterSpacing:1,whiteSpace:"nowrap"}}>{h}</th>
                     ))}
                   </tr>
@@ -439,9 +454,18 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
                 <tbody>
                   {filteredLog.map((c,i) => {
                     const meta = netlogMeta?.[c.id] || {};
-                    const status = meta.status || 'Pending';
-                    const followUpDate = meta.followUpDate || '';
-                    const isOverdue = status === 'Pending' && followUpDate && followUpDate < today;
+                    const status = migrateStatus(meta.status);
+                    const isOverdue = (() => {
+                      if (status === 'Accepted') {
+                        const d = c.date ? new Date(c.date) : null;
+                        return d && Math.floor((Date.now() - d) / 86400000) >= 7;
+                      }
+                      if (status === 'Replied') {
+                        const d = meta.statusChangedAt ? new Date(meta.statusChangedAt) : null;
+                        return d && Math.floor((Date.now() - d) / 86400000) >= 7;
+                      }
+                      return false;
+                    })();
                     const sc = getStatusStyle(status);
                     return (
                       <tr key={c.id||i} style={{borderBottom:`1px solid ${t.border}`,background:isOverdue?t.redL+"88":undefined}}>
@@ -454,17 +478,11 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
                         <td style={{padding:"10px 12px"}}>
                           <select
                             value={status}
-                            onChange={e => updateNetlogMeta(c.id, {status: e.target.value})}
+                            onChange={e => updateNetlogMeta(c.id, { status: e.target.value, statusChangedAt: new Date().toISOString() })}
                             style={{background:sc.bg,border:`1px solid ${sc.bd}`,borderRadius:7,padding:"4px 8px",color:sc.tx,fontSize:12,fontWeight:700,fontFamily:"inherit",outline:"none",cursor:"pointer"}}
                           >
                             {STATUS_OPTS.map(s => <option key={s} value={s}>{s}</option>)}
                           </select>
-                        </td>
-                        <td style={{padding:"10px 12px",whiteSpace:"nowrap"}}>
-                          <span style={{fontSize:12,fontWeight:600,color:isOverdue?t.red:t.sub,display:"flex",alignItems:"center",gap:4}}>
-                            {followUpDate || '—'}
-                            {isOverdue && <AlertTriangle size={12} color={t.red}/>}
-                          </span>
                         </td>
                         <td style={{padding:"10px 12px"}}>
                           {c.linkedinUrl && (
