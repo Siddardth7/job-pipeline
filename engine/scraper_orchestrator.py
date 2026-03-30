@@ -59,13 +59,13 @@ DATA_DIR.mkdir(exist_ok=True)
 
 # ── Daily query/run budgets ───────────────────────────────────────────────────
 QUOTAS = {
-    "jsearch": 10,   # daily cap; monthly cap enforced separately
+    "jsearch": 30,   # daily cap; monthly cap enforced separately (3 accounts × 10)
     "serpapi":  5,   # orchestrator cap; scraper also alternates days
-    "apify":    2,   # actor runs per day
+    "apify":    6,   # actor runs per day (3 accounts × 2)
 }
 
-# JSearch monthly hard ceiling — 200 free tier − 20 buffer
-JSEARCH_MONTHLY_LIMIT = 180
+# JSearch monthly hard ceiling — 3 accounts × (200 free tier − 20 buffer)
+JSEARCH_MONTHLY_LIMIT = 540
 
 logging.basicConfig(
     level=logging.INFO,
