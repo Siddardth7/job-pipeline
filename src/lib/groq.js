@@ -33,6 +33,73 @@ export async function callGroq(systemPrompt, userPrompt, apiKey, maxTokens = 100
 }
 
 // ─── Job Analysis ─────────────────────────────────────────────────────────────
+// ─── Summary Generation — focused separate call ───────────────────────────────
+// Receives pre-extracted keywords + title from the data call so the model
+// only has ONE job: write 3 sentences. No JSON, no competing fields.
+async function _generateSummary(jd, variant, keywords, title, apiKey) {
+  const VARIANT_LENS = {
+    A: {
+      description: "Manufacturing & Plant Ops",
+      angle: "The role needs someone who can make parts, hold tolerances, and keep a production line moving. Anchor sentence 1 to shop-floor fabrication or hardware inspection — the candidate has been on the floor building real aerospace hardware, not studying it."
+    },
+    B: {
+      description: "Process & Continuous Improvement",
+      angle: "The role needs someone who can look at a broken process, find the variable that is causing the problem, and move the numbers. Anchor sentence 1 to a specific outcome where the candidate measured a problem and changed the result."
+    },
+    C: {
+      description: "Quality & Materials",
+      angle: "The role needs someone who can accept or reject hardware with confidence — inspection, root cause, materials knowledge. Anchor sentence 1 to a disposition or inspection decision the candidate made on real aerospace flight hardware."
+    },
+    D: {
+      description: "Equipment & NPI",
+      angle: "The role needs someone who can build a manufacturing process that does not exist yet — develop the steps, qualify the hardware, validate first article. Anchor sentence 1 to a first-time process build the candidate created from scratch."
+    }
+  };
+  const lens = VARIANT_LENS[variant] || VARIANT_LENS.A;
+
+  const system = `You are writing a 3-sentence resume summary. Output ONLY the 3 sentences as plain text — no JSON, no labels, no explanation, no formatting markers.
+
+CANDIDATE BACKGROUND (use only these facts, never invent):
+- Degree: MS Aerospace Engineering, UIUC, Dec 2025. Entry level — never claim seniority.
+- Tata Boeing Aerospace: CMM-inspected 450+ flight-critical components to 0.02 mm, zero customer escapes; drove defect rate 15% → 3% using SPC and 8D root cause analysis on GE and Boeing programs; MRB disposition and RCCA investigations on aerospace flight hardware
+- SAMPE Competition: Fabricated 24-inch composite fuselage to 2% void content, autoclave at 275°F and 40 psi
+- Beckman Institute: Compressed composite cure cycle from 8 hours to 5 minutes using DOE-driven process development
+
+RESUME VARIANT: ${variant} — ${lens.description}
+VARIANT LENS: ${lens.angle}`;
+
+  const user = `TARGET ROLE: ${title}
+JD KEYWORDS TO USE (already extracted — do not re-extract): ${keywords.join(', ')}
+
+JD (first 1200 chars for context):
+${jd.slice(0, 1200)}
+
+---
+
+WRITE EXACTLY 3 SENTENCES using the logic below. Plain text only. No bold, no dashes as bullet points, no labels like "Sentence 1:".
+
+SENTENCE 1 — Identity + role fit (25–35 words):
+Start with: "MS Aerospace Engineering grad entering ${title} —"
+After the dash, write the ONE proof point from the background above that most directly answers what this specific role needs (use the VARIANT LENS to decide which one).
+Do NOT use "where" after the role title — it makes a job title sound like a location. Use the dash.
+The sentence ends when you have established: who the candidate is + the role + one concrete relevant experience.
+
+SENTENCE 2 — Proof for the keywords (20–30 words):
+Use 2–3 of the JD keywords listed above. For each, state where or how it was applied — from the candidate background only.
+The sentence must flow as one clause, not a keyword list. Each keyword earns its place by being attached to a place and an outcome.
+Do NOT dangle a tool at the end: "...using SPC" is weak. Show SPC mid-sentence with context: "SPC flagged the CNC tool wear that was driving..."
+
+SENTENCE 3 — What the candidate brings as a person (12–18 words):
+Read the JD for what this company values non-technically: precision? ownership? problem-solving instinct? rigor?
+Write a BEHAVIOR, not an output. These work: "Digs into the process until the variance disappears." / "Shows up to make parts right, not to report that they were wrong." / "Takes the accept/reject call seriously because the hardware is flying."
+These do NOT work: anything starting with Delivers / Brings / Offers / Provides / Demonstrates.
+These are banned: passionate, motivated, results-driven, dynamic, fast-paced, team player, leveraging, precision solutions.
+
+The 3 sentences must flow together — sentence 2 should feel like evidence for sentence 1's claim, and sentence 3 should feel like the natural conclusion about who this person is.`;
+
+  return callGroq(system, user, apiKey, 300);
+}
+
 export async function analyzeJobWithGroq(jd, variant, apiKey) {
   const RESUMES = {
     A: { name: "Manufacturing & Plant Ops" },
@@ -76,42 +143,13 @@ export async function analyzeJobWithGroq(jd, variant, apiKey) {
   const baseLines = BASE_SKILLLINES[variant] || BASE_SKILLLINES.A;
   const baseLinesJson = JSON.stringify(baseLines, null, 2);
 
-  // Per-variant: the specific angle that drives sentence 1 + a concrete example of what that sounds like.
-  // These are genuinely different — if a summary could work for another variant, it is wrong.
-  const VARIANT_LENS = {
-    A: {
-      angle: `Manufacturing execution — the role needs someone who can make parts, hold tolerances, and keep a production line moving. Sentence 1 should establish that the candidate has been on a shop floor building real hardware to aerospace tolerances, not studying it from a desk.`,
-      example: `MS Aerospace Engineering grad entering manufacturing — built a 24-inch composite fuselage to 2% void content at SAMPE and CMM-validated 450+ flight-critical components to zero customer escapes at Tata Boeing, which is the same job: making hardware that passes. Cut CNC-driven defect rates from 15% to 3% on GE and Boeing programs using SPC and 8D root cause. Shows up to make parts right, not to report that they were wrong.`
-    },
-    B: {
-      angle: `Process improvement — the role needs someone who can look at a broken or inefficient process, measure what is actually wrong, and change the outcome with data. Sentence 1 should connect the candidate to a specific outcome: the process was broken, they found the variable, and the numbers changed.`,
-      example: `MS Aerospace Engineering grad entering process engineering — at Tata Boeing, SPC flagged CNC tool wear as the defect driver and 8D closed it out, cutting a recurring reject rate from 15% to 3% on live GE and Boeing flight programs. Carried the same instinct to Beckman, where DOE-driven process development compressed a composite cure cycle from 8 hours to 5 minutes. Digs into the process until the variance disappears.`
-    },
-    C: {
-      angle: `Quality assurance — the role needs someone who can accept or reject hardware with confidence: inspection, root cause, and enough materials knowledge to know why a part failed. Sentence 1 should establish that the candidate has stood behind a disposition decision on real aerospace hardware.`,
-      example: `MS Aerospace Engineering grad entering quality engineering — CMM-inspected 450+ flight-critical components on GE and Boeing programs at Tata Boeing and dispositioned MRB findings through RCCA, backed by firsthand composites fabrication experience building a 24-inch fuselage to aerospace tolerances at SAMPE. Applied SPC to catch a CNC tool-wear trend before it escaped — drove reject rate from 15% to 3%. Takes the accept/reject call seriously because the hardware is flying.`
-    },
-    D: {
-      angle: `NPI and equipment — the role needs someone who can build a manufacturing process that does not exist yet: develop the steps, validate the first article, qualify the hardware. Sentence 1 should connect the candidate to a first-time process build — not maintaining something established, but creating something repeatable from scratch.`,
-      example: `MS Aerospace Engineering grad entering NPI — built a 24-inch composite fuselage from scratch at SAMPE, layup through autoclave qualification, then compressed a cure cycle from 8 hours to 5 minutes at Beckman through DOE-driven process development; both were processes that did not exist before. Validated first-article hardware on GE and Boeing programs at Tata Boeing using PFMEA and CMM inspection. Runs toward the problem that does not have an answer yet.`
-    }
-  };
-  const variantLens = VARIANT_LENS[variant] || VARIANT_LENS.A;
-
-  const system = `You are a resume optimizer for Siddardth Pathipaka (MS Aerospace Engineering, UIUC Dec 2025).
-
-CANDIDATE FACTS — use only these, never invent:
-- Tata Boeing: reduced defect rates 15% to 3% using SPC and 8D methodology
-- SAMPE: fabricated 24-inch composite fuselage, 2% void content, autoclave at 275F and 40 psi
-- Beckman Institute: reduced cure cycle from 8 hours to 5 minutes
-- Candidate tools: SPC, 8D methodology, FMEA, GD&T, CMM inspection, ABAQUS, SolidWorks, PFMEA, DOE, autoclave processing
-- Resume variant: ${variant} — ${RESUMES[variant]?.name}
+  const system = `You are a resume data extractor for Siddardth Pathipaka (MS Aerospace Engineering, UIUC Dec 2025).
+Resume variant: ${variant} — ${RESUMES[variant]?.name}
 
 OUTPUT RULES:
 1. Return valid JSON only — no markdown fences, no extra text before or after
-2. mod1_summary: PLAIN TEXT ONLY — zero bold markers, zero LaTeX, zero backslashes, zero curly braces
-3. top5_jd_skills: all 5 must be DIFFERENT from each other — no duplicates
-4. Skills and experience bullet points are LOCKED — do not modify them
+2. top5_jd_skills: all 5 must be DIFFERENT from each other — no duplicates
+3. Skill lines are reordered only — never add new skills not in the base list
 
 KEYWORD QUALITY — extract SPECIFIC technical terms only:
   GOOD: "SPC", "FMEA", "autoclave processing", "GD&T", "CMM inspection", "lean manufacturing",
@@ -125,60 +163,13 @@ ${jd.slice(0, 3500)}
 BASE SKILLLINES FOR RESUME ${variant}:
 ${baseLinesJson}
 
-STEP 1 — Extract top5_jd_skills: 5 specific technical keywords from the JD, all different.
-STEP 2 — Extract summary_title: exact job title from the JD.
-STEP 3 — Before writing the summary, reason through these three questions (do NOT include answers in output):
-  Q1. What is the single most important thing this specific role needs from a candidate — one phrase, from the JD?
-  Q2. Which proof point below most directly answers Q1?
-  Q3. What does this company value in a person beyond technical skills — ownership? learning speed? rigor? Read between the lines of the JD.
-  Use those three answers to drive each sentence. A summary that could work for a different variant is a wrong summary.
-
-STEP 4 — Write mod1_summary: exactly 3 sentences, 70–90 words total, plain text only.
-Word count targets per sentence — these are targets, not hard stops:
-  Sentence 1: 25–35 words. Full clause with identity, context, and a proof point.
-  Sentence 2: 20–30 words. Full clause with keyword + where/how it was applied.
-  Sentence 3: 12–18 words. One complete, specific statement about the candidate as a person.
-No sentence shorter than 12 words. A 6-word sentence is a fragment, not a summary sentence.
-
-CANDIDATE PROOF POINTS — every keyword used in the summary must tie to one of these. If a JD keyword has no match here, leave it out:
-- Composites fabrication / autoclave / layup: SAMPE — 24-in composite fuselage, 2% void content, autoclave 275°F and 40 psi
-- Defect reduction / SPC / quality / CMM inspection: Tata Boeing — drove defect rate 15% to 3% on GE and Boeing flight programs; CMM-validated 450+ flight-critical components to 0.02mm
-- Root cause / 8D / CAPA / MRB / RCCA: Tata Boeing — MRB disposition and RCCA investigations on aerospace flight hardware
-- Process development / cure cycle / DOE: Beckman Institute — compressed cure cycle from 8 hours to 5 minutes
-- Tools with proof: SPC, 8D methodology, CMM inspection, GD&T, FMEA, autoclave processing, DOE, PFMEA
-
-VARIANT ${variant} LENS — this determines what sentence 1 is about. It is not interchangeable with other variants:
-${variantLens.angle}
-
-SENTENCE 1 — Identity + primary fit (25–35 words):
-Open with "MS Aerospace Engineering grad entering [role]" then use a dash (—) to pivot directly into the experience that answers the role's primary need.
-GRAMMAR RULE: Never use "entering [role], where..." — "where" makes a job title sound like a location. Use a dash or a new clause instead.
-The product and environment of the JD matter — composites role references composites fabrication; CI role references a process they improved; NPI role references something they built from scratch.
-After reading sentence 1, a recruiter should think: this person has done this before, at the entry level.
-
-SENTENCE 2 — Proof for the keywords (20–30 words):
-Pick 2–4 JD keywords from top5_jd_skills that have a proof point. For each, show where or how — not a list, a real sentence.
-Sentence 2 should feel like evidence for sentence 1's claim, not a new topic.
-Do not end the sentence by dangling a tool name: "...using SPC" at the end of a sentence is weak. Embed the tool mid-sentence with context.
-
-SENTENCE 3 — What the candidate brings as a person (12–18 words):
-One sentence. Reflect what this company values non-technically based on the JD — read between the lines.
-STRUCTURE: Show a behavior or trait, not an output. "Digs into the process until the variance disappears" is a person. "Delivers precise technical solutions" is a job description.
-BANNED openers: "Delivers", "Brings", "Offers", "Provides", "Demonstrates" — these describe outputs, not people.
-BANNED phrases: "passionate", "results-driven", "leveraging", "dynamic", "thrives in fast-paced environments", "team player", "eager to learn", "precise technical solutions".
-Write something that could only be said about this candidate, not any engineer.
-
-VARIANT ${variant} EXAMPLE — this is what the correct angle and flow look like for this variant (do NOT copy it, write your own for the actual JD):
-  mod1_summary: "${variantLens.example}"
-
-Now return ONLY this JSON for the actual JD:
+Return ONLY this JSON:
 {
   "top5_jd_skills": ["kw1", "kw2", "kw3", "kw4", "kw5"],
   "summary_title": "exact job title from JD",
   "summary_structure_used": ${variant === 'A' ? 1 : variant === 'B' ? 2 : variant === 'C' ? 5 : 4},
-  "mod1_summary": "3 full sentences, plain text, no formatting, 70–90 words, each sentence minimum 12 words",
   "mod2_skilllines": [
-    {"label": "same label as base line 1", "skills": "reordered skills, added (Learning) if needed"},
+    {"label": "same label as base line 1", "skills": "reordered skills, add (Learning) tag if skill is weak"},
     {"label": "same label as base line 2", "skills": "reordered skills"},
     {"label": "same label as base line 3", "skills": "reordered skills"},
     {"label": "same label as base line 4", "skills": "reordered skills"},
@@ -193,20 +184,36 @@ Now return ONLY this JSON for the actual JD:
   "ai_insights": "3 to 5 specific actionable recommendations: what to emphasize in interview, red flags, sponsorship notes, or strategic tips for this specific JD"
 }`;
 
-  const text = await callGroq(system, user, apiKey, 1800);
+  // Call 1: extract structured data (keywords, title, skilllines, ATS metrics)
+  const dataText = await callGroq(system, user, apiKey, 1400);
 
+  let parsed;
   try {
-    const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-    const parsed = JSON.parse(cleaned);
-    return applyQCBarriers(parsed, variant);
+    const cleaned = dataText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+    parsed = JSON.parse(cleaned);
   } catch {
-    const match = text.match(/\{[\s\S]*\}/);
+    const match = dataText.match(/\{[\s\S]*\}/);
     if (match) {
-      try { return applyQCBarriers(JSON.parse(match[0]), variant); }
-      catch { /* fall through */ }
+      try { parsed = JSON.parse(match[0]); }
+      catch { throw new Error('Could not parse Groq response. Try again.'); }
+    } else {
+      throw new Error('Could not parse Groq response. Try again.');
     }
-    throw new Error('Could not parse Groq response. Try again.');
   }
+
+  // Call 2: generate summary in isolation — model's only job is 3 sentences
+  const summaryText = await _generateSummary(
+    jd,
+    variant,
+    parsed.top5_jd_skills || [],
+    parsed.summary_title || '',
+    apiKey
+  );
+
+  // Clean and attach summary to parsed result
+  parsed.mod1_summary = summaryText.trim();
+
+  return applyQCBarriers(parsed, variant);
 }
 
 // ── QC BARRIER — applied to every parsed Groq result ────────────────────────
