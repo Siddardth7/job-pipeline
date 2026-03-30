@@ -46,7 +46,16 @@ except ImportError:
 
 log = logging.getLogger("apify_scraper")
 
-APIFY_TOKEN = os.environ.get("APIFY_TOKEN", "")
+_raw_tokens = os.environ.get("APIFY_TOKENS", "") or os.environ.get("APIFY_TOKEN", "")
+APIFY_TOKENS = [t.strip() for t in _raw_tokens.split(",") if t.strip()]
+
+
+def _is_apify_quota_error(err: str) -> bool:
+    err_l = err.lower()
+    return any(kw in err_l for kw in [
+        "monthly usage hard limit", "usage limit", "quota",
+        "insufficient credits", "402", "payment required", "401",
+    ])
 
 # Actor slug — stable identifier for harvestapi LinkedIn scraper
 ACTOR_SLUG  = "harvestapi/linkedin-job-search"
@@ -96,19 +105,43 @@ class ApifyScraper:
     }
 
     def run(self, queries: List[Dict]) -> List[Dict]:
-        if not APIFY_TOKEN:
-            log.warning("[apify] APIFY_TOKEN not set — skipping")
+        if not APIFY_TOKENS:
+            log.warning("[apify] No APIFY_TOKENS set — skipping")
             return []
 
-        client     = ApifyClient(APIFY_TOKEN)
         job_titles = self._build_job_titles(queries)
+        title_to_cluster: Dict[str, str] = {}
+        for q in queries:
+            cluster = q.get("cluster", "")
+            title   = self.CLUSTER_TO_TITLE.get(cluster)
+            if title and title not in title_to_cluster:
+                title_to_cluster[title.lower()] = cluster.replace("_open", "")
 
+        for token in APIFY_TOKENS:
+            result = self._attempt_run_with_token(token, job_titles, title_to_cluster)
+            if result is not None:
+                return result
+
+        log.warning("[apify] All tokens quota-exhausted or failed")
+        return []
+
+    def _attempt_run_with_token(
+        self,
+        token: str,
+        job_titles: List[str],
+        title_to_cluster: Dict[str, str],
+    ) -> Optional[List[Dict]]:
+        """
+        Try one Apify token. Returns list of jobs on success,
+        None if quota/auth error (caller should try next token),
+        [] on non-quota failure (no point rotating).
+        """
+        client = ApifyClient(token)
         log.info(
             f"[apify] Actor: {ACTOR_SLUG!r} | "
             f"{len(job_titles)} job titles: {job_titles[:4]}"
             f"{'...' if len(job_titles) > 4 else ''}"
         )
-
         run_input = {
             "jobTitles":       job_titles,
             "locations":       ["United States"],
@@ -119,7 +152,6 @@ class ApifyScraper:
         }
         log.debug(f"[apify] run_input: {json.dumps(run_input)}")
 
-        # ── Start actor run ───────────────────────────────────────────────────
         try:
             run = client.actor(ACTOR_SLUG).call(
                 run_input=run_input,
@@ -127,43 +159,30 @@ class ApifyScraper:
             )
         except Exception as e:
             err = str(e)
+            if _is_apify_quota_error(err):
+                return None  # quota exhausted — try next token
             if "not found" in err.lower() or "404" in err:
                 log.error(
                     f"[apify] Actor '{ACTOR_SLUG}' was not found.\n"
                     f"  → Visit https://apify.com/harvestapi/linkedin-job-search\n"
-                    f"  → Verify your APIFY_TOKEN is valid in GitHub Secrets.\n"
                     f"  Raw error: {err}"
                 )
             else:
                 log.error(f"[apify] Actor failed to start: {err}")
             return []
 
-        # ── Validate run status ───────────────────────────────────────────────
         run_status = run.get("status", "UNKNOWN") if run else "NO_RESPONSE"
         dataset_id = run.get("defaultDatasetId", "") if run else ""
 
         if run_status not in ("SUCCEEDED", "READY"):
-            log.error(
-                f"[apify] Actor run ended with status '{run_status}'. "
-                f"Expected SUCCEEDED. No jobs returned."
-            )
+            log.error(f"[apify] Run ended with status '{run_status}'.")
             return []
-
         if not dataset_id:
             log.error("[apify] No defaultDatasetId returned.")
             return []
 
         log.info(f"[apify] Actor SUCCEEDED — reading dataset {dataset_id} ...")
 
-        # Build a cluster lookup by title so we can tag jobs correctly
-        title_to_cluster = {}
-        for q in queries:
-            cluster = q.get("cluster", "")
-            title   = self.CLUSTER_TO_TITLE.get(cluster)
-            if title and title not in title_to_cluster:
-                title_to_cluster[title.lower()] = cluster.replace("_open", "")
-
-        # ── Fetch and normalize dataset ───────────────────────────────────────
         all_jobs:   List[Dict] = []
         seen:       set        = set()
         item_count              = 0
