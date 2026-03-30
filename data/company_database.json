@@ -424,6 +424,11 @@
       "name": "Evonik",
       "domain": "",
       "industry": "Auto-promoted"
+    },
+    {
+      "name": "Cognizant",
+      "domain": "",
+      "industry": "Auto-promoted"
     }
   ],
   "promotion_tracking": {
@@ -576,7 +581,8 @@
       "2026-03-11"
     ],
     "JABIL CIRCUIT, INC": [
-      "2026-03-11"
+      "2026-03-11",
+      "2026-03-30"
     ],
     "Hermeus": [
       "2026-03-11",
@@ -955,7 +961,27 @@
     ],
     "Cognizant": [
       "2026-03-28",
-      "2026-03-29"
+      "2026-03-29",
+      "2026-03-30"
+    ],
+    "The Boeing Company": [
+      "2026-03-30",
+      "2026-03-30"
+    ],
+    "S&ME, Inc.": [
+      "2026-03-30"
+    ],
+    "Fm Industries": [
+      "2026-03-30"
+    ],
+    "Senior Aerospace SSP": [
+      "2026-03-30"
+    ],
+    "Robinson Helicopter Co": [
+      "2026-03-30"
+    ],
+    "A & D": [
+      "2026-03-30"
     ]
   },
   "rejected_companies": [],

@@ -1,35 +1,291 @@
 {
-  "green_jobs": [],
-  "yellow_jobs": [],
+  "green_jobs": [
+    {
+      "job_title": "Manufacturing Engineer (Entry Level or Associate)",
+      "company_name": "Boeing",
+      "job_url": "https://www.adzuna.com/land/ad/5682031163?se=AOwU0EYs8RG5I_lptdmnaA&utm_medium=api&utm_source=d700c99c&v=A49BD6050625084FB3FEBC32E4E5F337EECC0FFB",
+      "location": "Kennedy Space Center, Merritt Island",
+      "posted_date": "2026-03-29",
+      "description": "Manufacturing Engineer (Entry Level or Associate) Company: The Boeing Company Boeing Defense, Space and Security (BDS) is looking for an Entry Level or Associate Manufacturing Engineer (Level 1 or 2) to join our Space Launch Systems team in Kennedy Space Center, Florida. Position Responsibilities: Supports the development and implementation of production and tooling methodologies. Participates as a member of an Integrated Product Team (IPT) to support the integration of technical solutions acro\u2026",
+      "source": "adzuna",
+      "cluster": "manufacturing",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 71,
+      "boost_tags": [
+        "entry level"
+      ],
+      "verdict": "GREEN"
+    },
+    {
+      "job_title": "Entry Level Manufacturing Engineer",
+      "company_name": "Boeing",
+      "job_url": "https://www.adzuna.com/land/ad/5682014235?se=AOwU0EYs8RG5I_lptdmnaA&utm_medium=api&utm_source=d700c99c&v=83A11FA4401D7513C9F46526A4F1400C7FCD01A4",
+      "location": "Hazelwood, Saint Louis County",
+      "posted_date": "2026-03-29",
+      "description": "Entry Level Manufacturing Engineer Company: The Boeing Company Boeing Global Services (BGS) is currently seeking an Entry Level Manufacturing Engineer to become part of the Tactical Aircraft (TacAir) Spares Engineering Team in St. Louis, Missouri at the Hazelwood location. The Tactical Aircraft (TacAir) Spares Engineering Team is a multidisciplined engineering team that supports the post-production aircraft fleets with technical requirements for the fabrication and procurement of spare parts. T\u2026",
+      "source": "adzuna",
+      "cluster": "manufacturing",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 71,
+      "boost_tags": [
+        "entry level"
+      ],
+      "verdict": "GREEN"
+    },
+    {
+      "job_title": "Entry Level Manufacturing Engineer (Electrical/Electronics)",
+      "company_name": "Boeing",
+      "job_url": "https://www.adzuna.com/land/ad/5680954389?se=AOwU0EYs8RG5I_lptdmnaA&utm_medium=api&utm_source=d700c99c&v=87B9B629540F0378B62736C3187DE9D8B0018180",
+      "location": "Everett, Snohomish County",
+      "posted_date": "2026-03-28",
+      "description": "Entry Level Manufacturing Engineer (Electrical/Electronics) Company: The Boeing Company Boeing Commercial Airplanes is hiring Entry Level Manufacturing Engineers to support our 777 and 737 production teams in Everett and Renton Washington . Successful candidates will have the ability to learn in a fast-paced environment, and the ability to collaborate with both the engineering teams and mechanics on the factory floor. Primary Responsibilities: Supports the development and implementation of prod\u2026",
+      "source": "adzuna",
+      "cluster": "manufacturing",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 69,
+      "boost_tags": [
+        "entry level"
+      ],
+      "verdict": "GREEN"
+    },
+    {
+      "job_title": "Manufacturing Engineer (Entry Level or Associate)",
+      "company_name": "The Boeing Company",
+      "job_url": "https://www.adzuna.com/details/5681743561?utm_medium=api&utm_source=d700c99c",
+      "location": "Titusville, Brevard County",
+      "posted_date": "2026-03-28",
+      "description": "Job Description At Boeing, we innovate and collaborate to make the world a better place. We're committed to fostering an environment for every teammate that's welcoming, respectful and inclusive, with great opportunity for professional growth. Find your future with us. Boeing Defense, Space and Security (BDS) is looking for an Entry Level or Associate Manufacturing Engineer (Level 1 or 2) to join our Space Launch Systems team in Kennedy Space Center, Florida. Position Responsibilities:  Support\u2026",
+      "source": "adzuna",
+      "cluster": "manufacturing",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 67,
+      "boost_tags": [
+        "entry level"
+      ],
+      "verdict": "GREEN"
+    },
+    {
+      "job_title": "Manufacturing Engineer - Vehicle Integration (Entry Level)",
+      "company_name": "Joby Aviation",
+      "job_url": "https://www.adzuna.com/details/5683125646?utm_medium=api&utm_source=d700c99c",
+      "location": "Marina, Monterey County",
+      "posted_date": "2026-03-30",
+      "description": "Imagine a piloted air taxi that takes off vertically, then quietly carries you and your fellow passengers over the congested city streets below, enabling you to spend more time with the people and places that matter most. At Joby, we've been working to make that dream a reality since 2009 and we're now in the final stages of certifying our aircraft with the FAA. With plans to launch our aircraft in the US and Dubai, we're now scaling manufacturing and preparing for the launch of our commercial \u2026",
+      "source": "adzuna",
+      "cluster": "manufacturing",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 67,
+      "boost_tags": [
+        "entry level"
+      ],
+      "verdict": "GREEN"
+    },
+    {
+      "job_title": "Entry Level Manufacturing Engineer",
+      "company_name": "The Boeing Company",
+      "job_url": "https://www.adzuna.com/details/5681860186?utm_medium=api&utm_source=d700c99c",
+      "location": "Robertson, Saint Louis County",
+      "posted_date": "2026-03-28",
+      "description": "Job Description At Boeing, we innovate and collaborate to make the world a better place. We're committed to fostering an environment for every teammate that's welcoming, respectful and inclusive, with great opportunity for professional growth. Find your future with us. Boeing Global Services (BGS) is currently seeking an Entry Level Manufacturing Engineer to become part of the Tactical Aircraft (TacAir) Spares Engineering Team in St. Louis, Missouri at the Hazelwood location. The Tactical Aircr\u2026",
+      "source": "adzuna",
+      "cluster": "manufacturing",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 67,
+      "boost_tags": [
+        "entry level"
+      ],
+      "verdict": "GREEN"
+    },
+    {
+      "job_title": "Mechanical Engineer-Composites Focused",
+      "company_name": "Re:Build Manufacturing",
+      "job_url": "https://www.adzuna.com/details/5682665594?utm_medium=api&utm_source=d700c99c",
+      "location": "Rock Hill, York County",
+      "posted_date": "2026-03-30",
+      "description": "Who are Composite Resources and Re:Build Manufacturing? Re:Build CR, LLC (Composite Resources), a Re:Build Manufacturing, LLC company, is an innovative, rapidly growing manufacturer of composite components and tooling located in Rock Hill, SC. Our constantly evolving portfolio of projects includes parts and assemblies for clients in the aerospace and defense industries. At Composite Resources, we embrace a culture defined by teamwork, ownership, and accountability. Re:Build Manufacturing is a g\u2026",
+      "source": "adzuna",
+      "cluster": "composites",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 56,
+      "boost_tags": [],
+      "verdict": "GREEN"
+    },
+    {
+      "job_title": "Operations Engineer, NA Capacity Engineering, NA Capacity Engineering",
+      "company_name": "Amazon",
+      "job_url": "https://www.adzuna.com/land/ad/5682684046?se=JoIC20Ys8RGR7c_0u9suJw&utm_medium=api&utm_source=d700c99c&v=EE557C7EEA9BA24913E4260E5875C0B7D00EA7C2",
+      "location": "Bellevue, King County",
+      "posted_date": "2026-03-30",
+      "description": "Amazon is seeking a Operations Engineer to support the Amazon Logistics North America (AMZL NA) Capacity Engineering team. This role will manage the capacity of multiple last mile sites and partner with Topology, Operations, Design/Process/Network Engineering, Finance, and other planning teams to build a reliable view of short/mid/long term capacity. In this role, the Operations Engineer will drive innovation in developing the future of delivery operations to better serve customers and maximize\u2026",
+      "source": "adzuna",
+      "cluster": "industrial_operations",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 52,
+      "boost_tags": [],
+      "verdict": "GREEN"
+    },
+    {
+      "job_title": "Operations Engineer, NA Capacity Engineering, NA Capacity Engineering",
+      "company_name": "Amazon",
+      "job_url": "https://www.adzuna.com/details/5681799399?utm_medium=api&utm_source=d700c99c",
+      "location": "Nashville, Davidson County",
+      "posted_date": "2026-03-28",
+      "description": "Description Amazon is seeking a Operations Engineer to support the Amazon Logistics North America (AMZL NA) Capacity Engineering team. This role will manage the capacity of multiple last mile sites and partner with Topology, Operations, Design/Process/Network Engineering, Finance, and other planning teams to build a reliable view of short/mid/long term capacity. In this role, the Operations Engineer will drive innovation in developing the future of delivery operations to better serve customers \u2026",
+      "source": "adzuna",
+      "cluster": "industrial_operations",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 52,
+      "boost_tags": [],
+      "verdict": "GREEN"
+    },
+    {
+      "job_title": "Field Quality Engineer, Energy Storage",
+      "company_name": "Redwood Materials",
+      "job_url": "https://boards.greenhouse.io/redwoodmaterials/jobs/5835346004?gh_jid=5835346004",
+      "location": "San Francisco, California, United States",
+      "posted_date": "2026-03-30",
+      "description": "<div class=&quot;content-intro&quot;><div class=&quot;page&quot;> <div class=&quot;section&quot;> <div class=&quot;layoutArea&quot;> <div class=&quot;column&quot;> <p><span style=&quot;font-family: helvetica, arial, sans-serif; font-size: 12pt;&quot;><strong>About Redwood Materials</strong></span></p> <div> <p><strong>Redwood is localizing a global battery supply chain that seamlessly integrates recovery, reuse, and recycling&nbsp;</strong><strong>\u2014&nbsp;</strong><strong>keeping critical mineral",
+      "source": "ats_greenhouse",
+      "cluster": "quality",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 52,
+      "boost_tags": [],
+      "verdict": "GREEN"
+    },
+    {
+      "job_title": "Entry Level Quality Engineer",
+      "company_name": "Cognizant",
+      "job_url": "https://salutemyjob.com/jobs/entry-level-quality-engineer-cupertino-california/2688692768-2/?utm_campaign=google_jobs_apply&utm_source=google_jobs_apply&utm_medium=organic",
+      "location": "Cupertino, CA",
+      "posted_date": "2026-03-28",
+      "description": "Cognizant is a leading professional services company dedicated to helping clients modernize technology, reinvent processes, and transform experiences. We are eager to grow our team!\n\nIf you thrive in a dynamic, fast-paced environment and excel at multitasking, we want to hear from you!\n\nJob Responsibilities:\n\u2022 Triage, debug, and analyze test failures and data sets while authoring new test sets.\n\u2022 Analyze test results to identify defects and troubleshoot scenarios effectively.\n\u2022 Conduct software",
+      "source": "serpapi",
+      "cluster": "quality",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 67,
+      "boost_tags": [
+        "entry level"
+      ],
+      "verdict": "GREEN"
+    }
+  ],
+  "yellow_jobs": [
+    {
+      "job_title": "Entry-Level Construction Materials Engineering Technician",
+      "company_name": "S&ME, Inc.",
+      "job_url": "https://www.adzuna.com/details/5682429506?utm_medium=api&utm_source=d700c99c",
+      "location": "Spartanburg, Spartanburg County",
+      "posted_date": "2026-03-29",
+      "description": "Entry-Level Construction Materials Engineering Technician Requisition Number: 2026- 1260 -0 5 Looking to kickstart your career in construction? Join S&ME as an Entry-Level Construction Materials Engineering Technician in Spartanburg, SC ! You'll be part of our Construction Services team, helping build projects that matter while learning and growing every step of the way. Visit the Life tab on our LinkedIn profile to learn more about life at S&ME. What You Will Do : As a Construction Materials E\u2026",
+      "source": "adzuna",
+      "cluster": "materials",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 67,
+      "boost_tags": [
+        "entry-level"
+      ],
+      "verdict": "YELLOW"
+    },
+    {
+      "job_title": "Manufacturing Engineer 2 - NPI",
+      "company_name": "Fm Industries",
+      "job_url": "https://www.adzuna.com/details/5681875177?utm_medium=api&utm_source=d700c99c",
+      "location": "Sunol, Alameda County",
+      "posted_date": "2026-03-28",
+      "description": "WHAT CAN WE OFFER YOU FOR ALL YOUR HARD WORK? Competitive Salary PTO Program Nine (9) Paid Holidays Medical, Dental, Vision and Life Insurance Short and Long-Term Disability Coverage AT NO COST TO EMPLOYEE Tuition Assistance Pet Insurance Flexible Spending Plans Health Spending Plans Comprehensive Online Learning Center - houses thousands of training resources available to learn at your own pace 401(k) Retirement Savings - with a generous company 30% match! (100% vested after six years) GET TO \u2026",
+      "source": "adzuna",
+      "cluster": "startup_manufacturing",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 65,
+      "boost_tags": [
+        "engineer 2"
+      ],
+      "verdict": "YELLOW"
+    },
+    {
+      "job_title": "Composite Manufacturing Engineer",
+      "company_name": "Senior Aerospace SSP",
+      "job_url": "https://www.adzuna.com/details/5681050408?utm_medium=api&utm_source=d700c99c",
+      "location": "Burbank, Los Angeles County",
+      "posted_date": "2026-03-28",
+      "description": "Job Description http://\\\\svr-dfs1\\Namespace1\\Test Lab\\Staff Portal\\A2LA Audit Required Items\\Job Descriptions PERFORMANCE-BASED POSITION PROFILE Composite Manufacturing Engineer Overview Senior Aerospace SSP is seeking an experienced and driven Composite Manufacturing Engineer (CME) to lead fabrication and assembly initiatives within our Composite Cell. This role is responsible for the design, implementation, and optimization of complex composite manufacturing processes. You will serve as a tec\u2026",
+      "source": "adzuna",
+      "cluster": "composites",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 60,
+      "boost_tags": [],
+      "verdict": "YELLOW"
+    },
+    {
+      "job_title": "Quality Engineer",
+      "company_name": "JABIL CIRCUIT, INC",
+      "job_url": "https://www.adzuna.com/land/ad/5682692448?se=9niZ10Ys8RGR7c_0u9suJw&utm_medium=api&utm_source=d700c99c&v=EA682E021F34CD08C1894E90F3BA604A84756549",
+      "location": "Hopeful Heights, Boone County",
+      "posted_date": "2026-03-30",
+      "description": "Jabil\u2019s Florence, KY facilities are experiencing growth to support the manufacturing of servers. We are actively hiring to increase production. Please apply if you want to join a growing team! How will you make an impact? Represent the Quality function from the New Product Introduction process through the manufacturing process and including Field level performance. Work to prevent / mitigate potential risks proactively and lead corrective / preventive actions when issues occur. How will you get\u2026",
+      "source": "adzuna",
+      "cluster": "tooling_inspection",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 58,
+      "boost_tags": [],
+      "verdict": "YELLOW"
+    },
+    {
+      "job_title": "Administrative Assistant-Tooling & Manufacturing Engineering",
+      "company_name": "Robinson Helicopter Co",
+      "job_url": "https://www.adzuna.com/details/5681959287?utm_medium=api&utm_source=d700c99c",
+      "location": "Rolling Hills Estates, Los Angeles County",
+      "posted_date": "2026-03-29",
+      "description": "Description The Administrative Assistant for Tooling and Manufacturing Engineering provides administrative and operational support to the department. This role supports engineers and shop personnel by assisting with organization of departmental records, coordination of projects, and tracking of tooling-related activities. The Administrative Assistant plays an important role in helping the department operate efficiently by maintaining accurate documentation, assisting with planning and coordinat\u2026",
+      "source": "adzuna",
+      "cluster": "tooling_inspection",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 54,
+      "boost_tags": [],
+      "verdict": "YELLOW"
+    },
+    {
+      "job_title": "Manufacturing Engineer",
+      "company_name": "A & D",
+      "job_url": "https://www.adzuna.com/details/5682683400?utm_medium=api&utm_source=d700c99c",
+      "location": "Chula Vista, San Diego County",
+      "posted_date": "2026-03-30",
+      "description": "Temp Incorporate Engineering changes supporting manufacturing and purchasing activity. \u2022 Support the Chula Vista Service Center with planning and manufacturing, procurement, and floor support. \u2022 Innovate and design new tools to improve current manufacturing processes. \u2022 Review and commit airline customer orders and requests for quotes. \u2022 Write Engineering Change Requests. \u2022 Write tool orders to make new, alter and repair manufacturing tools. \u2022 Support procurement and suppliers of flight items b\u2026",
+      "source": "adzuna",
+      "cluster": "tooling_inspection",
+      "itar_flag": false,
+      "itar_detail": "",
+      "relevance_score": 54,
+      "boost_tags": [],
+      "verdict": "YELLOW"
+    }
+  ],
   "summary": {
-    "run_date": "2026-03-29",
-    "generated_utc": "2026-03-29T13:54:22.575001Z",
-    "total_scraped": 26,
-    "duplicates_removed": 24,
-    "filtered_jobs": 2,
-    "green_jobs": 0,
-    "yellow_jobs": 0,
+    "run_date": "2026-03-30",
+    "generated_utc": "2026-03-30T14:44:00.350100Z",
+    "total_scraped": 17,
+    "duplicates_removed": 0,
+    "filtered_jobs": 0,
+    "green_jobs": 11,
+    "yellow_jobs": 6,
     "promoted_companies": [
-      "Owens Corning",
-      "Rochester Electronics, LLC",
-      "Mativ",
-      "Haas Automation, Inc.",
-      "Medtronic",
-      "Superior Industries Inc",
-      "BuildASign",
-      "EPITEC",
-      "Giesecke+Devrient",
-      "Abbott",
-      "Dexter Magnetic Technologies",
-      "Kelly Science, Engineering, Technology & Telecom",
-      "W3Global",
-      "ASSA ABLOY Group",
-      "StandardAero",
-      "Nebraska Medicine",
-      "Atkore",
-      "Jobot",
-      "BioSpace",
-      "Evonik"
+      "Cognizant"
     ]
   }
 }
