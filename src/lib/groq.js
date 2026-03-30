@@ -79,10 +79,16 @@ ${jd.slice(0, 1200)}
 WRITE EXACTLY 3 SENTENCES using the logic below. Plain text only. No bold, no dashes as bullet points, no labels like "Sentence 1:".
 
 SENTENCE 1 — Identity + role fit (25–35 words):
-Start with: "MS Aerospace Engineering grad entering ${title} —"
-After the dash, write the ONE proof point from the background above that most directly answers what this specific role needs (use the VARIANT LENS to decide which one).
-Do NOT use "where" after the role title — it makes a job title sound like a location. Use the dash.
-The sentence ends when you have established: who the candidate is + the role + one concrete relevant experience.
+Position the candidate as a fresh Aerospace Engineering graduate targeting this role — do NOT use "MS" as the opener, it sounds like a credential list. Open with who they are in relation to the role.
+
+Good opener patterns (pick what fits the JD's environment naturally):
+- "Aerospace Engineering graduate targeting [role] with hands-on [composites/manufacturing/quality] experience in aerospace environments..."
+- "Fresh Aerospace Engineering grad with direct [fabrication/inspection/process] experience on [GE/Boeing] programs, stepping into [role]..."
+- "[Role-relevant domain] focused Aerospace Engineering graduate who [key relevant accomplishment] in [environment]..."
+
+After establishing identity, attach the ONE proof point that most directly answers what this role needs (use the VARIANT LENS above).
+The environment and product of the JD matter — composites company gets composites reference, CI-heavy role gets a process result, NPI role gets a first-time build.
+The sentence ends when a recruiter reading it would think: this person has done the core of this job before, even as a grad.
 
 SENTENCE 2 — Proof for the keywords (20–30 words):
 Use 2–3 of the JD keywords listed above. For each, state where or how it was applied — from the candidate background only.
@@ -290,8 +296,10 @@ function applyQCBarriers(parsed, variant) {
       s = s.replace(/[{}\\]/g, '').replace(/\s+/g, ' ').trim();
     }
 
-    // 7. Build LaTeX version: **text** -> \textbf{text}
-    parsed.mod1_summary_latex = s.replace(/\*\*([^*]+)\*\*/g, '\\textbf{$1}');
+    // 7. Build LaTeX version: **text** -> \textbf{text}, then escape % (LaTeX comment char)
+    parsed.mod1_summary_latex = s
+      .replace(/\*\*([^*]+)\*\*/g, '\\textbf{$1}')
+      .replace(/%/g, '\\%');
     parsed.mod1_summary = s;
   }
 
