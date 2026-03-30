@@ -18,5 +18,17 @@
   "lawfully admitted for permanent residence",
   "active clearance",
   "secret clearance",
-  "top secret"
+  "top secret",
+  "no sponsorship",
+  "no visa sponsorship",
+  "not able to sponsor",
+  "unable to sponsor",
+  "sponsorship is not available",
+  "sponsorship not available",
+  "does not sponsor",
+  "cannot sponsor",
+  "must be a us citizen",
+  "must be a u.s. citizen",
+  "us citizen only",
+  "citizenship only"
 ]

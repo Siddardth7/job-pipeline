@@ -46,7 +46,7 @@ ADZUNA_PAIRS = [
 
 BASE_URL        = "https://api.adzuna.com/v1/api/jobs/us/search/1"
 RESULTS_PER_REQ = 50
-MAX_DAYS_OLD    = 14   # only jobs posted in the last 2 weeks
+MAX_DAYS_OLD    = 3    # only jobs posted in the last 3 days (matches pipeline F4 72h window)
 REQUEST_DELAY   = 1.5  # seconds between requests
 
 # Short natural-language phrases per cluster (Adzuna supports plain keywords,

@@ -255,11 +255,9 @@ class AtsScraper:
         )
         desc = _strip_html(desc_blocks + " " + desc_extra)
 
-        created_ms  = raw.get("createdAt", 0) or 0
-        posted_date = (
-            datetime.utcfromtimestamp(created_ms / 1000).strftime("%Y-%m-%d")
-            if created_ms else datetime.utcnow().strftime("%Y-%m-%d")
-        )
+        # Lever returns all currently OPEN postings (no date filter available).
+        # Use today's date so F4 doesn't age-drop live jobs that were created weeks ago.
+        posted_date = datetime.utcnow().strftime("%Y-%m-%d")
 
         itar_flags = [kw for kw in ITAR_KEYWORDS if kw in desc.lower()]
 

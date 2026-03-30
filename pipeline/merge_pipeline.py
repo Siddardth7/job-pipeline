@@ -115,6 +115,7 @@ ROLE_RELEVANCE_TOKENS = [
 
 # F9 — Blacklisted company names (substring match, case-insensitive)
 BLACKLISTED_COMPANIES = [
+    # Tier-1 prime defense contractors
     "lockheed martin",
     "northrop grumman",
     "general dynamics",
@@ -124,6 +125,21 @@ BLACKLISTED_COMPANIES = [
     "bae systems",
     "anduril",
     "saronic",
+    # Defense-primary companies commonly returned by Adzuna
+    "leidos",
+    "saic",
+    "booz allen",
+    "curtiss-wright",
+    "mercury systems",
+    "moog inc",
+    "triumph group",
+    "ducommun",
+    "kaman aerospace",
+    "drs technologies",
+    "standardaero",
+    "draper laboratory",
+    "mitre corporation",
+    "aerospace corporation",
 ]
 
 # Scoring helpers (post-filter only — never used to bypass filters)
