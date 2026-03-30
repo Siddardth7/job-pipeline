@@ -133,7 +133,12 @@ STEP 3 — Before writing the summary, reason through these three questions (do 
   Q3. What does this company value in a person beyond technical skills — ownership? learning speed? rigor? Read between the lines of the JD.
   Use those three answers to drive each sentence. A summary that could work for a different variant is a wrong summary.
 
-STEP 4 — Write mod1_summary: exactly 3 sentences, ≤60 words total, plain text only.
+STEP 4 — Write mod1_summary: exactly 3 sentences, 70–90 words total, plain text only.
+Word count targets per sentence — these are targets, not hard stops:
+  Sentence 1: 25–35 words. Full clause with identity, context, and a proof point.
+  Sentence 2: 20–30 words. Full clause with keyword + where/how it was applied.
+  Sentence 3: 12–18 words. One complete, specific statement about the candidate as a person.
+No sentence shorter than 12 words. A 6-word sentence is a fragment, not a summary sentence.
 
 CANDIDATE PROOF POINTS — every keyword used in the summary must tie to one of these. If a JD keyword has no match here, leave it out:
 - Composites fabrication / autoclave / layup: SAMPE — 24-in composite fuselage, 2% void content, autoclave 275°F and 40 psi
@@ -168,7 +173,7 @@ Now return ONLY this JSON for the actual JD:
   "top5_jd_skills": ["kw1", "kw2", "kw3", "kw4", "kw5"],
   "summary_title": "exact job title from JD",
   "summary_structure_used": ${variant === 'A' ? 1 : variant === 'B' ? 2 : variant === 'C' ? 5 : 4},
-  "mod1_summary": "3 sentences, plain text, no formatting, 60 words max",
+  "mod1_summary": "3 full sentences, plain text, no formatting, 70–90 words, each sentence minimum 12 words",
   "mod2_skilllines": [
     {"label": "same label as base line 1", "skills": "reordered skills, added (Learning) if needed"},
     {"label": "same label as base line 2", "skills": "reordered skills"},
@@ -231,10 +236,10 @@ function applyQCBarriers(parsed, variant) {
     const sentences = s.match(/[^.!?]+[.!?]+/g) || [s];
     if (sentences.length > 3) s = sentences.slice(0, 3).join(' ');
 
-    // 3. Hard word cap: 65 words
+    // 3. Hard word cap: 95 words
     const words = s.split(/\s+/).filter(Boolean);
-    if (words.length > 65) {
-      s = words.slice(0, 65).join(' ').replace(/[,\s]+$/, '') + '.';
+    if (words.length > 95) {
+      s = words.slice(0, 95).join(' ').replace(/[,\s]+$/, '') + '.';
     }
 
     // 4. Clean up spacing
