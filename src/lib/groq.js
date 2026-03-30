@@ -81,19 +81,19 @@ export async function analyzeJobWithGroq(jd, variant, apiKey) {
   const VARIANT_LENS = {
     A: {
       angle: `Manufacturing execution — the role needs someone who can make parts, hold tolerances, and keep a production line moving. Sentence 1 should establish that the candidate has been on a shop floor building real hardware to aerospace tolerances, not studying it from a desk.`,
-      example: `MS Aerospace Engineering grad entering manufacturing, where building a 24-inch composite fuselage to 2% void content at SAMPE and holding zero customer escapes on 450+ flight-critical components at Tata Boeing are the same job: making hardware that passes. Applied SPC and CMM inspection to cut CNC-driven defects from 15% to 3% on GE and Boeing programs. Shows up to make parts right, not to report that they were wrong.`
+      example: `MS Aerospace Engineering grad entering manufacturing — built a 24-inch composite fuselage to 2% void content at SAMPE and CMM-validated 450+ flight-critical components to zero customer escapes at Tata Boeing, which is the same job: making hardware that passes. Cut CNC-driven defect rates from 15% to 3% on GE and Boeing programs using SPC and 8D root cause. Shows up to make parts right, not to report that they were wrong.`
     },
     B: {
-      angle: `Process improvement — the role needs someone who can look at a broken or inefficient process, measure what is actually wrong, and change the outcome with data. Sentence 1 should connect the candidate to a specific instance where they identified a root cause and the numbers moved as a result.`,
-      example: `MS Aerospace Engineering grad entering process engineering, where a Tata Boeing investigation — SPC to isolate CNC tool wear, 8D to close the loop — cut a recurring defect rate from 15% to 3% on live flight programs. The same data-first instinct reduced a composite cure cycle from 8 hours to 5 minutes at Beckman. Digs into the process until the variance disappears.`
+      angle: `Process improvement — the role needs someone who can look at a broken or inefficient process, measure what is actually wrong, and change the outcome with data. Sentence 1 should connect the candidate to a specific outcome: the process was broken, they found the variable, and the numbers changed.`,
+      example: `MS Aerospace Engineering grad entering process engineering — at Tata Boeing, SPC flagged CNC tool wear as the defect driver and 8D closed it out, cutting a recurring reject rate from 15% to 3% on live GE and Boeing flight programs. Carried the same instinct to Beckman, where DOE-driven process development compressed a composite cure cycle from 8 hours to 5 minutes. Digs into the process until the variance disappears.`
     },
     C: {
-      angle: `Quality assurance — the role needs someone who can accept or reject hardware with confidence: inspection, root cause, and enough materials knowledge to know why a part failed. Sentence 1 should establish that the candidate has stood behind a disposition decision on real aerospace hardware, not just run a checklist.`,
-      example: `MS Aerospace Engineering grad entering quality, with hands-on MRB disposition and CMM inspection of 450+ flight-critical components on GE and Boeing programs at Tata Boeing, backed by deep composites fabrication experience from SAMPE. Applied SPC-driven root cause to catch a CNC tool-wear defect trend before it escaped — 15% to 3% defect rate. Takes the accept/reject decision seriously because the hardware is flying.`
+      angle: `Quality assurance — the role needs someone who can accept or reject hardware with confidence: inspection, root cause, and enough materials knowledge to know why a part failed. Sentence 1 should establish that the candidate has stood behind a disposition decision on real aerospace hardware.`,
+      example: `MS Aerospace Engineering grad entering quality engineering — CMM-inspected 450+ flight-critical components on GE and Boeing programs at Tata Boeing and dispositioned MRB findings through RCCA, backed by firsthand composites fabrication experience building a 24-inch fuselage to aerospace tolerances at SAMPE. Applied SPC to catch a CNC tool-wear trend before it escaped — drove reject rate from 15% to 3%. Takes the accept/reject call seriously because the hardware is flying.`
     },
     D: {
-      angle: `NPI and equipment — the role needs someone who can build a manufacturing process that does not exist yet: design the tooling, develop the steps, validate the first article. Sentence 1 should connect the candidate to a first-time process build — not maintaining something established, but creating something repeatable from scratch.`,
-      example: `MS Aerospace Engineering grad entering NPI, having built a 24-inch composite fuselage from scratch at SAMPE — layup through autoclave qualification — and compressed a cure cycle from 8 hours to 5 minutes at Beckman through DOE-driven process development. Applied PFMEA and first-article inspection on GE and Boeing programs at Tata Boeing where hardware qualified or didn't. Runs toward the problem that doesn't have an answer yet.`
+      angle: `NPI and equipment — the role needs someone who can build a manufacturing process that does not exist yet: develop the steps, validate the first article, qualify the hardware. Sentence 1 should connect the candidate to a first-time process build — not maintaining something established, but creating something repeatable from scratch.`,
+      example: `MS Aerospace Engineering grad entering NPI — built a 24-inch composite fuselage from scratch at SAMPE, layup through autoclave qualification, then compressed a cure cycle from 8 hours to 5 minutes at Beckman through DOE-driven process development; both were processes that did not exist before. Validated first-article hardware on GE and Boeing programs at Tata Boeing using PFMEA and CMM inspection. Runs toward the problem that does not have an answer yet.`
     }
   };
   const variantLens = VARIANT_LENS[variant] || VARIANT_LENS.A;
@@ -150,20 +150,23 @@ CANDIDATE PROOF POINTS — every keyword used in the summary must tie to one of 
 VARIANT ${variant} LENS — this determines what sentence 1 is about. It is not interchangeable with other variants:
 ${variantLens.angle}
 
-SENTENCE 1 — Identity + primary fit:
-State who the candidate is (MS Aerospace Engineering grad) and in the same breath, connect to the thing the role needs most using the variant lens above and a relevant proof point.
+SENTENCE 1 — Identity + primary fit (25–35 words):
+Open with "MS Aerospace Engineering grad entering [role]" then use a dash (—) to pivot directly into the experience that answers the role's primary need.
+GRAMMAR RULE: Never use "entering [role], where..." — "where" makes a job title sound like a location. Use a dash or a new clause instead.
 The product and environment of the JD matter — composites role references composites fabrication; CI role references a process they improved; NPI role references something they built from scratch.
 After reading sentence 1, a recruiter should think: this person has done this before, at the entry level.
 
-SENTENCE 2 — Proof for the keywords:
-Pick 2–4 JD keywords from top5_jd_skills that have a proof point. For each, briefly show where or how — not a list, a sentence.
-Sentence 2 should feel like the evidence backing the claim made in sentence 1, not a separate thought.
-The flow should be: sentence 1 sets up the claim → sentence 2 delivers the proof.
+SENTENCE 2 — Proof for the keywords (20–30 words):
+Pick 2–4 JD keywords from top5_jd_skills that have a proof point. For each, show where or how — not a list, a real sentence.
+Sentence 2 should feel like evidence for sentence 1's claim, not a new topic.
+Do not end the sentence by dangling a tool name: "...using SPC" at the end of a sentence is weak. Embed the tool mid-sentence with context.
 
-SENTENCE 3 — What the candidate brings as a person:
-One sentence, 10–15 words. Reflect what this company values non-technically based on what you read in the JD.
-Do NOT use: "passionate", "results-driven", "leveraging", "dynamic", "thrives in fast-paced environments", "team player", "eager to learn".
-Write what the candidate is as a person — the kind of person who fits this team. Make it specific enough that it could not be said about anyone.
+SENTENCE 3 — What the candidate brings as a person (12–18 words):
+One sentence. Reflect what this company values non-technically based on the JD — read between the lines.
+STRUCTURE: Show a behavior or trait, not an output. "Digs into the process until the variance disappears" is a person. "Delivers precise technical solutions" is a job description.
+BANNED openers: "Delivers", "Brings", "Offers", "Provides", "Demonstrates" — these describe outputs, not people.
+BANNED phrases: "passionate", "results-driven", "leveraging", "dynamic", "thrives in fast-paced environments", "team player", "eager to learn", "precise technical solutions".
+Write something that could only be said about this candidate, not any engineer.
 
 VARIANT ${variant} EXAMPLE — this is what the correct angle and flow look like for this variant (do NOT copy it, write your own for the actual JD):
   mod1_summary: "${variantLens.example}"
