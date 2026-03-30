@@ -39,7 +39,8 @@ except ImportError:
 
 log = logging.getLogger("jsearch_scraper")
 
-JSEARCH_API_KEY = os.environ.get("JSEARCH_API_KEY", "")
+_raw_keys = os.environ.get("JSEARCH_API_KEYS", "") or os.environ.get("JSEARCH_API_KEY", "")
+JSEARCH_API_KEYS = [k.strip() for k in _raw_keys.split(",") if k.strip()]
 JSEARCH_HOST    = "jsearch.p.rapidapi.com"
 JSEARCH_URL     = "https://jsearch.p.rapidapi.com/search"
 
@@ -104,15 +105,28 @@ class JSearchScraper:
         compatibility but not used — JSearch runs hardcoded title queries.
         Returns jobs in pipeline schema.
         """
-        if not JSEARCH_API_KEY:
-            log.warning("[jsearch] JSEARCH_API_KEY not set — skipping")
+        if not JSEARCH_API_KEYS:
+            log.warning("[jsearch] JSEARCH_API_KEYS not set — skipping")
             return []
 
+        for key in JSEARCH_API_KEYS:
+            result = self._attempt_run(key)
+            if result is not None:
+                log.info(f"[jsearch] Done. {len(result)} jobs.")
+                return result
+
+        log.warning("[jsearch] All JSearch keys quota-exhausted")
+        return []
+
+    def _attempt_run(self, key: str) -> Optional[List[Dict]]:
+        """
+        Try all queries with one key. Returns job list on success,
+        None if key is quota-exhausted (caller should try next key).
+        """
         headers = {
-            "X-RapidAPI-Key":  JSEARCH_API_KEY,
+            "X-RapidAPI-Key":  key,
             "X-RapidAPI-Host": JSEARCH_HOST,
         }
-
         all_jobs:        List[Dict] = []
         seen_ids:        set        = set()
         api_calls                   = 0
@@ -120,7 +134,7 @@ class JSearchScraper:
 
         for i, query in enumerate(self.TITLE_QUERIES):
             if api_calls >= self.MAX_CALLS_PER_DAY:
-                log.info(f"[jsearch] Daily cap ({self.MAX_CALLS_PER_DAY}) reached — stopping")
+                log.info(f"[jsearch] Daily cap ({self.MAX_CALLS_PER_DAY}) reached")
                 break
 
             log.info(f"[jsearch] [{i+1}/{len(self.TITLE_QUERIES)}] Query: {query!r}")
@@ -130,8 +144,8 @@ class JSearchScraper:
             api_calls += 1
 
             if result == "quota":
-                log.error("[jsearch] 403 — monthly quota exhausted. Stopping.")
-                break
+                log.info("[jsearch] 403 quota — rotating to next key")
+                return None  # exhausted
 
             if result == "rate_limited":
                 consecutive_429s += 1
@@ -140,18 +154,14 @@ class JSearchScraper:
                     f"{consecutive_429s}/{self.MAX_CONSECUTIVE_429} consecutive 429s"
                 )
                 if consecutive_429s >= self.MAX_CONSECUTIVE_429:
-                    log.error(
-                        f"[jsearch] {self.MAX_CONSECUTIVE_429} consecutive 429s — "
-                        f"quota likely exhausted. Aborting remaining queries."
-                    )
-                    break
+                    log.info("[jsearch] Consecutive 429s — rotating to next key")
+                    return None  # exhausted
                 continue
 
             if result == "error":
                 log.warning(f"[jsearch] Query {i+1} skipped (error)")
                 continue
 
-            # Successful response — reset consecutive counter
             consecutive_429s = 0
 
             for job in result:
@@ -166,14 +176,13 @@ class JSearchScraper:
                     if is_aggregator(apply_link):
                         continue
 
-                desc         = job.get("job_description", "") or ""
-                city         = job.get("job_city",  "") or ""
-                state        = job.get("job_state", "") or ""
-                location     = f"{city}, {state}".strip(", ") or "United States"
-                posted_raw   = job.get("job_posted_at_datetime_utc", "") or ""
-                posted_date  = posted_raw[:10] if posted_raw else datetime.utcnow().strftime("%Y-%m-%d")
-
-                itar_flags   = check_itar(desc)   # single call, reused below
+                desc        = job.get("job_description", "") or ""
+                city        = job.get("job_city",  "") or ""
+                state       = job.get("job_state", "") or ""
+                location    = f"{city}, {state}".strip(", ") or "United States"
+                posted_raw  = job.get("job_posted_at_datetime_utc", "") or ""
+                posted_date = posted_raw[:10] if posted_raw else datetime.utcnow().strftime("%Y-%m-%d")
+                itar_flags  = check_itar(desc)
 
                 all_jobs.append({
                     "job_title":    job.get("job_title", ""),
@@ -189,7 +198,6 @@ class JSearchScraper:
                     "raw_id":       job_id,
                 })
 
-        log.info(f"[jsearch] Done. {len(all_jobs)} jobs from {api_calls} API calls.")
         return all_jobs
 
     def _single_query(self, headers: Dict, query: str):
