@@ -81,10 +81,11 @@ WRITE EXACTLY 3 SENTENCES using the logic below. Plain text only. No bold, no da
 SENTENCE 1 — Identity + role fit (25–35 words):
 Position the candidate as a fresh Aerospace Engineering graduate targeting this role — do NOT use "MS" as the opener, it sounds like a credential list. Open with who they are in relation to the role.
 
-Good opener patterns (pick what fits the JD's environment naturally):
-- "Aerospace Engineering graduate targeting [role] with hands-on [composites/manufacturing/quality] experience in aerospace environments..."
-- "Fresh Aerospace Engineering grad with direct [fabrication/inspection/process] experience on [GE/Boeing] programs, stepping into [role]..."
-- "[Role-relevant domain] focused Aerospace Engineering graduate who [key relevant accomplishment] in [environment]..."
+Good opener patterns (pick the one that fits the JD's environment and role most naturally):
+- "Aerospace Engineering graduate with [domain expertise] experience across [programs/environments], targeting [role] in aerospace manufacturing."
+- "Aerospace Engineering graduate who [key accomplishment tied to this role's primary need] — directly aligned for [role]."
+- "[Manufacturing/Quality/Process]-focused Aerospace Engineering graduate with production floor experience in [relevant domain], targeting [role] in [composites/NPI/CI] environments."
+- "Aerospace Engineering graduate with a foundation in [relevant domain 1], [relevant domain 2], and [relevant domain 3] — built for entry-level [role] in manufacturing."
 
 After establishing identity, attach the ONE proof point that most directly answers what this role needs (use the VARIANT LENS above).
 The environment and product of the JD matter — composites company gets composites reference, CI-heavy role gets a process result, NPI role gets a first-time build.
