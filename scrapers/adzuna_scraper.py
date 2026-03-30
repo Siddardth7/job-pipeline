@@ -36,8 +36,13 @@ except ImportError:
 
 log = logging.getLogger("adzuna_scraper")
 
-ADZUNA_APP_ID  = os.environ.get("ADZUNA_APP_ID",  "")
-ADZUNA_APP_KEY = os.environ.get("ADZUNA_APP_KEY", "")
+_raw_ids  = os.environ.get("ADZUNA_APP_IDS",  "") or os.environ.get("ADZUNA_APP_ID",  "")
+_raw_keys = os.environ.get("ADZUNA_APP_KEYS", "") or os.environ.get("ADZUNA_APP_KEY", "")
+ADZUNA_PAIRS = [
+    (i.strip(), k.strip())
+    for i, k in zip(_raw_ids.split(","), _raw_keys.split(","))
+    if i.strip() and k.strip()
+]
 
 BASE_URL        = "https://api.adzuna.com/v1/api/jobs/us/search/1"
 RESULTS_PER_REQ = 50
@@ -71,10 +76,26 @@ class AdzunaScraper:
     """Queries Adzuna US job search API and normalises results to pipeline format."""
 
     def run(self, queries: List[Dict]) -> List[Dict]:
-        if not ADZUNA_APP_ID or not ADZUNA_APP_KEY:
-            log.warning("[adzuna] ADZUNA_APP_ID or ADZUNA_APP_KEY not set — skipping")
+        if not ADZUNA_PAIRS:
+            log.warning("[adzuna] ADZUNA_APP_IDS or ADZUNA_APP_KEYS not set — skipping")
             return []
 
+        for app_id, app_key in ADZUNA_PAIRS:
+            result = self._attempt_run(app_id, app_key, queries)
+            if result is not None:
+                log.info(f"[adzuna] Total unique jobs: {len(result)}")
+                return result
+
+        log.warning("[adzuna] All Adzuna credentials failed or quota-exhausted")
+        return []
+
+    def _attempt_run(
+        self, app_id: str, app_key: str, queries: List[Dict]
+    ) -> Optional[List[Dict]]:
+        """
+        Try all queries with one credential pair. Returns job list on success,
+        None if 401/429 (caller should try next pair).
+        """
         all_jobs: List[Dict] = []
         seen: set = set()
 
@@ -83,9 +104,9 @@ class AdzunaScraper:
             phrase  = CLUSTER_QUERIES.get(cluster)
 
             if not phrase:
-                # Fall back to first quoted title from the boolean query string
                 raw_q  = q_dict.get("query", "")
-                tokens = [t.strip('"()') for t in raw_q.split() if t.strip('"()') and t.upper() not in ("OR", "AND", "NOT")]
+                tokens = [t.strip('"()') for t in raw_q.split()
+                          if t.strip('"()') and t.upper() not in ("OR", "AND", "NOT")]
                 phrase = " ".join(tokens[:5]).strip()
 
             if not phrase:
@@ -94,11 +115,12 @@ class AdzunaScraper:
             log.info(f"[adzuna] Query ({cluster}): {phrase!r}")
             time.sleep(REQUEST_DELAY)
 
-            results = self._api_call(phrase)
+            status, results = self._api_call(phrase, app_id, app_key)
+            if status == "quota":
+                return None  # 401/429 — rotate to next pair
             for raw in results:
                 self._add_if_new(raw, cluster, seen, all_jobs)
 
-        log.info(f"[adzuna] Total unique jobs: {len(all_jobs)}")
         return all_jobs
 
     # ── Internal helpers ──────────────────────────────────────────────────────
@@ -116,36 +138,33 @@ class AdzunaScraper:
         if normalized:
             out.append(normalized)
 
-    def _api_call(self, query: str) -> List[Dict]:
+    def _api_call(self, query: str, app_id: str, app_key: str):
+        """Returns ("ok", results) or ("quota", []) on auth/quota failure."""
         params = {
-            "app_id":          ADZUNA_APP_ID,
-            "app_key":         ADZUNA_APP_KEY,
-            "what":            query,
-            "where":           "United States",
+            "app_id":           app_id,
+            "app_key":          app_key,
+            "what":             query,
+            "where":            "United States",
             "results_per_page": RESULTS_PER_REQ,
-            "max_days_old":    MAX_DAYS_OLD,
-            "content-type":    "application/json",
+            "max_days_old":     MAX_DAYS_OLD,
+            "content-type":     "application/json",
         }
         try:
             r = requests.get(BASE_URL, params=params, timeout=20)
-            if r.status_code == 401:
-                log.error("[adzuna] 401 Unauthorized — check ADZUNA_APP_ID / ADZUNA_APP_KEY")
-                return []
+            if r.status_code in (401, 403):
+                return ("quota", [])
             if r.status_code == 429:
-                log.error("[adzuna] 429 Too Many Requests — daily quota exhausted")
-                return []
+                return ("quota", [])
             if r.status_code != 200:
                 log.warning(f"[adzuna] HTTP {r.status_code} for query {query!r}")
-                return []
-
+                return ("ok", [])
             data = r.json()
             results = data.get("results", [])
             log.info(f"  [adzuna] {len(results)} results")
-            return results
-
+            return ("ok", results)
         except Exception as exc:
             log.error(f"[adzuna] Request error for {query!r}: {exc}")
-            return []
+            return ("ok", [])
 
     def _normalize(self, raw: Dict, cluster: str) -> Optional[Dict]:
         title    = raw.get("title",    "") or ""
