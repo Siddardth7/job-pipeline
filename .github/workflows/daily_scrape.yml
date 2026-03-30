@@ -10,11 +10,11 @@ permissions:
 
 # ── All API keys injected as env vars so every script can read them ──────────
 env:
-  JSEARCH_API_KEY:      ${{ secrets.JSEARCH_API_KEY }}
-  APIFY_TOKEN:          ${{ secrets.APIFY_TOKEN }}
+  JSEARCH_API_KEYS:     ${{ secrets.JSEARCH_API_KEYS }}
+  APIFY_TOKENS:         ${{ secrets.APIFY_TOKENS }}
   SERPAPI_KEY:          ${{ secrets.SERPAPI_KEY }}
-  ADZUNA_APP_ID:        ${{ secrets.ADZUNA_APP_ID }}
-  ADZUNA_APP_KEY:       ${{ secrets.ADZUNA_APP_KEY }}
+  ADZUNA_APP_IDS:       ${{ secrets.ADZUNA_APP_IDS }}
+  ADZUNA_APP_KEYS:      ${{ secrets.ADZUNA_APP_KEYS }}
   SUPABASE_URL:         ${{ secrets.SUPABASE_URL }}
   SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
 
