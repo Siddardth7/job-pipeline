@@ -76,14 +76,27 @@ export async function analyzeJobWithGroq(jd, variant, apiKey) {
   const baseLines = BASE_SKILLLINES[variant] || BASE_SKILLLINES.A;
   const baseLinesJson = JSON.stringify(baseLines, null, 2);
 
-  // Variant → primary role focus. Informs Part 1 of the summary.
-  const VARIANT_FOCUS = {
-    A: "production execution, on-floor manufacturing output, and process adherence",
-    B: "process optimization, continuous improvement, and lean manufacturing",
-    C: "quality systems, composites inspection, defect control, and materials",
-    D: "new product introduction, process development, and production launch readiness"
+  // Per-variant: the specific angle that drives sentence 1 + a concrete example of what that sounds like.
+  // These are genuinely different — if a summary could work for another variant, it is wrong.
+  const VARIANT_LENS = {
+    A: {
+      angle: `Manufacturing execution — the role needs someone who can make parts, hold tolerances, and keep a production line moving. Sentence 1 should establish that the candidate has been on a shop floor building real hardware to aerospace tolerances, not studying it from a desk.`,
+      example: `MS Aerospace Engineering grad entering manufacturing, where building a 24-inch composite fuselage to 2% void content at SAMPE and holding zero customer escapes on 450+ flight-critical components at Tata Boeing are the same job: making hardware that passes. Applied SPC and CMM inspection to cut CNC-driven defects from 15% to 3% on GE and Boeing programs. Shows up to make parts right, not to report that they were wrong.`
+    },
+    B: {
+      angle: `Process improvement — the role needs someone who can look at a broken or inefficient process, measure what is actually wrong, and change the outcome with data. Sentence 1 should connect the candidate to a specific instance where they identified a root cause and the numbers moved as a result.`,
+      example: `MS Aerospace Engineering grad entering process engineering, where a Tata Boeing investigation — SPC to isolate CNC tool wear, 8D to close the loop — cut a recurring defect rate from 15% to 3% on live flight programs. The same data-first instinct reduced a composite cure cycle from 8 hours to 5 minutes at Beckman. Digs into the process until the variance disappears.`
+    },
+    C: {
+      angle: `Quality assurance — the role needs someone who can accept or reject hardware with confidence: inspection, root cause, and enough materials knowledge to know why a part failed. Sentence 1 should establish that the candidate has stood behind a disposition decision on real aerospace hardware, not just run a checklist.`,
+      example: `MS Aerospace Engineering grad entering quality, with hands-on MRB disposition and CMM inspection of 450+ flight-critical components on GE and Boeing programs at Tata Boeing, backed by deep composites fabrication experience from SAMPE. Applied SPC-driven root cause to catch a CNC tool-wear defect trend before it escaped — 15% to 3% defect rate. Takes the accept/reject decision seriously because the hardware is flying.`
+    },
+    D: {
+      angle: `NPI and equipment — the role needs someone who can build a manufacturing process that does not exist yet: design the tooling, develop the steps, validate the first article. Sentence 1 should connect the candidate to a first-time process build — not maintaining something established, but creating something repeatable from scratch.`,
+      example: `MS Aerospace Engineering grad entering NPI, having built a 24-inch composite fuselage from scratch at SAMPE — layup through autoclave qualification — and compressed a cure cycle from 8 hours to 5 minutes at Beckman through DOE-driven process development. Applied PFMEA and first-article inspection on GE and Boeing programs at Tata Boeing where hardware qualified or didn't. Runs toward the problem that doesn't have an answer yet.`
+    }
   };
-  const variantFocus = VARIANT_FOCUS[variant] || VARIANT_FOCUS.A;
+  const variantLens = VARIANT_LENS[variant] || VARIANT_LENS.A;
 
   const system = `You are a resume optimizer for Siddardth Pathipaka (MS Aerospace Engineering, UIUC Dec 2025).
 
@@ -114,42 +127,41 @@ ${baseLinesJson}
 
 STEP 1 — Extract top5_jd_skills: 5 specific technical keywords from the JD, all different.
 STEP 2 — Extract summary_title: exact job title from the JD.
-STEP 3 — Write mod1_summary using the 3-PART FRAMEWORK below. 3 sentences, ≤60 words, plain text only.
+STEP 3 — Before writing the summary, reason through these three questions (do NOT include answers in output):
+  Q1. What is the single most important thing this specific role needs from a candidate — one phrase, from the JD?
+  Q2. Which proof point below most directly answers Q1?
+  Q3. What does this company value in a person beyond technical skills — ownership? learning speed? rigor? Read between the lines of the JD.
+  Use those three answers to drive each sentence. A summary that could work for a different variant is a wrong summary.
 
-CANDIDATE PROOF POINTS — every keyword you use in the summary must map to one of these:
-- Composites fabrication / autoclave processing: SAMPE — 24-in composite fuselage, 2% void content, autoclave at 275°F and 40 psi
-- Defect reduction / SPC / quality systems: Tata Boeing — drove defect rate from 15% to 3% on GE and Boeing flight programs
-- Root cause analysis / 8D / CAPA / MRB / RCCA: Tata Boeing — MRB disposition and RCCA investigations on aerospace flight hardware
-- Process development / cure cycle / R&D: Beckman Institute — compressed cure cycle from 8 hours to 5 minutes
-- Tools with proof: SPC, 8D methodology, CMM inspection, GD&T, FMEA, autoclave processing, DOE
+STEP 4 — Write mod1_summary: exactly 3 sentences, ≤60 words total, plain text only.
 
-PART 1 — Opening (sentence 1):
-Establish identity: MS Aerospace Engineering graduate entering [summary_title].
-In the same sentence, tie the PRIMARY responsibility of this role (${variantFocus}) to one of the proof points above.
-The product and environment of the specific role matter — if it is composites-heavy, reference composites; if it is CI/NPI, reference process development.
-Result: within one sentence, the reader knows who the candidate is and why they fit this specific role.
+CANDIDATE PROOF POINTS — every keyword used in the summary must tie to one of these. If a JD keyword has no match here, leave it out:
+- Composites fabrication / autoclave / layup: SAMPE — 24-in composite fuselage, 2% void content, autoclave 275°F and 40 psi
+- Defect reduction / SPC / quality / CMM inspection: Tata Boeing — drove defect rate 15% to 3% on GE and Boeing flight programs; CMM-validated 450+ flight-critical components to 0.02mm
+- Root cause / 8D / CAPA / MRB / RCCA: Tata Boeing — MRB disposition and RCCA investigations on aerospace flight hardware
+- Process development / cure cycle / DOE: Beckman Institute — compressed cure cycle from 8 hours to 5 minutes
+- Tools with proof: SPC, 8D methodology, CMM inspection, GD&T, FMEA, autoclave processing, DOE, PFMEA
 
-PART 2 — Middle (sentence 2):
-Take 3–5 of the top5_jd_skills that have a matching proof point above.
-For each keyword used, briefly show where or how the candidate applied it — do not just list keywords.
-Write a single sentence that embeds these keyword+proof pairs naturally.
-RULE: if a JD keyword has no proof point, do not use it in the summary. The job may not be the right fit for that keyword.
+VARIANT ${variant} LENS — this determines what sentence 1 is about. It is not interchangeable with other variants:
+${variantLens.angle}
 
-PART 3 — Closing (sentence 3):
-Reflect what this company values in a candidate beyond technical skills — ownership, initiative, learning agility, accountability, curiosity.
-Do not copy their mission statement verbatim. Do not write generic phrases like "passionate about excellence" or "thrives in fast-paced environments."
-Write a genuine 10–15 word statement about what the candidate personally brings to the team as a human being.
+SENTENCE 1 — Identity + primary fit:
+State who the candidate is (MS Aerospace Engineering grad) and in the same breath, connect to the thing the role needs most using the variant lens above and a relevant proof point.
+The product and environment of the JD matter — composites role references composites fabrication; CI role references a process they improved; NPI role references something they built from scratch.
+After reading sentence 1, a recruiter should think: this person has done this before, at the entry level.
 
-TONE RULES:
-- Must sound like a person wrote it, not an AI
-- Keywords are present but embedded in real context — no keyword lists
-- No fluff, no AI tells ("passionate", "results-driven", "leveraging", "dynamic")
-- Every word earns its place
+SENTENCE 2 — Proof for the keywords:
+Pick 2–4 JD keywords from top5_jd_skills that have a proof point. For each, briefly show where or how — not a list, a sentence.
+Sentence 2 should feel like the evidence backing the claim made in sentence 1, not a separate thought.
+The flow should be: sentence 1 sets up the claim → sentence 2 delivers the proof.
 
-EXAMPLE (composites QA role — write your own for the actual JD):
-  top5_jd_skills: ["autoclave processing", "SPC", "MRB disposition", "CAPA", "AS9100"]
-  summary_title: "Quality Engineer"
-  mod1_summary: "MS Aerospace Engineering graduate stepping into quality engineering, with firsthand composites inspection and MRB disposition experience on Boeing flight hardware at Tata Boeing. Drove defect rates from 15% to 3% applying SPC and 8D root cause — the same CAPA discipline AS9100 programs demand. Brings the kind of ownership that makes QMS audits less painful for everyone."
+SENTENCE 3 — What the candidate brings as a person:
+One sentence, 10–15 words. Reflect what this company values non-technically based on what you read in the JD.
+Do NOT use: "passionate", "results-driven", "leveraging", "dynamic", "thrives in fast-paced environments", "team player", "eager to learn".
+Write what the candidate is as a person — the kind of person who fits this team. Make it specific enough that it could not be said about anyone.
+
+VARIANT ${variant} EXAMPLE — this is what the correct angle and flow look like for this variant (do NOT copy it, write your own for the actual JD):
+  mod1_summary: "${variantLens.example}"
 
 Now return ONLY this JSON for the actual JD:
 {
