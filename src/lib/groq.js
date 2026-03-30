@@ -76,30 +76,14 @@ export async function analyzeJobWithGroq(jd, variant, apiKey) {
   const baseLines = BASE_SKILLLINES[variant] || BASE_SKILLLINES.A;
   const baseLinesJson = JSON.stringify(baseLines, null, 2);
 
-  // Variant → structure skeleton. Picked deterministically — no model choice.
-  const STRUCTURE_SKELETONS = {
-    A: { // Manufacturing & Plant Ops
-      s1: '[JOB_TITLE] with hands-on [KW1] and [KW2] experience at [COMPANY].',
-      s2: 'Delivered [KW3] and [KW4] results using [TOOL_A] and [TOOL_B].',
-      s3: '[SOFT_CLOSE_WITH_KW5].'
-    },
-    B: { // Process & CI
-      s1: '[JOB_TITLE] specializing in [KW1] and [KW2], with direct exposure at [COMPANY].',
-      s2: 'Built a track record of [KW3] and [KW4] improvements using [TOOL_A] and [TOOL_B].',
-      s3: '[SOFT_CLOSE_WITH_KW5].'
-    },
-    C: { // Quality & Materials
-      s1: '[JOB_TITLE] built on [KW1] and [KW2] work at [COMPANY].',
-      s2: 'Validated [KW3] and [KW4] programs using [TOOL_A] and [TOOL_B].',
-      s3: '[SOFT_CLOSE_WITH_KW5].'
-    },
-    D: { // Equipment & NPI
-      s1: '[JOB_TITLE] combining [KW1] depth with [KW2] execution at [COMPANY].',
-      s2: 'Delivers [KW3] and [KW4] milestones using [TOOL_A] and [TOOL_B].',
-      s3: '[SOFT_CLOSE_WITH_KW5].'
-    }
+  // Variant → primary role focus. Informs Part 1 of the summary.
+  const VARIANT_FOCUS = {
+    A: "production execution, on-floor manufacturing output, and process adherence",
+    B: "process optimization, continuous improvement, and lean manufacturing",
+    C: "quality systems, composites inspection, defect control, and materials",
+    D: "new product introduction, process development, and production launch readiness"
   };
-  const skeleton = STRUCTURE_SKELETONS[variant] || STRUCTURE_SKELETONS.A;
+  const variantFocus = VARIANT_FOCUS[variant] || VARIANT_FOCUS.A;
 
   const system = `You are a resume optimizer for Siddardth Pathipaka (MS Aerospace Engineering, UIUC Dec 2025).
 
@@ -130,29 +114,42 @@ ${baseLinesJson}
 
 STEP 1 — Extract top5_jd_skills: 5 specific technical keywords from the JD, all different.
 STEP 2 — Extract summary_title: exact job title from the JD.
-STEP 3 — Fill this summary skeleton (replace each [SLOT] with the specified value):
+STEP 3 — Write mod1_summary using the 3-PART FRAMEWORK below. 3 sentences, ≤60 words, plain text only.
 
-${skeleton.s1}
-${skeleton.s2}
-${skeleton.s3}
+CANDIDATE PROOF POINTS — every keyword you use in the summary must map to one of these:
+- Composites fabrication / autoclave processing: SAMPE — 24-in composite fuselage, 2% void content, autoclave at 275°F and 40 psi
+- Defect reduction / SPC / quality systems: Tata Boeing — drove defect rate from 15% to 3% on GE and Boeing flight programs
+- Root cause analysis / 8D / CAPA / MRB / RCCA: Tata Boeing — MRB disposition and RCCA investigations on aerospace flight hardware
+- Process development / cure cycle / R&D: Beckman Institute — compressed cure cycle from 8 hours to 5 minutes
+- Tools with proof: SPC, 8D methodology, CMM inspection, GD&T, FMEA, autoclave processing, DOE
 
-SLOT RULES:
-- [JOB_TITLE] = summary_title (verbatim)
-- [KW1] = top5_jd_skills[0] verbatim
-- [KW2] = top5_jd_skills[1] verbatim
-- [KW3] = top5_jd_skills[2] verbatim
-- [KW4] = top5_jd_skills[3] verbatim
-- [KW5] = top5_jd_skills[4] verbatim — appears ONLY in sentence 3
-- [COMPANY] = "Tata Boeing" or "SAMPE" or "Beckman Institute" — pick the most relevant
-- [TOOL_A], [TOOL_B] = pick 2 from candidate tools list: SPC, 8D methodology, FMEA, GD&T, CMM inspection, ABAQUS, SolidWorks
-- [SOFT_CLOSE_WITH_KW5] = one 10-15 word sentence that naturally uses KW5 as a topic
-- Total summary: 60 words or fewer — count carefully
-- mod1_summary value must be plain text only — no ** markers, no backslashes, no curly braces
+PART 1 — Opening (sentence 1):
+Establish identity: MS Aerospace Engineering graduate entering [summary_title].
+In the same sentence, tie the PRIMARY responsibility of this role (${variantFocus}) to one of the proof points above.
+The product and environment of the specific role matter — if it is composites-heavy, reference composites; if it is CI/NPI, reference process development.
+Result: within one sentence, the reader knows who the candidate is and why they fit this specific role.
 
-EXAMPLE (for a composites QA role — use your own keywords for the actual JD):
-  top5_jd_skills: ["autoclave processing", "defect inspection", "SPC-driven quality", "CAPA closure", "AS9100 compliance"]
+PART 2 — Middle (sentence 2):
+Take 3–5 of the top5_jd_skills that have a matching proof point above.
+For each keyword used, briefly show where or how the candidate applied it — do not just list keywords.
+Write a single sentence that embeds these keyword+proof pairs naturally.
+RULE: if a JD keyword has no proof point, do not use it in the summary. The job may not be the right fit for that keyword.
+
+PART 3 — Closing (sentence 3):
+Reflect what this company values in a candidate beyond technical skills — ownership, initiative, learning agility, accountability, curiosity.
+Do not copy their mission statement verbatim. Do not write generic phrases like "passionate about excellence" or "thrives in fast-paced environments."
+Write a genuine 10–15 word statement about what the candidate personally brings to the team as a human being.
+
+TONE RULES:
+- Must sound like a person wrote it, not an AI
+- Keywords are present but embedded in real context — no keyword lists
+- No fluff, no AI tells ("passionate", "results-driven", "leveraging", "dynamic")
+- Every word earns its place
+
+EXAMPLE (composites QA role — write your own for the actual JD):
+  top5_jd_skills: ["autoclave processing", "SPC", "MRB disposition", "CAPA", "AS9100"]
   summary_title: "Quality Engineer"
-  mod1_summary: "Quality Engineer built on autoclave processing and defect inspection work at Tata Boeing. Validated SPC-driven quality and CAPA closure programs using 8D methodology and CMM inspection. Brings rigorous AS9100 compliance discipline to every manufacturing program."
+  mod1_summary: "MS Aerospace Engineering graduate stepping into quality engineering, with firsthand composites inspection and MRB disposition experience on Boeing flight hardware at Tata Boeing. Drove defect rates from 15% to 3% applying SPC and 8D root cause — the same CAPA discipline AS9100 programs demand. Brings the kind of ownership that makes QMS audits less painful for everyone."
 
 Now return ONLY this JSON for the actual JD:
 {
