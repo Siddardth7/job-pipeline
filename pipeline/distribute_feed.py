@@ -258,7 +258,8 @@ def run():
 
             score, matched = score_job_for_user(job, user)
 
-            if score < min_score:
+            # min_score=0 means "show everything" — bypass threshold
+            if min_score > 0 and score < min_score:
                 continue
 
             feed_row = {
