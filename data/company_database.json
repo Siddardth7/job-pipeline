@@ -429,6 +429,11 @@
       "name": "Cognizant",
       "domain": "",
       "industry": "Auto-promoted"
+    },
+    {
+      "name": "JABIL CIRCUIT, INC",
+      "domain": "",
+      "industry": "Auto-promoted"
     }
   ],
   "promotion_tracking": {
@@ -582,7 +587,9 @@
     ],
     "JABIL CIRCUIT, INC": [
       "2026-03-11",
-      "2026-03-30"
+      "2026-03-30",
+      "2026-03-31",
+      "2026-03-31"
     ],
     "Hermeus": [
       "2026-03-11",
@@ -969,7 +976,8 @@
       "2026-03-30"
     ],
     "S&ME, Inc.": [
-      "2026-03-30"
+      "2026-03-30",
+      "2026-03-31"
     ],
     "Fm Industries": [
       "2026-03-30"
@@ -978,10 +986,94 @@
       "2026-03-30"
     ],
     "Robinson Helicopter Co": [
-      "2026-03-30"
+      "2026-03-30",
+      "2026-03-31"
     ],
     "A & D": [
-      "2026-03-30"
+      "2026-03-30",
+      "2026-03-31"
+    ],
+    "Spectrum Plastics Group, A DuPont Business": [
+      "2026-03-31"
+    ],
+    "Oxford Global Resources": [
+      "2026-03-31"
+    ],
+    "Gulfstream Aerospace": [
+      "2026-03-31"
+    ],
+    "Yamaha Motor Corporation, USA": [
+      "2026-03-31"
+    ],
+    "U.S. Engineering": [
+      "2026-03-31"
+    ],
+    "Mitsubishi Electric Power Products, Inc.": [
+      "2026-03-31"
+    ],
+    "KONE": [
+      "2026-03-31"
+    ],
+    "Alcami Corporation": [
+      "2026-03-31"
+    ],
+    "Aerospace": [
+      "2026-03-31"
+    ],
+    "GKN Automotive": [
+      "2026-03-31"
+    ],
+    "Talnt": [
+      "2026-03-31"
+    ],
+    "CertainTeed": [
+      "2026-03-31"
+    ],
+    "Ecoplastic America Corporation": [
+      "2026-03-31"
+    ],
+    "Spring Meadow Nursery, Inc.": [
+      "2026-03-31"
+    ],
+    "Shaw Industries": [
+      "2026-03-31"
+    ],
+    "Clark Schaefer Hackett": [
+      "2026-03-31"
+    ],
+    "Autocam Medical": [
+      "2026-03-31"
+    ],
+    "Akkodis": [
+      "2026-03-31",
+      "2026-03-31"
+    ],
+    "The Pivot Group": [
+      "2026-03-31"
+    ],
+    "Jabil": [
+      "2026-03-31"
+    ],
+    "Maker's Pride": [
+      "2026-03-31"
+    ],
+    "Komatsu": [
+      "2026-03-31"
+    ],
+    "Quanex": [
+      "2026-03-31"
+    ],
+    "Conagra Brands": [
+      "2026-03-31"
+    ],
+    "Rockwell Automation": [
+      "2026-03-31"
+    ],
+    "Brightstar Lottery": [
+      "2026-03-31"
+    ],
+    "Orbital Sidekick": [
+      "2026-03-31"
     ]
   },
   "rejected_companies": [],
