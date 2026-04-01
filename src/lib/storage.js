@@ -248,7 +248,11 @@ export async function fetchNetlog() {
     .eq('user_id', userId)
     .order('created_at', { ascending: false });
   if (error) throw error;
-  return data || [];
+  // Hydrate snake_case DB column → camelCase used by UI
+  return (data || []).map(row => ({
+    ...row,
+    linkedinUrl: row.linkedin_url || null,
+  }));
 }
 
 export async function upsertNetlog(entry) {

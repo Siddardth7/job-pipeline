@@ -66,10 +66,14 @@ export default function FindJobs({searchResults, setSearchResults, pipeline, add
     setLoading(true);
     setError("");
     try {
-      const [jobs, dates] = await Promise.all([fetchJobs(), fetchFeedDates()]);
-      setSearchResults(jobs.filter(j => !j.in_pipeline));
+      const dates = await fetchFeedDates();
       setFeedDates(dates);
-      setSelectedDate(dates[0] || '');
+      const firstDate = dates[0] || '';
+      setSelectedDate(firstDate);
+      // Load only the most-recent date's jobs so the dropdown and data are in sync.
+      // If no dated feed exists yet, fall back to fetchJobs().
+      const jobs = firstDate ? await fetchJobsByDate(firstDate) : await fetchJobs();
+      setSearchResults(jobs.filter(j => !j.in_pipeline));
       setLastUpdated(new Date().toISOString());
     } catch(e) {
       setError("Failed to load feed: " + e.message);

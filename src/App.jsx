@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import {
   LayoutDashboard, Search, BarChart2, Briefcase, Users, Building2, Settings,
   Sun, Moon, Zap, Activity, FileText, UserCircle
@@ -128,6 +128,19 @@ export default function JobAgent() {
 
   const saveTimer = useRef(null);
   const stateRef = useRef({});
+
+  // Live clock for header — ticks every second
+  const [clockNow, setClockNow] = useState(() => new Date());
+  useEffect(() => {
+    const id = setInterval(() => setClockNow(new Date()), 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const clockDisplay = useMemo(() => {
+    const date = clockNow.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    const time = clockNow.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+    return { date, time };
+  }, [clockNow]);
 
   // Keep stateRef current
   useEffect(() => {
@@ -461,9 +474,14 @@ export default function JobAgent() {
 
       {/* MAIN CONTENT */}
       <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
-        <div style={{height:52,borderBottom:`1px solid ${t.border}`,display:"flex",alignItems:"center",padding:"0 28px",background:t.sb,flexShrink:0}}>
+        <div style={{height:52,borderBottom:`1px solid ${t.border}`,display:"flex",alignItems:"center",justifyContent:"space-between",padding:"0 28px",background:t.sb,flexShrink:0}}>
           <div style={{fontSize:13,fontWeight:600,color:t.sub}}>
             {NAV_ITEMS_FLAT.find(n => n.id === page)?.label || "Dashboard"}
+          </div>
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
+            <span style={{fontSize:12.5,fontWeight:600,color:t.sub,fontFamily:"'Geist Mono','Courier New',monospace"}}>{clockDisplay.date}</span>
+            <span style={{width:1,height:16,background:t.border}}/>
+            <span style={{fontSize:13,fontWeight:700,color:t.tx,fontFamily:"'Geist Mono','Courier New',monospace",minWidth:72,textAlign:"right"}}>{clockDisplay.time}</span>
           </div>
         </div>
         <div style={{flex:1,overflowY:"auto",padding:"28px 32px"}}>

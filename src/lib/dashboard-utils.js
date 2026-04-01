@@ -1,6 +1,30 @@
 const MAX_STREAK_LOOKBACK_DAYS = 60;
 
 /**
+ * Parse any date string the app uses into a local-midnight Date.
+ * Handles: "4/1/2026", "April 1, 2026", "2026-04-01", ISO timestamps.
+ * Returns null if unparseable.
+ */
+function parseDate(dateStr) {
+  if (!dateStr) return null;
+  const d = new Date(dateStr);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+/**
+ * True if dateStr represents the same local calendar day as targetDate.
+ */
+function isSameLocalDay(dateStr, targetDate) {
+  const d = parseDate(dateStr);
+  if (!d) return false;
+  return (
+    d.getFullYear() === targetDate.getFullYear() &&
+    d.getMonth()    === targetDate.getMonth()    &&
+    d.getDate()     === targetDate.getDate()
+  );
+}
+
+/**
  * Returns an array of 7 Date objects for the current Mon–Sun week.
  * Each date is midnight local time.
  */
@@ -19,7 +43,7 @@ export function getWeekDays() {
 
 /**
  * Calculates the current active streak in days.
- * A day counts if apps or networkingLog has an item whose `date` starts with that day's ISO string.
+ * A day counts if apps or networkingLog has an item whose `date` falls on that day.
  * Stops at the first gap (skips today-only gaps only on day 0).
  */
 export function calcStreak(apps, networkingLog) {
@@ -28,10 +52,9 @@ export function calcStreak(apps, networkingLog) {
   for (let i = 0; i < MAX_STREAK_LOOKBACK_DAYS; i++) {
     const d = new Date(today);
     d.setDate(today.getDate() - i);
-    const ds = d.toISOString().split('T')[0];
     const active =
-      apps.some(a => a.date?.startsWith(ds)) ||
-      networkingLog.some(c => c.date?.startsWith(ds));
+      apps.some(a => isSameLocalDay(a.date, d)) ||
+      networkingLog.some(c => isSameLocalDay(c.date, d));
     if (active) {
       count++;
     } else if (i > 0) {
@@ -43,7 +66,7 @@ export function calcStreak(apps, networkingLog) {
 
 /**
  * Builds a sparkline data array of `days` length.
- * Each entry is the count of items whose `date` matches that day.
+ * Each entry is the count of items whose `date` falls on that day.
  * Index 0 = oldest, index (days-1) = today.
  */
 export function buildSparkData(items, days) {
@@ -51,7 +74,6 @@ export function buildSparkData(items, days) {
   return Array.from({ length: days }, (_, i) => {
     const d = new Date(today);
     d.setDate(today.getDate() - (days - 1 - i));
-    const ds = d.toISOString().split('T')[0];
-    return items.filter(x => x.date?.startsWith(ds)).length;
+    return items.filter(x => isSameLocalDay(x.date, d)).length;
   });
 }

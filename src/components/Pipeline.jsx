@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Activity, ArrowRight, Check, Trash2 } from 'lucide-react';
 
 function Card({children, t, style, onClick}) {
@@ -19,6 +20,9 @@ function StatusBadge({status, t}) {
 const matchColor=(v,t)=>v>=90?t.green:v>=75?t.yellow:t.red;
 
 export default function Pipeline({pipeline, removePipeline, completePipeline, onLogApp, setPage, setCurrentJob, apps, t}) {
+  const [verdictFilter, setVerdictFilter] = useState("All");
+  const [sortBy, setSortBy] = useState("date");
+
   const active = pipeline.filter(j => j.status === "active");
   const appKeys = new Set(apps.map(a => `${a.role}||${a.company}`));
 
@@ -76,28 +80,59 @@ export default function Pipeline({pipeline, removePipeline, completePipeline, on
         </Card>
       )}
 
-      {active.length > 0 && (
-        <>
-          <SectionLabel t={t}>Active ({active.length})</SectionLabel>
-          {active.map(job => (
-            <Card key={job.id} t={t} style={{marginBottom:8,padding:"14px 18px"}}>
-              <div style={{display:"flex",alignItems:"center",gap:14}}>
-                <div style={{flex:1}}>
-                  <div style={{fontSize:14.5,fontWeight:700,color:t.tx}}>{job.role}</div>
-                  <div style={{fontSize:13,color:t.sub}}>{job.company}{job.location?` · ${job.location}`:""}</div>
+      {active.length > 0 && (() => {
+        const selStyle = {background:t.card,border:`1px solid ${t.border}`,borderRadius:8,padding:"6px 10px",color:t.tx,fontSize:12.5,fontFamily:"inherit",outline:"none",cursor:"pointer"};
+
+        const displayed = active
+          .filter(j => verdictFilter === "All" || (j.verdict||"YELLOW") === verdictFilter)
+          .sort((a, b) => {
+            if (sortBy === "match")   return (b.match||0) - (a.match||0);
+            if (sortBy === "company") return (a.company||"").localeCompare(b.company||"");
+            // date: newest first (addedAt is a ms timestamp set in addToPipeline)
+            return (b.addedAt||0) - (a.addedAt||0);
+          });
+
+        return (
+          <>
+            {/* Sort + filter row */}
+            <div style={{display:"flex",gap:10,marginBottom:14,alignItems:"center",flexWrap:"wrap"}}>
+              <div style={{fontSize:11,fontWeight:700,color:t.muted,textTransform:"uppercase",letterSpacing:1}}>Sort</div>
+              <select value={sortBy} onChange={e => setSortBy(e.target.value)} style={selStyle}>
+                <option value="date">Date Added</option>
+                <option value="match">Match %</option>
+                <option value="company">Company</option>
+              </select>
+              <div style={{fontSize:11,fontWeight:700,color:t.muted,textTransform:"uppercase",letterSpacing:1,marginLeft:8}}>Filter</div>
+              <select value={verdictFilter} onChange={e => setVerdictFilter(e.target.value)} style={selStyle}>
+                <option value="All">All Verdicts</option>
+                <option value="GREEN">GREEN</option>
+                <option value="YELLOW">YELLOW</option>
+                <option value="RED">RED</option>
+              </select>
+              <span style={{fontSize:12,color:t.muted,marginLeft:"auto"}}>{displayed.length} of {active.length}</span>
+            </div>
+
+            <SectionLabel t={t}>Active ({active.length})</SectionLabel>
+            {displayed.map(job => (
+              <Card key={job.id} t={t} style={{marginBottom:8,padding:"14px 18px"}}>
+                <div style={{display:"flex",alignItems:"center",gap:14}}>
+                  <div style={{flex:1}}>
+                    <div style={{fontSize:14.5,fontWeight:700,color:t.tx}}>{job.role}</div>
+                    <div style={{fontSize:13,color:t.sub}}>{job.company}{job.location?` · ${job.location}`:""}</div>
+                  </div>
+                  <div style={{display:"flex",alignItems:"center",gap:8}}>
+                    {job.match && <span style={{fontSize:13,fontWeight:700,color:matchColor(job.match,t)}}>{job.match}%</span>}
+                    <StatusBadge status={job.verdict||"YELLOW"} t={t}/>
+                    <Btn size="sm" onClick={() => setPage("analyze", job)} t={t}><ArrowRight size={12}/> Analyze</Btn>
+                    <Btn size="sm" variant="green" onClick={() => handleComplete(job)} t={t}><Check size={12}/> Complete</Btn>
+                    <Btn size="sm" variant="red" onClick={() => removePipeline(job.id)} t={t}><Trash2 size={12}/></Btn>
+                  </div>
                 </div>
-                <div style={{display:"flex",alignItems:"center",gap:8}}>
-                  {job.match && <span style={{fontSize:13,fontWeight:700,color:matchColor(job.match,t)}}>{job.match}%</span>}
-                  <StatusBadge status={job.verdict||"YELLOW"} t={t}/>
-                  <Btn size="sm" onClick={() => setPage("analyze", job)} t={t}><ArrowRight size={12}/> Analyze</Btn>
-                  <Btn size="sm" variant="green" onClick={() => handleComplete(job)} t={t}><Check size={12}/> Complete</Btn>
-                  <Btn size="sm" variant="red" onClick={() => removePipeline(job.id)} t={t}><Trash2 size={12}/></Btn>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </>
-      )}
+              </Card>
+            ))}
+          </>
+        );
+      })()}
     </div>
   );
 }

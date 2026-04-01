@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { CheckCircle, Users, AlertTriangle, MessageSquare, Coffee, Zap, Circle } from 'lucide-react';
 import { getWeekDays, calcStreak, buildSparkData } from '../lib/dashboard-utils.js';
 
@@ -43,8 +44,15 @@ function KpiCard({ label, value, sparkData, color, sub, t }) {
 }
 
 export default function Dashboard({ apps, pipeline, searchResults: _searchResults, networkingLog, netlogMeta, setPage, t }) {
+  // Live clock — ticks every minute so greeting and today-index stay current
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const id = setInterval(() => setNow(new Date()), 60_000);
+    return () => clearInterval(id);
+  }, []);
+
   const weekDays = getWeekDays();
-  const today = new Date();
+  const today = now;
   const todayIdx = (today.getDay() + 6) % 7; // Mon=0, Sun=6
 
   const appsPerDay = weekDays.map(day => {

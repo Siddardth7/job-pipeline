@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Users, Send, Linkedin, Mail, Copy, Check, MessageSquare, Sparkles, RefreshCw, AlertTriangle } from 'lucide-react';
+import { Users, Send, Linkedin, Mail, Copy, Check, MessageSquare, Sparkles, RefreshCw, AlertTriangle, Search, Plus, X } from 'lucide-react';
 import { fetchLinkedInContacts, updateLinkedInContactNotes } from '../lib/storage.js';
 import { draftMessageWithGroq } from '../lib/groq.js';
 
@@ -301,6 +301,9 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
   const [personasOpen, setPersonasOpen] = useState(false);
   const [tab, setTab]     = useState("find");
   const [logFilter, setLogFilter] = useState("All");
+  const [logSearch, setLogSearch] = useState("");
+  const [showAddContact, setShowAddContact] = useState(false);
+  const [newContact, setNewContact] = useState({name:"",company:"",type:"Peer Engineer",role:"",email:"",linkedinUrl:""});
   const dmLoaded = useRef(false);
   const [dmContacts, setDmContacts]           = useState([]);
   const [dmLoading, setDmLoading]             = useState(false);
@@ -350,9 +353,16 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
 
   const pocCount = networkingLog.filter(c => migrateStatus(netlogMeta?.[c.id]?.status) === 'Referral Secured').length;
 
-  const filteredLog = logFilter === 'All'
-    ? networkingLog
-    : networkingLog.filter(c => migrateStatus(netlogMeta?.[c.id]?.status) === logFilter);
+  const filteredLog = networkingLog
+    .filter(c => logFilter === 'All' || migrateStatus(netlogMeta?.[c.id]?.status) === logFilter)
+    .filter(c => {
+      if (!logSearch.trim()) return true;
+      const q = logSearch.toLowerCase();
+      return (c.name||"").toLowerCase().includes(q)
+          || (c.company||"").toLowerCase().includes(q)
+          || (c.role||"").toLowerCase().includes(q)
+          || (c.linkedinUrl||c.linkedin_url||"").toLowerCase().includes(q);
+    });
 
   const findContacts = async () => {
     setLoading(true);
@@ -520,6 +530,58 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
 
       {tab === "log" && (
         <div>
+          {/* Search + Add row */}
+          <div style={{display:"flex",gap:10,marginBottom:14,alignItems:"center"}}>
+            <div style={{flex:1,position:"relative"}}>
+              <Search size={14} color={t.muted} style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)"}}/>
+              <input
+                value={logSearch}
+                onChange={e => setLogSearch(e.target.value)}
+                placeholder="Search by name, company, role, LinkedIn…"
+                style={{width:"100%",background:t.card,border:`1px solid ${t.border}`,borderRadius:8,padding:"9px 12px 9px 36px",color:t.tx,fontSize:13,outline:"none",fontFamily:"inherit",boxSizing:"border-box"}}
+              />
+            </div>
+            <Btn size="sm" onClick={() => setShowAddContact(true)} t={t}><Plus size={13}/> Add Contact</Btn>
+          </div>
+
+          {/* Add Contact modal */}
+          {showAddContact && (
+            <Card t={t} style={{marginBottom:16,border:`1px solid ${t.priBd}`,background:t.priL+"55"}}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
+                <div style={{fontSize:13,fontWeight:700,color:t.tx}}>Add External Contact</div>
+                <button onClick={() => { setShowAddContact(false); setNewContact({name:"",company:"",type:"Peer Engineer",role:"",email:"",linkedinUrl:""}); }} style={{background:"none",border:"none",cursor:"pointer",color:t.muted,padding:4}}><X size={16}/></button>
+              </div>
+              <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:10}}>
+                <Input label="Name *" value={newContact.name} onChange={e => setNewContact(p=>({...p,name:e.target.value}))} placeholder="Jane Smith" t={t}/>
+                <Input label="Company" value={newContact.company} onChange={e => setNewContact(p=>({...p,company:e.target.value}))} placeholder="SpaceX" t={t}/>
+                <div style={{marginBottom:14}}>
+                  <label style={{fontSize:11,fontWeight:700,color:t.sub,display:"block",marginBottom:5,textTransform:"uppercase",letterSpacing:1}}>Type</label>
+                  <select value={newContact.type} onChange={e => setNewContact(p=>({...p,type:e.target.value}))} style={{width:"100%",background:t.bg,border:`1px solid ${t.border}`,borderRadius:8,padding:"9px 13px",color:t.tx,fontSize:13.5,fontFamily:"inherit",outline:"none"}}>
+                    {PERSONAS.map(p => <option key={p} value={p}>{p}</option>)}
+                  </select>
+                </div>
+                <Input label="Role / Title" value={newContact.role} onChange={e => setNewContact(p=>({...p,role:e.target.value}))} placeholder="Engineering Manager" t={t}/>
+                <Input label="LinkedIn URL" value={newContact.linkedinUrl} onChange={e => setNewContact(p=>({...p,linkedinUrl:e.target.value}))} placeholder="https://linkedin.com/in/…" t={t}/>
+                <Input label="Email" value={newContact.email} onChange={e => setNewContact(p=>({...p,email:e.target.value}))} placeholder="jane@company.com" t={t}/>
+              </div>
+              <Btn onClick={() => {
+                if (!newContact.name.trim()) return;
+                addToNetworkingLog({
+                  id: `manual-${Date.now()}`,
+                  date: new Date().toLocaleDateString(),
+                  name: newContact.name.trim(),
+                  type: newContact.type,
+                  company: newContact.company.trim(),
+                  role: newContact.role.trim(),
+                  email: newContact.email.trim() || "NA",
+                  linkedinUrl: newContact.linkedinUrl.trim(),
+                });
+                setShowAddContact(false);
+                setNewContact({name:"",company:"",type:"Peer Engineer",role:"",email:"",linkedinUrl:""});
+              }} disabled={!newContact.name.trim()} t={t}><Plus size={13}/> Add to Log</Btn>
+            </Card>
+          )}
+
           {/* Status filter row */}
           <div style={{display:"flex",gap:8,marginBottom:16,flexWrap:"wrap",alignItems:"center"}}>
             {['All', ...STATUS_OPTS].map(s => (
@@ -553,7 +615,7 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
               <table style={{width:"100%",borderCollapse:"collapse",fontSize:13}}>
                 <thead>
                   <tr style={{borderBottom:`2px solid ${t.border}`}}>
-                    {["Date","Name","Type","Company","Status","LinkedIn"].map(h => (
+                    {["Date","Name","Type","Company","Status","LinkedIn","POC"].map(h => (
                       <th key={h} style={{textAlign:"left",padding:"10px 12px",fontSize:11,fontWeight:700,color:t.muted,textTransform:"uppercase",letterSpacing:1,whiteSpace:"nowrap"}}>{h}</th>
                     ))}
                   </tr>
@@ -592,10 +654,23 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
                           </select>
                         </td>
                         <td style={{padding:"10px 12px"}}>
-                          {c.linkedinUrl && (
-                            <a href={c.linkedinUrl} target="_blank" rel="noreferrer" style={{display:"inline-flex",alignItems:"center",gap:4,padding:"5px 12px",borderRadius:6,background:"#0077B5",color:"#fff",fontWeight:600,fontSize:12,textDecoration:"none"}}>
+                          {(c.linkedinUrl||c.linkedin_url) && (
+                            <a href={c.linkedinUrl||c.linkedin_url} target="_blank" rel="noreferrer" style={{display:"inline-flex",alignItems:"center",gap:4,padding:"5px 12px",borderRadius:6,background:"#0077B5",color:"#fff",fontWeight:600,fontSize:12,textDecoration:"none"}}>
                               <Linkedin size={13}/> Open
                             </a>
+                          )}
+                        </td>
+                        <td style={{padding:"10px 12px"}}>
+                          {status !== 'Referral Secured' && (
+                            <button
+                              onClick={() => updateNetlogMeta(c.id, { status: 'Referral Secured', statusChangedAt: new Date().toISOString() })}
+                              style={{background:"#fce7f3",border:"1px solid #f9a8d4",borderRadius:6,padding:"4px 10px",fontSize:11.5,fontWeight:700,color:"#db2777",cursor:"pointer",fontFamily:"inherit",whiteSpace:"nowrap"}}
+                            >
+                              + POC
+                            </button>
+                          )}
+                          {status === 'Referral Secured' && (
+                            <span style={{fontSize:11,fontWeight:700,color:"#db2777"}}>✓ POC</span>
                           )}
                         </td>
                       </tr>

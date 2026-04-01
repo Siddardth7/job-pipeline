@@ -297,10 +297,13 @@ function applyQCBarriers(parsed, variant) {
       s = s.replace(/[{}\\]/g, '').replace(/\s+/g, ' ').trim();
     }
 
-    // 7. Build LaTeX version: **text** -> \textbf{text}, then escape % (LaTeX comment char)
+    // 7. Build LaTeX version: **text** -> \textbf{text}, then escape LaTeX special chars
     parsed.mod1_summary_latex = s
       .replace(/\*\*([^*]+)\*\*/g, '\\textbf{$1}')
-      .replace(/%/g, '\\%');
+      .replace(/%/g, '\\%')
+      .replace(/&/g, '\\&')
+      .replace(/\$/g, '\\$')
+      .replace(/#/g, '\\#');
     parsed.mod1_summary = s;
   }
 

@@ -53,11 +53,11 @@
 }
 
 \newcommand{\expentry}[2]{%
-  \vspace{2pt}%
+  \vspace{6pt}%
   \noindent\begin{tabularx}{\textwidth}{@{}X r@{}}
     {\fontsize{11pt}{13pt}\selectfont\textbf{#1}} & {\fontsize{11pt}{13pt}\selectfont\textbf{#2}}
   \end{tabularx}%
-  \vspace{0pt}%
+  \vspace{1pt}%
 }
 
 \newcommand{\eduentry}[2]{%
@@ -95,63 +95,59 @@
 \vspace{1pt}
 %%SKILLS_BLOCK_START%%
 \skillline{Manufacturing \& Tooling:}{Fixture Design, Assembly Sequencing, Tooling Qualification, CNC Machining, GD\&T, CMM Inspection, Blueprint Reading, SolidWorks}
-\skillline{Process \& Quality Control:}{FMEA, SPC, 8D Root Cause Analysis, First Article Inspection, MRB Disposition, CAPA, Defect Reduction, Lean Principles}
+\skillline{Process \& Quality Control:}{pFMEA, SPC, 8D Root Cause Analysis, RCCA, First Article Inspection, MRB Disposition, CAPA, Lean Principles}
 \skillline{Composite Processing:}{Prepreg Layup, Autoclave Processing, Vacuum Bagging, Cure Cycle Development, Out-of-Autoclave Methods}
-\skillline{Simulation \& Software:}{ABAQUS, ANSYS Fluent, FEA, MATLAB, Python, AutoCAD}
+\skillline{Simulation \& Software:}{ABAQUS, FEA, Classical Lamination Theory, MATLAB, Python, AutoCAD}
 %%SKILLS_BLOCK_END%%
 
 %----------EXPERIENCE----------
 \section{EXPERIENCE}
 
-% Tata Boeing -- lead card for plant-focused
+% Tata Boeing -- lead card for manufacturing
 \expentry{Manufacturing \& Quality Intern \textbar\ Tata Boeing Aerospace}{Oct 2022 \textbar\ Mar 2023}
 \begin{itemize}
-  \item Established \textbf{GD\&T-driven CMM inspection workflow} validating \textbf{450+} flight-critical aerospace components to \textbf{0.02 mm accuracy}, achieving \textbf{zero customer escapes} on GE and Boeing programs.
-  \item Ran \textbf{SPC-based investigation} that isolated \textbf{CNC tool wear} as primary driver of position tolerance failures, reducing recurring defect rate from \textbf{15\% to under 3\%}.
-  \item Drove cross-functional \textbf{MRB dispositions} using \textbf{8D root cause analysis} for GE engine components, cutting nonconformance cycle time by \textbf{22\%}.
-  \item Prevented \textbf{\textasciitilde\$3,000} in potential scrap by conducting \textbf{FMEA} on supplier nonconformance and supporting engineering team in securing use-as-is disposition.
+  \item Implemented \textbf{SPC-guided corrective actions} by revising \textbf{CNC tool change intervals} based on RCCA findings, reducing position tolerance defect rate from \textbf{15\% to under 3\%}.
+  \item Audited \textbf{GD\&T-based CMM inspection records} for \textbf{450+} flight-critical components to \textbf{0.02 mm accuracy}, supporting \textbf{zero customer escapes} across GE and Boeing programs.
+  \item Introduced \textbf{8D structured problem-solving} into GE engine component MRB process, applying parallel containment to reduce nonconformance cycle time by \textbf{22\%}.
+  \item Built \textbf{FMEA-based justification} for a supplier nonconformance, enabling an engineering-approved \textbf{use-as-is disposition} that prevented \textbf{\textasciitilde\$3,000} in scrap and a \textbf{4-week supply delay}.
 \end{itemize}
 
 % SAMPE
 \expentry{Manufacturing Lead \textbar\ SAMPE Composite Fuselage Program, UIUC}{Jan 2025 \textbar\ May 2025}
 \begin{itemize}
-  \item Built a \textbf{24-inch composite fuselage} using \textbf{prepreg layup} and \textbf{autoclave cure (275°F, 40 psi)}, achieving first-article success with under \textbf{2\% void content}.
-  \item Redesigned layup workflow by switching from individual ply wraps to a \textbf{continuous prepreg blanket}, eliminating delamination risk and improving \textbf{process repeatability}.
-  \item Implemented \textbf{FMEA} identifying vacuum bag leaks as highest-risk failure mode \textbf{(RPN=60)}, configuring automated leak detection that achieved \textbf{zero process deviations} across all cure cycles.
-  \item Used \textbf{FEA-validated stacking sequence} to make a production build decision that reduced part deflection by \textbf{38\%} at \textbf{150\% design load (1,000 lbf)}, eliminating a rework loop before the cure cycle.
+  \item Built a \textbf{24-inch composite fuselage} via \textbf{prepreg layup} and \textbf{autoclave cure (275°F, 40 psi)}, achieving first-article acceptance with the part sustaining \textbf{2,700 lbf at test}.
+  \item Redesigned layup to a \textbf{dual-blanket structure (7 inner + 7 outer plies)} overnight after a ply geometry fit failure, eliminating inter-ply gaps and improving \textbf{process repeatability}.
+  \item Identified vacuum bag leaks as highest-risk failure mode \textbf{(RPN=60)} via \textbf{pFMEA} and standardized a \textbf{20 psi pressurized hold test protocol}, achieving \textbf{zero process deviations}.
+  \item Optimized laminate stacking using \textbf{Python (simulated annealing)} and \textbf{ABAQUS FEA}, achieving \textbf{38\% deflection reduction} over baseline configuration, confirmed at \textbf{2,700 lbf} structural test.
 \end{itemize}
 
 % EQIC
 \expentry{Manufacturing Intern \textbar\ EQIC Dies \& Moulds Engineers Pvt. Ltd.}{Jun 2022 \textbar\ Aug 2022}
 \begin{itemize}
-  \item Worked directly with technicians across a \textbf{12-stage die manufacturing line} -- CNC machining, EDM, wire EDM, vacuum heat treatment, and final assembly -- building shop-floor fluency in multi-step production execution and machine setup.
-  \item Owned dimensional verification of cavity and core components to \textbf{±0.02 mm} against \textbf{GD\&T specifications} and confirmed \textbf{parting surface alignment ({>}80\% contact)} on \textbf{800-bar HPDC tooling} before release to production.
+  \item Mapped a \textbf{12-stage die production workflow} (CNC machining, EDM, heat treatment, and assembly), identifying inter-stage handoff points as primary sources of dimensional tolerance accumulation.
+  \item Verified die component tolerances to \textbf{±0.02 mm (GD\&T)} and confirmed \textbf{parting surface alignment ({>}80\% contact)} on \textbf{800-bar HPDC tooling}, ensuring casting quality at production release.
 \end{itemize}
 
 % Graduate Research
 \expentry{Graduate Research Assistant \textbar\ Beckman Institute, UIUC}{May 2024 \textbar\ Dec 2024}
 \begin{itemize}
-  \item Developed a \textbf{rapid out-of-autoclave cure method} reducing composite processing time from \textbf{8+ hours to under 5 minutes}, demonstrating scalable alternative to traditional autoclave production cycles.
-  \item Reduced composite process qualification time by \textbf{94\%} through validated computational modeling, enabling faster process parameter decisions without additional physical builds.
+  \item Developed and validated an \textbf{out-of-autoclave cure method} using \textbf{frontal polymerization}, reducing composite processing cycle from \textbf{8+ hours to under 5 minutes} in a research setting.
+  \item Predicted cure behavior within \textbf{10\% velocity accuracy} and \textbf{3°C} of peak temperatures, accelerating process parameter optimization by \textbf{94\%} through computational modeling.
 \end{itemize}
 
 %----------PROJECTS----------
 \section{PROJECTS}
 
-\expentry{Brakes \& Suspension Lead \textbar\ Electric Solar Vehicle Championship (ESVC)}{Oct 2019 \textbar\ Apr 2023}
+\expentry{Study of Microstructure \& Mechanical Properties of Borosilicate-based Glass Ceramic Composites \textbar\ Team Lead}{Aug 2022 \textbar\ Apr 2023}
 \begin{itemize}
-  \item Led manufacturing and assembly of brake and suspension hardware for a \textbf{30-member} team using manual machining and welding, delivering \textbf{zero mechanical failures} and \textbf{7th place nationally}.
-  \item Achieved \textbf{180.43/200 on Cross Pad Test} (top handling score), validating manufactured brake and suspension geometry performance.
+  \item Engineered \textbf{borosilicate glass-ceramic composites} via \textbf{powder metallurgy}, increasing hardness by \textbf{27\% (548 to 699 HV)} through optimized alumina reinforcement across \textbf{24 formulations}.
+  \item Characterized specimens via \textbf{SEM/EDS} and \textbf{Vickers hardness testing (ASTM E384)}, confirming microstructural uniformity and process repeatability across all formulations.
 \end{itemize}
 
-\expentry{Structures \& Manufacturing Lead \textbar\ SAE Aero Design Challenge}{Dec 2021 \textbar\ Sep 2022}
+\expentry{Electric Solar Vehicle Championship (ESVC) \textbar\ Brakes \& Suspension Lead}{Oct 2019 \textbar\ Apr 2023}
 \begin{itemize}
-  \item Planned \textbf{end-to-end assembly sequencing} for a \textbf{92-inch tapered balsa wing} including reinforcement design and \textbf{CG balancing at 25\% MAC}, coordinating fabrication across multiple sub-teams.
-\end{itemize}
-
-\expentry{Research Assistant \textbar\ VNR VJIET Composites Lab, Hyderabad}{Aug 2022 \textbar\ Apr 2023}
-\begin{itemize}
-  \item Fabricated \textbf{borosilicate glass-ceramic composite specimens} using \textbf{powder metallurgy} across \textbf{24 formulations}, achieving \textbf{27\% hardness improvement (548 to 699 HV)}.
+  \item Led brake and suspension design and manufacturing for a \textbf{30-member} team, delivering hardware with \textbf{zero mechanical failures} and securing \textbf{7th place nationally}.
+  \item Achieved \textbf{180.43/200 on Cross Pad Test} (top national handling score), validating brake and suspension geometry manufactured in-house.
 \end{itemize}
 
 %----------EDUCATION----------
@@ -159,7 +155,7 @@
 
 \eduentry{M.S., Aerospace Engineering \textbar\ University of Illinois at Urbana-Champaign}{Jan 2024 \textbar\ Dec 2025}
 \vspace{1pt}
-\hspace{0.12in}{\fontsize{9pt}{11pt}\selectfont\textbf{\textit{Relevant Coursework:}} \textit{Manufacturing Processes, Composite Materials, Materials Characterization, Structural Mechanics, Finite Element Methods}}
+\hspace{0.12in}{\fontsize{9pt}{11pt}\selectfont\textbf{\textit{Relevant Coursework:}} \textit{Advanced Composites Manufacturing, Mechanics of Composites, Space Structures}}
 
 \eduentry{B.Tech, Mechanical Engineering \textbar\ VNR VJIET}{Aug 2019 \textbar\ May 2023}
 
