@@ -454,6 +454,131 @@
       "name": "Akkodis",
       "domain": "",
       "industry": "Auto-promoted"
+    },
+    {
+      "name": "Nammo Defense Systems, Inc",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Module X Solutions LLC",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Ingersoll Rand",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "S&ME, Inc.",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Yamaha Motor Corporation, USA",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Mitsubishi Electric Power Products, Inc.",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "KONE",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Alcami Corporation",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Talnt",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "CertainTeed",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Ecoplastic America Corporation",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Clark Schaefer Hackett",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Autocam Medical",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "The Pivot Group",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Jabil",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Maker's Pride",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Komatsu",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Quanex",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Rockwell Automation",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Brightstar Lottery",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Orbital Sidekick",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Kleinfelder Inc",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Yokogawa",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Xylem",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Elanco",
+      "domain": "",
+      "industry": "Auto-promoted"
     }
   ],
   "promotion_tracking": {
@@ -703,7 +828,8 @@
     ],
     "Nammo Defense Systems, Inc": [
       "2026-03-12",
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "Super Radiator Coils": [
       "2026-03-12"
@@ -830,7 +956,9 @@
     ],
     "Module X Solutions LLC": [
       "2026-03-13",
-      "2026-03-14"
+      "2026-03-14",
+      "2026-04-02",
+      "2026-04-02"
     ],
     "Rain Carbon Inc": [
       "2026-03-13",
@@ -862,7 +990,9 @@
     ],
     "Ingersoll Rand": [
       "2026-03-13",
-      "2026-03-14"
+      "2026-03-14",
+      "2026-04-02",
+      "2026-04-02"
     ],
     "Factorial": [
       "2026-03-13",
@@ -999,7 +1129,9 @@
     ],
     "S&ME, Inc.": [
       "2026-03-30",
-      "2026-03-31"
+      "2026-03-31",
+      "2026-04-02",
+      "2026-04-02"
     ],
     "Fm Industries": [
       "2026-03-30"
@@ -1030,7 +1162,8 @@
     ],
     "Yamaha Motor Corporation, USA": [
       "2026-03-31",
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "U.S. Engineering": [
       "2026-03-31",
@@ -1038,15 +1171,18 @@
     ],
     "Mitsubishi Electric Power Products, Inc.": [
       "2026-03-31",
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "KONE": [
       "2026-03-31",
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "Alcami Corporation": [
       "2026-03-31",
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "Aerospace": [
       "2026-03-31"
@@ -1056,15 +1192,18 @@
     ],
     "Talnt": [
       "2026-03-31",
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "CertainTeed": [
       "2026-03-31",
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "Ecoplastic America Corporation": [
       "2026-03-31",
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "Spring Meadow Nursery, Inc.": [
       "2026-03-31"
@@ -1075,11 +1214,13 @@
     ],
     "Clark Schaefer Hackett": [
       "2026-03-31",
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "Autocam Medical": [
       "2026-03-31",
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "Akkodis": [
       "2026-03-31",
@@ -1089,23 +1230,31 @@
     ],
     "The Pivot Group": [
       "2026-03-31",
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "Jabil": [
       "2026-03-31",
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02",
+      "2026-04-02",
+      "2026-04-02",
+      "2026-04-02"
     ],
     "Maker's Pride": [
       "2026-03-31",
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "Komatsu": [
       "2026-03-31",
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "Quanex": [
       "2026-03-31",
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "Conagra Brands": [
       "2026-03-31",
@@ -1113,117 +1262,240 @@
     ],
     "Rockwell Automation": [
       "2026-03-31",
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "Brightstar Lottery": [
       "2026-03-31",
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "Orbital Sidekick": [
       "2026-03-31",
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "Kleinfelder Inc": [
       "2026-04-01",
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02",
+      "2026-04-02"
     ],
     "AECOM": [
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "Connors Group": [
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "Yokogawa": [
       "2026-04-01",
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02",
+      "2026-04-02"
     ],
     "ZAP Engineering & Construction Services, Inc.": [
       "2026-04-01"
     ],
     "Rheem": [
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "nVent": [
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "Children's Nebraska": [
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "Michael Baker International": [
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "ENTRON Controls, LLC.": [
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "Judge Group, Inc.": [
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "Rugged Robotics": [
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "MinebeaMitsumi Companies": [
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "Schaeffler": [
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "Swift Engineering": [
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "PlanIT Group LLC": [
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "Keystone Management": [
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "Siemens Energy": [
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "Franklin Electric": [
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "Myticas Consulting": [
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "The Shepherd Color Company": [
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "Modine Manufacturing Company": [
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "PACCAR": [
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "JTM Food Group": [
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "KBR": [
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "Ulbrich Stainless Steels & Special Metals, Inc.": [
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "Xylem": [
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02",
+      "2026-04-02"
     ],
     "Magna International": [
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "Wild Goose Filling": [
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "Elanco": [
       "2026-04-01",
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02",
+      "2026-04-02"
     ],
     "Sandvik": [
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "Service Partners": [
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
     ],
     "Ohly": [
-      "2026-04-01"
+      "2026-04-01",
+      "2026-04-02"
+    ],
+    "Phoenix Contact USA": [
+      "2026-04-02"
+    ],
+    "Lifecycle Insights": [
+      "2026-04-02"
+    ],
+    "ASSA ABLOY Opening Solutions Americas": [
+      "2026-04-02"
+    ],
+    "Pfizer": [
+      "2026-04-02"
+    ],
+    "Jacobs": [
+      "2026-04-02"
+    ],
+    "ADM": [
+      "2026-04-02"
+    ],
+    "Nordson Corporation": [
+      "2026-04-02"
+    ],
+    "Veolia | Water Tech": [
+      "2026-04-02"
+    ],
+    "Clarion Chase": [
+      "2026-04-02"
+    ],
+    "SLB": [
+      "2026-04-02"
+    ],
+    "Georgia-Pacific": [
+      "2026-04-02"
+    ],
+    "Beacon Hill": [
+      "2026-04-02"
+    ],
+    "Halo Industries, Inc.": [
+      "2026-04-02"
+    ],
+    "B. Braun Medical Inc. (US)": [
+      "2026-04-02"
+    ],
+    "Marmon Industrial Energy & Infrastructure": [
+      "2026-04-02"
+    ],
+    "Danone": [
+      "2026-04-02"
+    ],
+    "ASD": [
+      "2026-04-02"
+    ],
+    "Cleveland-Cliffs": [
+      "2026-04-02"
+    ],
+    "Antora Energy": [
+      "2026-04-02"
+    ],
+    "Velo3D": [
+      "2026-04-02"
+    ],
+    "Oshkosh Corporation": [
+      "2026-04-02"
+    ],
+    "Flex": [
+      "2026-04-02"
+    ],
+    "Collabera": [
+      "2026-04-02"
+    ],
+    "Sulzer": [
+      "2026-04-02"
+    ],
+    "Putzmeister America, Inc.": [
+      "2026-04-02"
+    ],
+    "Whirlpool Corporation": [
+      "2026-04-02"
+    ],
+    "Ontex": [
+      "2026-04-02"
+    ],
+    "Roche": [
+      "2026-04-02"
     ]
   },
   "rejected_companies": [],
