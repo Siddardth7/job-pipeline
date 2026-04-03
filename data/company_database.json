@@ -579,6 +579,136 @@
       "name": "Elanco",
       "domain": "",
       "industry": "Auto-promoted"
+    },
+    {
+      "name": "Mitsubishi Chemical America",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Motion Recruitment",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "ASM",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "nVent",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Children's Nebraska",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Michael Baker International",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "ENTRON Controls, LLC.",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Rugged Robotics",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "MinebeaMitsumi Companies",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Schaeffler",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "PlanIT Group LLC",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Keystone Management",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Siemens Energy",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Franklin Electric",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Myticas Consulting",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Modine Manufacturing Company",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "JTM Food Group",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "KBR",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Ulbrich Stainless Steels & Special Metals, Inc.",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Magna International",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Wild Goose Filling",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Sandvik",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Service Partners",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "Ohly",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "B. Braun Medical Inc. (US)",
+      "domain": "",
+      "industry": "Auto-promoted"
+    },
+    {
+      "name": "NOW Hiring Heroes",
+      "domain": "",
+      "industry": "Auto-promoted"
     }
   ],
   "promotion_tracking": {
@@ -614,7 +744,8 @@
       "2026-03-09"
     ],
     "Progress Rail": [
-      "2026-03-10"
+      "2026-03-10",
+      "2026-04-03"
     ],
     "Dupont": [
       "2026-03-10",
@@ -622,7 +753,8 @@
       "2026-03-11"
     ],
     "Zachry Group": [
-      "2026-03-10"
+      "2026-03-10",
+      "2026-04-03"
     ],
     "LanceSoft": [
       "2026-03-10"
@@ -697,7 +829,8 @@
       "2026-03-11"
     ],
     "Stellantis": [
-      "2026-03-11"
+      "2026-03-11",
+      "2026-04-03"
     ],
     "Dawn Aerospace": [
       "2026-03-11",
@@ -922,7 +1055,8 @@
     ],
     "Mitsubishi Chemical America": [
       "2026-03-13",
-      "2026-03-14"
+      "2026-03-14",
+      "2026-04-03"
     ],
     "Tenneco": [
       "2026-03-13",
@@ -938,7 +1072,8 @@
     ],
     "Motion Recruitment": [
       "2026-03-13",
-      "2026-03-14"
+      "2026-03-14",
+      "2026-04-03"
     ],
     "Micron Technology": [
       "2026-03-13",
@@ -982,7 +1117,8 @@
     ],
     "ASM": [
       "2026-03-13",
-      "2026-03-14"
+      "2026-03-14",
+      "2026-04-03"
     ],
     "Cargill": [
       "2026-03-13",
@@ -1304,19 +1440,23 @@
     ],
     "nVent": [
       "2026-04-01",
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Children's Nebraska": [
       "2026-04-01",
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Michael Baker International": [
       "2026-04-01",
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "ENTRON Controls, LLC.": [
       "2026-04-01",
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Judge Group, Inc.": [
       "2026-04-01",
@@ -1324,15 +1464,18 @@
     ],
     "Rugged Robotics": [
       "2026-04-01",
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "MinebeaMitsumi Companies": [
       "2026-04-01",
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Schaeffler": [
       "2026-04-01",
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Swift Engineering": [
       "2026-04-01",
@@ -1340,23 +1483,28 @@
     ],
     "PlanIT Group LLC": [
       "2026-04-01",
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Keystone Management": [
       "2026-04-01",
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Siemens Energy": [
       "2026-04-01",
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Franklin Electric": [
       "2026-04-01",
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Myticas Consulting": [
       "2026-04-01",
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "The Shepherd Color Company": [
       "2026-04-01",
@@ -1364,7 +1512,8 @@
     ],
     "Modine Manufacturing Company": [
       "2026-04-01",
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "PACCAR": [
       "2026-04-01",
@@ -1372,15 +1521,18 @@
     ],
     "JTM Food Group": [
       "2026-04-01",
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "KBR": [
       "2026-04-01",
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Ulbrich Stainless Steels & Special Metals, Inc.": [
       "2026-04-01",
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Xylem": [
       "2026-04-01",
@@ -1389,11 +1541,13 @@
     ],
     "Magna International": [
       "2026-04-01",
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Wild Goose Filling": [
       "2026-04-01",
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Elanco": [
       "2026-04-01",
@@ -1403,99 +1557,197 @@
     ],
     "Sandvik": [
       "2026-04-01",
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Service Partners": [
       "2026-04-01",
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Ohly": [
       "2026-04-01",
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Phoenix Contact USA": [
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Lifecycle Insights": [
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "ASSA ABLOY Opening Solutions Americas": [
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Pfizer": [
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Jacobs": [
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "ADM": [
       "2026-04-02"
     ],
     "Nordson Corporation": [
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Veolia | Water Tech": [
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Clarion Chase": [
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "SLB": [
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Georgia-Pacific": [
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Beacon Hill": [
       "2026-04-02"
     ],
     "Halo Industries, Inc.": [
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "B. Braun Medical Inc. (US)": [
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03",
+      "2026-04-03"
     ],
     "Marmon Industrial Energy & Infrastructure": [
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Danone": [
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "ASD": [
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Cleveland-Cliffs": [
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Antora Energy": [
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Velo3D": [
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Oshkosh Corporation": [
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Flex": [
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Collabera": [
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Sulzer": [
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Putzmeister America, Inc.": [
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Whirlpool Corporation": [
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Ontex": [
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
     ],
     "Roche": [
-      "2026-04-02"
+      "2026-04-02",
+      "2026-04-03"
+    ],
+    "Corning Incorporated": [
+      "2026-04-03"
+    ],
+    "Garmin": [
+      "2026-04-03"
+    ],
+    "Medline": [
+      "2026-04-03"
+    ],
+    "PM Mold Company": [
+      "2026-04-03"
+    ],
+    "CVR Energy, Inc.": [
+      "2026-04-03"
+    ],
+    "First Solar": [
+      "2026-04-03"
+    ],
+    "Microchip Technology Inc.": [
+      "2026-04-03"
+    ],
+    "Commercial Vehicle Group, Inc.": [
+      "2026-04-03"
+    ],
+    "Agile Resources, Inc.": [
+      "2026-04-03"
+    ],
+    "ARCHE Consulting": [
+      "2026-04-03"
+    ],
+    "Rogue Fitness": [
+      "2026-04-03"
+    ],
+    "Rock West Composites": [
+      "2026-04-03"
+    ],
+    "NOW Hiring Heroes": [
+      "2026-04-03",
+      "2026-04-03",
+      "2026-04-03"
+    ],
+    "Phononic Inc": [
+      "2026-04-03"
+    ],
+    "Oshkosh Delivery": [
+      "2026-04-03"
+    ],
+    "Neapco": [
+      "2026-04-03"
+    ],
+    "Nesco Resource": [
+      "2026-04-03"
+    ],
+    "Broadcom": [
+      "2026-04-03"
+    ],
+    "Ssw Advanced Technologies": [
+      "2026-04-03"
+    ],
+    "TSE Industries": [
+      "2026-04-03"
+    ],
+    "Randstad Digital Americas": [
+      "2026-04-03"
+    ],
+    "hims & hers": [
+      "2026-04-03"
     ]
   },
   "rejected_companies": [],
