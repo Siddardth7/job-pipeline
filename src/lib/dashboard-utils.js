@@ -7,6 +7,13 @@ const MAX_STREAK_LOOKBACK_DAYS = 60;
  */
 function parseDate(dateStr) {
   if (!dateStr) return null;
+  // ISO date-only strings (YYYY-MM-DD) are parsed as UTC midnight by the Date
+  // constructor, which shifts them into the previous local day for UTC- zones.
+  // Parse them as local midnight instead to avoid off-by-one errors.
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    return new Date(y, m - 1, d);
+  }
   const d = new Date(dateStr);
   return isNaN(d.getTime()) ? null : d;
 }
