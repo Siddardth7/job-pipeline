@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { CheckCircle, Users, AlertTriangle, MessageSquare, Coffee, Zap, Circle } from 'lucide-react';
-import { getWeekDays, calcStreak, buildSparkData } from '../lib/dashboard-utils.js';
+import { getWeekDays, calcStreak, buildSparkData, isSameLocalDay } from '../lib/dashboard-utils.js';
 
 const DAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const DAILY_GOAL = 3;
@@ -55,10 +55,9 @@ export default function Dashboard({ apps, pipeline, searchResults: _searchResult
   const today = now;
   const todayIdx = (today.getDay() + 6) % 7; // Mon=0, Sun=6
 
-  const appsPerDay = weekDays.map(day => {
-    const ds = day.toISOString().split('T')[0];
-    return apps.filter(a => a.date?.startsWith(ds)).length;
-  });
+  const appsPerDay = weekDays.map(day =>
+    apps.filter(a => isSameLocalDay(a.date, day)).length
+  );
 
   const appsSpark  = buildSparkData(apps, 7);
   const netSpark   = buildSparkData(networkingLog, 7);

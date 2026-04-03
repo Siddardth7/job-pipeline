@@ -21,7 +21,7 @@ function parseDate(dateStr) {
 /**
  * True if dateStr represents the same local calendar day as targetDate.
  */
-function isSameLocalDay(dateStr, targetDate) {
+export function isSameLocalDay(dateStr, targetDate) {
   const d = parseDate(dateStr);
   if (!d) return false;
   return (
