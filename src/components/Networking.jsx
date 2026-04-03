@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Users, Send, Linkedin, Mail, Copy, Check, MessageSquare, Sparkles, RefreshCw, AlertTriangle, Search, Plus, X } from 'lucide-react';
-import { fetchLinkedInContacts, updateLinkedInContactNotes } from '../lib/storage.js';
+import { fetchLinkedInContacts, updateLinkedInContactNotes, fetchLinkedInStats } from '../lib/storage.js';
 import { draftMessageWithGroq } from '../lib/groq.js';
 
 function Card({children, t, style, onClick}) {
@@ -314,6 +314,15 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
   const [showFollowupOnly, setShowFollowupOnly] = useState(false);
   const [expandedSummaries, setExpandedSummaries] = useState(new Set());
   const [editedNotes, setEditedNotes]         = useState({});
+  // Intelligence filters
+  const [personaFilter, setPersonaFilter]     = useState('All');
+  const [stageFilter, setStageFilter]         = useState('All');
+  const [pocFilter, setPocFilter]             = useState('All');
+  const [strengthFilter, setStrengthFilter]   = useState('All');
+  const [fuPriorityFilter, setFuPriorityFilter] = useState('All');
+  const [dmSearch, setDmSearch]               = useState('');
+  const [dmStats, setDmStats]                 = useState(null);
+  const [expandedGuidance, setExpandedGuidance] = useState(new Set());
 
   useEffect(() => {
     if (currentJob) {
@@ -329,7 +338,12 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
       setDmLoading(true);
       setDmError('');
       fetchLinkedInContacts()
-        .then(data => { setEditedNotes({}); setDmContacts(data); setDmLoading(false); })
+        .then(data => {
+          setEditedNotes({});
+          setDmContacts(data);
+          setDmStats(fetchLinkedInStats(data));
+          setDmLoading(false);
+        })
         .catch(e  => { setDmError(e.message); setDmLoading(false); dmLoaded.current = false; });
     }
   }, [tab]);
@@ -685,44 +699,90 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
 
       {tab === "dms" && (
         <div>
-          {/* ── Stats row ── */}
-          {dmContacts.length > 0 && (() => {
-            const followUps  = dmContacts.filter(c => c.follow_up).length;
-            const active     = dmContacts.filter(c => c.conv_status === 'Opportunity Active').length;
-            const recruiters = dmContacts.filter(c => c.role_type === 'Recruiter').length;
-            const statStyle  = (bg, color) => ({
-              padding:"8px 16px", borderRadius:10, fontSize:13, fontWeight:700,
-              background:bg, color
-            });
+
+          {/* ── Intelligence Stats Row ── */}
+          {dmContacts.length > 0 && dmStats && (() => {
+            const s = dmStats;
+            const stat = (label, val, bg, color, title) => (
+              <div title={title} style={{padding:"10px 14px",borderRadius:10,fontSize:12,fontWeight:700,background:bg,color,minWidth:0,flexShrink:0}}>
+                <div style={{fontSize:20,fontWeight:800,lineHeight:1}}>{val}</div>
+                <div style={{fontSize:10,marginTop:2,opacity:.8,fontWeight:600,textTransform:"uppercase",letterSpacing:.5}}>{label}</div>
+              </div>
+            );
             return (
-              <div style={{display:"flex",gap:10,flexWrap:"wrap",marginBottom:18}}>
-                <div style={statStyle(t.card, t.tx)}>{dmContacts.length} total</div>
-                <div style={statStyle(t.yellowL, t.yellow)}>{followUps} follow-ups</div>
-                <div style={statStyle(t.greenL, t.green)}>{active} active opportunities</div>
-                <div style={statStyle(t.priL, t.pri)}>{recruiters} recruiters</div>
+              <div style={{marginBottom:20}}>
+                <div style={{fontSize:10.5,fontWeight:700,color:t.muted,textTransform:"uppercase",letterSpacing:1.5,marginBottom:8}}>Network Intelligence</div>
+                <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+                  {stat("Total",        s.total,        t.card,    t.tx,     "All imported LinkedIn contacts")}
+                  {stat("Two-Way",      s.twoWay,       t.priL,    t.pri,    "Contacts with actual back-and-forth conversation")}
+                  {stat("Warm",         s.warm,         t.greenL,  t.green,  "Warm or stronger relationship")}
+                  {stat("POC Cands.",   s.pocCandidates,'#fce7f3', '#db2777',"Potential Points of Contact")}
+                  {stat("Confirmed POC",s.confirmedPoc, '#fce7f3', '#db2777',"Referral secured or score ≥8")}
+                  {stat("Recruiters",   s.recruiters,   t.priL,    t.pri,    "Classified as Recruiter")}
+                  {stat("Hiring Mgrs.", s.hiringMgrs,   '#fee2e2', '#dc2626',"Classified as Hiring Manager")}
+                  {stat("Follow-Ups",   s.followUps,    s.urgentFu > 0 ? '#fee2e2' : t.yellowL, s.urgentFu > 0 ? '#dc2626' : t.yellow, `${s.urgentFu} urgent`)}
+                </div>
               </div>
             );
           })()}
 
-          {/* ── Filter bar ── */}
+          {/* ── Filter + Search Bar ── */}
           {dmContacts.length > 0 && (() => {
-            const sel = {background:t.bg,border:`1px solid ${t.border}`,borderRadius:8,padding:'8px 11px',color:t.tx,fontSize:12.5,fontFamily:'inherit',outline:'none'};
+            const sel = {background:t.bg,border:`1px solid ${t.border}`,borderRadius:8,padding:'7px 10px',color:t.tx,fontSize:12,fontFamily:'inherit',outline:'none'};
+            const hasFilters = personaFilter !== 'All' || stageFilter !== 'All' || pocFilter !== 'All'
+              || strengthFilter !== 'All' || fuPriorityFilter !== 'All' || showFollowupOnly || dmSearch.trim();
             return (
-              <div style={{display:"flex",gap:10,flexWrap:"wrap",marginBottom:18,alignItems:"center"}}>
-                <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)} style={sel}>
-                  {['All','Recruiter','Hiring Manager','Executive','Referral Contact','Alumni','Peer Engineer','Unknown'].map(v =>
-                    <option key={v} value={v}>{v === 'All' ? 'All Roles' : v}</option>
+              <div style={{marginBottom:18}}>
+                {/* Search */}
+                <div style={{position:"relative",marginBottom:8}}>
+                  <Search size={14} style={{position:"absolute",left:10,top:"50%",transform:"translateY(-50%)",color:t.muted}}/>
+                  <input
+                    value={dmSearch}
+                    onChange={e => setDmSearch(e.target.value)}
+                    placeholder="Search by name, company, tags..."
+                    style={{width:"100%",background:t.bg,border:`1px solid ${t.border}`,borderRadius:8,padding:"8px 12px 8px 32px",color:t.tx,fontSize:13,fontFamily:"inherit",outline:"none",boxSizing:"border-box"}}
+                  />
+                  {dmSearch && (
+                    <button onClick={() => setDmSearch('')} style={{position:"absolute",right:10,top:"50%",transform:"translateY(-50%)",background:"none",border:"none",cursor:"pointer",color:t.muted,padding:0}}>
+                      <X size={14}/>
+                    </button>
                   )}
-                </select>
-                <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} style={sel}>
-                  {['All','Opportunity Active','Follow-Up Needed','Awaiting Reply','Replied','Cold / No Action'].map(v =>
-                    <option key={v} value={v}>{v === 'All' ? 'All Statuses' : v}</option>
+                </div>
+                {/* Filter row */}
+                <div style={{display:"flex",gap:8,flexWrap:"wrap",alignItems:"center"}}>
+                  <select value={personaFilter} onChange={e => setPersonaFilter(e.target.value)} style={sel}>
+                    {['All','Recruiter','Hiring Manager','Senior Engineer','Peer Engineer','Executive','Alumni','Referral Contact','Potential Mentor','Unknown'].map(v =>
+                      <option key={v} value={v}>{v === 'All' ? 'All Personas' : v}</option>
+                    )}
+                  </select>
+                  <select value={stageFilter} onChange={e => setStageFilter(e.target.value)} style={sel}>
+                    {['All','Strong Rapport','Active Conversation','Warm Contact','Replied Once','Referral Requested','Referral Secured','Hiring Process Related','Initial Outreach Sent','Follow-Up Needed','Dormant','Cold / No Action'].map(v =>
+                      <option key={v} value={v}>{v === 'All' ? 'All Stages' : v}</option>
+                    )}
+                  </select>
+                  <select value={strengthFilter} onChange={e => setStrengthFilter(e.target.value)} style={sel}>
+                    {['All','Confirmed POC','POC Candidate','Strong','Warm','Informational','Low'].map(v =>
+                      <option key={v} value={v}>{v === 'All' ? 'All Strengths' : v}</option>
+                    )}
+                  </select>
+                  <select value={pocFilter} onChange={e => setPocFilter(e.target.value)} style={sel}>
+                    <option value="All">All POC Status</option>
+                    <option value="confirmed">Confirmed POC</option>
+                    <option value="candidate">POC Candidate</option>
+                    <option value="none">Not POC</option>
+                  </select>
+                  <select value={fuPriorityFilter} onChange={e => setFuPriorityFilter(e.target.value)} style={sel}>
+                    {['All','urgent','high','medium','low','none'].map(v =>
+                      <option key={v} value={v}>{v === 'All' ? 'All Follow-Up' : v === 'none' ? 'No Follow-Up' : `${v.charAt(0).toUpperCase()+v.slice(1)} Priority`}</option>
+                    )}
+                  </select>
+                  {hasFilters && (
+                    <button onClick={() => { setPersonaFilter('All'); setStageFilter('All'); setPocFilter('All'); setStrengthFilter('All'); setFuPriorityFilter('All'); setShowFollowupOnly(false); setDmSearch(''); }}
+                      style={{padding:"7px 12px",borderRadius:8,background:t.hover,border:`1px solid ${t.border}`,color:t.sub,fontSize:12,fontWeight:600,cursor:"pointer",fontFamily:"inherit",display:"flex",alignItems:"center",gap:4}}>
+                      <X size={11}/> Clear
+                    </button>
                   )}
-                </select>
-                <select value={showFollowupOnly ? 'followup' : 'all'} onChange={e => setShowFollowupOnly(e.target.value === 'followup')} style={sel}>
-                  <option value="all">All Contacts</option>
-                  <option value="followup">Follow-Up Only</option>
-                </select>
+                </div>
               </div>
             );
           })()}
@@ -752,62 +812,120 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
             <Card t={t} style={{textAlign:"center",padding:"60px 24px"}}>
               <Users size={32} color={t.muted} style={{marginBottom:12}}/>
               <div style={{fontSize:14,fontWeight:600,color:t.sub,marginBottom:12}}>No LinkedIn DM contacts yet.</div>
-              <div style={{fontSize:13,color:t.muted,marginBottom:12}}>Run the import script to get started:</div>
+              <div style={{fontSize:13,color:t.muted,marginBottom:12}}>Run the intelligence analysis script to populate this section:</div>
               <div style={{background:t.hover,borderRadius:6,padding:"8px 14px",fontSize:12,fontFamily:"monospace",color:t.tx,display:"inline-block",textAlign:"left"}}>
-                python linkedin_crm_import.py --csv ~/Desktop/linkedin-crm/output/contacts_export.csv
+                python linkedin_intelligence_v2.py --zip ~/Desktop/Basic_LinkedInDataExport_*.zip
               </div>
             </Card>
           )}
 
           {/* ── Contact cards ── */}
           {!dmLoading && !dmError && (() => {
-            const ROLE_COLORS = {
-              'Recruiter':        {bg:t.priL,   tx:t.pri},
+            // ── Color maps ────────────────────────────────────────────────────
+            const PERSONA_COLORS = {
+              'Recruiter':        {bg:t.priL,    tx:t.pri},
               'Hiring Manager':   {bg:'#fee2e2', tx:'#dc2626'},
               'Executive':        {bg:'#ede9fe', tx:'#7c3aed'},
               'Referral Contact': {bg:'#ffedd5', tx:'#ea580c'},
               'Alumni':           {bg:'#ccfbf1', tx:'#0d9488'},
+              'Senior Engineer':  {bg:'#f0fdf4', tx:'#15803d'},
               'Peer Engineer':    {bg:t.greenL,  tx:t.green},
+              'Potential Mentor': {bg:'#faf5ff', tx:'#7c3aed'},
             };
-            const STATUS_COLORS_DM = {
-              'Opportunity Active': {bg:t.greenL,  tx:t.green},
-              'Follow-Up Needed':   {bg:t.yellowL, tx:t.yellow},
-              'Awaiting Reply':     {bg:t.priL,    tx:t.pri},
+            const STAGE_COLORS = {
+              'Strong Rapport':        {bg:'#f0fdf4', tx:'#15803d'},
+              'Active Conversation':   {bg:t.greenL,  tx:t.green},
+              'Warm Contact':          {bg:'#ecfdf5', tx:'#059669'},
+              'Replied Once':          {bg:t.priL,    tx:t.pri},
+              'Referral Requested':    {bg:'#fff7ed', tx:'#c2410c'},
+              'Referral Secured':      {bg:'#fce7f3', tx:'#db2777'},
+              'Hiring Process Related':{bg:'#fee2e2', tx:'#dc2626'},
+              'Initial Outreach Sent': {bg:t.hover,   tx:t.sub},
+              'Follow-Up Needed':      {bg:t.yellowL, tx:t.yellow},
+              'Dormant':               {bg:t.hover,   tx:t.muted},
+              'Cold / No Action':      {bg:t.hover,   tx:t.muted},
             };
-            const priorityColor = (p) => {
-              if (p >= 8) return {bg:'#fee2e2', tx:'#dc2626'};
-              if (p >= 6) return {bg:'#ffedd5', tx:'#ea580c'};
-              if (p >= 4) return {bg:t.yellowL,  tx:t.yellow};
-              return {bg:t.hover, tx:t.muted};
+            const STRENGTH_COLORS = {
+              'Confirmed POC':  {bg:'#fce7f3', tx:'#db2777'},
+              'POC Candidate':  {bg:'#fff1f5', tx:'#e11d63'},
+              'Strong':         {bg:t.greenL,  tx:t.green},
+              'Warm':           {bg:'#ecfdf5', tx:'#059669'},
+              'Informational':  {bg:t.priL,    tx:t.pri},
+              'Low':            {bg:t.hover,   tx:t.muted},
+            };
+            const FU_PRIORITY_COLORS = {
+              'urgent': {bg:'#fee2e2', tx:'#dc2626'},
+              'high':   {bg:'#ffedd5', tx:'#ea580c'},
+              'medium': {bg:t.yellowL, tx:t.yellow},
+              'low':    {bg:t.hover,   tx:t.muted},
+            };
+            const TONE_ICONS = {
+              'warm':        '☀️',
+              'encouraging': '⭐',
+              'helpful':     '🤝',
+              'neutral':     '○',
+              'transactional':'→',
+              'dismissive':  '✗',
             };
 
-            const filtered = dmContacts
-              .filter(c => roleFilter === 'All'   || c.role_type === roleFilter)
-              .filter(c => statusFilter === 'All' || c.conv_status === statusFilter)
-              .filter(c => !showFollowupOnly      || c.follow_up === true);
+            // ── Filtering ─────────────────────────────────────────────────────
+            const q = dmSearch.trim().toLowerCase();
+            const filtered = dmContacts.filter(c => {
+              if (personaFilter !== 'All' && c.persona !== personaFilter) return false;
+              if (stageFilter !== 'All' && c.conversation_stage !== stageFilter) return false;
+              if (strengthFilter !== 'All' && c.relationship_strength !== strengthFilter) return false;
+              if (pocFilter === 'confirmed' && !c.is_confirmed_poc) return false;
+              if (pocFilter === 'candidate' && (!c.is_poc_candidate || c.is_confirmed_poc)) return false;
+              if (pocFilter === 'none' && c.is_poc_candidate) return false;
+              if (fuPriorityFilter !== 'All' && c.follow_up_priority !== fuPriorityFilter) return false;
+              if (showFollowupOnly && !c.follow_up) return false;
+              if (q) {
+                const haystack = [c.name, c.company, c.position, c.persona, c.conversation_stage, c.tags, c.crm_summary].join(' ').toLowerCase();
+                if (!haystack.includes(q)) return false;
+              }
+              return true;
+            });
 
-            return filtered.map(c => {
-              const roleCl    = ROLE_COLORS[c.role_type] || {bg:t.hover, tx:t.muted};
-              const statusCl  = STATUS_COLORS_DM[c.conv_status] || {bg:t.hover, tx:t.muted};
-              const priCl     = priorityColor(c.priority);
-              const isExpanded = expandedSummaries.has(c.id);
-              const noteVal   = (editedNotes[c.id] ?? c.notes) ?? '';
+            // ── Result count ─────────────────────────────────────────────────
+            const resultLine = filtered.length !== dmContacts.length
+              ? <div style={{fontSize:12,color:t.muted,marginBottom:12}}>Showing {filtered.length} of {dmContacts.length} contacts</div>
+              : null;
 
-              // Live days since contact (computed from last_contact YYYY-MM-DD)
-              let daysText = null;
+            const cards = filtered.map(c => {
+              const personaCl   = PERSONA_COLORS[c.persona] || {bg:t.hover, tx:t.muted};
+              const stageCl     = STAGE_COLORS[c.conversation_stage] || {bg:t.hover, tx:t.muted};
+              const strengthCl  = STRENGTH_COLORS[c.relationship_strength] || {bg:t.hover, tx:t.muted};
+              const fuPriCl     = FU_PRIORITY_COLORS[c.follow_up_priority] || null;
+              const toneIcon    = TONE_ICONS[c.tone] || '';
+              const isSummaryExpanded = expandedSummaries.has(c.id);
+              const isGuidanceExpanded = expandedGuidance.has(c.id);
+              const noteVal     = (editedNotes[c.id] ?? c.notes) ?? '';
+
+              // Days since
+              let daysText = null, daysNum = null;
               if (c.last_contact) {
-                const days = Math.floor((Date.now() - new Date(c.last_contact + 'T00:00:00')) / 86400000);
-                daysText = `${days} day${days !== 1 ? 's' : ''} ago`;
+                daysNum = Math.floor((Date.now() - new Date(c.last_contact + 'T00:00:00')) / 86400000);
+                daysText = `${daysNum}d ago`;
               } else if (c.days_since != null) {
-                daysText = `${c.days_since} days ago`;
+                daysNum = c.days_since;
+                daysText = `${daysNum}d ago`;
               }
 
-              const toggleSummary = () => setExpandedSummaries(prev => {
-                const next = new Set(prev);
-                next.has(c.id) ? next.delete(c.id) : next.add(c.id);
-                return next;
-              });
+              // Left border color by urgency / strength
+              let borderColor = undefined;
+              if (c.follow_up_priority === 'urgent') borderColor = '#dc2626';
+              else if (c.follow_up_priority === 'high') borderColor = '#ea580c';
+              else if (c.is_confirmed_poc) borderColor = '#db2777';
+              else if (c.is_poc_candidate) borderColor = '#e11d63';
+              else if (c.conversation_stage === 'Strong Rapport') borderColor = t.green;
+              else if (c.follow_up) borderColor = t.yellow;
 
+              const toggleSummary = () => setExpandedSummaries(prev => {
+                const next = new Set(prev); next.has(c.id) ? next.delete(c.id) : next.add(c.id); return next;
+              });
+              const toggleGuidance = () => setExpandedGuidance(prev => {
+                const next = new Set(prev); next.has(c.id) ? next.delete(c.id) : next.add(c.id); return next;
+              });
               const handleNoteBlur = () => {
                 if (editedNotes[c.id] !== undefined && editedNotes[c.id] !== (c.notes || '')) {
                   updateLinkedInContactNotes(c.id, editedNotes[c.id]).catch(e => setDmNoteError('Note save failed: ' + e.message));
@@ -815,63 +933,162 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
               };
 
               return (
-                <Card key={c.id} t={t} style={{
-                  marginBottom:12,
-                  borderLeft: c.follow_up ? '4px solid #ea580c' : undefined,
-                }}>
+                <Card key={c.id} t={t} style={{marginBottom:10, borderLeft: borderColor ? `4px solid ${borderColor}` : undefined}}>
                   <div style={{display:"flex",alignItems:"flex-start",gap:12}}>
-                    <Avatar name={c.name} size={42} t={t}/>
+                    <Avatar name={c.name} size={40} t={t}/>
                     <div style={{flex:1,minWidth:0}}>
-                      {/* Header row */}
-                      <div style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap",marginBottom:3}}>
+
+                      {/* ── Name + LinkedIn link ── */}
+                      <div style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap",marginBottom:2}}>
                         {c.linkedin_url
-                          ? <a href={c.linkedin_url} target="_blank" rel="noreferrer" style={{fontSize:14.5,fontWeight:700,color:t.tx,textDecoration:"none"}}>{c.name}</a>
-                          : <span style={{fontSize:14.5,fontWeight:700,color:t.tx}}>{c.name}</span>
+                          ? <a href={c.linkedin_url} target="_blank" rel="noreferrer" style={{fontSize:14,fontWeight:700,color:t.tx,textDecoration:"none"}}>{c.name}</a>
+                          : <span style={{fontSize:14,fontWeight:700,color:t.tx}}>{c.name}</span>
                         }
-                        {c.follow_up && <span title="Follow-up needed">🔔</span>}
-                        <span style={{fontSize:10.5,fontWeight:700,padding:"2px 8px",borderRadius:10,background:roleCl.bg,color:roleCl.tx}}>{c.role_type||'Unknown'}</span>
-                        <span style={{fontSize:10.5,fontWeight:700,padding:"2px 8px",borderRadius:10,background:statusCl.bg,color:statusCl.tx}}>{c.conv_status}</span>
-                        {c.priority != null && (
-                          <span style={{marginLeft:'auto',fontSize:11,fontWeight:800,padding:"2px 8px",borderRadius:10,background:priCl.bg,color:priCl.tx}}>P{c.priority}</span>
+                        {c.is_confirmed_poc && <span title="Confirmed POC" style={{fontSize:11,fontWeight:800,padding:"1px 7px",borderRadius:10,background:'#fce7f3',color:'#db2777'}}>★ POC</span>}
+                        {!c.is_confirmed_poc && c.is_poc_candidate && <span title="POC Candidate" style={{fontSize:11,fontWeight:700,padding:"1px 7px",borderRadius:10,background:'#fff1f5',color:'#e11d63'}}>◆ Candidate</span>}
+                        {c.referral_secured && <span title="Referral secured" style={{fontSize:11,fontWeight:700,padding:"1px 7px",borderRadius:10,background:'#ecfdf5',color:'#059669'}}>✓ Referred</span>}
+                        {c.promise_made && <span title={`Promise: ${c.promise_text||''}`} style={{fontSize:11,fontWeight:700,padding:"1px 7px",borderRadius:10,background:'#fff7ed',color:'#c2410c'}}>Promise</span>}
+                        {c.follow_up && fuPriCl && (
+                          <span style={{fontSize:10.5,fontWeight:800,padding:"1px 7px",borderRadius:10,background:fuPriCl.bg,color:fuPriCl.tx,marginLeft:'auto'}}>
+                            {c.follow_up_priority === 'urgent' ? '🔴 Urgent' : c.follow_up_priority === 'high' ? '🟠 High' : '🟡 Follow-up'}
+                          </span>
                         )}
                       </div>
-                      {/* Subtitle */}
-                      <div style={{fontSize:13,color:t.muted,marginBottom:4}}>
-                        {[c.company,c.position].filter(Boolean).join(' · ')}
-                      </div>
-                      {/* Days since */}
-                      {daysText && <div style={{fontSize:12,color:t.muted,marginBottom:6}}>{daysText}</div>}
-                      {/* Next action */}
-                      {c.next_action && (
-                        <div style={{fontSize:12,color:t.sub,background:t.hover,borderRadius:6,padding:"5px 10px",marginBottom:8}}>
-                          <span style={{fontWeight:700}}>Next: </span>{c.next_action}
+
+                      {/* ── Company / Position ── */}
+                      {(c.company || c.position) && (
+                        <div style={{fontSize:12.5,color:t.muted,marginBottom:4}}>
+                          {[c.company, c.position].filter(Boolean).join(' · ')}
                         </div>
                       )}
-                      {/* Expandable summary */}
-                      {c.summary && (
-                        <div style={{marginBottom:8}}>
-                          <button onClick={toggleSummary} style={{fontSize:11.5,color:t.pri,background:"none",border:"none",padding:0,cursor:"pointer",fontFamily:"inherit",fontWeight:600}}>
-                            {isExpanded ? 'Hide summary ▴' : 'Show summary ▾'}
-                          </button>
-                          {isExpanded && (
-                            <div style={{fontSize:12.5,color:t.sub,marginTop:6,lineHeight:1.6}}>{c.summary}</div>
+
+                      {/* ── Badge row: Persona | Stage | Strength | Tone | Days ── */}
+                      <div style={{display:"flex",gap:5,flexWrap:"wrap",alignItems:"center",marginBottom:8}}>
+                        <span style={{fontSize:10,fontWeight:700,padding:"2px 7px",borderRadius:8,background:personaCl.bg,color:personaCl.tx}}>
+                          {c.persona || c.role_type || 'Unknown'}
+                        </span>
+                        {c.persona_confidence != null && c.persona_confidence < 60 && (
+                          <span style={{fontSize:10,color:t.muted}}>~{c.persona_confidence}%</span>
+                        )}
+                        <span style={{fontSize:10,fontWeight:700,padding:"2px 7px",borderRadius:8,background:stageCl.bg,color:stageCl.tx}}>
+                          {c.conversation_stage || c.conv_status || '—'}
+                        </span>
+                        <span style={{fontSize:10,fontWeight:700,padding:"2px 7px",borderRadius:8,background:strengthCl.bg,color:strengthCl.tx}}>
+                          {c.relationship_strength || '—'}
+                        </span>
+                        {c.tone && c.tone !== 'neutral' && (
+                          <span title={`Tone: ${c.tone}`} style={{fontSize:10,color:t.muted}}>{toneIcon} {c.tone}</span>
+                        )}
+                        {c.two_way_conversation && <span title="Two-way conversation" style={{fontSize:10,color:t.green}}>⇄ {c.total_exchanges || ''}x</span>}
+                        {daysText && <span style={{fontSize:10.5,color:t.muted,marginLeft:"auto"}}>{daysText}</span>}
+                      </div>
+
+                      {/* ── POC Score bar ── */}
+                      {c.poc_score != null && c.poc_score > 0 && (
+                        <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:8}}>
+                          <span style={{fontSize:10,fontWeight:700,color:t.muted,whiteSpace:"nowrap"}}>POC {c.poc_score}/10</span>
+                          <div style={{flex:1,height:4,borderRadius:4,background:t.hover,overflow:"hidden"}}>
+                            <div style={{height:"100%",width:`${c.poc_score * 10}%`,borderRadius:4,background: c.poc_score >= 7 ? '#db2777' : c.poc_score >= 5 ? '#ea580c' : c.poc_score >= 3 ? t.yellow : t.muted}}/>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* ── Message count ── */}
+                      {c.message_count > 0 && (
+                        <div style={{fontSize:11,color:t.muted,marginBottom:6}}>
+                          {c.message_count} message{c.message_count !== 1 ? 's' : ''}
+                          {c.i_sent_first !== null && c.i_sent_first !== undefined && (
+                            <span style={{marginLeft:6}}>{c.i_sent_first ? '(you initiated)' : '(they initiated)'}</span>
+                          )}
+                          {!c.they_replied && c.i_sent_first && <span style={{marginLeft:6,color:t.muted}}>— no reply</span>}
+                        </div>
+                      )}
+
+                      {/* ── Promise tracking ── */}
+                      {c.promise_made && c.promise_text && (
+                        <div style={{marginBottom:8,padding:"6px 10px",borderRadius:6,background:'#fff7ed',border:"1px solid #fed7aa"}}>
+                          <div style={{fontSize:10,fontWeight:700,color:'#c2410c',marginBottom:2,textTransform:"uppercase",letterSpacing:.5}}>Promise Made</div>
+                          <div style={{fontSize:11.5,color:'#9a3412'}}>{c.promise_text.slice(0,180)}{c.promise_text.length > 180 ? '…' : ''}</div>
+                          {c.promise_status && (
+                            <div style={{fontSize:10,marginTop:3,fontWeight:600,color:'#c2410c'}}>Status: {c.promise_status}</div>
                           )}
                         </div>
                       )}
-                      {/* Notes textarea — auto-saves on blur */}
+
+                      {/* ── Follow-up guidance ── */}
+                      {c.follow_up && c.follow_up_type && c.follow_up_type !== 'none' && (
+                        <div style={{marginBottom:8,padding:"6px 10px",borderRadius:6,background: c.follow_up_priority === 'urgent' ? '#fee2e2' : t.yellowL, border:`1px solid ${c.follow_up_priority === 'urgent' ? '#fca5a5' : t.yellowBd}`}}>
+                          <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
+                            <div>
+                              <div style={{fontSize:10,fontWeight:700,color:c.follow_up_priority === 'urgent' ? '#dc2626' : t.yellow,textTransform:"uppercase",letterSpacing:.5,marginBottom:2}}>
+                                {c.follow_up_type.replace(/-/g,' ')} {c.follow_up_timing ? `· ${c.follow_up_timing}` : ''}
+                              </div>
+                              {c.follow_up_reason && (
+                                <div style={{fontSize:11.5,color:c.follow_up_priority === 'urgent' ? '#b91c1c' : '#92400e'}}>{c.follow_up_reason}</div>
+                              )}
+                            </div>
+                            {c.follow_up_guidance && (
+                              <button onClick={toggleGuidance} style={{fontSize:10.5,color:t.pri,background:"none",border:"none",padding:0,cursor:"pointer",fontFamily:"inherit",fontWeight:600,whiteSpace:"nowrap",marginLeft:8}}>
+                                {isGuidanceExpanded ? 'Hide tip ▴' : 'What to say ▾'}
+                              </button>
+                            )}
+                          </div>
+                          {isGuidanceExpanded && c.follow_up_guidance && (
+                            <div style={{fontSize:11.5,color:t.sub,marginTop:6,lineHeight:1.6,paddingTop:6,borderTop:`1px solid ${t.border}`}}>
+                              {c.follow_up_guidance}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* ── CRM Summary ── */}
+                      {(c.crm_summary || c.summary) && (
+                        <div style={{marginBottom:8}}>
+                          <button onClick={toggleSummary} style={{fontSize:11,color:t.pri,background:"none",border:"none",padding:0,cursor:"pointer",fontFamily:"inherit",fontWeight:600}}>
+                            {isSummaryExpanded ? 'Hide summary ▴' : 'Summary ▾'}
+                          </button>
+                          {isSummaryExpanded && (
+                            <div style={{fontSize:12,color:t.sub,marginTop:5,lineHeight:1.6,padding:"6px 10px",background:t.hover,borderRadius:6}}>
+                              {c.crm_summary || c.summary}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* ── Tags ── */}
+                      {c.tags && (
+                        <div style={{display:"flex",gap:4,flexWrap:"wrap",marginBottom:8}}>
+                          {c.tags.split(',').filter(Boolean).map(tag => (
+                            <span key={tag} style={{fontSize:10,padding:"1px 6px",borderRadius:6,background:t.hover,color:t.muted,border:`1px solid ${t.border}`}}>
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* ── Next action ── */}
+                      {c.next_action && (
+                        <div style={{fontSize:11.5,color:t.sub,background:t.hover,borderRadius:6,padding:"4px 9px",marginBottom:8}}>
+                          <span style={{fontWeight:700}}>Next: </span>{c.next_action}
+                        </div>
+                      )}
+
+                      {/* ── Notes textarea ── */}
                       <textarea
                         value={noteVal}
                         rows={2}
                         placeholder="Add notes..."
                         onChange={e => setEditedNotes(prev => ({...prev, [c.id]: e.target.value}))}
                         onBlur={handleNoteBlur}
-                        style={{width:"100%",background:t.bg,border:`1px solid ${t.border}`,borderRadius:8,padding:"7px 10px",color:t.tx,fontSize:12.5,fontFamily:"inherit",resize:"vertical",boxSizing:"border-box",outline:"none"}}
+                        style={{width:"100%",background:t.bg,border:`1px solid ${t.border}`,borderRadius:8,padding:"6px 10px",color:t.tx,fontSize:12,fontFamily:"inherit",resize:"vertical",boxSizing:"border-box",outline:"none"}}
                       />
                     </div>
                   </div>
                 </Card>
               );
             });
+
+            return <>{resultLine}{cards}</>;
           })()}
         </div>
       )}
