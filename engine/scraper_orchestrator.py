@@ -161,7 +161,7 @@ def deduct(name: str, count: int, state: Dict):
 
 def run():
     log.info("=" * 60)
-    log.info("JobAgent v4.2 — Scraper Orchestrator Starting")
+    log.info("JobAgent v4.3 — Scraper Orchestrator Starting")
     log.info("=" * 60)
 
     start_time = datetime.utcnow()
@@ -172,7 +172,7 @@ def run():
     log.info(f"Query engine produced {len(all_queries)} queries")
 
     run_record: Dict = {
-        "version":           "4.2",
+        "version":           "4.3",
         "run_date":          str(date.today()),
         "run_start_utc":     start_time.isoformat() + "Z",
         "queries_generated": len(all_queries),

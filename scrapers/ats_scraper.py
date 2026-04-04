@@ -40,6 +40,15 @@ except ImportError:
 
 log = logging.getLogger("ats_scraper")
 
+# ── User-Agent headers ────────────────────────────────────────────────────────
+HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (compatible; JobAgentBot/4.3; "
+        "+https://github.com/Siddardth7/job-pipeline)"
+    ),
+    "Accept": "application/json",
+}
+
 # ── Request config ────────────────────────────────────────────────────────────
 REQUEST_TIMEOUT  = 12    # seconds per HTTP request
 MAX_JOBS_PER_CO  = 50    # cap to avoid runaway on companies with 1000+ postings
@@ -145,7 +154,7 @@ class AtsScraper:
         if updated_after:
             url += f"&updated_after={updated_after}"
         try:
-            r = requests.get(url, timeout=REQUEST_TIMEOUT)
+            r = requests.get(url, headers=HEADERS, timeout=REQUEST_TIMEOUT)
             if r.status_code == 404:
                 log.warning(
                     f"  [ats/gh] {meta['name']!r} — 404 (slug={slug!r}). "
@@ -212,7 +221,7 @@ class AtsScraper:
     def _fetch_lever(self, slug: str, meta: Dict) -> List[Dict]:
         url = f"https://api.lever.co/v0/postings/{slug}?mode=json"
         try:
-            r = requests.get(url, timeout=REQUEST_TIMEOUT)
+            r = requests.get(url, headers=HEADERS, timeout=REQUEST_TIMEOUT)
             if r.status_code == 404:
                 log.warning(
                     f"  [ats/lv] {meta['name']!r} — 404 (slug={slug!r}). "

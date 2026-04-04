@@ -39,6 +39,15 @@ except ImportError:
 
 log = logging.getLogger("jsearch_scraper")
 
+# ── User-Agent headers ────────────────────────────────────────────────────────
+HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (compatible; JobAgentBot/4.3; "
+        "+https://github.com/Siddardth7/job-pipeline)"
+    ),
+    "Accept": "application/json",
+}
+
 _raw_keys = os.environ.get("JSEARCH_API_KEYS", "") or os.environ.get("JSEARCH_API_KEY", "")
 JSEARCH_API_KEYS = [k.strip() for k in _raw_keys.split(",") if k.strip()]
 JSEARCH_HOST    = "jsearch.p.rapidapi.com"
@@ -227,9 +236,11 @@ class JSearchScraper:
             "country":    "us",
             "language":   "en",
         }
+        # Merge User-Agent headers with RapidAPI auth headers
+        merged_headers = {**HEADERS, **headers}
         for attempt in range(2):
             try:
-                r = requests.get(JSEARCH_URL, headers=headers, params=params, timeout=15)
+                r = requests.get(JSEARCH_URL, headers=merged_headers, params=params, timeout=15)
                 if r.status_code == 200:
                     return r.json().get("data", [])
                 if r.status_code == 429:

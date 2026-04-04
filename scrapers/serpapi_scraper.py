@@ -42,6 +42,15 @@ except ImportError:
 
 log = logging.getLogger("serpapi_scraper")
 
+# ── User-Agent headers ────────────────────────────────────────────────────────
+HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (compatible; JobAgentBot/4.3; "
+        "+https://github.com/Siddardth7/job-pipeline)"
+    ),
+    "Accept": "application/json",
+}
+
 SERPAPI_KEY = (
     os.environ.get("SERPAPI_KEY", "")
     or os.environ.get("SERPAPI_API_KEY", "")
@@ -185,7 +194,7 @@ class SerpApiScraper:
                 params["chips"] = chips_val
 
             try:
-                r = requests.get(SERPAPI_URL, params=params, timeout=20)
+                r = requests.get(SERPAPI_URL, headers=HEADERS, params=params, timeout=20)
                 if r.status_code == 401:
                     log.error("[serpapi] 401 Unauthorized — check SERPAPI_KEY")
                     return [], False

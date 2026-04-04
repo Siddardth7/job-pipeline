@@ -36,6 +36,15 @@ except ImportError:
 
 log = logging.getLogger("adzuna_scraper")
 
+# ── User-Agent headers ────────────────────────────────────────────────────────
+HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (compatible; JobAgentBot/4.3; "
+        "+https://github.com/Siddardth7/job-pipeline)"
+    ),
+    "Accept": "application/json",
+}
+
 _raw_ids  = os.environ.get("ADZUNA_APP_IDS",  "") or os.environ.get("ADZUNA_APP_ID",  "")
 _raw_keys = os.environ.get("ADZUNA_APP_KEYS", "") or os.environ.get("ADZUNA_APP_KEY", "")
 ADZUNA_PAIRS = [
@@ -150,7 +159,7 @@ class AdzunaScraper:
             "content-type":     "application/json",
         }
         try:
-            r = requests.get(BASE_URL, params=params, timeout=20)
+            r = requests.get(BASE_URL, headers=HEADERS, params=params, timeout=20)
             if r.status_code in (401, 403):
                 return ("quota", [])
             if r.status_code == 429:
