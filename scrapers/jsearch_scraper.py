@@ -182,7 +182,7 @@ class JSearchScraper:
                 location    = f"{city}, {state}".strip(", ") or "United States"
                 posted_raw  = job.get("job_posted_at_datetime_utc", "") or ""
                 posted_date = posted_raw[:10] if posted_raw else datetime.utcnow().strftime("%Y-%m-%d")
-                itar_flags  = check_itar(desc)
+                itar_flags  = check_itar(job.get("job_title", "") + " " + desc)
 
                 all_jobs.append({
                     "job_title":    job.get("job_title", ""),

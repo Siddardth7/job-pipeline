@@ -233,7 +233,8 @@ class SerpApiScraper:
         posted_date = self._parse_ago(
             raw.get("detected_extensions", {}).get("posted_at", "")
         )
-        itar_flags = [kw for kw in ITAR_KEYWORDS if kw in desc.lower()]
+        itar_combined = (title + " " + desc).lower()
+        itar_flags = [kw for kw in ITAR_KEYWORDS if kw in itar_combined]
 
         return {
             "job_title":    title,

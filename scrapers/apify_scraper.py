@@ -266,7 +266,8 @@ class ApifyScraper:
             cluster = self._infer_cluster(title)
 
         posted_date = self._parse_date(raw.get("postedDate", "") or "")
-        itar_flags  = [kw for kw in ITAR_KEYWORDS if kw in desc.lower()]
+        itar_combined = (title + " " + desc).lower()
+        itar_flags  = [kw for kw in ITAR_KEYWORDS if kw in itar_combined]
 
         return {
             "job_title":    title,

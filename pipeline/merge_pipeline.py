@@ -519,15 +519,16 @@ def _itar_reject_reason(job: Dict) -> Optional[str]:
         detail = (job.get("itar_detail") or "").strip()
         return f"itar_flag=True" + (f" ({detail})" if detail else "")
 
-    # Belt-and-suspenders: re-scan itar_detail and full description
+    # Belt-and-suspenders: re-scan title + itar_detail + full description
     combined = " ".join([
+        job.get("job_title",   "") or "",
         job.get("itar_detail", "") or "",
         job.get("description", "") or "",
     ]).lower()
 
     for kw in ITAR_REJECT_KEYWORDS:
         if kw in combined:
-            return f"keyword: '{kw}'"
+            return f"keyword in title/desc: '{kw}'"
 
     return None
 

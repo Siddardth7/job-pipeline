@@ -176,7 +176,8 @@ class AdzunaScraper:
         if not link:
             return None
 
-        itar_flags = [kw for kw in ITAR_KEYWORDS if kw in desc.lower()]
+        itar_combined = (title + " " + desc).lower()
+        itar_flags = [kw for kw in ITAR_KEYWORDS if kw in itar_combined]
 
         return {
             "job_title":    title,

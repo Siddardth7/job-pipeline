@@ -187,7 +187,8 @@ class AtsScraper:
         posted_raw  = raw.get("updated_at", "") or raw.get("created_at", "")
         posted_date = self._parse_iso(posted_raw)
 
-        itar_flags = [kw for kw in ITAR_KEYWORDS if kw in desc.lower()]
+        itar_combined = (title + " " + desc).lower()
+        itar_flags = [kw for kw in ITAR_KEYWORDS if kw in itar_combined]
 
         return {
             "job_title":    title,
@@ -259,7 +260,8 @@ class AtsScraper:
         # Use today's date so F4 doesn't age-drop live jobs that were created weeks ago.
         posted_date = datetime.utcnow().strftime("%Y-%m-%d")
 
-        itar_flags = [kw for kw in ITAR_KEYWORDS if kw in desc.lower()]
+        itar_combined = (title + " " + desc).lower()
+        itar_flags = [kw for kw in ITAR_KEYWORDS if kw in itar_combined]
 
         return {
             "job_title":    title,

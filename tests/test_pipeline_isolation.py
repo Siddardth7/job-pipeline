@@ -74,3 +74,29 @@ def test_normalize_stable_id_prefers_raw_id(tmp_path):
     }
     result = _normalize(job)
     assert result["stable_id"] == "ats_greenhouse:99"
+
+
+def test_itar_reject_reason_catches_title():
+    """F8 must reject jobs with ITAR keywords in the title, not just description."""
+    from pipeline.merge_pipeline import _itar_reject_reason
+    job = {
+        "job_title": "Manufacturing Engineer with Security Clearance",
+        "company_name": "PlanIT Group LLC",
+        "itar_flag": False,
+        "itar_detail": "",
+        "description": "You will work on manufacturing processes.",
+    }
+    reason = _itar_reject_reason(job)
+    assert reason is not None, "Should reject title containing 'security clearance'"
+
+
+def test_itar_reject_reason_clean_job_passes():
+    from pipeline.merge_pipeline import _itar_reject_reason
+    job = {
+        "job_title": "Manufacturing Engineer",
+        "company_name": "Joby Aviation",
+        "itar_flag": False,
+        "itar_detail": "",
+        "description": "Work on composite manufacturing processes.",
+    }
+    assert _itar_reject_reason(job) is None
