@@ -18,6 +18,10 @@ env:
   SUPABASE_URL:         ${{ secrets.SUPABASE_URL }}
   SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
 
+concurrency:
+  group: daily-scrape
+  cancel-in-progress: false
+
 jobs:
   scrape:
     runs-on: ubuntu-latest
@@ -34,6 +38,11 @@ jobs:
 
       - name: Install dependencies
         run: pip install requests apify-client python-dotenv supabase
+
+      - name: Clear temp directory
+        run: |
+          rm -f temp/jobs_*.json
+          echo "temp/ cleared — stale source files removed"
 
       # ── STEP 1: Run all scrapers via orchestrator ─────────────────────────
       # Runs ATS → JSearch → Apify → SerpAPI → Adzuna in order.
@@ -62,8 +71,27 @@ jobs:
         run: |
           if [ ! -f output/jobs_clean_latest.json ] && [ -f temp/jobs_clean_intermediate.json ]; then
             mkdir -p output
-            cp temp/jobs_clean_intermediate.json output/jobs_clean_latest.json
-            echo "WARNING: Used intermediate file as fallback for output/jobs_clean_latest.json"
+            # Wrap intermediate format to match company_intelligence output schema
+            python3 -c "
+          import json, datetime
+          d = json.load(open('temp/jobs_clean_intermediate.json'))
+          jobs = d.get('jobs', [])
+          out = {
+            'green_jobs': jobs,
+            'yellow_jobs': [],
+            'summary': {
+              'run_date': str(datetime.date.today()),
+              'generated_utc': datetime.datetime.utcnow().isoformat() + 'Z',
+              'total_scraped': len(jobs),
+              'green_jobs': len(jobs),
+              'yellow_jobs': 0,
+              'filtered_jobs': 0,
+              'promoted_companies': [],
+            }
+          }
+          json.dump(out, open('output/jobs_clean_latest.json', 'w'), indent=2)
+          print(f'WARNING: Fallback output written with {len(jobs)} jobs (schema-wrapped)')
+          "
           fi
 
       # ── STEP 3c: Distribute jobs to per-user feeds ───────────────────────
