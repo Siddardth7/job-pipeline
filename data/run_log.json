@@ -944,5 +944,43 @@
       }
     },
     "run_end_utc": "2026-04-03T14:05:05.341099Z"
+  },
+  {
+    "version": "4.2",
+    "run_date": "2026-04-04",
+    "run_start_utc": "2026-04-04T13:53:57.301041Z",
+    "queries_generated": 15,
+    "scrapers": {
+      "ats": {
+        "status": "success",
+        "jobs_found": 128
+      },
+      "jsearch": {
+        "status": "zero_results",
+        "queries_used": 10,
+        "jobs_found": 0
+      },
+      "apify": {
+        "status": "success",
+        "queries_used": 15,
+        "jobs_found": 113
+      },
+      "serpapi": {
+        "status": "skipped",
+        "reason": "scheduled_off",
+        "jobs_found": 0
+      },
+      "adzuna": {
+        "status": "success",
+        "jobs_found": 173,
+        "queries_used": 15
+      },
+      "theirstack": {
+        "status": "skipped",
+        "reason": "disabled_free_tier_exhausted",
+        "jobs_found": 0
+      }
+    },
+    "run_end_utc": "2026-04-04T13:56:50.334504Z"
   }
 ]
