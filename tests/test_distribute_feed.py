@@ -37,3 +37,19 @@ def test_build_applied_set_normalizes():
 
 def test_build_applied_set_empty_input():
     assert build_applied_set([]) == set()
+
+
+def test_chunk_list_splits_correctly():
+    """_chunk should split a list into batches of given size."""
+    from pipeline.batch_upsert import chunk
+    lst = list(range(250))
+    batches = list(chunk(lst, 100))
+    assert len(batches) == 3
+    assert len(batches[0]) == 100
+    assert len(batches[1]) == 100
+    assert len(batches[2]) == 50
+
+
+def test_chunk_empty_list():
+    from pipeline.batch_upsert import chunk
+    assert list(chunk([], 100)) == []
