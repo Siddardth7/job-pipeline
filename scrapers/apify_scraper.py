@@ -77,6 +77,26 @@ def _coerce_str(v) -> str:
     return str(v or "")
 
 
+def _extract_location(raw_location) -> str:
+    """
+    Extract a human-readable location string from the LinkedIn actor's location field.
+    The field can be: None, a plain string, or a dict with 'city', 'state', and 'country' keys.
+    Returns empty string (not a default like 'United States') so that
+    blank-location jobs can be detected and quarantined downstream.
+    """
+    if not raw_location:
+        return ""
+    if isinstance(raw_location, str):
+        return raw_location.strip()
+    if isinstance(raw_location, dict):
+        city    = (raw_location.get("city")    or "").strip()
+        state   = (raw_location.get("state")   or "").strip()
+        country = (raw_location.get("country") or "").strip()
+        parts = [p for p in [city, state, country] if p]
+        return ", ".join(parts)
+    return ""
+
+
 class ApifyScraper:
     """
     Runs harvestapi/linkedin-job-search for LinkedIn job discovery.
@@ -235,15 +255,7 @@ class ApifyScraper:
         title    = str(raw.get("title", "") or "")
         _co_raw  = raw.get("company") or {}
         company  = str(_co_raw.get("name", "") if isinstance(_co_raw, dict) else _co_raw or "")
-        _loc_raw = raw.get("location", "") or ""
-        if isinstance(_loc_raw, dict):
-            location = ", ".join(filter(None, [
-                _loc_raw.get("city", ""),
-                _loc_raw.get("state", ""),
-                _loc_raw.get("country", ""),
-            ]))
-        else:
-            location = str(_loc_raw)
+        location = _extract_location(raw.get("location") or raw.get("jobLocation") or raw.get("companyLocation"))
 
         desc = raw.get("descriptionText", "") or raw.get("description", "") or ""
 

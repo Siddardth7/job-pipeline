@@ -342,12 +342,17 @@ def _normalize(job: Dict) -> Optional[Dict]:
     else:
         stable_id = url.lower().split("?")[0].rstrip("/")[:120]
 
+    # Track whether location was provided — blank location poisons dedupe
+    location_raw = str(job.get("location", "") or "").strip()
+    location_confidence = "known" if location_raw else "unknown"
+
     return {
-        "job_title":       title,
-        "company_name":    company,
-        "job_url":         url,
-        "location":        str(job.get("location",    "") or "").strip(),
-        "posted_date":     str(job.get("posted_date", "") or "").strip(),
+        "job_title":            title,
+        "company_name":         company,
+        "job_url":              url,
+        "location":             location_raw,
+        "location_confidence":  location_confidence,
+        "posted_date":          str(job.get("posted_date", "") or "").strip(),
         "date_confidence": str(job.get("date_confidence", "actual") or "actual"),
         "description":     str(job.get("description", "") or "").strip(),
         "source":          source,
