@@ -399,22 +399,41 @@ def _filter_age(jobs: List[Dict]) -> Tuple[List[Dict], int]:
     passed, rejected = [], 0
     cutoff = datetime.utcnow() - timedelta(hours=MAX_AGE_HOURS)
     for j in jobs:
-        if _is_fresh(j.get("posted_date", ""), cutoff):
+        if _is_fresh(j, cutoff):
             passed.append(j)
         else:
             rejected += 1
-            log.debug(f"  [F4 DROP] Age {j.get('posted_date')!r} — {j['job_title']!r} @ {j['company_name']}")
+            log.debug(
+                f"  [F4 DROP] Age/unknown-date — {j.get('posted_date')!r} "
+                f"(confidence={j.get('date_confidence','actual')}) "
+                f"— {j['job_title']!r} @ {j['company_name']}"
+            )
     return passed, rejected
 
 
-def _is_fresh(posted_date: str, cutoff: datetime) -> bool:
-    if not posted_date:
-        return True  # unknown date → treat as fresh
+def _is_fresh(job: Dict, cutoff: datetime) -> bool:
+    """
+    Returns True if the job is within the freshness window.
+    - ATS sources (ats_greenhouse, ats_lever): unknown dates are accepted as fresh
+      because these are live open postings polled directly from employer ATS.
+    - All other sources: unknown dates are DROPPED — faking freshness overstates the feed.
+    """
+    posted_date     = job.get("posted_date", "")
+    date_confidence = job.get("date_confidence", "actual")
+    source          = job.get("source", "")
+
+    if not posted_date or date_confidence == "unknown":
+        # ATS direct sources: open postings are definitionally current
+        if source in ("ats_greenhouse", "ats_lever"):
+            return True
+        # All other sources: unknown date = drop
+        return False
+
     try:
         dt = datetime.strptime(posted_date[:10], "%Y-%m-%d")
         return dt >= cutoff
     except Exception:
-        return True
+        return source in ("ats_greenhouse", "ats_lever")
 
 
 # ── F5 — Deduplication ────────────────────────────────────────────────────────

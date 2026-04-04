@@ -179,19 +179,22 @@ class AdzunaScraper:
         itar_combined = (title + " " + desc).lower()
         itar_flags = [kw for kw in ITAR_KEYWORDS if kw in itar_combined]
 
+        posted_date, date_confidence = self._parse_created(raw.get("created", ""))
+
         return {
-            "job_title":    title,
-            "company_name": company,
-            "job_url":      link,
-            "location":     location,
-            "posted_date":  self._parse_created(raw.get("created", "")),
-            "description":  desc[:500],
-            "salary":       self._format_salary(raw),
-            "source":       "adzuna",
-            "cluster":      cluster,
-            "itar_flag":    bool(itar_flags),
-            "itar_detail":  ", ".join(itar_flags),
-            "raw_id":       f"adzuna_{raw.get('id', '')}",
+            "job_title":       title,
+            "company_name":    company,
+            "job_url":         link,
+            "location":        location,
+            "posted_date":     posted_date,
+            "date_confidence": date_confidence,
+            "description":     desc[:500],
+            "salary":          self._format_salary(raw),
+            "source":          "adzuna",
+            "cluster":         cluster,
+            "itar_flag":       bool(itar_flags),
+            "itar_detail":     ", ".join(itar_flags),
+            "raw_id":          f"adzuna_{raw.get('id', '')}",
         }
 
     @staticmethod
@@ -205,14 +208,17 @@ class AdzunaScraper:
         return ""
 
     @staticmethod
-    def _parse_created(created: str) -> str:
-        """Convert Adzuna ISO timestamp → YYYY-MM-DD."""
+    def _parse_created(created: str):
+        """
+        Convert Adzuna ISO timestamp → (YYYY-MM-DD, date_confidence).
+        Returns ('', 'unknown') when no date is available.
+        """
         if not created:
-            return datetime.utcnow().strftime("%Y-%m-%d")
+            return "", "unknown"
         try:
-            return created[:10]
+            return created[:10], "actual"
         except Exception:
-            return datetime.utcnow().strftime("%Y-%m-%d")
+            return "", "unknown"
 
 
 if __name__ == "__main__":

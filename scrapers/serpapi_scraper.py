@@ -230,24 +230,25 @@ class SerpApiScraper:
             log.debug(f"  [serpapi] No usable URL for {title!r} @ {company} — dropping")
             return None
 
-        posted_date = self._parse_ago(
+        posted_date, date_confidence = self._parse_ago(
             raw.get("detected_extensions", {}).get("posted_at", "")
         )
         itar_combined = (title + " " + desc).lower()
         itar_flags = [kw for kw in ITAR_KEYWORDS if kw in itar_combined]
 
         return {
-            "job_title":    title,
-            "company_name": company,
-            "job_url":      apply_link,
-            "location":     location,
-            "posted_date":  posted_date,
-            "description":  desc[:500],
-            "source":       "serpapi",
-            "cluster":      cluster,
-            "itar_flag":    bool(itar_flags),
-            "itar_detail":  ", ".join(itar_flags),
-            "raw_id":       "",
+            "job_title":       title,
+            "company_name":    company,
+            "job_url":         apply_link,
+            "location":        location,
+            "posted_date":     posted_date,
+            "date_confidence": date_confidence,
+            "description":     desc[:500],
+            "source":          "serpapi",
+            "cluster":         cluster,
+            "itar_flag":       bool(itar_flags),
+            "itar_detail":     ", ".join(itar_flags),
+            "raw_id":          "",
         }
 
     def _best_apply_link(self, raw: Dict) -> str:
@@ -281,26 +282,29 @@ class SerpApiScraper:
         lower = url.lower()
         return any(d in lower for d in AGGREGATOR_DOMAINS)
 
-    def _parse_ago(self, text: str) -> str:
-        """Convert '3 days ago', '2 hours ago' → ISO date string."""
+    def _parse_ago(self, text: str):
+        """
+        Convert '3 days ago', '2 hours ago' → (ISO date string, date_confidence).
+        Returns ('', 'unknown') when no text or unrecognized format.
+        """
         if not text:
-            return ""
+            return "", "unknown"
         t = text.lower()
         now = datetime.utcnow()
         try:
             if "hour" in t or "minute" in t or "just" in t:
-                return now.strftime("%Y-%m-%d")
+                return now.strftime("%Y-%m-%d"), "actual"
             if "day" in t:
                 days = int("".join(c for c in t if c.isdigit()) or "1")
-                return (now - timedelta(days=days)).strftime("%Y-%m-%d")
+                return (now - timedelta(days=days)).strftime("%Y-%m-%d"), "actual"
             if "week" in t:
                 weeks = int("".join(c for c in t if c.isdigit()) or "1")
-                return (now - timedelta(weeks=weeks)).strftime("%Y-%m-%d")
+                return (now - timedelta(weeks=weeks)).strftime("%Y-%m-%d"), "actual"
             if "month" in t:
-                return (now - timedelta(days=30)).strftime("%Y-%m-%d")
+                return (now - timedelta(days=30)).strftime("%Y-%m-%d"), "actual"
         except Exception:
             pass
-        return now.strftime("%Y-%m-%d")
+        return "", "unknown"
 
 
 if __name__ == "__main__":

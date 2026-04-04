@@ -185,25 +185,26 @@ class AtsScraper:
         desc    = _strip_html(content)
 
         posted_raw  = raw.get("updated_at", "") or raw.get("created_at", "")
-        posted_date = self._parse_iso(posted_raw)
+        posted_date, date_confidence = self._parse_iso(posted_raw)
 
         itar_combined = (title + " " + desc).lower()
         itar_flags = [kw for kw in ITAR_KEYWORDS if kw in itar_combined]
 
         return {
-            "job_title":    title,
-            "company_name": meta["name"],
-            "job_url":      url,
-            "location":     location,
-            "posted_date":  posted_date,
-            "description":  desc[:500],
-            "source":       "ats_greenhouse",
-            "cluster":      self._infer_cluster(title),
-            "itar_flag":    bool(itar_flags),
-            "itar_detail":  ", ".join(itar_flags),
-            "raw_id":       job_id,
-            "ats_tier":     meta.get("tier", ""),
-            "h1b":          meta.get("h1b", ""),
+            "job_title":       title,
+            "company_name":    meta["name"],
+            "job_url":         url,
+            "location":        location,
+            "posted_date":     posted_date,
+            "date_confidence": date_confidence,
+            "description":     desc[:500],
+            "source":          "ats_greenhouse",
+            "cluster":         self._infer_cluster(title),
+            "itar_flag":       bool(itar_flags),
+            "itar_detail":     ", ".join(itar_flags),
+            "raw_id":          job_id,
+            "ats_tier":        meta.get("tier", ""),
+            "h1b":             meta.get("h1b", ""),
         }
 
     # ── Lever ─────────────────────────────────────────────────────────────────
@@ -256,27 +257,29 @@ class AtsScraper:
         )
         desc = _strip_html(desc_blocks + " " + desc_extra)
 
-        # Lever returns all currently OPEN postings (no date filter available).
-        # Use today's date so F4 doesn't age-drop live jobs that were created weeks ago.
-        posted_date = datetime.utcnow().strftime("%Y-%m-%d")
+        # Lever API has no date field — postings are all currently open.
+        # F4 accepts unknown dates from ats_lever because source=ats_lever signals a live posting.
+        posted_date     = ""        # Lever API has no date field
+        date_confidence = "unknown" # accepted as fresh because source=ats_lever
 
         itar_combined = (title + " " + desc).lower()
         itar_flags = [kw for kw in ITAR_KEYWORDS if kw in itar_combined]
 
         return {
-            "job_title":    title,
-            "company_name": meta["name"],
-            "job_url":      url,
-            "location":     location,
-            "posted_date":  posted_date,
-            "description":  desc[:500],
-            "source":       "ats_lever",
-            "cluster":      self._infer_cluster(title),
-            "itar_flag":    bool(itar_flags),
-            "itar_detail":  ", ".join(itar_flags),
-            "raw_id":       str(job_id),
-            "ats_tier":     meta.get("tier", ""),
-            "h1b":          meta.get("h1b", ""),
+            "job_title":       title,
+            "company_name":    meta["name"],
+            "job_url":         url,
+            "location":        location,
+            "posted_date":     posted_date,
+            "date_confidence": date_confidence,
+            "description":     desc[:500],
+            "source":          "ats_lever",
+            "cluster":         self._infer_cluster(title),
+            "itar_flag":       bool(itar_flags),
+            "itar_detail":     ", ".join(itar_flags),
+            "raw_id":          str(job_id),
+            "ats_tier":        meta.get("tier", ""),
+            "h1b":             meta.get("h1b", ""),
         }
 
     # ── Shared helpers ────────────────────────────────────────────────────────
@@ -301,16 +304,23 @@ class AtsScraper:
         if "npi"         in t or "prototype" in t or "build" in t: return "startup_manufacturing"
         return "manufacturing"
 
-    def _parse_iso(self, ts: str) -> str:
+    def _parse_iso(self, ts: str):
+        """
+        Parse ISO timestamp → (YYYY-MM-DD, date_confidence).
+        Returns ('', 'unknown') when no date is available.
+        """
         if not ts:
-            return datetime.utcnow().strftime("%Y-%m-%d")
+            return "", "unknown"
         try:
-            return (
+            date_str = (
                 datetime.fromisoformat(ts.replace("Z", "+00:00"))
                 .strftime("%Y-%m-%d")
             )
+            return date_str, "actual"
         except Exception:
-            return ts[:10] if len(ts) >= 10 else datetime.utcnow().strftime("%Y-%m-%d")
+            if len(ts) >= 10:
+                return ts[:10], "actual"
+            return "", "unknown"
 
 
 # ── HTML stripping utility ────────────────────────────────────────────────────

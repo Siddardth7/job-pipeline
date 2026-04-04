@@ -181,21 +181,27 @@ class JSearchScraper:
                 state       = job.get("job_state", "") or ""
                 location    = f"{city}, {state}".strip(", ") or "United States"
                 posted_raw  = job.get("job_posted_at_datetime_utc", "") or ""
-                posted_date = posted_raw[:10] if posted_raw else datetime.utcnow().strftime("%Y-%m-%d")
+                if posted_raw:
+                    posted_date     = posted_raw[:10]
+                    date_confidence = "actual"
+                else:
+                    posted_date     = ""
+                    date_confidence = "unknown"
                 itar_flags  = check_itar(job.get("job_title", "") + " " + desc)
 
                 all_jobs.append({
-                    "job_title":    job.get("job_title", ""),
-                    "company_name": job.get("employer_name", ""),
-                    "job_url":      apply_link,
-                    "location":     location,
-                    "posted_date":  posted_date,
-                    "description":  desc[:500],
-                    "source":       "jsearch",
-                    "cluster":      self._cluster(query),
-                    "itar_flag":    bool(itar_flags),
-                    "itar_detail":  ", ".join(itar_flags),
-                    "raw_id":       job_id,
+                    "job_title":       job.get("job_title", ""),
+                    "company_name":    job.get("employer_name", ""),
+                    "job_url":         apply_link,
+                    "location":        location,
+                    "posted_date":     posted_date,
+                    "date_confidence": date_confidence,
+                    "description":     desc[:500],
+                    "source":          "jsearch",
+                    "cluster":         self._cluster(query),
+                    "itar_flag":       bool(itar_flags),
+                    "itar_detail":     ", ".join(itar_flags),
+                    "raw_id":          job_id,
                 })
 
         return all_jobs

@@ -154,3 +154,33 @@ def test_dedupe_prefers_ats_over_aggregator():
     assert len(rejected) == 1
     assert passed[0]["source"] == "ats_greenhouse"
     assert passed[0]["job_url"] == "https://boards.greenhouse.io/joby/jobs/999"
+
+
+def test_f4_drops_unknown_date_non_ats():
+    """Non-ATS jobs with date_confidence=unknown must be dropped by F4."""
+    from pipeline.merge_pipeline import _filter_age
+    from datetime import datetime, timedelta
+
+    cutoff = datetime.utcnow() - timedelta(hours=72)
+    jobs = [
+        {
+            "job_title": "Process Engineer",
+            "company_name": "SomeCo",
+            "job_url": "https://example.com/job1",
+            "posted_date": "",
+            "date_confidence": "unknown",
+            "source": "adzuna",
+        },
+        {
+            "job_title": "Process Engineer",
+            "company_name": "SomeCo",
+            "job_url": "https://example.com/job2",
+            "posted_date": "",
+            "date_confidence": "unknown",
+            "source": "ats_lever",  # Lever exception — ATS = accept unknown
+        },
+    ]
+    passed, rejected = _filter_age(jobs)
+    assert len(passed) == 1
+    assert passed[0]["source"] == "ats_lever"
+    assert rejected == 1
