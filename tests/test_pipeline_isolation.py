@@ -184,3 +184,45 @@ def test_f4_drops_unknown_date_non_ats():
     assert len(passed) == 1
     assert passed[0]["source"] == "ats_lever"
     assert rejected == 1
+
+
+def test_f3_rejects_adzuna_land_url():
+    from pipeline.merge_pipeline import _filter_aggregators
+    jobs = [{
+        "job_title": "Manufacturing Engineer",
+        "company_name": "Acme",
+        "job_url": "https://www.adzuna.com/land/ad/4701290876",
+        "location": "Austin, TX",
+        "posted_date": "2026-04-03",
+        "description": "",
+        "source": "adzuna",
+        "cluster": "manufacturing",
+        "itar_flag": False, "itar_detail": "",
+        "relevance_score": 0, "boost_tags": [],
+        "raw_id": "", "ats_tier": "", "h1b": "", "salary": "",
+        "stable_id": "x", "date_confidence": "actual", "location_confidence": "known",
+    }]
+    passed, rejected = _filter_aggregators(jobs)
+    assert len(passed) == 0
+    assert rejected == 1
+
+
+def test_f3_rejects_appcast_redirect():
+    from pipeline.merge_pipeline import _filter_aggregators
+    jobs = [{
+        "job_title": "Process Engineer",
+        "company_name": "SomeCo",
+        "job_url": "https://click.appcast.io/track/xyz?jobId=123",
+        "location": "Austin, TX",
+        "posted_date": "2026-04-03",
+        "description": "",
+        "source": "serpapi",
+        "cluster": "process",
+        "itar_flag": False, "itar_detail": "",
+        "relevance_score": 0, "boost_tags": [],
+        "raw_id": "", "ats_tier": "", "h1b": "", "salary": "",
+        "stable_id": "y", "date_confidence": "actual", "location_confidence": "known",
+    }]
+    passed, rejected = _filter_aggregators(jobs)
+    assert len(passed) == 0
+    assert rejected == 1

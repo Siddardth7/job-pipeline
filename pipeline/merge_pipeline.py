@@ -100,9 +100,30 @@ except Exception:
 
 # F3 — Aggregator domains (applied post-merge to catch all scrapers)
 AGGREGATOR_DOMAINS = [
-    "indeed.com", "glassdoor.com", "ziprecruiter.com",
-    "simplyhired.com", "monster.com", "careerbuilder.com",
+    # Job board aggregators
+    "indeed.com",
+    "glassdoor.com",
+    "ziprecruiter.com",
+    "simplyhired.com",
+    "monster.com",
+    "careerbuilder.com",
     "linkedin.com",
+    # Adzuna redirect/land URLs (Adzuna source files have direct apply URLs stripped)
+    "adzuna.com/land/",
+    "adzuna.co.uk/land/",
+    # Redirect/tracking aggregators
+    "appcast.io",
+    "click.appcast.io",
+    "apply.workable.com/j/",   # Workable apply redirects (not direct postings)
+    "dice.com",
+    "careersite.com",
+    "talentify.io",
+    "lensa.com",
+    "nexxt.com",
+    "jooble.org",
+    "recruiter.com",
+    "talent.com",
+    "getwork.com",
 ]
 
 # F6 — Seniority reject tokens
