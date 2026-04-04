@@ -186,6 +186,17 @@ BOOST_TITLE_TOKENS = [
     "engineer 1", "engineer 2", "early career", "new grad", "junior",
     "level i", "level ii",
 ]
+
+# Source priority — lower number = higher quality. ATS direct > company apply > clean API > aggregator
+SOURCE_PRIORITY: Dict[str, int] = {
+    "ats_greenhouse":  1,
+    "ats_lever":       1,
+    "jsearch":         3,
+    "apify":           4,
+    "serpapi":         4,
+    "adzuna":          5,
+    "unknown":         9,
+}
 RELEVANCE_KEYWORDS = [
     "manufacturing", "process", "production", "quality", "composites",
     "materials", "industrial", "lean", "tooling", "inspection",
@@ -216,7 +227,7 @@ def run():
     # Filters run in strict sequence. Each returns (passed, rejected_count).
     after_f3, f3_rejected = _filter_aggregators(normalized)     # F2 + F3
     after_f4, f4_rejected = _filter_age(after_f3)              # F4
-    after_f5, f5_rejected = _filter_duplicates(after_f4)       # F5
+    after_f5, f5_rejected = _filter_duplicates_priority(after_f4)  # F5 — priority dedupe
     after_f6, f6_rejected = _filter_seniority(after_f5)        # F6
     after_f7, f7_rejected = _filter_role_relevance(after_f6)   # F7
     after_f8, f8_rejected = _filter_itar(after_f7)             # F8 — HARD DROP
@@ -232,7 +243,7 @@ def run():
         schema_rejected=schema_rejected,
         f3_rejected=f3_rejected,
         f4_rejected=f4_rejected,
-        f5_rejected=f5_rejected,
+        f5_rejected=len(f5_rejected),
         f6_rejected=f6_rejected,
         f7_rejected=f7_rejected,
         f8_rejected=f8_rejected,
@@ -248,7 +259,7 @@ def run():
             "schema_rejected": schema_rejected,
             "f3_aggregator":   f3_rejected,
             "f4_age":          f4_rejected,
-            "f5_duplicates":   f5_rejected,
+            "f5_duplicates":   len(f5_rejected),
             "f6_seniority":    f6_rejected,
             "f7_role":         f7_rejected,
             "f8_itar":         f8_rejected,
@@ -425,6 +436,60 @@ def _filter_duplicates(jobs: List[Dict]) -> Tuple[List[Dict], int]:
         seen_urls.add(url_key)
         seen_composite.add(comp_key)
         passed.append(j)
+    return passed, rejected
+
+
+def _filter_duplicates_priority(jobs: List[Dict]) -> Tuple[List[Dict], List[Dict]]:
+    """
+    Deduplicate keeping the highest-priority source record.
+    Composite key: (company_lower, title_lower[:40], location_lower[:20])
+    URL key also checked to catch same-URL duplicates.
+    Returns (passed_jobs, rejected_jobs).
+    """
+    # Index: composite_key → best job so far
+    best_by_comp: Dict[tuple, Dict] = {}
+    best_by_url:  Dict[str,  Dict] = {}
+    rejected: List[Dict] = []
+
+    for j in jobs:
+        url_key  = j["job_url"].lower().split("?")[0].rstrip("/")
+        comp_key = (
+            j["company_name"].lower(),
+            j["job_title"].lower()[:40],
+            j["location"].lower()[:20],
+        )
+        priority = SOURCE_PRIORITY.get(j.get("source", "unknown"), 9)
+
+        existing_url  = best_by_url.get(url_key)
+        existing_comp = best_by_comp.get(comp_key)
+
+        # URL-based dedup
+        if existing_url:
+            existing_priority = SOURCE_PRIORITY.get(existing_url.get("source", "unknown"), 9)
+            if priority < existing_priority:
+                rejected.append(existing_url)
+                best_by_url[url_key] = j
+            else:
+                rejected.append(j)
+            continue  # already seen this URL
+
+        # Composite-key dedup
+        if existing_comp:
+            existing_priority = SOURCE_PRIORITY.get(existing_comp.get("source", "unknown"), 9)
+            if priority < existing_priority:
+                # Evict the old record: remove its URL entry so it doesn't leak into passed
+                old_url_key = existing_comp["job_url"].lower().split("?")[0].rstrip("/")
+                best_by_url.pop(old_url_key, None)
+                rejected.append(existing_comp)
+                best_by_comp[comp_key] = j
+                best_by_url[url_key]   = j
+            else:
+                rejected.append(j)
+        else:
+            best_by_comp[comp_key] = j
+            best_by_url[url_key]   = j
+
+    passed = list(best_by_url.values())
     return passed, rejected
 
 

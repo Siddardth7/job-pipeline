@@ -100,3 +100,57 @@ def test_itar_reject_reason_clean_job_passes():
         "description": "Work on composite manufacturing processes.",
     }
     assert _itar_reject_reason(job) is None
+
+
+def test_dedupe_prefers_ats_over_aggregator():
+    """When the same job appears in ATS and an aggregator, keep the ATS record."""
+    from pipeline.merge_pipeline import _filter_duplicates_priority
+
+    jobs = [
+        {
+            "job_title": "Manufacturing Engineer",
+            "company_name": "Joby Aviation",
+            "job_url": "https://adzuna.com/land/ad/12345",
+            "location": "Santa Cruz, CA",
+            "posted_date": "2026-04-03",
+            "description": "...",
+            "source": "adzuna",
+            "cluster": "manufacturing",
+            "itar_flag": False,
+            "itar_detail": "",
+            "relevance_score": 0,
+            "boost_tags": [],
+            "raw_id": "az-12345",
+            "ats_tier": "",
+            "h1b": "",
+            "salary": "",
+            "stable_id": "adzuna:az-12345",
+            "date_confidence": "actual",
+        },
+        {
+            "job_title": "Manufacturing Engineer",
+            "company_name": "Joby Aviation",
+            "job_url": "https://boards.greenhouse.io/joby/jobs/999",
+            "location": "Santa Cruz, CA",
+            "posted_date": "2026-04-03",
+            "description": "...",
+            "source": "ats_greenhouse",
+            "cluster": "manufacturing",
+            "itar_flag": False,
+            "itar_detail": "",
+            "relevance_score": 0,
+            "boost_tags": [],
+            "raw_id": "999",
+            "ats_tier": "tier1",
+            "h1b": "YES",
+            "salary": "",
+            "stable_id": "ats_greenhouse:999",
+            "date_confidence": "actual",
+        },
+    ]
+
+    passed, rejected = _filter_duplicates_priority(jobs)
+    assert len(passed) == 1
+    assert len(rejected) == 1
+    assert passed[0]["source"] == "ats_greenhouse"
+    assert passed[0]["job_url"] == "https://boards.greenhouse.io/joby/jobs/999"
