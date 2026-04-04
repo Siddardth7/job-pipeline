@@ -104,24 +104,29 @@ class JSearchScraper:
         Called by orchestrator. The `queries` parameter is accepted for interface
         compatibility but not used — JSearch runs hardcoded title queries.
         Returns jobs in pipeline schema.
+        After returning, `self.calls_made` holds the actual number of API calls fired.
         """
+        self.calls_made = 0
+
         if not JSEARCH_API_KEYS:
             log.warning("[jsearch] JSEARCH_API_KEYS not set — skipping")
             return []
 
         for key in JSEARCH_API_KEYS:
-            result = self._attempt_run(key)
+            result, calls = self._attempt_run(key)
+            self.calls_made += calls
             if result is not None:
-                log.info(f"[jsearch] Done. {len(result)} jobs.")
+                log.info(f"[jsearch] Done. {len(result)} jobs. API calls this run: {self.calls_made}")
                 return result
 
         log.warning("[jsearch] All JSearch keys quota-exhausted")
         return []
 
-    def _attempt_run(self, key: str) -> Optional[List[Dict]]:
+    def _attempt_run(self, key: str) -> tuple:
         """
-        Try all queries with one key. Returns job list on success,
-        None if key is quota-exhausted (caller should try next key).
+        Try all queries with one key.
+        Returns (job_list, api_calls) on success,
+        (None, api_calls) if key is quota-exhausted (caller should try next key).
         """
         headers = {
             "X-RapidAPI-Key":  key,
@@ -145,7 +150,7 @@ class JSearchScraper:
 
             if result == "quota":
                 log.info("[jsearch] 403 quota — rotating to next key")
-                return None  # exhausted
+                return None, api_calls  # exhausted
 
             if result == "rate_limited":
                 consecutive_429s += 1
@@ -155,7 +160,7 @@ class JSearchScraper:
                 )
                 if consecutive_429s >= self.MAX_CONSECUTIVE_429:
                     log.info("[jsearch] Consecutive 429s — rotating to next key")
-                    return None  # exhausted
+                    return None, api_calls  # exhausted
                 continue
 
             if result == "error":
@@ -204,7 +209,7 @@ class JSearchScraper:
                     "raw_id":          job_id,
                 })
 
-        return all_jobs
+        return all_jobs, api_calls
 
     def _single_query(self, headers: Dict, query: str):
         """

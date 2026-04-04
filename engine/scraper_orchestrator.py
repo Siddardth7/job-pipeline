@@ -226,8 +226,9 @@ def run():
             jobs       = scraper.run()   # uses hardcoded TITLE_QUERIES, quota managed internally
             jobs_found = len(jobs)
             _write_output(jsearch_output, "jsearch", jobs)
-            # JSearch class runs up to MAX_CALLS_PER_DAY internally — deduct actual calls
-            calls_used = min(len(JSearchScraper.TITLE_QUERIES), quota)
+            # Use actual API calls fired by the scraper, not a pre-run estimate
+            calls_used = scraper.calls_made
+            log.info(f"  [jsearch] actual queries used this run: {calls_used}")
             deduct("jsearch", calls_used, state)
             total_primary_jobs += jobs_found
 
