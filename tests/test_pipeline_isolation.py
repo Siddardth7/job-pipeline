@@ -35,3 +35,42 @@ def test_load_sources_rejects_theirstack_file(tmp_path):
     from pipeline.merge_pipeline import _load_whitelisted_sources
     jobs, counts = _load_whitelisted_sources(tmp_path)
     assert not any(j["job_title"] == "TheirStack Job" for j in jobs)
+
+
+def test_normalize_carries_h1b_and_ats_tier(tmp_path):
+    """_normalize must carry h1b and ats_tier fields."""
+    from pipeline.merge_pipeline import _normalize
+    job = {
+        "job_title": "Manufacturing Engineer",
+        "company_name": "Acme",
+        "job_url": "https://boards.greenhouse.io/acme/jobs/1",
+        "location": "Austin, TX",
+        "posted_date": "2026-04-03",
+        "description": "Full long description here",
+        "source": "ats_greenhouse",
+        "cluster": "manufacturing",
+        "itar_flag": False,
+        "itar_detail": "",
+        "h1b": "YES",
+        "ats_tier": "tier1",
+        "raw_id": "gh-12345",
+    }
+    result = _normalize(job)
+    assert result is not None
+    assert result["h1b"] == "YES"
+    assert result["ats_tier"] == "tier1"
+    assert result["raw_id"] == "gh-12345"
+
+
+def test_normalize_stable_id_prefers_raw_id(tmp_path):
+    """Stable ID should be source:raw_id when raw_id exists."""
+    from pipeline.merge_pipeline import _normalize
+    job = {
+        "job_title": "Process Engineer",
+        "company_name": "Acme",
+        "job_url": "https://boards.greenhouse.io/acme/jobs/99",
+        "source": "ats_greenhouse",
+        "raw_id": "99",
+    }
+    result = _normalize(job)
+    assert result["stable_id"] == "ats_greenhouse:99"

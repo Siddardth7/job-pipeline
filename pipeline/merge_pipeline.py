@@ -36,6 +36,44 @@ ROOT = Path(__file__).parent.parent  # pipeline/ subdir → parent.parent = repo
 TEMP_DIR    = ROOT / "temp"
 OUTPUT_PATH = TEMP_DIR / "jobs_clean_intermediate.json"
 
+# Explicit whitelist of temp files produced by live scrapers.
+# NEVER load jobs_clean_intermediate.json or old disabled-source files here.
+WHITELISTED_SOURCE_FILES = [
+    "jobs_ats.json",
+    "jobs_jsearch.json",
+    "jobs_apify.json",
+    "jobs_serpapi.json",
+    "jobs_adzuna.json",
+]
+
+
+def _load_whitelisted_sources(temp_dir: Path = None) -> Tuple[List[Dict], Dict[str, int]]:
+    """Load only from whitelisted scraper output files — never intermediate or stale."""
+    if temp_dir is None:
+        temp_dir = TEMP_DIR
+    jobs: List[Dict] = []
+    scraper_counts: Dict[str, int] = {}
+    for filename in WHITELISTED_SOURCE_FILES:
+        path = temp_dir / filename
+        if not path.exists():
+            source_name = filename.replace("jobs_", "").replace(".json", "")
+            scraper_counts[source_name] = 0
+            log.info(f"  {filename}: not present (scraper may have been skipped)")
+            continue
+        try:
+            data = json.loads(path.read_text())
+            batch = data.get("jobs", [])
+            source_name = data.get("source", path.stem.replace("jobs_", ""))
+            scraper_counts[source_name] = len(batch)
+            log.info(f"  Loaded {filename}: {len(batch)} jobs")
+            jobs.extend(batch)
+        except Exception as e:
+            log.error(f"Failed to load {filename}: {e}")
+            source_name = filename.replace("jobs_", "").replace(".json", "")
+            scraper_counts[source_name] = 0
+    return jobs, scraper_counts
+
+
 sys.path.insert(0, str(ROOT))
 
 log = logging.getLogger("merge_pipeline")
@@ -165,7 +203,7 @@ def run():
     log.info("=" * 60)
 
     # Step 1 — Load all scraper outputs
-    raw_jobs, scraper_counts = _load_all_sources()
+    raw_jobs, scraper_counts = _load_whitelisted_sources()
     _print_scraper_health(scraper_counts, raw_jobs)
     total_raw = len(raw_jobs)
 
@@ -284,19 +322,35 @@ def _normalize(job: Dict) -> Optional[Dict]:
     if not title or not company or not url:
         return None  # F1 fail — drop
 
+    source = str(job.get("source", "unknown"))
+    raw_id = str(job.get("raw_id", "") or "")
+
+    # Stable job ID: prefer source:raw_id, fall back to URL-based key
+    if raw_id:
+        stable_id = f"{source}:{raw_id}"
+    else:
+        stable_id = url.lower().split("?")[0].rstrip("/")[:120]
+
     return {
         "job_title":       title,
         "company_name":    company,
         "job_url":         url,
         "location":        str(job.get("location",    "") or "").strip(),
         "posted_date":     str(job.get("posted_date", "") or "").strip(),
+        "date_confidence": str(job.get("date_confidence", "actual") or "actual"),
         "description":     str(job.get("description", "") or "").strip(),
-        "source":          str(job.get("source",      "unknown")),
+        "source":          source,
         "cluster":         str(job.get("cluster",     "")),
         "itar_flag":       bool(job.get("itar_flag",  False)),
         "itar_detail":     str(job.get("itar_detail", "") or ""),
         "relevance_score": 0,
         "boost_tags":      [],
+        # Metadata carried through end-to-end
+        "raw_id":          raw_id,
+        "ats_tier":        str(job.get("ats_tier", "") or ""),
+        "h1b":             str(job.get("h1b", "") or ""),
+        "salary":          str(job.get("salary", "") or ""),
+        "stable_id":       stable_id,
     }
 
 
