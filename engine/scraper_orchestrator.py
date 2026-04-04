@@ -11,7 +11,7 @@ Scraper stack (in execution order):
     2. jsearch_scraper   — JSearch/RapidAPI broad search (200 req/month)
     3. apify_scraper     — LinkedIn via harvestapi actor (Pay-per-event, ~$0.20/mo)
     4. serpapi_scraper   — Google Jobs via SerpAPI (100 searches/month, alternate days)
-    5. adzuna_scraper    — Adzuna US job index (250 req/day free, replaces TheirStack)
+    5. adzuna_scraper    — Adzuna US job index (250 req/day free)
 
 Quota notes:
     jsearch:    200 req/month → 6/day budget. Monthly cap tracked in state file
@@ -24,7 +24,6 @@ Quota notes:
                 index — different results from SerpAPI/Apify. No alternation needed.
 
 Changes from v4.2:
-    - TheirStack permanently disabled (free tier structurally insufficient)
     - Added industrial_operations and mechanical_thermal query clusters (query_engine)
     - Added 12 industrial/thermal ATS companies to ats_companies.json
     - Version bumped to v4.3
@@ -47,7 +46,6 @@ from scrapers.jsearch_scraper          import JSearchScraper
 from scrapers.apify_scraper            import ApifyScraper
 from scrapers.serpapi_scraper          import SerpApiScraper
 from scrapers.adzuna_scraper           import AdzunaScraper
-# TheirStackScraper import removed — scraper permanently disabled (v4.3)
 
 DATA_DIR     = ROOT / "data"
 TEMP_DIR     = ROOT / "temp"
@@ -92,7 +90,6 @@ def load_state() -> Dict:
             state["jsearch"].update({"queries_today": 0})
             state.setdefault("serpapi",    {})["queries_today"]     = 0
             state.setdefault("apify",      {})["runs_today"]        = 0
-            # theirstack removed in v4.3 — no daily reset needed
             state["last_reset"] = today
 
         # Monthly reset — only affects jsearch monthly counter
@@ -110,7 +107,6 @@ def _fresh_state(today: str) -> Dict:
         "jsearch":    {"queries_today": 0, "queries_this_month": 0},
         "serpapi":    {"queries_today": 0},
         "apify":      {"runs_today":    0},
-        # theirstack removed in v4.3
         "last_reset": today,
         "month_year": today[:7],
     }
@@ -361,11 +357,6 @@ def run():
         run_record["scrapers"]["adzuna"] = {
             "status": "error", "error": str(exc), "jobs_found": 0
         }
-
-    # TheirStack permanently disabled — kept as tombstone so run_record stays consistent
-    run_record["scrapers"]["theirstack"] = {
-        "status": "skipped", "reason": "disabled_free_tier_exhausted", "jobs_found": 0
-    }
 
     # ── Finalise ──────────────────────────────────────────────────────────────
     save_state(state)
