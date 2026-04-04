@@ -74,14 +74,15 @@ jobs:
             # Wrap intermediate format to match company_intelligence output schema
             python3 -c "
           import json, datetime
-          d = json.load(open('temp/jobs_clean_intermediate.json'))
+          with open('temp/jobs_clean_intermediate.json') as f:
+              d = json.load(f)
           jobs = d.get('jobs', [])
           out = {
             'green_jobs': jobs,
             'yellow_jobs': [],
             'summary': {
               'run_date': str(datetime.date.today()),
-              'generated_utc': datetime.datetime.utcnow().isoformat() + 'Z',
+              'generated_utc': datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None).isoformat() + 'Z',
               'total_scraped': len(jobs),
               'green_jobs': len(jobs),
               'yellow_jobs': 0,
@@ -89,7 +90,8 @@ jobs:
               'promoted_companies': [],
             }
           }
-          json.dump(out, open('output/jobs_clean_latest.json', 'w'), indent=2)
+          with open('output/jobs_clean_latest.json', 'w') as f:
+              json.dump(out, f, indent=2)
           print(f'WARNING: Fallback output written with {len(jobs)} jobs (schema-wrapped)')
           "
           fi
@@ -117,7 +119,8 @@ jobs:
           if [ -f output/jobs_clean_latest.json ]; then
             python3 -c "
           import json
-          d = json.load(open('output/jobs_clean_latest.json'))
+          with open('output/jobs_clean_latest.json') as f:
+              d = json.load(f)
           green  = d.get('green_jobs',  [])
           yellow = d.get('yellow_jobs', [])
           jobs   = green + yellow
@@ -139,7 +142,8 @@ jobs:
           elif [ -f temp/jobs_clean_intermediate.json ]; then
             python3 -c "
           import json
-          d = json.load(open('temp/jobs_clean_intermediate.json'))
+          with open('temp/jobs_clean_intermediate.json') as f:
+              d = json.load(f)
           jobs = d.get('jobs', [])
           print(f'Intermediate: {len(jobs)} jobs (company_intelligence may have failed)')
           "

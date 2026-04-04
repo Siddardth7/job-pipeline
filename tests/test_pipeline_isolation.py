@@ -1,14 +1,13 @@
 """Tests for pipeline isolation — stale contamination prevention."""
 import json
-import tempfile
+import sys
 from pathlib import Path
-import pytest
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
 
 def test_load_sources_rejects_intermediate_file(tmp_path):
     """merge_pipeline must NOT load jobs_clean_intermediate.json as a source."""
-    import sys
-    sys.path.insert(0, str(Path(__file__).parent.parent))
     # Write a fake intermediate file that looks like stale output
     intermediate = tmp_path / "jobs_clean_intermediate.json"
     intermediate.write_text(json.dumps({"source": "intermediate", "jobs": [
