@@ -28,14 +28,18 @@ export default async function handler(req, res) {
   }
 
   // ── Fetch API key server-side ────────────────────────────────────────────────
-  const { data: integration } = await supabase
+  const { data: integration, error: dbError } = await supabase
     .from('user_integrations')
     .select('api_key')
     .eq('user_id', user.id)
     .eq('service', 'groq')
     .maybeSingle();
 
-  const key = process.env.GROQ_API_KEY || integration?.api_key;
+  if (dbError) {
+    console.error('Failed to fetch groq integration:', dbError.message);
+  }
+
+  const key = integration?.api_key || process.env.GROQ_API_KEY;
   if (!key) {
     return res.status(400).json({ error: 'No Groq API key — add it in Settings.' });
   }
