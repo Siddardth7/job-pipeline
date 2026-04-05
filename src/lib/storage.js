@@ -508,10 +508,13 @@ export async function fetchRoleTargets() {
 
 export async function upsertRoleTarget(target) {
   const userId = await getUserId();
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from('role_targets')
-    .upsert({ ...target, user_id: userId }, { onConflict: 'id' });
+    .upsert({ ...target, user_id: userId }, { onConflict: 'id' })
+    .select()
+    .single();
   if (error) throw error;
+  return data;
 }
 
 export async function deleteRoleTarget(id) {
