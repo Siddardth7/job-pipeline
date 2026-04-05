@@ -80,20 +80,25 @@ def _coerce_str(v) -> str:
 def _extract_location(raw_location) -> str:
     """
     Extract a human-readable location string from the LinkedIn actor's location field.
-    The field can be: None, a plain string, or a dict with 'city', 'state', and 'country' keys.
-    Returns empty string (not a default like 'United States') so that
-    blank-location jobs can be detected and quarantined downstream.
+    The harvestapi actor returns location as {"name": "Austin, TX, United States"}.
+    May also be a plain string, a structured dict with city/state/country keys, or None.
+    Returns empty string for unknown/null so blank-location jobs can be detected downstream.
     """
     if not raw_location:
         return ""
     if isinstance(raw_location, str):
         return raw_location.strip()
     if isinstance(raw_location, dict):
+        # Structured format: {"city": "Austin", "state": "TX", "country": "US"}
         city    = (raw_location.get("city")    or "").strip()
         state   = (raw_location.get("state")   or "").strip()
         country = (raw_location.get("country") or "").strip()
         parts = [p for p in [city, state, country] if p]
-        return ", ".join(parts)
+        if parts:
+            return ", ".join(parts)
+        # harvestapi actor format: {"name": "Austin, TX, United States"}
+        name = (raw_location.get("name") or "").strip()
+        return name
     return ""
 
 

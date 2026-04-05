@@ -29,3 +29,17 @@ def test_location_from_dict_with_only_country():
     from scrapers.apify_scraper import _extract_location
     raw = {"city": "", "country": "United States"}
     assert _extract_location(raw) == "United States"
+
+
+def test_location_from_harvestapi_name_key():
+    """harvestapi actor returns location as {"name": "Austin, TX, United States"}."""
+    from scrapers.apify_scraper import _extract_location
+    raw = {"name": "Austin, TX, United States"}
+    assert _extract_location(raw) == "Austin, TX, United States"
+
+
+def test_location_from_dict_city_takes_precedence_over_name():
+    """Structured city/state/country wins over name key when both present."""
+    from scrapers.apify_scraper import _extract_location
+    raw = {"city": "Austin", "state": "TX", "name": "Austin, TX, United States"}
+    assert _extract_location(raw) == "Austin, TX"
