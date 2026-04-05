@@ -62,7 +62,7 @@ export default function AppSettings({templates, setTemplates, groqKey, setGroqKe
     setSerperStatus("Testing...");
     const keyToUse = serperInput.trim() || serperKey;
     try {
-      const res = await fetch('/.netlify/functions/find-contacts', {
+      const res = await fetch('/api/find-contacts', {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
         body: JSON.stringify({company:"Boeing", role:"Engineer", count:3, serperKey: keyToUse})
