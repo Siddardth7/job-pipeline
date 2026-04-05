@@ -171,7 +171,7 @@ export default function Dashboard({ apps, pipeline, searchResults: _searchResult
         />
         <KpiCard
           label="Response Rate" value={`${responseRate}%`}
-          sparkData={Array.from({ length: 7 }, () => responseRate)}
+          sparkData={null}
           color={t.green}
           sub={`${statusCounts['Replied'] + statusCounts['Coffee Chat']} of ${totalNetworked} replied`} t={t}
         />

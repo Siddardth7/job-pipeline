@@ -345,6 +345,21 @@ export default function FindJobs({searchResults, setSearchResults, pipeline, add
           );
         })}
       </div>
+      {filtered.length === 0 && searchResults.length > 0 && !loading && (
+        <div style={{textAlign:"center",padding:"48px 24px",color:t.muted}}>
+          <Search size={28} color={t.muted} style={{marginBottom:10}}/>
+          <div style={{fontSize:14,fontWeight:600,color:t.sub,marginBottom:6}}>No jobs match your current filters.</div>
+          <div style={{fontSize:13,color:t.muted}}>
+            Try removing a filter or clearing the search query.
+          </div>
+          <button
+            onClick={() => { setActiveFilter("All"); setQuery(""); }}
+            style={{marginTop:14,padding:"8px 18px",background:t.priL,border:`1px solid ${t.priBd}`,borderRadius:8,color:t.pri,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:"inherit"}}
+          >
+            Clear filters
+          </button>
+        </div>
+      )}
       {searchResults.length === 0 && !loading && (
         <Card t={t} style={{textAlign:"center",padding:"60px 24px"}}>
           <Search size={32} color={t.muted} style={{marginBottom:12}}/>

@@ -98,7 +98,7 @@ function normalizeJob(j, idx) {
     h1b: j.h1b || (dbCo ? dbCo.h1b : "LIKELY"),
     industry: j.industry || (dbCo ? dbCo.industry : ""),
     reason: j.reason || `Imported (${src})`,
-    match: j.match || j.relevance_score || (j.itar_flag ? 0 : Math.floor(70 + Math.random() * 25)),
+    match: j.match ?? j.relevance_score ?? (j.itar_flag ? 0 : null),
     verdict: j.verdict || (j.itar_flag ? "RED" : "GREEN"),
     source: src, domain_verified: j.domain_verified || false,
   };
@@ -158,17 +158,18 @@ export default function JobAgent() {
     if (!user) return;
     (async () => {
       try {
-        const [dbApps, dbJobs, dbNetlog, dbTemplates, dbSettings, savedJob] = await Promise.all([
+        const [dbApps, dbJobs, dbNetlog, dbTemplates, dbSettings, savedJob, savedCompanies] = await Promise.all([
           Storage.fetchApplications(),
           Storage.fetchJobs(),
           Storage.fetchNetlog(),
           Storage.fetchTemplates(),
           Storage.fetchSettings(),
           Storage.loadCurrentJob(),
+          Storage.loadCustomCompanies(),
         ]);
 
         const pipelineJobs = dbJobs.filter(j => j.in_pipeline && j.status !== 'completed');
-        const searchJobs = dbJobs.filter(j => !j.in_pipeline);
+        const searchJobs = dbJobs.filter(j => !j.in_pipeline && j.status !== 'completed');
 
         setApps(dbApps);
         setPipeline(pipelineJobs.map(j => ({...j, status: j.status || 'active'})));
@@ -190,6 +191,7 @@ export default function JobAgent() {
           try { setNetlogMeta(JSON.parse(dbSettings.netlog_meta)); } catch { /* ignore */ }
         }
         if (savedJob) setCurrentJob(savedJob);
+        if (savedCompanies.length > 0) setCustomCompanies(savedCompanies);
       } catch(e) {
         console.warn('Supabase load error (will use local state):', e.message);
       }
@@ -232,6 +234,12 @@ export default function JobAgent() {
     }, 1500);
     return () => clearTimeout(timer);
   }, [currentJob, loaded]);
+
+  // Auto-save customCompanies whenever the user adds/removes companies
+  useEffect(() => {
+    if (!loaded) return;
+    Storage.saveCustomCompanies(customCompanies).catch(e => console.warn('customCompanies save error:', e));
+  }, [customCompanies, loaded]);
 
   // ─── State handlers ───────────────────────────────────────────────────────
   const setPage = useCallback((pg, jobData) => {
@@ -287,7 +295,10 @@ export default function JobAgent() {
 
   const addToNetworkingLog = useCallback((contact) => {
     setNetworkingLog(nl => nl.find(x => x.id === contact.id) ? nl : [...nl, contact]);
-    debouncedSave(() => Storage.upsertNetlog(contact));
+    setSyncStatus("saving");
+    Storage.upsertNetlog(contact)
+      .then(() => { setSyncStatus("saved"); setTimeout(() => setSyncStatus(""), 3000); })
+      .catch(e => { setSyncStatus("error"); console.error("addToNetworkingLog save error:", e); });
     // Auto-set Pending status + follow-up reminder 5 days out
     const followUpDate = new Date(Date.now() + 5 * 86400000).toISOString().split('T')[0];
     setNetlogMeta(prev => {
@@ -296,12 +307,15 @@ export default function JobAgent() {
       Storage.saveSetting('netlog_meta', JSON.stringify(next)).catch(e => console.warn('netlog_meta save error:', e));
       return next;
     });
-  }, [debouncedSave]);
+  }, []);
 
   const logApplication = useCallback((app) => {
     setApps(p => [...p, app]);
-    debouncedSave(() => Storage.upsertApplication(app));
-  }, [debouncedSave]);
+    setSyncStatus("saving");
+    Storage.upsertApplication(app)
+      .then(() => { setSyncStatus("saved"); setTimeout(() => setSyncStatus(""), 3000); })
+      .catch(e => { setSyncStatus("error"); console.error("logApplication save error:", e); });
+  }, []);
 
   const updateApplicationStatus = useCallback((id, status) => {
     setApps(p => p.map(a => a.id === id ? {...a, status} : a));
@@ -322,6 +336,7 @@ export default function JobAgent() {
   const pendingPipeline = pipeline.filter(j => j.status === "active").length;
 
   const renderSyncStatus = () => {
+    if (!loaded) return null;
     if (syncStatus === "saving") return <span style={{color:t.muted,fontWeight:700,fontSize:10.5}}>Saving...</span>;
     if (syncStatus === "error") return <span style={{color:t.red,fontWeight:700,fontSize:10.5}}>Sync error</span>;
     if (syncStatus === "saved") return (
@@ -474,7 +489,11 @@ export default function JobAgent() {
         )}
 
         <div style={{padding:"12px 10px",borderTop:`1px solid ${t.border}`}}>
-          <div onClick={() => setDark(!dark)} style={{display:"flex",alignItems:"center",gap:11,padding:"9px 12px",borderRadius:9,cursor:"pointer",color:t.sub}}
+          <div onClick={() => {
+            const next = !dark;
+            setDark(next);
+            Storage.saveSetting('dark', String(next)).catch(e => console.warn('dark save error:', e));
+          }} style={{display:"flex",alignItems:"center",gap:11,padding:"9px 12px",borderRadius:9,cursor:"pointer",color:t.sub}}
             onMouseEnter={e => e.currentTarget.style.background=t.hover}
             onMouseLeave={e => e.currentTarget.style.background="transparent"}>
             {dark ? <Sun size={16}/> : <Moon size={16}/>}

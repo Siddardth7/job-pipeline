@@ -49,7 +49,6 @@ def _get_supabase_client():
         sys.exit(1)
     return create_client(url, key)
 
-
 # ── Data loading ──────────────────────────────────────────────────────────────
 
 def load_jobs():

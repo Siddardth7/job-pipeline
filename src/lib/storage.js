@@ -107,7 +107,12 @@ export async function fetchJobs() {
     resume_variant:   row.resume_variant,
     resumeVariant:    row.resume_variant,
     status:           row.status,
-    locationType:     null,
+    locationType: (() => {
+      const loc = (row.job?.location || '').toLowerCase();
+      if (loc.includes('remote')) return 'Remote';
+      if (loc.includes('hybrid')) return 'Hybrid';
+      return 'Onsite';
+    })(),
     _feedId:          row.id,   // internal — feed row PK for targeted updates
   }));
 }
@@ -136,8 +141,12 @@ export async function fetchFeedDates() {
 // Returns jobs for a specific date in YYYY-MM-DD format (same shape as fetchJobs())
 export async function fetchJobsByDate(dateStr) {
   const userId = await getUserId();
-  const start  = `${dateStr}T00:00:00.000Z`;
-  const end    = new Date(new Date(start).getTime() + 24 * 60 * 60 * 1000).toISOString();
+  // Parse as local midnight to avoid UTC off-by-one for non-UTC timezones
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const startLocal = new Date(y, m - 1, d, 0, 0, 0, 0);
+  const endLocal   = new Date(y, m - 1, d + 1, 0, 0, 0, 0);
+  const start = startLocal.toISOString();
+  const end   = endLocal.toISOString();
   const { data, error } = await supabase
     .from('user_job_feed')
     .select(`
@@ -176,7 +185,12 @@ export async function fetchJobsByDate(dateStr) {
     resume_variant:   row.resume_variant,
     resumeVariant:    row.resume_variant,
     status:           row.status,
-    locationType:     null,
+    locationType: (() => {
+      const loc = (row.job?.location || '').toLowerCase();
+      if (loc.includes('remote')) return 'Remote';
+      if (loc.includes('hybrid')) return 'Hybrid';
+      return 'Onsite';
+    })(),
     _feedId:          row.id,
   }));
 }
@@ -423,10 +437,12 @@ export async function upsertLinkedInContact(contact) {
 
 export async function updateLinkedInContactNotes(id, notes) {
   if (!id) throw new Error('updateLinkedInContactNotes: id is required');
+  const userId = await getUserId();
   const { error } = await supabase
     .from('linkedin_dm_contacts')
     .update({ notes, updated_at: new Date().toISOString() })
-    .eq('id', id);
+    .eq('id', id)
+    .eq('user_id', userId);
   if (error) throw error;
 }
 
@@ -506,10 +522,13 @@ export async function fetchRoleTargets() {
 
 export async function upsertRoleTarget(target) {
   const userId = await getUserId();
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from('role_targets')
-    .upsert({ ...target, user_id: userId }, { onConflict: 'id' });
+    .upsert({ ...target, user_id: userId }, { onConflict: 'id' })
+    .select()
+    .single();
   if (error) throw error;
+  return data;
 }
 
 export async function deleteRoleTarget(id) {
@@ -688,4 +707,20 @@ export async function savePreferences(prefs) {
       { onConflict: 'user_id' }
     );
   if (error) throw error;
+}
+
+// ── Custom Company Intel ───────────────────────────────────────────────────────
+export async function saveCustomCompanies(companies) {
+  return saveSetting('custom_companies', JSON.stringify(companies));
+}
+
+export async function loadCustomCompanies() {
+  const userId = await getUserId();
+  const { data, error } = await supabase
+    .from('settings')
+    .select('value')
+    .eq('key', `${userId}:custom_companies`)
+    .maybeSingle();
+  if (error || !data) return [];
+  try { return JSON.parse(data.value); } catch { return []; }
 }
