@@ -169,7 +169,7 @@ export default function JobAgent() {
         ]);
 
         const pipelineJobs = dbJobs.filter(j => j.in_pipeline && j.status !== 'completed');
-        const searchJobs = dbJobs.filter(j => !j.in_pipeline);
+        const searchJobs = dbJobs.filter(j => !j.in_pipeline && j.status !== 'completed');
 
         setApps(dbApps);
         setPipeline(pipelineJobs.map(j => ({...j, status: j.status || 'active'})));
