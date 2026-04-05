@@ -250,6 +250,19 @@ export default function JobAgent() {
     setPageRaw(pg);
   }, []);
 
+  const trackSave = useCallback((promise) => {
+    setPendingSaves(n => n + 1);
+    setSaveError(null);
+    return promise
+      .then(() => setPendingSaves(n => Math.max(0, n - 1)))
+      .catch(e => {
+        setPendingSaves(n => Math.max(0, n - 1));
+        setSaveError(e.message || 'Unknown error');
+        setTimeout(() => setSaveError(null), 10000);
+        console.error('Save error:', e);
+      });
+  }, []);
+
   // Discrete pipeline mutations save immediately — do NOT use debouncedSave here.
   // debouncedSave uses a single shared timer: rapid successive adds cancel each
   // other so only the last job would persist. Direct saves ensure every job lands.
@@ -334,18 +347,6 @@ export default function JobAgent() {
     );
   };
 
-  const trackSave = useCallback((promise) => {
-    setPendingSaves(n => n + 1);
-    setSaveError(null);
-    return promise
-      .then(() => setPendingSaves(n => Math.max(0, n - 1)))
-      .catch(e => {
-        setPendingSaves(n => Math.max(0, n - 1));
-        setSaveError(e.message || 'Unknown error');
-        setTimeout(() => setSaveError(null), 10000);
-        console.error('Save error:', e);
-      });
-  }, []);
 
   const pages = {
     dashboard: (
