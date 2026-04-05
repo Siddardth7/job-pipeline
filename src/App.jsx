@@ -98,7 +98,7 @@ function normalizeJob(j, idx) {
     h1b: j.h1b || (dbCo ? dbCo.h1b : "LIKELY"),
     industry: j.industry || (dbCo ? dbCo.industry : ""),
     reason: j.reason || `Imported (${src})`,
-    match: j.match || j.relevance_score || (j.itar_flag ? 0 : Math.floor(70 + Math.random() * 25)),
+    match: j.match ?? j.relevance_score ?? (j.itar_flag ? 0 : null),
     verdict: j.verdict || (j.itar_flag ? "RED" : "GREEN"),
     source: src, domain_verified: j.domain_verified || false,
   };
