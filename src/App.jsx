@@ -474,7 +474,11 @@ export default function JobAgent() {
         )}
 
         <div style={{padding:"12px 10px",borderTop:`1px solid ${t.border}`}}>
-          <div onClick={() => setDark(!dark)} style={{display:"flex",alignItems:"center",gap:11,padding:"9px 12px",borderRadius:9,cursor:"pointer",color:t.sub}}
+          <div onClick={() => {
+            const next = !dark;
+            setDark(next);
+            Storage.saveSetting('dark', String(next)).catch(e => console.warn('dark save error:', e));
+          }} style={{display:"flex",alignItems:"center",gap:11,padding:"9px 12px",borderRadius:9,cursor:"pointer",color:t.sub}}
             onMouseEnter={e => e.currentTarget.style.background=t.hover}
             onMouseLeave={e => e.currentTarget.style.background="transparent"}>
             {dark ? <Sun size={16}/> : <Moon size={16}/>}
