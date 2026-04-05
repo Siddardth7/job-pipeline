@@ -107,7 +107,12 @@ export async function fetchJobs() {
     resume_variant:   row.resume_variant,
     resumeVariant:    row.resume_variant,
     status:           row.status,
-    locationType:     null,
+    locationType: (() => {
+      const loc = (row.job?.location || '').toLowerCase();
+      if (loc.includes('remote')) return 'Remote';
+      if (loc.includes('hybrid')) return 'Hybrid';
+      return 'Onsite';
+    })(),
     _feedId:          row.id,   // internal — feed row PK for targeted updates
   }));
 }
@@ -180,7 +185,12 @@ export async function fetchJobsByDate(dateStr) {
     resume_variant:   row.resume_variant,
     resumeVariant:    row.resume_variant,
     status:           row.status,
-    locationType:     null,
+    locationType: (() => {
+      const loc = (row.job?.location || '').toLowerCase();
+      if (loc.includes('remote')) return 'Remote';
+      if (loc.includes('hybrid')) return 'Hybrid';
+      return 'Onsite';
+    })(),
     _feedId:          row.id,
   }));
 }
