@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Database, Zap, RefreshCw, Plus, Trash2, Edit3, Check, X, ChevronDown, Sparkles, Info } from 'lucide-react';
 import { DEFAULT_TEMPLATES } from '../lib/templates.js';
 import * as Storage from '../lib/storage.js';
+import { supabase } from '../supabase.js';
 
 function Card({children, t, style}) {
   return <div style={{background:t.card,border:`1px solid ${t.border}`,borderRadius:12,padding:20,boxShadow:t.shadow,...style}}>{children}</div>;
@@ -62,14 +63,21 @@ export default function AppSettings({templates, setTemplates, groqKey, setGroqKe
   };
 
   const testSerper = async () => {
+    if (serperInput.trim() !== serperKey) {
+      setSerperStatus("Save the key first, then test.");
+      return;
+    }
     setTestingSerper(true);
     setSerperStatus("Testing...");
-    const keyToUse = serperInput.trim() || serperKey;
     try {
+      const { data: { session } } = await supabase.auth.getSession();
       const res = await fetch('/api/find-contacts', {
         method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({company:"Boeing", role:"Engineer", count:3, serperKey: keyToUse})
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token ?? ''}`,
+        },
+        body: JSON.stringify({ company: "Boeing", role: "Engineer", count: 3 }),
       });
       if (res.ok) {
         const data = await res.json();

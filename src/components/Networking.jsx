@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Users, Send, Linkedin, Mail, Copy, Check, MessageSquare, Sparkles, RefreshCw, AlertTriangle, Search, Plus, X } from 'lucide-react';
 import { fetchLinkedInContacts, updateLinkedInContactNotes, fetchLinkedInStats } from '../lib/storage.js';
 import { draftMessageWithGroq } from '../lib/groq.js';
+import { supabase } from '../supabase.js';
 
 function Card({children, t, style, onClick}) {
   return <div onClick={onClick} style={{background:t.card,border:`1px solid ${t.border}`,borderRadius:12,padding:20,boxShadow:t.shadow,cursor:onClick?"pointer":"default",...style}}>{children}</div>;
@@ -382,10 +383,14 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
     setLoading(true);
     setErr("");
     try {
+      const { data: { session } } = await supabase.auth.getSession();
       const res = await fetch('/api/find-contacts', {
         method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ company: co, role, location: loc, personas: selectedPersonas, serperKey })
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token ?? ''}`,
+        },
+        body: JSON.stringify({ company: co, role, location: loc, personas: selectedPersonas }),
       });
       if (!res.ok) {
         const txt = await res.text();
