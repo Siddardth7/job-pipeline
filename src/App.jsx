@@ -110,7 +110,8 @@ export default function JobAgent() {
   const [profile, setProfile] = useState(undefined); // undefined=not loaded, null=no profile, object=loaded
   const [dark, setDark] = useState(false);
   const t = dark ? DARK : LIGHT;
-  const [syncStatus, setSyncStatus] = useState(""); // "saving"|"saved"|"error"|""
+  const [pendingSaves, setPendingSaves] = useState(0);
+  const [saveError,    setSaveError]    = useState(null);
   const [loaded, setLoaded] = useState(false);
   const [page, setPageRaw] = useState("dashboard");
 
@@ -202,14 +203,16 @@ export default function JobAgent() {
   // Debounced save helper
   const debouncedSave = useCallback((saveFn) => {
     if (saveTimer.current) clearTimeout(saveTimer.current);
-    setSyncStatus("saving");
+    setPendingSaves(n => n + 1);
+    setSaveError(null);
     saveTimer.current = setTimeout(async () => {
       try {
         await saveFn();
-        setSyncStatus("saved");
-        setTimeout(() => setSyncStatus(""), 3000);
+        setPendingSaves(n => Math.max(0, n - 1));
       } catch(e) {
-        setSyncStatus("error");
+        setPendingSaves(n => Math.max(0, n - 1));
+        setSaveError(e.message || 'Unknown error');
+        setTimeout(() => setSaveError(null), 10000);
         console.error("Save error:", e);
       }
     }, 2000);
@@ -253,29 +256,20 @@ export default function JobAgent() {
   const addToPipeline = useCallback((job) => {
     const newJob = {...job, status:"active", addedAt:Date.now(), in_pipeline: true};
     setPipeline(p => p.find(j => j.id === job.id) ? p : [...p, newJob]);
-    setSyncStatus("saving");
-    Storage.upsertJob(newJob)
-      .then(() => { setSyncStatus("saved"); setTimeout(() => setSyncStatus(""), 3000); })
-      .catch(e => { setSyncStatus("error"); console.error("addToPipeline save error:", e); });
-  }, []);
+    trackSave(Storage.upsertJob(newJob));
+  }, [trackSave]);
 
   const removePipeline = useCallback((id) => {
     setPipeline(p => p.filter(j => j.id !== id));
-    setSyncStatus("saving");
-    Storage.deleteJob(id)
-      .then(() => { setSyncStatus("saved"); setTimeout(() => setSyncStatus(""), 3000); })
-      .catch(e => { setSyncStatus("error"); console.error("removePipeline save error:", e); });
-  }, []);
+    trackSave(Storage.deleteJob(id));
+  }, [trackSave]);
 
   const completePipeline = useCallback((id) => {
     setPipeline(p => p.map(j => j.id === id ? {...j, status:"completed"} : j));
     const job = stateRef.current.pipeline.find(j => j.id === id);
     if (!job) return;
-    setSyncStatus("saving");
-    Storage.upsertJob({...job, status:"completed", in_pipeline: false})
-      .then(() => { setSyncStatus("saved"); setTimeout(() => setSyncStatus(""), 3000); })
-      .catch(e => { setSyncStatus("error"); console.error("completePipeline save error:", e); });
-  }, []);
+    trackSave(Storage.upsertJob({...job, status:"completed", in_pipeline: false}));
+  }, [trackSave]);
 
   const updatePipelineJob = useCallback((id, updates) => {
     setPipeline(p => p.map(j => j.id === id ? {...j, ...updates} : j));
@@ -295,35 +289,25 @@ export default function JobAgent() {
 
   const addToNetworkingLog = useCallback((contact) => {
     setNetworkingLog(nl => nl.find(x => x.id === contact.id) ? nl : [...nl, contact]);
-    setSyncStatus("saving");
-    Storage.upsertNetlog(contact)
-      .then(() => { setSyncStatus("saved"); setTimeout(() => setSyncStatus(""), 3000); })
-      .catch(e => { setSyncStatus("error"); console.error("addToNetworkingLog save error:", e); });
-    // Auto-set Pending status + follow-up reminder 5 days out
+    trackSave(Storage.upsertNetlog(contact));
     const followUpDate = new Date(Date.now() + 5 * 86400000).toISOString().split('T')[0];
     setNetlogMeta(prev => {
-      if (prev[contact.id]) return prev; // don't overwrite if already set
+      if (prev[contact.id]) return prev;
       const next = {...prev, [contact.id]: {status: 'Pending', followUpDate}};
       Storage.saveSetting('netlog_meta', JSON.stringify(next)).catch(e => console.warn('netlog_meta save error:', e));
       return next;
     });
-  }, []);
+  }, [trackSave]);
 
   const logApplication = useCallback((app) => {
     setApps(p => [...p, app]);
-    setSyncStatus("saving");
-    Storage.upsertApplication(app)
-      .then(() => { setSyncStatus("saved"); setTimeout(() => setSyncStatus(""), 3000); })
-      .catch(e => { setSyncStatus("error"); console.error("logApplication save error:", e); });
-  }, []);
+    trackSave(Storage.upsertApplication(app));
+  }, [trackSave]);
 
   const updateApplicationStatus = useCallback((id, status) => {
     setApps(p => p.map(a => a.id === id ? {...a, status} : a));
-    setSyncStatus("saving");
-    Storage.upsertApplication({...stateRef.current.apps.find(a => a.id === id), status})
-      .then(() => { setSyncStatus("saved"); setTimeout(() => setSyncStatus(""), 3000); })
-      .catch(e => { setSyncStatus("error"); console.error("updateApplicationStatus error:", e); });
-  }, []);
+    trackSave(Storage.upsertApplication({...stateRef.current.apps.find(a => a.id === id), status}));
+  }, [trackSave]);
 
   const setSearchResultsWithSave = useCallback((updater) => {
     setSearchResults(prev => {
@@ -337,12 +321,11 @@ export default function JobAgent() {
 
   const renderSyncStatus = () => {
     if (!loaded) return null;
-    if (syncStatus === "saving") return <span style={{color:t.muted,fontWeight:700,fontSize:10.5}}>Saving...</span>;
-    if (syncStatus === "error") return <span style={{color:t.red,fontWeight:700,fontSize:10.5}}>Sync error</span>;
-    if (syncStatus === "saved") return (
-      <span style={{display:"flex",alignItems:"center",gap:3,color:t.green,fontWeight:700,fontSize:10.5}}>
-        <span style={{width:5,height:5,borderRadius:"50%",background:t.green,display:"inline-block"}}/>Saved
-      </span>
+    if (saveError) return (
+      <span style={{color:t.red,fontWeight:700,fontSize:10.5}}>Sync error</span>
+    );
+    if (pendingSaves > 0) return (
+      <span style={{color:t.muted,fontWeight:700,fontSize:10.5}}>Saving...</span>
     );
     return (
       <span style={{display:"flex",alignItems:"center",gap:3,color:t.green,fontWeight:700,fontSize:10.5}}>
@@ -350,6 +333,19 @@ export default function JobAgent() {
       </span>
     );
   };
+
+  const trackSave = useCallback((promise) => {
+    setPendingSaves(n => n + 1);
+    setSaveError(null);
+    return promise
+      .then(() => setPendingSaves(n => Math.max(0, n - 1)))
+      .catch(e => {
+        setPendingSaves(n => Math.max(0, n - 1));
+        setSaveError(e.message || 'Unknown error');
+        setTimeout(() => setSaveError(null), 10000);
+        console.error('Save error:', e);
+      });
+  }, []);
 
   const pages = {
     dashboard: (
