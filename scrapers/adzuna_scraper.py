@@ -36,6 +36,15 @@ except ImportError:
 
 log = logging.getLogger("adzuna_scraper")
 
+# ── User-Agent headers ────────────────────────────────────────────────────────
+HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (compatible; JobAgentBot/4.3; "
+        "+https://github.com/Siddardth7/job-pipeline)"
+    ),
+    "Accept": "application/json",
+}
+
 _raw_ids  = os.environ.get("ADZUNA_APP_IDS",  "") or os.environ.get("ADZUNA_APP_ID",  "")
 _raw_keys = os.environ.get("ADZUNA_APP_KEYS", "") or os.environ.get("ADZUNA_APP_KEY", "")
 ADZUNA_PAIRS = [
@@ -150,7 +159,7 @@ class AdzunaScraper:
             "content-type":     "application/json",
         }
         try:
-            r = requests.get(BASE_URL, params=params, timeout=20)
+            r = requests.get(BASE_URL, headers=HEADERS, params=params, timeout=20)
             if r.status_code in (401, 403):
                 return ("quota", [])
             if r.status_code == 429:
@@ -176,21 +185,25 @@ class AdzunaScraper:
         if not link:
             return None
 
-        itar_flags = [kw for kw in ITAR_KEYWORDS if kw in desc.lower()]
+        itar_combined = (title + " " + desc).lower()
+        itar_flags = [kw for kw in ITAR_KEYWORDS if kw in itar_combined]
+
+        posted_date, date_confidence = self._parse_created(raw.get("created", ""))
 
         return {
-            "job_title":    title,
-            "company_name": company,
-            "job_url":      link,
-            "location":     location,
-            "posted_date":  self._parse_created(raw.get("created", "")),
-            "description":  desc[:500],
-            "salary":       self._format_salary(raw),
-            "source":       "adzuna",
-            "cluster":      cluster,
-            "itar_flag":    bool(itar_flags),
-            "itar_detail":  ", ".join(itar_flags),
-            "raw_id":       f"adzuna_{raw.get('id', '')}",
+            "job_title":       title,
+            "company_name":    company,
+            "job_url":         link,
+            "location":        location,
+            "posted_date":     posted_date,
+            "date_confidence": date_confidence,
+            "description":     desc[:500],
+            "salary":          self._format_salary(raw),
+            "source":          "adzuna",
+            "cluster":         cluster,
+            "itar_flag":       bool(itar_flags),
+            "itar_detail":     ", ".join(itar_flags),
+            "raw_id":          f"adzuna_{raw.get('id', '')}",
         }
 
     @staticmethod
@@ -204,14 +217,17 @@ class AdzunaScraper:
         return ""
 
     @staticmethod
-    def _parse_created(created: str) -> str:
-        """Convert Adzuna ISO timestamp → YYYY-MM-DD."""
+    def _parse_created(created: str):
+        """
+        Convert Adzuna ISO timestamp → (YYYY-MM-DD, date_confidence).
+        Returns ('', 'unknown') when no date is available.
+        """
         if not created:
-            return datetime.utcnow().strftime("%Y-%m-%d")
+            return "", "unknown"
         try:
-            return created[:10]
+            return created[:10], "actual"
         except Exception:
-            return datetime.utcnow().strftime("%Y-%m-%d")
+            return "", "unknown"
 
 
 if __name__ == "__main__":

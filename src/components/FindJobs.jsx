@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Search, RefreshCw, Plus, Check, ExternalLink, Upload, PenTool, Database, CheckCircle, UserPlus } from 'lucide-react';
 import { fetchJobs, fetchFeedDates, fetchJobsByDate } from '../lib/storage.js';
 
@@ -45,6 +45,13 @@ function universalParse(data) {
 
 
 const FILTERS = ["All","Visa Sponsor","Remote","90%+ Match","ITAR-Free"];
+const SORT_OPTIONS = [
+  { value: 'match_desc', label: 'Match: High → Low' },
+  { value: 'match_asc',  label: 'Match: Low → High' },
+  { value: 'date_desc',  label: 'Date: Newest' },
+  { value: 'date_asc',   label: 'Date: Oldest' },
+  { value: 'co_az',      label: 'Company A→Z' },
+];
 
 export default function FindJobs({searchResults, setSearchResults, pipeline, addToPipeline, setPage, findCompany, normalizeJob, isBlacklisted, checkITAR, customCompanies, setCustomCompanies, t}) {
   const [loading, setLoading] = useState(false);
@@ -52,6 +59,7 @@ export default function FindJobs({searchResults, setSearchResults, pipeline, add
   const [lastUpdated, setLastUpdated] = useState("");
   const [query, setQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("All");
+  const [sortBy, setSortBy] = useState("match_desc");
   const [tab, setTab] = useState("feed");
   const [feedDates, setFeedDates]       = useState([]);
   const [selectedDate, setSelectedDate] = useState('');
@@ -80,6 +88,10 @@ export default function FindJobs({searchResults, setSearchResults, pipeline, add
     }
     setLoading(false);
   };
+
+  // Auto-load today's feed on first mount so dropdown and data are always in sync.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { handleRefresh(); }, []);
 
   const handleDateChange = async (dateStr) => {
     setSelectedDate(dateStr);
@@ -202,6 +214,13 @@ export default function FindJobs({searchResults, setSearchResults, pipeline, add
                 ))}
               </select>
             )}
+            <select
+              value={sortBy}
+              onChange={e => setSortBy(e.target.value)}
+              style={{background:t.card,border:`1px solid ${t.border}`,borderRadius:8,padding:"6px 10px",color:t.tx,fontSize:13,fontFamily:"inherit",cursor:"pointer",outline:"none"}}
+            >
+              {SORT_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+            </select>
             <button onClick={handleRefresh} disabled={loading} style={{padding:"0 16px",background:t.card,border:`1px solid ${t.border}`,borderRadius:10,cursor:loading?"not-allowed":"pointer",color:t.sub,display:"flex",alignItems:"center",gap:6,fontSize:13,fontWeight:600,fontFamily:"inherit",opacity:loading?.5:1}}>
               <RefreshCw size={14} style={{animation:loading?"lp-spin 1s linear infinite":"none"}}/>{loading?"Loading":"Refresh"}
             </button>
@@ -293,7 +312,15 @@ export default function FindJobs({searchResults, setSearchResults, pipeline, add
 
       {/* Job list */}
       <div style={{display:"flex",flexDirection:"column",gap:4}}>
-        {filtered.sort((a,b) => a.itar_flag-b.itar_flag).map((job,i) => {
+        {[...filtered].sort((a,b) => {
+          if (a.itar_flag !== b.itar_flag) return a.itar_flag - b.itar_flag;
+          if (sortBy === 'match_desc') return (b.match||0) - (a.match||0);
+          if (sortBy === 'match_asc')  return (a.match||0) - (b.match||0);
+          if (sortBy === 'date_desc')  return (b.posted||'').localeCompare(a.posted||'');
+          if (sortBy === 'date_asc')   return (a.posted||'').localeCompare(b.posted||'');
+          if (sortBy === 'co_az')      return (a.company||'').localeCompare(b.company||'');
+          return 0;
+        }).map((job,i) => {
           const inP = pipeIds.has(job.id);
           return (
             <Card key={job.id||i} t={t} style={{opacity:job.itar_flag?.5:1,borderColor:job.itar_flag?t.redBd:t.border,padding:"14px 18px"}}>

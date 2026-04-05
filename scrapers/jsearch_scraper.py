@@ -39,6 +39,15 @@ except ImportError:
 
 log = logging.getLogger("jsearch_scraper")
 
+# ── User-Agent headers ────────────────────────────────────────────────────────
+HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (compatible; JobAgentBot/4.3; "
+        "+https://github.com/Siddardth7/job-pipeline)"
+    ),
+    "Accept": "application/json",
+}
+
 _raw_keys = os.environ.get("JSEARCH_API_KEYS", "") or os.environ.get("JSEARCH_API_KEY", "")
 JSEARCH_API_KEYS = [k.strip() for k in _raw_keys.split(",") if k.strip()]
 JSEARCH_HOST    = "jsearch.p.rapidapi.com"
@@ -104,24 +113,29 @@ class JSearchScraper:
         Called by orchestrator. The `queries` parameter is accepted for interface
         compatibility but not used — JSearch runs hardcoded title queries.
         Returns jobs in pipeline schema.
+        After returning, `self.calls_made` holds the actual number of API calls fired.
         """
+        self.calls_made = 0
+
         if not JSEARCH_API_KEYS:
             log.warning("[jsearch] JSEARCH_API_KEYS not set — skipping")
             return []
 
         for key in JSEARCH_API_KEYS:
-            result = self._attempt_run(key)
+            result, calls = self._attempt_run(key)
+            self.calls_made += calls
             if result is not None:
-                log.info(f"[jsearch] Done. {len(result)} jobs.")
+                log.info(f"[jsearch] Done. {len(result)} jobs. API calls this run: {self.calls_made}")
                 return result
 
         log.warning("[jsearch] All JSearch keys quota-exhausted")
         return []
 
-    def _attempt_run(self, key: str) -> Optional[List[Dict]]:
+    def _attempt_run(self, key: str) -> tuple:
         """
-        Try all queries with one key. Returns job list on success,
-        None if key is quota-exhausted (caller should try next key).
+        Try all queries with one key.
+        Returns (job_list, api_calls) on success,
+        (None, api_calls) if key is quota-exhausted (caller should try next key).
         """
         headers = {
             "X-RapidAPI-Key":  key,
@@ -145,7 +159,7 @@ class JSearchScraper:
 
             if result == "quota":
                 log.info("[jsearch] 403 quota — rotating to next key")
-                return None  # exhausted
+                return None, api_calls  # exhausted
 
             if result == "rate_limited":
                 consecutive_429s += 1
@@ -155,7 +169,7 @@ class JSearchScraper:
                 )
                 if consecutive_429s >= self.MAX_CONSECUTIVE_429:
                     log.info("[jsearch] Consecutive 429s — rotating to next key")
-                    return None  # exhausted
+                    return None, api_calls  # exhausted
                 continue
 
             if result == "error":
@@ -181,24 +195,30 @@ class JSearchScraper:
                 state       = job.get("job_state", "") or ""
                 location    = f"{city}, {state}".strip(", ") or "United States"
                 posted_raw  = job.get("job_posted_at_datetime_utc", "") or ""
-                posted_date = posted_raw[:10] if posted_raw else datetime.utcnow().strftime("%Y-%m-%d")
-                itar_flags  = check_itar(desc)
+                if posted_raw:
+                    posted_date     = posted_raw[:10]
+                    date_confidence = "actual"
+                else:
+                    posted_date     = ""
+                    date_confidence = "unknown"
+                itar_flags  = check_itar(job.get("job_title", "") + " " + desc)
 
                 all_jobs.append({
-                    "job_title":    job.get("job_title", ""),
-                    "company_name": job.get("employer_name", ""),
-                    "job_url":      apply_link,
-                    "location":     location,
-                    "posted_date":  posted_date,
-                    "description":  desc[:500],
-                    "source":       "jsearch",
-                    "cluster":      self._cluster(query),
-                    "itar_flag":    bool(itar_flags),
-                    "itar_detail":  ", ".join(itar_flags),
-                    "raw_id":       job_id,
+                    "job_title":       job.get("job_title", ""),
+                    "company_name":    job.get("employer_name", ""),
+                    "job_url":         apply_link,
+                    "location":        location,
+                    "posted_date":     posted_date,
+                    "date_confidence": date_confidence,
+                    "description":     desc[:500],
+                    "source":          "jsearch",
+                    "cluster":         self._cluster(query),
+                    "itar_flag":       bool(itar_flags),
+                    "itar_detail":     ", ".join(itar_flags),
+                    "raw_id":          job_id,
                 })
 
-        return all_jobs
+        return all_jobs, api_calls
 
     def _single_query(self, headers: Dict, query: str):
         """
@@ -216,9 +236,11 @@ class JSearchScraper:
             "country":    "us",
             "language":   "en",
         }
+        # Merge User-Agent headers with RapidAPI auth headers
+        merged_headers = {**HEADERS, **headers}
         for attempt in range(2):
             try:
-                r = requests.get(JSEARCH_URL, headers=headers, params=params, timeout=15)
+                r = requests.get(JSEARCH_URL, headers=merged_headers, params=params, timeout=15)
                 if r.status_code == 200:
                     return r.json().get("data", [])
                 if r.status_code == 429:

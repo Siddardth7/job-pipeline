@@ -36,6 +36,44 @@ ROOT = Path(__file__).parent.parent  # pipeline/ subdir → parent.parent = repo
 TEMP_DIR    = ROOT / "temp"
 OUTPUT_PATH = TEMP_DIR / "jobs_clean_intermediate.json"
 
+# Explicit whitelist of temp files produced by live scrapers.
+# NEVER load jobs_clean_intermediate.json or old disabled-source files here.
+WHITELISTED_SOURCE_FILES = [
+    "jobs_ats.json",
+    "jobs_jsearch.json",
+    "jobs_apify.json",
+    "jobs_serpapi.json",
+    "jobs_adzuna.json",
+]
+
+
+def _load_whitelisted_sources(temp_dir: Path = None) -> Tuple[List[Dict], Dict[str, int]]:
+    """Load only from whitelisted scraper output files — never intermediate or stale."""
+    if temp_dir is None:
+        temp_dir = TEMP_DIR
+    jobs: List[Dict] = []
+    scraper_counts: Dict[str, int] = {}
+    for filename in WHITELISTED_SOURCE_FILES:
+        path = temp_dir / filename
+        if not path.exists():
+            source_name = filename.replace("jobs_", "").replace(".json", "")
+            scraper_counts[source_name] = 0
+            log.info(f"  {filename}: not present (scraper may have been skipped)")
+            continue
+        try:
+            data = json.loads(path.read_text())
+            batch = data.get("jobs", [])
+            source_name = data.get("source", path.stem.replace("jobs_", ""))
+            scraper_counts[source_name] = len(batch)
+            log.info(f"  Loaded {filename}: {len(batch)} jobs")
+            jobs.extend(batch)
+        except Exception as e:
+            log.error(f"Failed to load {filename}: {e}")
+            source_name = filename.replace("jobs_", "").replace(".json", "")
+            scraper_counts[source_name] = 0
+    return jobs, scraper_counts
+
+
 sys.path.insert(0, str(ROOT))
 
 log = logging.getLogger("merge_pipeline")
@@ -62,9 +100,30 @@ except Exception:
 
 # F3 — Aggregator domains (applied post-merge to catch all scrapers)
 AGGREGATOR_DOMAINS = [
-    "indeed.com", "glassdoor.com", "ziprecruiter.com",
-    "simplyhired.com", "monster.com", "careerbuilder.com",
+    # Job board aggregators
+    "indeed.com",
+    "glassdoor.com",
+    "ziprecruiter.com",
+    "simplyhired.com",
+    "monster.com",
+    "careerbuilder.com",
     "linkedin.com",
+    # Adzuna redirect/land URLs (Adzuna source files have direct apply URLs stripped)
+    "adzuna.com/land/",
+    "adzuna.co.uk/land/",
+    # Redirect/tracking aggregators
+    "appcast.io",
+    "click.appcast.io",
+    "apply.workable.com/j/",   # Workable apply redirects (not direct postings)
+    "dice.com",
+    "careersite.com",
+    "talentify.io",
+    "lensa.com",
+    "nexxt.com",
+    "jooble.org",
+    "recruiter.com",
+    "talent.com",
+    "getwork.com",
 ]
 
 # F6 — Seniority reject tokens
@@ -148,6 +207,17 @@ BOOST_TITLE_TOKENS = [
     "engineer 1", "engineer 2", "early career", "new grad", "junior",
     "level i", "level ii",
 ]
+
+# Source priority — lower number = higher quality. ATS direct > company apply > clean API > aggregator
+SOURCE_PRIORITY: Dict[str, int] = {
+    "ats_greenhouse":  1,
+    "ats_lever":       1,
+    "jsearch":         3,
+    "apify":           4,
+    "serpapi":         4,
+    "adzuna":          5,
+    "unknown":         9,
+}
 RELEVANCE_KEYWORDS = [
     "manufacturing", "process", "production", "quality", "composites",
     "materials", "industrial", "lean", "tooling", "inspection",
@@ -165,7 +235,7 @@ def run():
     log.info("=" * 60)
 
     # Step 1 — Load all scraper outputs
-    raw_jobs, scraper_counts = _load_all_sources()
+    raw_jobs, scraper_counts = _load_whitelisted_sources()
     _print_scraper_health(scraper_counts, raw_jobs)
     total_raw = len(raw_jobs)
 
@@ -178,7 +248,7 @@ def run():
     # Filters run in strict sequence. Each returns (passed, rejected_count).
     after_f3, f3_rejected = _filter_aggregators(normalized)     # F2 + F3
     after_f4, f4_rejected = _filter_age(after_f3)              # F4
-    after_f5, f5_rejected = _filter_duplicates(after_f4)       # F5
+    after_f5, f5_rejected = _filter_duplicates_priority(after_f4)  # F5 — priority dedupe
     after_f6, f6_rejected = _filter_seniority(after_f5)        # F6
     after_f7, f7_rejected = _filter_role_relevance(after_f6)   # F7
     after_f8, f8_rejected = _filter_itar(after_f7)             # F8 — HARD DROP
@@ -194,7 +264,7 @@ def run():
         schema_rejected=schema_rejected,
         f3_rejected=f3_rejected,
         f4_rejected=f4_rejected,
-        f5_rejected=f5_rejected,
+        f5_rejected=len(f5_rejected),
         f6_rejected=f6_rejected,
         f7_rejected=f7_rejected,
         f8_rejected=f8_rejected,
@@ -210,7 +280,7 @@ def run():
             "schema_rejected": schema_rejected,
             "f3_aggregator":   f3_rejected,
             "f4_age":          f4_rejected,
-            "f5_duplicates":   f5_rejected,
+            "f5_duplicates":   len(f5_rejected),
             "f6_seniority":    f6_rejected,
             "f7_role":         f7_rejected,
             "f8_itar":         f8_rejected,
@@ -284,19 +354,40 @@ def _normalize(job: Dict) -> Optional[Dict]:
     if not title or not company or not url:
         return None  # F1 fail — drop
 
+    source = str(job.get("source", "unknown"))
+    raw_id = str(job.get("raw_id", "") or "")
+
+    # Stable job ID: prefer source:raw_id, fall back to URL-based key
+    if raw_id:
+        stable_id = f"{source}:{raw_id}"
+    else:
+        stable_id = url.lower().split("?")[0].rstrip("/")[:120]
+
+    # Track whether location was provided — blank location poisons dedupe
+    location_raw = str(job.get("location", "") or "").strip()
+    location_confidence = "known" if location_raw else "unknown"
+
     return {
-        "job_title":       title,
-        "company_name":    company,
-        "job_url":         url,
-        "location":        str(job.get("location",    "") or "").strip(),
-        "posted_date":     str(job.get("posted_date", "") or "").strip(),
+        "job_title":            title,
+        "company_name":         company,
+        "job_url":              url,
+        "location":             location_raw,
+        "location_confidence":  location_confidence,
+        "posted_date":          str(job.get("posted_date", "") or "").strip(),
+        "date_confidence": str(job.get("date_confidence", "actual") or "actual"),
         "description":     str(job.get("description", "") or "").strip(),
-        "source":          str(job.get("source",      "unknown")),
+        "source":          source,
         "cluster":         str(job.get("cluster",     "")),
         "itar_flag":       bool(job.get("itar_flag",  False)),
         "itar_detail":     str(job.get("itar_detail", "") or ""),
         "relevance_score": 0,
         "boost_tags":      [],
+        # Metadata carried through end-to-end
+        "raw_id":          raw_id,
+        "ats_tier":        str(job.get("ats_tier", "") or ""),
+        "h1b":             str(job.get("h1b", "") or ""),
+        "salary":          str(job.get("salary", "") or ""),
+        "stable_id":       stable_id,
     }
 
 
@@ -334,22 +425,41 @@ def _filter_age(jobs: List[Dict]) -> Tuple[List[Dict], int]:
     passed, rejected = [], 0
     cutoff = datetime.utcnow() - timedelta(hours=MAX_AGE_HOURS)
     for j in jobs:
-        if _is_fresh(j.get("posted_date", ""), cutoff):
+        if _is_fresh(j, cutoff):
             passed.append(j)
         else:
             rejected += 1
-            log.debug(f"  [F4 DROP] Age {j.get('posted_date')!r} — {j['job_title']!r} @ {j['company_name']}")
+            log.debug(
+                f"  [F4 DROP] Age/unknown-date — {j.get('posted_date')!r} "
+                f"(confidence={j.get('date_confidence','actual')}) "
+                f"— {j['job_title']!r} @ {j['company_name']}"
+            )
     return passed, rejected
 
 
-def _is_fresh(posted_date: str, cutoff: datetime) -> bool:
-    if not posted_date:
-        return True  # unknown date → treat as fresh
+def _is_fresh(job: Dict, cutoff: datetime) -> bool:
+    """
+    Returns True if the job is within the freshness window.
+    - ATS sources (ats_greenhouse, ats_lever): unknown dates are accepted as fresh
+      because these are live open postings polled directly from employer ATS.
+    - All other sources: unknown dates are DROPPED — faking freshness overstates the feed.
+    """
+    posted_date     = job.get("posted_date", "")
+    date_confidence = job.get("date_confidence", "actual")
+    source          = job.get("source", "")
+
+    if not posted_date or date_confidence == "unknown":
+        # ATS direct sources: open postings are definitionally current
+        if source in ("ats_greenhouse", "ats_lever"):
+            return True
+        # All other sources: unknown date = drop
+        return False
+
     try:
         dt = datetime.strptime(posted_date[:10], "%Y-%m-%d")
         return dt >= cutoff
     except Exception:
-        return True
+        return source in ("ats_greenhouse", "ats_lever")
 
 
 # ── F5 — Deduplication ────────────────────────────────────────────────────────
@@ -371,6 +481,60 @@ def _filter_duplicates(jobs: List[Dict]) -> Tuple[List[Dict], int]:
         seen_urls.add(url_key)
         seen_composite.add(comp_key)
         passed.append(j)
+    return passed, rejected
+
+
+def _filter_duplicates_priority(jobs: List[Dict]) -> Tuple[List[Dict], List[Dict]]:
+    """
+    Deduplicate keeping the highest-priority source record.
+    Composite key: (company_lower, title_lower[:40], location_lower[:20])
+    URL key also checked to catch same-URL duplicates.
+    Returns (passed_jobs, rejected_jobs).
+    """
+    # Index: composite_key → best job so far
+    best_by_comp: Dict[tuple, Dict] = {}
+    best_by_url:  Dict[str,  Dict] = {}
+    rejected: List[Dict] = []
+
+    for j in jobs:
+        url_key  = j["job_url"].lower().split("?")[0].rstrip("/")
+        comp_key = (
+            j["company_name"].lower(),
+            j["job_title"].lower()[:40],
+            j["location"].lower()[:20],
+        )
+        priority = SOURCE_PRIORITY.get(j.get("source", "unknown"), 9)
+
+        existing_url  = best_by_url.get(url_key)
+        existing_comp = best_by_comp.get(comp_key)
+
+        # URL-based dedup
+        if existing_url:
+            existing_priority = SOURCE_PRIORITY.get(existing_url.get("source", "unknown"), 9)
+            if priority < existing_priority:
+                rejected.append(existing_url)
+                best_by_url[url_key] = j
+            else:
+                rejected.append(j)
+            continue  # already seen this URL
+
+        # Composite-key dedup
+        if existing_comp:
+            existing_priority = SOURCE_PRIORITY.get(existing_comp.get("source", "unknown"), 9)
+            if priority < existing_priority:
+                # Evict the old record: remove its URL entry so it doesn't leak into passed
+                old_url_key = existing_comp["job_url"].lower().split("?")[0].rstrip("/")
+                best_by_url.pop(old_url_key, None)
+                rejected.append(existing_comp)
+                best_by_comp[comp_key] = j
+                best_by_url[url_key]   = j
+            else:
+                rejected.append(j)
+        else:
+            best_by_comp[comp_key] = j
+            best_by_url[url_key]   = j
+
+    passed = list(best_by_url.values())
     return passed, rejected
 
 
@@ -465,15 +629,16 @@ def _itar_reject_reason(job: Dict) -> Optional[str]:
         detail = (job.get("itar_detail") or "").strip()
         return f"itar_flag=True" + (f" ({detail})" if detail else "")
 
-    # Belt-and-suspenders: re-scan itar_detail and full description
+    # Belt-and-suspenders: re-scan title + itar_detail + full description
     combined = " ".join([
+        job.get("job_title",   "") or "",
         job.get("itar_detail", "") or "",
         job.get("description", "") or "",
     ]).lower()
 
     for kw in ITAR_REJECT_KEYWORDS:
         if kw in combined:
-            return f"keyword: '{kw}'"
+            return f"keyword in title/desc: '{kw}'"
 
     return None
 

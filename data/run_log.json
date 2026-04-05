@@ -908,47 +908,9 @@
     "run_end_utc": "2026-04-02T14:25:30.828328Z"
   },
   {
-    "version": "4.2",
-    "run_date": "2026-04-03",
-    "run_start_utc": "2026-04-03T14:01:41.452013Z",
-    "queries_generated": 15,
-    "scrapers": {
-      "ats": {
-        "status": "success",
-        "jobs_found": 126
-      },
-      "jsearch": {
-        "status": "zero_results",
-        "queries_used": 10,
-        "jobs_found": 0
-      },
-      "apify": {
-        "status": "success",
-        "queries_used": 15,
-        "jobs_found": 149
-      },
-      "serpapi": {
-        "status": "success",
-        "queries_used": 5,
-        "jobs_found": 31
-      },
-      "adzuna": {
-        "status": "success",
-        "jobs_found": 193,
-        "queries_used": 15
-      },
-      "theirstack": {
-        "status": "skipped",
-        "reason": "disabled_free_tier_exhausted",
-        "jobs_found": 0
-      }
-    },
-    "run_end_utc": "2026-04-03T14:05:05.341099Z"
-  },
-  {
-    "version": "4.2",
-    "run_date": "2026-04-04",
-    "run_start_utc": "2026-04-04T13:53:57.301041Z",
+    "version": "4.3",
+    "run_date": "2026-04-05",
+    "run_start_utc": "2026-04-05T00:38:19.137611Z",
     "queries_generated": 15,
     "scrapers": {
       "ats": {
@@ -957,30 +919,58 @@
       },
       "jsearch": {
         "status": "zero_results",
-        "queries_used": 10,
+        "queries_used": 3,
         "jobs_found": 0
       },
       "apify": {
         "status": "success",
         "queries_used": 15,
-        "jobs_found": 113
+        "jobs_found": 127
+      },
+      "serpapi": {
+        "status": "success",
+        "queries_used": 5,
+        "jobs_found": 30
+      },
+      "adzuna": {
+        "status": "success",
+        "jobs_found": 141,
+        "queries_used": 15
+      }
+    },
+    "run_end_utc": "2026-04-05T00:42:11.666388Z"
+  },
+  {
+    "version": "4.3",
+    "run_date": "2026-04-05",
+    "run_start_utc": "2026-04-05T00:49:37.105957Z",
+    "queries_generated": 15,
+    "scrapers": {
+      "ats": {
+        "status": "success",
+        "jobs_found": 128
+      },
+      "jsearch": {
+        "status": "zero_results",
+        "queries_used": 3,
+        "jobs_found": 0
+      },
+      "apify": {
+        "status": "success",
+        "queries_used": 15,
+        "jobs_found": 147
       },
       "serpapi": {
         "status": "skipped",
-        "reason": "scheduled_off",
+        "reason": "quota_exhausted",
         "jobs_found": 0
       },
       "adzuna": {
         "status": "success",
-        "jobs_found": 173,
+        "jobs_found": 141,
         "queries_used": 15
-      },
-      "theirstack": {
-        "status": "skipped",
-        "reason": "disabled_free_tier_exhausted",
-        "jobs_found": 0
       }
     },
-    "run_end_utc": "2026-04-04T13:56:50.334504Z"
+    "run_end_utc": "2026-04-05T00:53:07.138900Z"
   }
 ]

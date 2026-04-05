@@ -100,23 +100,11 @@ def run():
     log.info(f"  YELLOW: {len(yellow_jobs)}")
     log.info(f"  RED (dropped): {dropped}")
 
-    # Update promotion tracking with today's new jobs
-    _update_promotions(db, green_jobs + yellow_jobs)
-
-    # Check for promotions: YELLOW companies that crossed threshold
-    promoted = _check_promotions(db)
-    if promoted:
-        log.info(f"  Promoted to GREEN: {promoted}")
-        # Re-classify yellow jobs from promoted companies
-        still_yellow, now_green = [], []
-        for job in yellow_jobs:
-            if job["company_name"] in promoted:
-                job["verdict"] = "GREEN"
-                now_green.append(job)
-            else:
-                still_yellow.append(job)
-        green_jobs.extend(now_green)
-        yellow_jobs = still_yellow
+    # Auto-promotion permanently disabled — GREEN list is curated by hand.
+    # Reason: promotion counted same-day jobs as multiple appearances, promoting
+    # recruiters (Motion Recruitment, Myticas Consulting) into the trusted set.
+    log.info("  Promotion check: disabled. Edit data/company_database.json to add GREEN companies.")
+    promoted = []
 
     # Save updated database
     _save_db(db)
@@ -207,33 +195,25 @@ def _classify(company: str, description: str, db: Dict) -> str:
 # ── Promotion logic ───────────────────────────────────────────────────────────
 
 def _update_promotions(db: Dict, jobs: List[Dict]):
-    """Track how often each YELLOW company appears across runs."""
-    tracking = db.setdefault("promotion_tracking", {})
-    today = str(date.today())
+    """Track how often each YELLOW company appears across runs.
 
-    for job in jobs:
-        company = job["company_name"]
-        if not _is_green(company, db):
-            if company not in tracking:
-                tracking[company] = []
-            tracking[company].append(today)
+    DISABLED — no longer called from run(). Auto-promotion has been permanently
+    disabled. The GREEN list is curated by hand only.
+    See the comment in run() for the full rationale.
+    """
+    # Disabled — kept for reference only.
+    pass
 
 
 def _check_promotions(db: Dict) -> List[str]:
-    """Return list of companies that crossed the promotion threshold."""
-    tracking = db.get("promotion_tracking", {})
-    cutoff = date.today() - timedelta(days=PROMOTION_WINDOW_DAYS)
-    promoted = []
+    """Return list of companies that crossed the promotion threshold.
 
-    for company, dates in tracking.items():
-        recent = [d for d in dates if _parse_date(d) >= cutoff]
-        tracking[company] = [str(d) for d in recent]  # trim old dates
-        if len(recent) >= PROMOTION_THRESHOLD:
-            if not _is_green(company, db):
-                db["green"].append({"name": company, "domain": "", "industry": "Auto-promoted"})
-                promoted.append(company)
-
-    return promoted
+    DISABLED — no longer called from run(). Auto-promotion has been permanently
+    disabled. The GREEN list is curated by hand only.
+    See the comment in run() for the full rationale.
+    """
+    # Disabled — always returns empty list. No companies are auto-promoted.
+    return []
 
 
 def _is_green(company: str, db: Dict) -> bool:

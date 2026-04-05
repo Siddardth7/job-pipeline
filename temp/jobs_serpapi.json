@@ -1,7 +1,7 @@
 {
   "source": "serpapi",
-  "generated_utc": "2026-04-04T13:56:21.649434Z",
+  "generated_utc": "2026-04-05T00:52:36.931893Z",
   "count": 0,
-  "error": "scheduled_off",
+  "error": "quota_exhausted",
   "jobs": []
 }

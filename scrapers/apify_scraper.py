@@ -77,6 +77,31 @@ def _coerce_str(v) -> str:
     return str(v or "")
 
 
+def _extract_location(raw_location) -> str:
+    """
+    Extract a human-readable location string from the LinkedIn actor's location field.
+    The harvestapi actor returns location as {"name": "Austin, TX, United States"}.
+    May also be a plain string, a structured dict with city/state/country keys, or None.
+    Returns empty string for unknown/null so blank-location jobs can be detected downstream.
+    """
+    if not raw_location:
+        return ""
+    if isinstance(raw_location, str):
+        return raw_location.strip()
+    if isinstance(raw_location, dict):
+        # Structured format: {"city": "Austin", "state": "TX", "country": "US"}
+        city    = (raw_location.get("city")    or "").strip()
+        state   = (raw_location.get("state")   or "").strip()
+        country = (raw_location.get("country") or "").strip()
+        parts = [p for p in [city, state, country] if p]
+        if parts:
+            return ", ".join(parts)
+        # harvestapi actor format: {"name": "Austin, TX, United States"}
+        name = (raw_location.get("name") or "").strip()
+        return name
+    return ""
+
+
 class ApifyScraper:
     """
     Runs harvestapi/linkedin-job-search for LinkedIn job discovery.
@@ -235,15 +260,7 @@ class ApifyScraper:
         title    = str(raw.get("title", "") or "")
         _co_raw  = raw.get("company") or {}
         company  = str(_co_raw.get("name", "") if isinstance(_co_raw, dict) else _co_raw or "")
-        _loc_raw = raw.get("location", "") or ""
-        if isinstance(_loc_raw, dict):
-            location = ", ".join(filter(None, [
-                _loc_raw.get("city", ""),
-                _loc_raw.get("state", ""),
-                _loc_raw.get("country", ""),
-            ]))
-        else:
-            location = str(_loc_raw)
+        location = _extract_location(raw.get("location") or raw.get("jobLocation") or raw.get("companyLocation"))
 
         desc = raw.get("descriptionText", "") or raw.get("description", "") or ""
 
@@ -265,21 +282,23 @@ class ApifyScraper:
         if not cluster:
             cluster = self._infer_cluster(title)
 
-        posted_date = self._parse_date(raw.get("postedDate", "") or "")
-        itar_flags  = [kw for kw in ITAR_KEYWORDS if kw in desc.lower()]
+        posted_date, date_confidence = self._parse_date(raw.get("postedDate", "") or "")
+        itar_combined = (title + " " + desc).lower()
+        itar_flags  = [kw for kw in ITAR_KEYWORDS if kw in itar_combined]
 
         return {
-            "job_title":    title,
-            "company_name": company,
-            "job_url":      url,
-            "location":     location,
-            "posted_date":  posted_date,
-            "description":  desc[:500],
-            "source":       "apify",
-            "cluster":      cluster,
-            "itar_flag":    bool(itar_flags),
-            "itar_detail":  ", ".join(itar_flags),
-            "raw_id":       str(raw.get("id", "") or ""),
+            "job_title":       title,
+            "company_name":    company,
+            "job_url":         url,
+            "location":        location,
+            "posted_date":     posted_date,
+            "date_confidence": date_confidence,
+            "description":     desc[:500],
+            "source":          "apify",
+            "cluster":         cluster,
+            "itar_flag":       bool(itar_flags),
+            "itar_detail":     ", ".join(itar_flags),
+            "raw_id":          str(raw.get("id", "") or ""),
         }
 
     def _infer_cluster(self, title: str) -> str:
@@ -293,19 +312,25 @@ class ApifyScraper:
         if "npi"         in t: return "startup_manufacturing"
         return "manufacturing"
 
-    def _parse_date(self, ts: str) -> str:
-        """Parse ISO 8601 date from harvestapi (e.g. '2025-05-14T17:12:41.000Z')."""
+    def _parse_date(self, ts: str):
+        """
+        Parse ISO 8601 date from harvestapi (e.g. '2025-05-14T17:12:41.000Z').
+        Returns (posted_date, date_confidence) tuple.
+        date_confidence is 'actual' when a real date is parsed, 'unknown' otherwise.
+        """
         if not ts:
-            return datetime.utcnow().strftime("%Y-%m-%d")
+            return "", "unknown"
         try:
-            return (
+            date_str = (
                 datetime.fromisoformat(ts.replace("Z", "+00:00"))
                 .strftime("%Y-%m-%d")
             )
+            return date_str, "actual"
         except Exception:
             pass
         try:
-            return datetime.strptime(ts[:10], "%Y-%m-%d").strftime("%Y-%m-%d")
+            date_str = datetime.strptime(ts[:10], "%Y-%m-%d").strftime("%Y-%m-%d")
+            return date_str, "actual"
         except Exception:
             pass
         # Relative text fallback: "2 days ago", "3 hours ago"
@@ -313,15 +338,15 @@ class ApifyScraper:
         try:
             now = datetime.utcnow()
             if "hour" in ts_l or "minute" in ts_l:
-                return now.strftime("%Y-%m-%d")
+                return now.strftime("%Y-%m-%d"), "actual"
             if "day" in ts_l:
                 days = int("".join(c for c in ts_l if c.isdigit()) or "1")
-                return (now - timedelta(days=days)).strftime("%Y-%m-%d")
+                return (now - timedelta(days=days)).strftime("%Y-%m-%d"), "actual"
             if "week" in ts_l:
-                return (now - timedelta(weeks=1)).strftime("%Y-%m-%d")
+                return (now - timedelta(weeks=1)).strftime("%Y-%m-%d"), "actual"
         except Exception:
             pass
-        return datetime.utcnow().strftime("%Y-%m-%d")
+        return "", "unknown"
 
 
 if __name__ == "__main__":

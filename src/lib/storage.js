@@ -430,6 +430,44 @@ export async function updateLinkedInContactNotes(id, notes) {
   if (error) throw error;
 }
 
+export async function fetchLinkedInStats(contacts) {
+  // Compute intelligence metrics from the already-fetched contacts array.
+  // Accepts the result of fetchLinkedInContacts() so no extra DB round-trip.
+  const c = contacts || [];
+  const now = Date.now();
+
+  const twoWay       = c.filter(x => x.two_way_conversation).length;
+  const warm         = c.filter(x => ['Warm','Strong','POC Candidate','Confirmed POC'].includes(x.relationship_strength)).length;
+  const pocCandidates= c.filter(x => x.is_poc_candidate).length;
+  const confirmedPoc = c.filter(x => x.is_confirmed_poc).length;
+  const recruiters   = c.filter(x => x.persona === 'Recruiter').length;
+  const hiringMgrs   = c.filter(x => x.persona === 'Hiring Manager').length;
+  const followUps    = c.filter(x => x.follow_up).length;
+  const urgentFu     = c.filter(x => x.follow_up_priority === 'urgent').length;
+  const referrals    = c.filter(x => x.referral_discussed).length;
+  const refSecured   = c.filter(x => x.referral_secured).length;
+  const promises     = c.filter(x => x.promise_made).length;
+  const dormant      = c.filter(x => x.conversation_stage === 'Dormant').length;
+  const strongRapport= c.filter(x => x.conversation_stage === 'Strong Rapport').length;
+
+  return {
+    total:         c.length,
+    twoWay,
+    warm,
+    pocCandidates,
+    confirmedPoc,
+    recruiters,
+    hiringMgrs,
+    followUps,
+    urgentFu,
+    referrals,
+    refSecured,
+    promises,
+    dormant,
+    strongRapport,
+  };
+}
+
 // ── User Profile ───────────────────────────────────────────────────────────────
 export async function fetchUserProfile() {
   const userId = await getUserId();

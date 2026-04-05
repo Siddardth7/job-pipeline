@@ -26,20 +26,28 @@ except ImportError:
     print("Run: pip install supabase")
     sys.exit(1)
 
+try:
+    from pipeline.batch_upsert import batch_upsert
+except ImportError:
+    # When run as a script directly (python pipeline/distribute_feed.py),
+    # pipeline/ is on sys.path rather than the project root.
+    from batch_upsert import batch_upsert
+
 ROOT      = Path(__file__).parent.parent
 JOBS_PATH = ROOT / "output" / "jobs_clean_latest.json"
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 log = logging.getLogger("distribute_feed")
 
-SB_URL = os.environ.get("SUPABASE_URL",       "").strip()
-SB_KEY = os.environ.get("SUPABASE_SERVICE_KEY","").strip()
 
-if not SB_URL or not SB_KEY:
-    log.error("SUPABASE_URL and SUPABASE_SERVICE_KEY must be set")
-    sys.exit(1)
-
-sb = create_client(SB_URL, SB_KEY)
+def _get_supabase_client():
+    """Create and return Supabase client. Raises SystemExit if env vars missing."""
+    url = os.environ.get("SUPABASE_URL",        "").strip()
+    key = os.environ.get("SUPABASE_SERVICE_KEY", "").strip()
+    if not url or not key:
+        log.error("SUPABASE_URL and SUPABASE_SERVICE_KEY must be set")
+        sys.exit(1)
+    return create_client(url, key)
 
 
 # ── Data loading ──────────────────────────────────────────────────────────────
@@ -55,16 +63,16 @@ def load_jobs():
     return green + yellow
 
 
-def load_users():
+def load_users(sb_client):
     """Return list of {user_id, role_targets, preferences} from Supabase."""
-    profiles_result = sb.table("user_profiles").select("user_id, domain_family").execute()
+    profiles_result = sb_client.table("user_profiles").select("user_id, domain_family").execute()
     targets_result  = (
-        sb.table("role_targets")
+        sb_client.table("role_targets")
         .select("user_id, title, cluster, priority")
         .eq("active", True)
         .execute()
     )
-    prefs_result = sb.table("user_preferences").select("user_id, feed_min_score, h1b_filter").execute()
+    prefs_result = sb_client.table("user_preferences").select("user_id, feed_min_score, h1b_filter").execute()
 
     profiles = {p["user_id"]: p for p in (profiles_result.data  or [])}
     prefs    = {p["user_id"]: p for p in (prefs_result.data     or [])}
@@ -189,8 +197,10 @@ def run():
     log.info("=" * 60)
     log.info("Feed Distribution — Starting")
 
+    sb = _get_supabase_client()
+
     jobs  = load_jobs()
-    users = load_users()
+    users = load_users(sb)
 
     # Load applied jobs for all users (used to skip already-applied jobs in feed)
     applied_by_user = load_applied_by_user(sb)
@@ -207,12 +217,12 @@ def run():
 
     # Step 1: Upsert all jobs into normalized_jobs (shared table, service role)
     log.info(f"Upserting {len(jobs)} jobs into normalized_jobs...")
-    upsert_errors = 0
+    job_rows = []
     for job in jobs:
         job_id = job.get("id") or job.get("job_url", "")[:100]
         if not job_id:
             continue
-        row = {
+        job_rows.append({
             "id":               job_id,
             "job_title":        job.get("job_title"),
             "company_name":     job.get("company_name"),
@@ -228,13 +238,8 @@ def run():
             "verdict":          job.get("verdict", "GREEN"),
             "relevance_score":  job.get("relevance_score", 50),
             "boost_tags":       job.get("boost_tags") or [],
-        }
-        try:
-            sb.table("normalized_jobs").upsert(row, on_conflict="id").execute()
-        except Exception as exc:
-            log.warning(f"  Could not upsert job {job_id[:30]}: {exc}")
-            upsert_errors += 1
-
+        })
+    upsert_errors = batch_upsert(sb, "normalized_jobs", job_rows, on_conflict="id")
     log.info(f"normalized_jobs upsert complete ({upsert_errors} errors)")
 
     # Step 2: Score and distribute to each user's feed
@@ -242,9 +247,9 @@ def run():
     total_inserted = 0
 
     for user in users:
-        min_score    = user["preferences"].get("feed_min_score", 30)
-        user_inserts = 0
-        uid_short    = user["user_id"][:8]
+        min_score = user["preferences"].get("feed_min_score", 30)
+        uid_short = user["user_id"][:8]
+        feed_rows = []
 
         for job in jobs:
             job_id = job.get("id") or job.get("job_url", "")[:100]
@@ -262,20 +267,17 @@ def run():
             if min_score > 0 and score < min_score:
                 continue
 
-            feed_row = {
+            feed_rows.append({
                 "user_id":              user["user_id"],
                 "job_id":               job_id,
                 "user_relevance_score": score,
                 "matched_clusters":     matched,
                 "status":               "new",
-            }
-            try:
-                sb.table("user_job_feed").upsert(feed_row, on_conflict="user_id,job_id").execute()
-                user_inserts += 1
-            except Exception as exc:
-                log.warning(f"  Feed insert failed [{uid_short}] job {job_id[:20]}: {exc}")
+            })
 
-        log.info(f"  [{uid_short}...] {user_inserts} jobs in feed (threshold={min_score})")
+        feed_errors = batch_upsert(sb, "user_job_feed", feed_rows, on_conflict="user_id,job_id")
+        user_inserts = len(feed_rows)
+        log.info(f"  [{uid_short}...] {user_inserts} jobs in feed (threshold={min_score}, errors={feed_errors})")
         total_inserted += user_inserts
 
     log.info(f"Distribution complete — {total_inserted} total feed rows written")

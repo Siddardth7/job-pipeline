@@ -39,7 +39,7 @@ export default function Pipeline({pipeline, removePipeline, completePipeline, on
         match: job.match || "",
         verdict: job.verdict || "GREEN",
         status: "Applied",
-        date: new Date().toLocaleDateString(),
+        date: new Date().toISOString().split('T')[0],
         locationType: job.locationType || "Onsite",
         type: job.type || "Full-time",
         salary: job.salary || "",

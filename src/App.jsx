@@ -213,6 +213,17 @@ export default function JobAgent() {
     }, 2000);
   }, []);
 
+  // Re-fetch apps and networking when navigating to Dashboard so counts are always fresh.
+  useEffect(() => {
+    if (page !== 'dashboard' || !loaded) return;
+    Promise.all([Storage.fetchApplications(), Storage.fetchNetlog()])
+      .then(([freshApps, freshNetlog]) => {
+        setApps(freshApps);
+        setNetworkingLog(freshNetlog);
+      })
+      .catch(e => console.warn('Dashboard refresh error:', e));
+  }, [page, loaded]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Auto-save currentJob to Supabase whenever it changes
   useEffect(() => {
     if (!loaded || !currentJob) return;
