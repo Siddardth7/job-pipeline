@@ -26,7 +26,12 @@ except ImportError:
     print("Run: pip install supabase")
     sys.exit(1)
 
-from pipeline.batch_upsert import batch_upsert
+try:
+    from pipeline.batch_upsert import batch_upsert
+except ImportError:
+    # When run as a script directly (python pipeline/distribute_feed.py),
+    # pipeline/ is on sys.path rather than the project root.
+    from batch_upsert import batch_upsert
 
 ROOT      = Path(__file__).parent.parent
 JOBS_PATH = ROOT / "output" / "jobs_clean_latest.json"
