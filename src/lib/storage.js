@@ -691,3 +691,19 @@ export async function savePreferences(prefs) {
     );
   if (error) throw error;
 }
+
+// ── Custom Company Intel ───────────────────────────────────────────────────────
+export async function saveCustomCompanies(companies) {
+  return saveSetting('custom_companies', JSON.stringify(companies));
+}
+
+export async function loadCustomCompanies() {
+  const userId = await getUserId();
+  const { data, error } = await supabase
+    .from('settings')
+    .select('value')
+    .eq('key', `${userId}:custom_companies`)
+    .maybeSingle();
+  if (error || !data) return [];
+  try { return JSON.parse(data.value); } catch { return []; }
+}

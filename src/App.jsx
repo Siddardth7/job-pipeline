@@ -158,13 +158,14 @@ export default function JobAgent() {
     if (!user) return;
     (async () => {
       try {
-        const [dbApps, dbJobs, dbNetlog, dbTemplates, dbSettings, savedJob] = await Promise.all([
+        const [dbApps, dbJobs, dbNetlog, dbTemplates, dbSettings, savedJob, savedCompanies] = await Promise.all([
           Storage.fetchApplications(),
           Storage.fetchJobs(),
           Storage.fetchNetlog(),
           Storage.fetchTemplates(),
           Storage.fetchSettings(),
           Storage.loadCurrentJob(),
+          Storage.loadCustomCompanies(),
         ]);
 
         const pipelineJobs = dbJobs.filter(j => j.in_pipeline && j.status !== 'completed');
@@ -190,6 +191,7 @@ export default function JobAgent() {
           try { setNetlogMeta(JSON.parse(dbSettings.netlog_meta)); } catch { /* ignore */ }
         }
         if (savedJob) setCurrentJob(savedJob);
+        if (savedCompanies.length > 0) setCustomCompanies(savedCompanies);
       } catch(e) {
         console.warn('Supabase load error (will use local state):', e.message);
       }
@@ -232,6 +234,12 @@ export default function JobAgent() {
     }, 1500);
     return () => clearTimeout(timer);
   }, [currentJob, loaded]);
+
+  // Auto-save customCompanies whenever the user adds/removes companies
+  useEffect(() => {
+    if (!loaded) return;
+    Storage.saveCustomCompanies(customCompanies).catch(e => console.warn('customCompanies save error:', e));
+  }, [customCompanies, loaded]);
 
   // ─── State handlers ───────────────────────────────────────────────────────
   const setPage = useCallback((pg, jobData) => {
