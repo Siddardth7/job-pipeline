@@ -20,7 +20,11 @@ async function serperSearch(query, apiKey, num = 10) {
     headers: { 'X-API-KEY': apiKey, 'Content-Type': 'application/json' },
     body: JSON.stringify({ q: query, num }),
   });
-  if (!res.ok) throw new Error(`Serper ${res.status}: ${await res.text()}`);
+  if (!res.ok) {
+    const raw = await res.text();
+    console.error(`Serper error ${res.status}:`, raw);
+    throw new Error(`Search service error (${res.status})`);
+  }
   const data = await res.json();
   return data.organic || [];
 }
@@ -141,8 +145,8 @@ export default async function handler(req, res) {
     }
 
     // ── Step 3: Targeted fill-ins for missing personas ────────────────────────
-    for (const persona of personas) {
-      if (buckets[persona]) continue;
+    const missingPersonas = personas.filter(p => !buckets[p]);
+    await Promise.all(missingPersonas.map(async (persona) => {
       let targeted = await serperSearch(buildTargetedQuery(company, persona, location), apiKey, 3);
       if (targeted.length === 0 && location) {
         targeted = await serperSearch(buildTargetedQuery(company, persona, ''), apiKey, 3);
@@ -152,7 +156,7 @@ export default async function handler(req, res) {
         buckets[persona] = fresh[0];
         usedLinks.add(fresh[0].link);
       }
-    }
+    }));
 
     // ── Step 4: Build final contacts — fallback to unused broad results ────────
     const fallback = broad.filter(r => !usedLinks.has(r.link));
