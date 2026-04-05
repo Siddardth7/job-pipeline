@@ -136,8 +136,12 @@ export async function fetchFeedDates() {
 // Returns jobs for a specific date in YYYY-MM-DD format (same shape as fetchJobs())
 export async function fetchJobsByDate(dateStr) {
   const userId = await getUserId();
-  const start  = `${dateStr}T00:00:00.000Z`;
-  const end    = new Date(new Date(start).getTime() + 24 * 60 * 60 * 1000).toISOString();
+  // Parse as local midnight to avoid UTC off-by-one for non-UTC timezones
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const startLocal = new Date(y, m - 1, d, 0, 0, 0, 0);
+  const endLocal   = new Date(y, m - 1, d + 1, 0, 0, 0, 0);
+  const start = startLocal.toISOString();
+  const end   = endLocal.toISOString();
   const { data, error } = await supabase
     .from('user_job_feed')
     .select(`
