@@ -156,15 +156,33 @@ def build_applied_set(rows: list) -> set:
 
 def is_applied(job: dict, applied_set: set) -> bool:
     """
-    Return True if all three of (company_name, location, job_title) match
-    an entry in applied_set (after normalization). Empty fields never match.
+    Return True if this job matches an entry in applied_set.
+
+    Matching rules:
+    - company_name and job_title are always required.
+    - If both the feed job and the applied entry have a location, they must match.
+    - If either side has an empty location, fall back to a 2-field (company+title) match.
+      This handles inconsistent location data across different scrapers.
     """
     company  = (job.get("company_name") or "").lower().strip()
     location = (job.get("location")     or "").lower().strip()
     title    = (job.get("job_title")    or "").lower().strip()
-    if not company or not location or not title:
+
+    if not company or not title:
         return False
-    return (company, location, title) in applied_set
+
+    # Exact 3-field match (fast path)
+    if (company, location, title) in applied_set:
+        return True
+
+    # Location-tolerant fallback:
+    # Trigger only when at least one side has an empty location.
+    if not location:
+        # Feed job has no location — check company+title across all applied entries
+        return any(c == company and t == title for (c, l, t) in applied_set)
+    else:
+        # Feed job has a location — check if applied entry had empty location for same job
+        return (company, "", title) in applied_set
 
 
 def load_applied_by_user(sb_client) -> dict:
