@@ -30,6 +30,10 @@ export default function AppSettings({templates, setTemplates, groqKey, setGroqKe
   const [prefs, setPrefs]           = useState({});
   const [prefSaving, setPrefSaving] = useState('');
 
+  // Sync inputs when API keys load asynchronously from Supabase
+  useEffect(() => { setGroqInput(groqKey || ""); }, [groqKey]);
+  useEffect(() => { setSerperInput(serperKey || ""); }, [serperKey]);
+
   useEffect(() => {
     Storage.fetchPreferences().then(p => setPrefs(p || {})).catch(() => {});
   }, []);
