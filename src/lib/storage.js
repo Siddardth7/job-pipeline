@@ -423,10 +423,12 @@ export async function upsertLinkedInContact(contact) {
 
 export async function updateLinkedInContactNotes(id, notes) {
   if (!id) throw new Error('updateLinkedInContactNotes: id is required');
+  const userId = await getUserId();
   const { error } = await supabase
     .from('linkedin_dm_contacts')
     .update({ notes, updated_at: new Date().toISOString() })
-    .eq('id', id);
+    .eq('id', id)
+    .eq('user_id', userId);
   if (error) throw error;
 }
 
