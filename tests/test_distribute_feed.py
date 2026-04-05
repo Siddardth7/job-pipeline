@@ -17,10 +17,11 @@ def test_partial_match_two_of_three_passes():
     assert is_applied(job, applied) is False
 
 
-def test_empty_job_field_passes_through():
+def test_empty_job_location_matches_via_two_field_fallback():
+    """Feed job with empty location should be filtered when company+title match an applied entry."""
     applied = {("acme corp", "austin, tx", "software engineer")}
     job = {"company_name": "Acme Corp", "location": "", "job_title": "Software Engineer"}
-    assert is_applied(job, applied) is False
+    assert is_applied(job, applied) is True
 
 
 def test_empty_applied_set_passes_all():
@@ -53,3 +54,31 @@ def test_chunk_list_splits_correctly():
 def test_chunk_empty_list():
     from pipeline.batch_upsert import chunk
     assert list(chunk([], 100)) == []
+
+
+def test_feed_job_no_location_matches_applied_with_location():
+    """Job distributed with empty location should still be filtered if user applied."""
+    applied = build_applied_set([{"company": "Acme Corp", "location": "Austin, TX", "role": "Software Engineer"}])
+    job = {"company_name": "Acme Corp", "location": "", "job_title": "Software Engineer"}
+    assert is_applied(job, applied) is True
+
+
+def test_applied_no_location_matches_feed_job_with_location():
+    """User applied with no location field — feed job with location should still be filtered."""
+    applied = build_applied_set([{"company": "Acme Corp", "location": "", "role": "Software Engineer"}])
+    job = {"company_name": "Acme Corp", "location": "Austin, TX", "job_title": "Software Engineer"}
+    assert is_applied(job, applied) is True
+
+
+def test_both_locations_present_different_not_filtered():
+    """Two jobs at same company with different explicit locations are NOT duplicates."""
+    applied = build_applied_set([{"company": "Acme Corp", "location": "New York, NY", "role": "Software Engineer"}])
+    job = {"company_name": "Acme Corp", "location": "Austin, TX", "job_title": "Software Engineer"}
+    assert is_applied(job, applied) is False
+
+
+def test_existing_empty_location_behavior_unchanged():
+    """Both location fields empty — company+title only match works."""
+    applied = build_applied_set([{"company": "Acme Corp", "location": "", "role": "Software Engineer"}])
+    job = {"company_name": "Acme Corp", "location": "", "job_title": "Software Engineer"}
+    assert is_applied(job, applied) is True

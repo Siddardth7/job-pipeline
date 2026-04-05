@@ -36,7 +36,7 @@ export default function Pipeline({pipeline, removePipeline, completePipeline, on
         location: job.location || "",
         link: job.link || "",
         companyLink: "",
-        match: job.match || "",
+        match: job.match != null ? job.match : "",
         verdict: job.verdict || "GREEN",
         status: "Applied",
         date: new Date().toISOString().split('T')[0],
@@ -121,7 +121,7 @@ export default function Pipeline({pipeline, removePipeline, completePipeline, on
                     <div style={{fontSize:13,color:t.sub}}>{job.company}{job.location?` · ${job.location}`:""}</div>
                   </div>
                   <div style={{display:"flex",alignItems:"center",gap:8}}>
-                    {job.match && <span style={{fontSize:13,fontWeight:700,color:matchColor(job.match,t)}}>{job.match}%</span>}
+                    {job.match != null && <span style={{fontSize:13,fontWeight:700,color:matchColor(job.match,t)}}>{job.match}%</span>}
                     <StatusBadge status={job.verdict||"YELLOW"} t={t}/>
                     <Btn size="sm" onClick={() => setPage("analyze", job)} t={t}><ArrowRight size={12}/> Analyze</Btn>
                     <Btn size="sm" variant="green" onClick={() => handleComplete(job)} t={t}><Check size={12}/> Complete</Btn>

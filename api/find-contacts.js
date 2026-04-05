@@ -1,3 +1,8 @@
+import { createClient } from '@supabase/supabase-js';
+
+const SUPABASE_URL      = 'https://wefcbqfxzvvgremxhubi.supabase.co';
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlZmNicWZ4enZ2Z3JlbXhodWJpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMzNTI1NjUsImV4cCI6MjA4ODkyODU2NX0.vXTs_vh0dMvEt83FR589vKY9JfcMBFVgN82QblQH6OU';
+
 const PERSONA_MAP = {
   'Recruiter':       { keywords: ['recruiter', 'talent acquisition', 'recruiting'],                              query: 'recruiter OR "talent acquisition"' },
   'Hiring Manager':  { keywords: ['hiring manager'],                                                              query: '"hiring manager"' },
@@ -15,7 +20,11 @@ async function serperSearch(query, apiKey, num = 10) {
     headers: { 'X-API-KEY': apiKey, 'Content-Type': 'application/json' },
     body: JSON.stringify({ q: query, num }),
   });
-  if (!res.ok) throw new Error(`Serper ${res.status}: ${await res.text()}`);
+  if (!res.ok) {
+    const raw = await res.text();
+    console.error(`Serper error ${res.status}:`, raw);
+    throw new Error(`Search service error (${res.status})`);
+  }
   const data = await res.json();
   return data.organic || [];
 }
@@ -77,16 +86,44 @@ function parseContact(result, company, personaSlot, idx) {
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
+  // ── Auth ────────────────────────────────────────────────────────────────────
+  const authHeader = req.headers.authorization;
+  if (!authHeader?.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Authentication required' });
+  }
+  const token = authHeader.slice(7);
+
+  const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    global: { headers: { Authorization: `Bearer ${token}` } },
+  });
+
+  const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+  if (authError || !user) {
+    return res.status(401).json({ error: 'Invalid or expired token' });
+  }
+
+  // ── Fetch API key server-side (never trust client-provided key) ─────────────
+  const { data: integration, error: dbError } = await supabase
+    .from('user_integrations')
+    .select('api_key')
+    .eq('user_id', user.id)
+    .eq('service', 'serper')
+    .maybeSingle();
+
+  if (dbError || !integration?.api_key) {
+    return res.status(400).json({ error: 'No Serper API key configured. Add it in Settings.' });
+  }
+
+  const apiKey = integration.api_key;
+
   const {
     company,
     role     = '',
     location = '',
     personas = DEFAULT_PERSONAS,
-    serperKey,
+    // serperKey intentionally ignored — fetched server-side above
   } = req.body || {};
 
-  const apiKey = process.env.SERPER_API_KEY || serperKey;
-  if (!apiKey)  return res.status(500).json({ error: 'No Serper API key — add it in Settings or set SERPER_API_KEY env var' });
   if (!company) return res.status(400).json({ error: 'company is required' });
 
   try {
@@ -108,8 +145,8 @@ export default async function handler(req, res) {
     }
 
     // ── Step 3: Targeted fill-ins for missing personas ────────────────────────
-    for (const persona of personas) {
-      if (buckets[persona]) continue;
+    const missingPersonas = personas.filter(p => !buckets[p]);
+    await Promise.all(missingPersonas.map(async (persona) => {
       let targeted = await serperSearch(buildTargetedQuery(company, persona, location), apiKey, 3);
       if (targeted.length === 0 && location) {
         targeted = await serperSearch(buildTargetedQuery(company, persona, ''), apiKey, 3);
@@ -119,7 +156,7 @@ export default async function handler(req, res) {
         buckets[persona] = fresh[0];
         usedLinks.add(fresh[0].link);
       }
-    }
+    }));
 
     // ── Step 4: Build final contacts — fallback to unused broad results ────────
     const fallback = broad.filter(r => !usedLinks.has(r.link));

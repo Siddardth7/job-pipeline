@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Database, Zap, RefreshCw, Plus, Trash2, Edit3, Check, X, ChevronDown, Sparkles, Info } from 'lucide-react';
 import { DEFAULT_TEMPLATES } from '../lib/templates.js';
 import * as Storage from '../lib/storage.js';
+import { supabase } from '../supabase.js';
 
 function Card({children, t, style}) {
   return <div style={{background:t.card,border:`1px solid ${t.border}`,borderRadius:12,padding:20,boxShadow:t.shadow,...style}}>{children}</div>;
@@ -16,11 +17,13 @@ export default function AppSettings({templates, setTemplates, groqKey, setGroqKe
   const [serperStatus, setSerperStatus] = useState("");
   const [testingSerper, setTestingSerper] = useState(false);
   const [serperInput, setSerperInput] = useState(serperKey || "");
+  const [serperDirty, setSerperDirty] = useState(false);
   const [serperSaveStatus, setSerperSaveStatus] = useState("");
   const [editingTemplate, setEditingTemplate] = useState(null);
   const [editDraft, setEditDraft] = useState({name:"", body:""});
   const [premiumOpen, setPremiumOpen] = useState(false);
   const [groqInput, setGroqInput] = useState(groqKey || "");
+  const [groqDirty, setGroqDirty] = useState(false);
   const [groqSaveStatus, setGroqSaveStatus] = useState("");
   const [gistMigrateId, setGistMigrateId] = useState("");
   const [gistMigrateToken, setGistMigrateToken] = useState("");
@@ -31,8 +34,8 @@ export default function AppSettings({templates, setTemplates, groqKey, setGroqKe
   const [prefSaving, setPrefSaving] = useState('');
 
   // Sync inputs when API keys load asynchronously from Supabase
-  useEffect(() => { setGroqInput(groqKey || ""); }, [groqKey]);
-  useEffect(() => { setSerperInput(serperKey || ""); }, [serperKey]);
+  useEffect(() => { if (!groqDirty)   setGroqInput(groqKey   || ""); }, [groqKey,   groqDirty]);
+  useEffect(() => { if (!serperDirty) setSerperInput(serperKey || ""); }, [serperKey, serperDirty]);
 
   useEffect(() => {
     Storage.fetchPreferences().then(p => setPrefs(p || {})).catch(() => {});
@@ -50,6 +53,7 @@ export default function AppSettings({templates, setTemplates, groqKey, setGroqKe
   };
 
   const saveSerperKey = async () => {
+    setSerperDirty(false);
     try {
       setSerperSaveStatus("Saving...");
       await Storage.saveUserIntegration('serper', serperInput.trim());
@@ -62,14 +66,21 @@ export default function AppSettings({templates, setTemplates, groqKey, setGroqKe
   };
 
   const testSerper = async () => {
+    if (serperInput.trim() !== serperKey) {
+      setSerperStatus("Save the key first, then test.");
+      return;
+    }
     setTestingSerper(true);
     setSerperStatus("Testing...");
-    const keyToUse = serperInput.trim() || serperKey;
     try {
+      const { data: { session } } = await supabase.auth.getSession();
       const res = await fetch('/api/find-contacts', {
         method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({company:"Boeing", role:"Engineer", count:3, serperKey: keyToUse})
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token ?? ''}`,
+        },
+        body: JSON.stringify({ company: "Boeing", role: "Engineer", count: 3 }),
       });
       if (res.ok) {
         const data = await res.json();
@@ -112,6 +123,7 @@ export default function AppSettings({templates, setTemplates, groqKey, setGroqKe
   };
 
   const saveGroqKey = async () => {
+    setGroqDirty(false);
     try {
       setGroqSaveStatus("Saving...");
       await Storage.saveUserIntegration('groq', groqInput.trim());
@@ -296,7 +308,7 @@ export default function AppSettings({templates, setTemplates, groqKey, setGroqKe
           <input
             type="password"
             value={serperInput}
-            onChange={e => setSerperInput(e.target.value)}
+            onChange={e => { setSerperInput(e.target.value); setSerperDirty(true); }}
             placeholder="paste your Serper key..."
             style={{width:"100%",background:t.bg,border:`1px solid ${t.border}`,borderRadius:8,padding:"9px 13px",color:t.tx,fontSize:13,fontFamily:"monospace",outline:"none",boxSizing:"border-box"}}
           />
@@ -336,7 +348,7 @@ export default function AppSettings({templates, setTemplates, groqKey, setGroqKe
               <input
                 type="password"
                 value={groqInput}
-                onChange={e => setGroqInput(e.target.value)}
+                onChange={e => { setGroqInput(e.target.value); setGroqDirty(true); }}
                 placeholder="gsk_..."
                 style={{width:"100%",background:t.bg,border:`1px solid ${t.border}`,borderRadius:8,padding:"9px 13px",color:t.tx,fontSize:13,fontFamily:"monospace",outline:"none",boxSizing:"border-box"}}
               />
