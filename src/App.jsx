@@ -295,7 +295,10 @@ export default function JobAgent() {
 
   const addToNetworkingLog = useCallback((contact) => {
     setNetworkingLog(nl => nl.find(x => x.id === contact.id) ? nl : [...nl, contact]);
-    debouncedSave(() => Storage.upsertNetlog(contact));
+    setSyncStatus("saving");
+    Storage.upsertNetlog(contact)
+      .then(() => { setSyncStatus("saved"); setTimeout(() => setSyncStatus(""), 3000); })
+      .catch(e => { setSyncStatus("error"); console.error("addToNetworkingLog save error:", e); });
     // Auto-set Pending status + follow-up reminder 5 days out
     const followUpDate = new Date(Date.now() + 5 * 86400000).toISOString().split('T')[0];
     setNetlogMeta(prev => {
@@ -304,12 +307,15 @@ export default function JobAgent() {
       Storage.saveSetting('netlog_meta', JSON.stringify(next)).catch(e => console.warn('netlog_meta save error:', e));
       return next;
     });
-  }, [debouncedSave]);
+  }, []);
 
   const logApplication = useCallback((app) => {
     setApps(p => [...p, app]);
-    debouncedSave(() => Storage.upsertApplication(app));
-  }, [debouncedSave]);
+    setSyncStatus("saving");
+    Storage.upsertApplication(app)
+      .then(() => { setSyncStatus("saved"); setTimeout(() => setSyncStatus(""), 3000); })
+      .catch(e => { setSyncStatus("error"); console.error("logApplication save error:", e); });
+  }, []);
 
   const updateApplicationStatus = useCallback((id, status) => {
     setApps(p => p.map(a => a.id === id ? {...a, status} : a));
