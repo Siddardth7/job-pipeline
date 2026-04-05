@@ -336,6 +336,7 @@ export default function JobAgent() {
   const pendingPipeline = pipeline.filter(j => j.status === "active").length;
 
   const renderSyncStatus = () => {
+    if (!loaded) return null;
     if (syncStatus === "saving") return <span style={{color:t.muted,fontWeight:700,fontSize:10.5}}>Saving...</span>;
     if (syncStatus === "error") return <span style={{color:t.red,fontWeight:700,fontSize:10.5}}>Sync error</span>;
     if (syncStatus === "saved") return (
