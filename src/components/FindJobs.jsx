@@ -44,7 +44,7 @@ function universalParse(data) {
 }
 
 
-const FILTERS = ["All","Visa Sponsor","Remote","90%+ Match","ITAR-Free"];
+const FILTERS = ["All","Today","Visa Sponsor","Remote","90%+ Match","ITAR-Free"];
 const SORT_OPTIONS = [
   { value: 'match_desc', label: 'Match: High → Low' },
   { value: 'match_asc',  label: 'Match: Low → High' },
@@ -166,8 +166,10 @@ export default function FindJobs({searchResults, setSearchResults, pipeline, add
     setTab("feed");
   };
 
+  const todayStr = new Date().toISOString().slice(0, 10);
   const filtered = searchResults.filter(j => {
     if (query.trim() && !j.role.toLowerCase().includes(query.toLowerCase()) && !j.company.toLowerCase().includes(query.toLowerCase()) && !(j.industry||"").toLowerCase().includes(query.toLowerCase())) return false;
+    if (activeFilter === "Today" && j.feed_date !== todayStr) return false;
     if (activeFilter === "Visa Sponsor" && j.h1b !== "YES") return false;
     if (activeFilter === "Remote" && !(j.location||"").toLowerCase().includes("remote")) return false;
     if (activeFilter === "90%+ Match" && (j.match||0) < 90) return false;

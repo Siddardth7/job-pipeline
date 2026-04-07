@@ -107,6 +107,7 @@ export async function fetchJobs() {
     resume_variant:   row.resume_variant,
     resumeVariant:    row.resume_variant,
     status:           row.status,
+    feed_date:        row.created_at ? row.created_at.slice(0, 10) : null,
     locationType: (() => {
       const loc = (row.job?.location || '').toLowerCase();
       if (loc.includes('remote')) return 'Remote';
@@ -185,6 +186,7 @@ export async function fetchJobsByDate(dateStr) {
     resume_variant:   row.resume_variant,
     resumeVariant:    row.resume_variant,
     status:           row.status,
+    feed_date:        row.created_at ? row.created_at.slice(0, 10) : null,
     locationType: (() => {
       const loc = (row.job?.location || '').toLowerCase();
       if (loc.includes('remote')) return 'Remote';
