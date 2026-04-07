@@ -7,12 +7,19 @@ const MAX_STREAK_LOOKBACK_DAYS = 60;
  */
 function parseDate(dateStr) {
   if (!dateStr) return null;
-  // ISO date-only strings (YYYY-MM-DD) are parsed as UTC midnight by the Date
-  // constructor, which shifts them into the previous local day for UTC- zones.
-  // Parse them as local midnight instead to avoid off-by-one errors.
+  // ISO date-only strings (YYYY-MM-DD) — parse as local midnight to avoid
+  // UTC off-by-one for negative-offset timezones.
   if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
     const [y, m, d] = dateStr.split('-').map(Number);
     return new Date(y, m - 1, d);
+  }
+  // Locale date strings like "4/6/2026" or "06/04/2026" — extract parts
+  // explicitly rather than relying on Date() which is locale/browser-dependent.
+  const slashMatch = dateStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (slashMatch) {
+    // Assume M/D/YYYY (US locale, the only locale used in the app)
+    const [, mo, dy, yr] = slashMatch.map(Number);
+    return new Date(yr, mo - 1, dy);
   }
   const d = new Date(dateStr);
   return isNaN(d.getTime()) ? null : d;
