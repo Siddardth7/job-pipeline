@@ -229,6 +229,18 @@ export default function JobAgent() {
       .catch(e => console.warn('Dashboard refresh error:', e));
   }, [page, loaded]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Warn before page unload if a save is still in-flight (prevents pipeline loss on refresh)
+  useEffect(() => {
+    const handler = (e) => {
+      if (pendingSaves > 0) {
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [pendingSaves]);
+
   // Auto-save currentJob to Supabase whenever it changes
   useEffect(() => {
     if (!loaded || !currentJob) return;

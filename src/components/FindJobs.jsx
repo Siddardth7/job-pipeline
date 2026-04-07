@@ -74,13 +74,12 @@ export default function FindJobs({searchResults, setSearchResults, pipeline, add
     setLoading(true);
     setError("");
     try {
-      const dates = await fetchFeedDates();
+      const [dates, jobs] = await Promise.all([fetchFeedDates(), fetchJobs()]);
       setFeedDates(dates);
-      const firstDate = dates[0] || '';
-      setSelectedDate(firstDate);
-      // Load only the most-recent date's jobs so the dropdown and data are in sync.
-      // If no dated feed exists yet, fall back to fetchJobs().
-      const jobs = firstDate ? await fetchJobsByDate(firstDate) : await fetchJobs();
+      // Show ALL feed jobs by default — created_at is only set on INSERT so
+      // re-upserted jobs keep old dates and fetchJobsByDate(dates[0]) misses them.
+      // The date dropdown lets users filter down to a specific day.
+      setSelectedDate('');
       setSearchResults(jobs.filter(j => !j.in_pipeline));
       setLastUpdated(new Date().toISOString());
     } catch(e) {
