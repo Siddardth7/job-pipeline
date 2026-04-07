@@ -1,17 +1,23 @@
 // ─── Groq AI Helper ───────────────────────────────────────────────────────────
-// Uses Groq's free API (llama-3.3-70b) for tailored analysis and drafting
+// Routes through /api/groq proxy (Vercel serverless) to avoid CORS issues and
+// keep the API key server-side. apiKey param retained for signature compatibility
+// but the proxy fetches the key from Supabase — it is not sent over the wire.
 
-const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
+import { supabase } from '../supabase.js';
+
 const MODEL = 'llama-3.3-70b-versatile';
 
 export async function callGroq(systemPrompt, userPrompt, apiKey, maxTokens = 1000) {
-  if (!apiKey) throw new Error('No Groq API key configured. Add it in Settings → Groq AI.');
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session?.access_token) {
+    throw new Error('Not signed in — please sign in to use AI features.');
+  }
 
-  const res = await fetch(GROQ_API_URL, {
+  const res = await fetch('/api/groq', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${apiKey}`
+      'Authorization': `Bearer ${session.access_token}`,
     },
     body: JSON.stringify({
       model: MODEL,
