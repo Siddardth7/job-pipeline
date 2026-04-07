@@ -561,7 +561,7 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
         match: currentJob?.match || "",
         verdict: currentJob?.verdict || "GREEN",
         status: "Applied",
-        date: new Date().toLocaleDateString(),
+        date: new Date().toISOString().split('T')[0],
         locationType: currentJob?.locationType || "Onsite",
         type: currentJob?.type || "Full-time",
         salary: currentJob?.salary || "",
