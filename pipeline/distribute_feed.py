@@ -18,6 +18,7 @@ import json
 import logging
 import os
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 try:
@@ -290,6 +291,10 @@ def run():
                 "user_relevance_score": score,
                 "matched_clusters":     matched,
                 "status":               "new",
+                # Force created_at to update on every upsert so the date-based
+                # feed filter in the UI correctly shows all jobs from today's run,
+                # not just truly-new rows (which is the Supabase INSERT-only default).
+                "created_at":           datetime.now(timezone.utc).isoformat(),
             })
 
         feed_errors = batch_upsert(sb, "user_job_feed", feed_rows, on_conflict="user_id,job_id")
