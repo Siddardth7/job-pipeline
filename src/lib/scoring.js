@@ -24,35 +24,31 @@ const VARIANT_KEYWORDS = {
 const TEMPLATE_SUMMARIES = {
   A: "Manufacturing engineer with expertise in GD&T, CMM inspection, and fixture design. Reduced defect rates from 15% to 3% through SPC implementation at Tata Boeing. STEM OPT — 3 years, no sponsorship cost.",
   B: "Process and continuous improvement engineer with hands-on FMEA, SPC, and 8D problem-solving experience. Drove 15% to 3% defect reduction via lean methodology. STEM OPT — 3 years, no sponsorship cost.",
-  C: "Materials and quality engineer specializing in composites manufacturing and CMM inspection. Led 24-inch composite fuselage achieving 2% void content at SAMPE. STEM OPT — 3 years, no sponsorship cost.",
+  C: "Quality and materials engineer with composites manufacturing and CMM inspection experience. Built 24-inch composite fuselage — part sustained 2,700 lbf at test (2.7× design requirement). STEM OPT — 3 years, no sponsorship cost.",
   D: "Equipment and NPI engineer experienced in tooling design, DOE, and process validation. Reduced cure cycle from 8 hours to 5 minutes at Beckman Institute. STEM OPT — 3 years, no sponsorship cost."
 };
 
 // LaTeX skillline format — copy-paste directly into Overleaf
 const TEMPLATE_SKILLS = {
-  A: `\\skillline{Manufacturing \\& Quality:}{GD\\&T, CMM Inspection, First Article Inspection, PPAP, AS9100, SPC, Dimensional Inspection}
-\\skillline{Process \\& Tooling:}{Fixtures \\& Jigs, Metrology, Tolerance Analysis, NADCAP, Production Planning, Shop Floor}
-\\skillline{Engineering Tools:}{SolidWorks, CATIA, MATLAB, Python}
-\\skillline{Manufacturing Processes:}{Machining, Assembly, Stamping, Casting, Forging, Welding, CNC}
-\\skillline{Project Management:}{Cross-Functional Collaboration, Continuous Improvement, Lean Methodologies}`,
+  A: `\\skillline{Certifications:}{Six Sigma Green Belt (CSSC) \\textbar\\ Inspection \\& Quality Control in Manufacturing (NPTEL -- IIT Roorkee)}
+\\skillline{Quality / Analysis:}{pFMEA, SPC, 8D Root Cause Analysis, RCCA, CMM Inspection, GD\\&T, First Article Inspection, CAPA, MRB Disposition}
+\\skillline{Manufacturing / Process:}{Prepreg Layup, Autoclave Processing, Cure Cycle Development, AS9100, Process Validation, Lean Principles, NADCAP}
+\\skillline{Tools / Software:}{SolidWorks, CATIA, MATLAB, Python, AutoCAD}`,
 
-  B: `\\skillline{Quality \\& CI Systems:}{FMEA, SPC, 8D Root Cause Analysis, DMAIC, CAPA, Kaizen, Lean, Six Sigma}
-\\skillline{Process Tools:}{Value Stream Mapping, Poka-Yoke, 5S, OEE, Defect Reduction, Process Optimization, Corrective Action}
-\\skillline{Engineering Tools:}{SolidWorks, MATLAB, Python, Minitab}
-\\skillline{Documentation:}{Technical Writing, SOPs, Control Plans, Work Instructions, Change Control}
-\\skillline{Project Management:}{Cross-Functional Collaboration, Continuous Improvement, Lean Methodologies}`,
+  B: `\\skillline{Certifications:}{Six Sigma Green Belt (CSSC) \\textbar\\ Inspection \\& Quality Control in Manufacturing (NPTEL -- IIT Roorkee)}
+\\skillline{Quality / Analysis:}{pFMEA, SPC, 8D Root Cause Analysis, RCCA, DMAIC, CAPA, MRB Disposition}
+\\skillline{Process / CI:}{Value Stream Mapping, Poka-Yoke, 5S, OEE, Defect Reduction, Lean Principles, Kaizen, Process Validation, Corrective Action}
+\\skillline{Tools / Software:}{SolidWorks, MATLAB, Python, Minitab, AutoCAD}`,
 
-  C: `\\skillline{Quality Systems:}{CAPA, FMEA, 8D Root Cause Analysis, SPC, MRB, GD\\&T, CMM Inspection}
-\\skillline{Regulatory \\& Documentation:}{Technical Writing, SOPs, Change Control, Quality Records, ISO Standards, AS9100}
-\\skillline{Manufacturing \\& Materials:}{Prepreg Layup, Autoclave Processing, Vacuum Bagging, Composite Materials, NDT}
-\\skillline{Engineering Tools:}{ABAQUS, ANSYS, FEA, SolidWorks, CATIA, MATLAB, Python}
-\\skillline{Project Management:}{Cross-Functional Collaboration, Continuous Improvement, Lean Methodologies}`,
+  C: `\\skillline{Certifications:}{Six Sigma Green Belt (CSSC) \\textbar\\ Inspection \\& Quality Control in Manufacturing (NPTEL -- IIT Roorkee)}
+\\skillline{Quality / Analysis:}{pFMEA, SPC, 8D Root Cause Analysis, RCCA, MRB Disposition, CAPA, GD\\&T, CMM Inspection, First Article Inspection}
+\\skillline{Materials / Process:}{Prepreg Layup, Autoclave Processing, Vacuum Bagging, Cure Cycle Development, Out-of-Autoclave Methods, NDT, AS9100}
+\\skillline{Tools / Software:}{ABAQUS, FEA, Classical Lamination Theory, SolidWorks, MATLAB, Python, AutoCAD}`,
 
-  D: `\\skillline{NPI \\& Tooling:}{PFMEA, DOE, APQP, Tooling Design, Fixture Design, Process Validation, IQ/OQ/PQ}
-\\skillline{Product Development:}{New Product Introduction, Design Review, Prototype, Manufacturing Readiness, Commissioning}
-\\skillline{Engineering Tools:}{SolidWorks, CATIA, FEA, MATLAB, Python}
-\\skillline{Manufacturing:}{Capital Equipment, Production Launch, Process Development, Validation, R\\&D}
-\\skillline{Project Management:}{Cross-Functional Collaboration, Continuous Improvement, Lean Methodologies}`,
+  D: `\\skillline{Certifications:}{Six Sigma Green Belt (CSSC) \\textbar\\ Inspection \\& Quality Control in Manufacturing (NPTEL -- IIT Roorkee)}
+\\skillline{Quality / Analysis:}{pFMEA, RCCA, CAPA, 8D Root Cause Analysis, SPC, First Article Inspection, CMM Inspection}
+\\skillline{NPI / Tooling:}{DOE, APQP, Process Validation, New Product Introduction, Design Review, Manufacturing Readiness, IQ/OQ/PQ}
+\\skillline{Tools / Software:}{SolidWorks, CATIA, FEA, MATLAB, Python, AutoCAD}`,
 };
 
 export function analyzeJob(jdText, selectedVariant = null) {

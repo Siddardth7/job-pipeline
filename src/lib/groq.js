@@ -127,32 +127,28 @@ export async function analyzeJobWithGroq(jd, variant, apiKey) {
   // Base skilllines per variant — Groq modifies these, never generates from scratch
   const BASE_SKILLLINES = {
     A: [
-      { label: "Manufacturing & Quality:", skills: "GD&T, CMM Inspection, First Article Inspection, PPAP, AS9100, SPC, Dimensional Inspection" },
-      { label: "Process & Tooling:", skills: "Fixtures & Jigs, Metrology, Tolerance Analysis, NADCAP, Production Planning, Shop Floor" },
-      { label: "Engineering Tools:", skills: "SolidWorks, CATIA, MATLAB, Python" },
-      { label: "Manufacturing Processes:", skills: "Machining, Assembly, Stamping, Casting, Forging, Welding, CNC" },
-      { label: "Project Management:", skills: "Cross-Functional Collaboration, Continuous Improvement, Lean Methodologies" }
+      { label: "Certifications:", skills: "Six Sigma Green Belt (CSSC) | Inspection & Quality Control in Manufacturing (NPTEL -- IIT Roorkee)" },
+      { label: "Quality / Analysis:", skills: "pFMEA, SPC, 8D Root Cause Analysis, RCCA, CMM Inspection, GD&T, First Article Inspection, CAPA, MRB Disposition" },
+      { label: "Manufacturing / Process:", skills: "Prepreg Layup, Autoclave Processing, Cure Cycle Development, AS9100, Process Validation, Lean Principles, NADCAP" },
+      { label: "Tools / Software:", skills: "SolidWorks, CATIA, MATLAB, Python, AutoCAD" }
     ],
     B: [
-      { label: "Quality & CI Systems:", skills: "FMEA, SPC, 8D Root Cause Analysis, DMAIC, CAPA, Kaizen, Lean, Six Sigma" },
-      { label: "Process Tools:", skills: "Value Stream Mapping, Poka-Yoke, 5S, OEE, Defect Reduction, Process Optimization, Corrective Action" },
-      { label: "Engineering Tools:", skills: "SolidWorks, MATLAB, Python, Minitab" },
-      { label: "Documentation:", skills: "Technical Writing, SOPs, Control Plans, Work Instructions, Change Control" },
-      { label: "Project Management:", skills: "Cross-Functional Collaboration, Continuous Improvement, Lean Methodologies" }
+      { label: "Certifications:", skills: "Six Sigma Green Belt (CSSC) | Inspection & Quality Control in Manufacturing (NPTEL -- IIT Roorkee)" },
+      { label: "Quality / Analysis:", skills: "pFMEA, SPC, 8D Root Cause Analysis, RCCA, DMAIC, CAPA, MRB Disposition" },
+      { label: "Process / CI:", skills: "Value Stream Mapping, Poka-Yoke, 5S, OEE, Defect Reduction, Lean Principles, Kaizen, Process Validation, Corrective Action" },
+      { label: "Tools / Software:", skills: "SolidWorks, MATLAB, Python, Minitab, AutoCAD" }
     ],
     C: [
-      { label: "Quality Systems:", skills: "CAPA, FMEA, 8D Root Cause Analysis, SPC, MRB, GD&T, CMM Inspection" },
-      { label: "Regulatory & Documentation:", skills: "Technical Writing, SOPs, Change Control, Quality Records, ISO Standards, AS9100" },
-      { label: "Manufacturing & Materials:", skills: "Prepreg Layup, Autoclave Processing, Vacuum Bagging, Composite Materials, NDT" },
-      { label: "Engineering Tools:", skills: "ABAQUS, ANSYS, FEA, SolidWorks, CATIA, MATLAB, Python" },
-      { label: "Project Management:", skills: "Cross-Functional Collaboration, Continuous Improvement, Lean Methodologies" }
+      { label: "Certifications:", skills: "Six Sigma Green Belt (CSSC) | Inspection & Quality Control in Manufacturing (NPTEL -- IIT Roorkee)" },
+      { label: "Quality / Analysis:", skills: "pFMEA, SPC, 8D Root Cause Analysis, RCCA, MRB Disposition, CAPA, GD&T, CMM Inspection, First Article Inspection" },
+      { label: "Materials / Process:", skills: "Prepreg Layup, Autoclave Processing, Vacuum Bagging, Cure Cycle Development, Out-of-Autoclave Methods, NDT, AS9100" },
+      { label: "Tools / Software:", skills: "ABAQUS, FEA, Classical Lamination Theory, SolidWorks, MATLAB, Python, AutoCAD" }
     ],
     D: [
-      { label: "NPI & Tooling:", skills: "PFMEA, DOE, APQP, Tooling Design, Fixture Design, Process Validation, IQ/OQ/PQ" },
-      { label: "Product Development:", skills: "New Product Introduction, Design Review, Prototype, Manufacturing Readiness, Commissioning" },
-      { label: "Engineering Tools:", skills: "SolidWorks, CATIA, FEA, MATLAB, Python" },
-      { label: "Manufacturing:", skills: "Capital Equipment, Production Launch, Process Development, Validation, R&D" },
-      { label: "Project Management:", skills: "Cross-Functional Collaboration, Continuous Improvement, Lean Methodologies" }
+      { label: "Certifications:", skills: "Six Sigma Green Belt (CSSC) | Inspection & Quality Control in Manufacturing (NPTEL -- IIT Roorkee)" },
+      { label: "Quality / Analysis:", skills: "pFMEA, RCCA, CAPA, 8D Root Cause Analysis, SPC, First Article Inspection, CMM Inspection" },
+      { label: "NPI / Tooling:", skills: "DOE, APQP, Process Validation, New Product Introduction, Design Review, Manufacturing Readiness, IQ/OQ/PQ" },
+      { label: "Tools / Software:", skills: "SolidWorks, CATIA, FEA, MATLAB, Python, AutoCAD" }
     ]
   };
 
@@ -188,8 +184,7 @@ Return ONLY this JSON:
     {"label": "same label as base line 1", "skills": "reordered skills, add (Learning) tag if skill is weak"},
     {"label": "same label as base line 2", "skills": "reordered skills"},
     {"label": "same label as base line 3", "skills": "reordered skills"},
-    {"label": "same label as base line 4", "skills": "reordered skills"},
-    {"label": "same label as base line 5", "skills": "reordered skills"}
+    {"label": "same label as base line 4", "skills": "reordered skills"}
   ],
   "missing_keywords": ["kw1", "kw2", "kw3", "kw4", "kw5"],
   "ats_coverage": "XX%",
