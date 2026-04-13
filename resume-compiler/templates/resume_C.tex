@@ -1,6 +1,6 @@
 %-------------------------
 % Resume - Siddardth Pathipaka
-% Version C: Quality / Materials & Processes Engineer
+% Quality Engineer (Variant C)
 %-------------------------
 \documentclass[letterpaper,10pt]{extarticle}
 
@@ -41,7 +41,7 @@
 \titleformat{\section}{
   \bfseries\fontsize{11pt}{12pt}\selectfont
 }{}{0em}{}[\vspace{-8pt}\rule{\textwidth}{0.5pt}]
-\titlespacing*{\section}{0pt}{3pt}{0pt}
+\titlespacing*{\section}{0pt}{4pt}{1pt}
 
 \setlist[itemize]{
   leftmargin=0.25in,
@@ -53,7 +53,7 @@
 }
 
 \newcommand{\expentry}[2]{%
-  \vspace{3pt}%
+  \vspace{6pt}%
   \noindent\begin{tabularx}{\textwidth}{@{}X r@{}}
     {\fontsize{11pt}{13pt}\selectfont\textbf{#1}} & {\fontsize{11pt}{13pt}\selectfont\textbf{#2}}
   \end{tabularx}%
@@ -82,7 +82,7 @@
   \href{https://siddardth7.github.io/portfolio/}{\color{linkblue}\underline{Portfolio}}}}
 \end{center}
 
-\vspace{-14pt}
+\vspace{-12pt}
 
 %----------SUMMARY----------
 \section{SUMMARY}
@@ -137,6 +137,16 @@
 
 %----------PROJECTS----------
 \section{PROJECTS}
+
+\expentry{\href{https://github.com/Siddardth7/fmea-risk-analyzer}{\color{linkblue}\underline{FMEA Risk Prioritization Tool}} \textbar\ Python, Streamlit \textbar\ Deployed}{2025}
+\begin{itemize}
+  \item Built a deployed \textbf{pFMEA automation tool} implementing \textbf{AIAG FMEA-4} standards — RPN scoring, Pareto 80/20 risk ranking, criticality flagging, and PDF/Excel export — validated with \textbf{61 unit tests} on an aerospace CFRP composite panel dataset.
+\end{itemize}
+
+\expentry{\href{https://github.com/Siddardth7/Virtual-Composite-Design-Optimization}{\color{linkblue}\underline{Virtual Composite Laminate Design \& Optimization}} \textbar\ Python, CalculiX FEA}{Jan 2025 \textbar\ May 2025}
+\begin{itemize}
+  \item Implemented \textbf{Classical Laminate Theory} engine with \textbf{Simulated Annealing} stacking sequence optimizer, validated against \textbf{CalculiX FEA} achieving \textbf{$<$1\% deflection error} and \textbf{$<$3\% stress error} on IM7/8552 CFRP plate.
+\end{itemize}
 
 \expentry{Study of Microstructure \& Mechanical Properties of Borosilicate-based Glass Ceramic Composites \textbar\ Team Lead}{Aug 2022 \textbar\ Apr 2023}
 \begin{itemize}
