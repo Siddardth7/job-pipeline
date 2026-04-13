@@ -598,7 +598,6 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
     <div>
       <div style={{marginBottom:24}}>
         <h2 style={{margin:"0 0 4px",fontSize:24,fontWeight:700,color:t.tx}}>Job Analysis</h2>
-        <p style={{margin:0,fontSize:14,color:t.sub}}>Resume modifications for ATS optimization (2 edits only: Summary + Skills)</p>
       </div>
 
       {!currentJob?.role && !co && (
@@ -735,9 +734,10 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
             )}
           </div>
 
-          <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16,marginBottom:16}}>
+          <div style={{display:"grid",gridTemplateColumns:"1fr",gap:16,marginBottom:16}}>
 
-            {/* MOD 1: Summary */}
+            {/* MOD 1: Summary — hidden (summary section removed from resume) */}
+            <div style={{display:"none"}}>
             <Card t={t} style={{borderColor:t.greenBd}}>
               <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
                 <div style={{display:"flex",alignItems:"center",gap:8}}>
@@ -775,6 +775,7 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
               </div>
 
             </Card>
+            </div>
 
             {/* MOD 2: Skills */}
             <Card t={t} style={{borderColor:t.greenBd}}>
