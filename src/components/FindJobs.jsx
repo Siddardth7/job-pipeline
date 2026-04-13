@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Search, RefreshCw, Plus, Check, ExternalLink, Upload, PenTool, Database, CheckCircle, UserPlus } from 'lucide-react';
-import { fetchJobs, fetchFeedDates, fetchJobsByDate } from '../lib/storage.js';
+import { fetchJobs } from '../lib/storage.js';
 
 function Card({children, t, style, onClick}) {
   return <div onClick={onClick} style={{background:t.card,border:`1px solid ${t.border}`,borderRadius:12,padding:20,boxShadow:t.shadow,cursor:onClick?"pointer":"default",...style}}>{children}</div>;
@@ -69,18 +69,36 @@ export default function FindJobs({searchResults, setSearchResults, pipeline, add
   const [addToIntel, setAddToIntel] = useState(false);
   const [extIntel, setExtIntel] = useState({industry:"",h1b:"LIKELY",itar:"NO"});
   const fileRef = useRef(null);
+  const allFeedJobsRef = useRef([]); // full fetch cache — avoids re-querying on date switch
   const pipeIds = new Set(pipeline.map(j => j.id));
 
   const handleRefresh = async () => {
     setLoading(true);
     setError("");
     try {
-      const dates = await fetchFeedDates();
+      // Fetch ALL feed rows in one shot — avoids date-boundary bugs from the
+      // two-call fetchFeedDates→fetchJobsByDate chain.
+      const allJobs = await fetchJobs();
+      allFeedJobsRef.current = allJobs;
+
+      // Extract unique UTC dates (same slice fetchJobs uses for feed_date)
+      const seen = new Set();
+      const dates = [];
+      for (const j of allJobs) {
+        if (j.feed_date && !seen.has(j.feed_date)) {
+          seen.add(j.feed_date);
+          dates.push(j.feed_date);
+        }
+      }
+      dates.sort((a, b) => b.localeCompare(a)); // descending
       setFeedDates(dates);
+
       const firstDate = dates[0] || '';
       setSelectedDate(firstDate);
-      const jobs = firstDate ? await fetchJobsByDate(firstDate) : await fetchJobs();
-      setSearchResults(jobs.filter(j => !j.in_pipeline));
+      const visible = firstDate
+        ? allJobs.filter(j => j.feed_date === firstDate && !j.in_pipeline)
+        : allJobs.filter(j => !j.in_pipeline);
+      setSearchResults(visible);
       setLastUpdated(new Date().toISOString());
     } catch(e) {
       setError("Failed to load feed: " + e.message);
@@ -92,17 +110,11 @@ export default function FindJobs({searchResults, setSearchResults, pipeline, add
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { handleRefresh(); }, []);
 
-  const handleDateChange = async (dateStr) => {
+  const handleDateChange = (dateStr) => {
     setSelectedDate(dateStr);
-    setLoading(true);
-    setError("");
-    try {
-      const jobs = await fetchJobsByDate(dateStr);
-      setSearchResults(jobs.filter(j => !j.in_pipeline));
-    } catch(e) {
-      setError("Failed to load feed for date: " + e.message);
-    }
-    setLoading(false);
+    // Filter client-side from the already-loaded allFeedJobsRef — instant, no re-fetch
+    const jobs = allFeedJobsRef.current.filter(j => j.feed_date === dateStr && !j.in_pipeline);
+    setSearchResults(jobs);
   };
 
   const formatDateLabel = (d) => {
