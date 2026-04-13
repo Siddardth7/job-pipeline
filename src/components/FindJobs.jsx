@@ -61,6 +61,7 @@ export default function FindJobs({searchResults, setSearchResults, pipeline, add
   const [activeFilter, setActiveFilter] = useState("All");
   const [sortBy, setSortBy] = useState("match_desc");
   const [tab, setTab] = useState("feed");
+  const [expandedBreakdown, setExpandedBreakdown] = useState(null);
   const [feedDates, setFeedDates]       = useState([]);
   const [selectedDate, setSelectedDate] = useState('');
   const [localJson, setLocalJson] = useState("");
@@ -327,16 +328,46 @@ export default function FindJobs({searchResults, setSearchResults, pipeline, add
             <Card key={job.id||i} t={t} style={{opacity:job.itar_flag?.5:1,borderColor:job.itar_flag?t.redBd:t.border,padding:"14px 18px"}}>
               <div style={{display:"flex",alignItems:"center",gap:16}}>
                 <div style={{flex:1,minWidth:0}}>
-                  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:3}}>
+                  <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:3,flexWrap:"wrap"}}>
                     <span style={{fontSize:14.5,fontWeight:700,color:t.tx,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{job.role}</span>
                     <StatusBadge status={job.verdict} t={t}/>
                     {job.employment_type==="Contract" && <span style={{fontSize:10,fontWeight:700,padding:"2px 7px",borderRadius:10,background:"rgba(217,119,6,0.13)",color:"#d97706"}}>CONTRACT</span>}
+                    {job.legitimacy_tier==="suspicious" && <span style={{fontSize:10,fontWeight:700,padding:"2px 7px",borderRadius:10,background:"rgba(220,38,38,0.1)",color:"#dc2626"}}>⚠ SUSPICIOUS</span>}
+                    {job.legitimacy_tier==="caution" && <span style={{fontSize:10,fontWeight:700,padding:"2px 7px",borderRadius:10,background:"rgba(217,119,6,0.1)",color:"#d97706"}}>⚠ CAUTION</span>}
                     {job.source==="external" && <span style={{fontSize:10,fontWeight:700,padding:"2px 7px",borderRadius:10,background:t.priL,color:t.pri}}>EXTERNAL</span>}
                   </div>
                   <div style={{fontSize:13,color:t.sub}}>{job.company}{job.location?` · ${job.location}`:""}{job.posted?` · ${job.posted}`:""}</div>
+                  {expandedBreakdown===job.id && job.score_breakdown && (
+                    <div style={{marginTop:8,padding:"8px 10px",background:t.bg2||t.bg,border:`1px solid ${t.border}`,borderRadius:8,fontSize:11.5,color:t.sub,display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:"4px 12px"}}>
+                      {[
+                        ["Title Match", job.score_breakdown.title_match, 40],
+                        ["H1B Score",   job.score_breakdown.h1b_score,   20],
+                        ["ITAR Clean",  job.score_breakdown.itar_clean,  10],
+                        ["Entry Level", job.score_breakdown.entry_level, 15],
+                        ["Co. Intel",  job.score_breakdown.company_intel,10],
+                        ["Legitimacy",  job.score_breakdown.legitimacy,   5],
+                      ].map(([label, val, max]) => (
+                        <div key={label} style={{display:"flex",alignItems:"center",gap:5}}>
+                          <span style={{color:t.muted,minWidth:72}}>{label}</span>
+                          <span style={{fontWeight:700,color:val===max?t.green||"#16a34a":t.tx}}>{val}/{max}</span>
+                        </div>
+                      ))}
+                      {(job.red_flags||[]).length > 0 && (
+                        <div style={{gridColumn:"1/-1",marginTop:4,color:"#d97706",fontWeight:600}}>
+                          Flags: {job.red_flags.join(", ")}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
                 <div style={{display:"flex",alignItems:"center",gap:8,flexShrink:0}}>
-                  {job.match != null && <span style={{fontSize:14,fontWeight:800,color:matchColor(job.match,t)}}>{job.match}%</span>}
+                  {job.match != null && (
+                    <span
+                      onClick={() => setExpandedBreakdown(prev => prev===job.id ? null : job.id)}
+                      style={{fontSize:14,fontWeight:800,color:matchColor(job.match,t),cursor:job.score_breakdown?"pointer":"default",userSelect:"none"}}
+                      title={job.score_breakdown?"Click to see score breakdown":undefined}
+                    >{job.match}%</span>
+                  )}
                   {job.link && <a href={job.link} target="_blank" rel="noreferrer" style={{color:t.sub}}><ExternalLink size={14}/></a>}
                   <Btn size="sm" variant={inP?"green":"secondary"} onClick={() => { if(!inP) addToPipeline(job); }} disabled={inP||job.itar_flag} t={t}>
                     {inP ? <><Check size={12}/> Added</> : <><Plus size={12}/> Pipeline</>}

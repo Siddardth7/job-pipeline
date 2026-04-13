@@ -75,7 +75,8 @@ export async function fetchJobs() {
       job:normalized_jobs (
         id, job_title, company_name, job_url, location, posted_date,
         description, source, itar_flag, tier, h1b, industry,
-        verdict, relevance_score, boost_tags, employment_type
+        verdict, relevance_score, boost_tags, employment_type,
+        red_flags, legitimacy_tier
       )
     `)
     .eq('user_id', userId)
@@ -98,8 +99,11 @@ export async function fetchJobs() {
     h1b:              row.job?.h1b             ?? null,
     industry:         row.job?.industry        ?? null,
     verdict:          row.job?.verdict         ?? null,
-    employment_type:  row.job?.employment_type ?? null,
+    employment_type:  row.job?.employment_type  ?? null,
+    red_flags:        row.job?.red_flags        ?? [],
+    legitimacy_tier:  row.job?.legitimacy_tier  ?? 'high',
     // Per-user feed fields
+    score_breakdown:  row.score_breakdown       ?? null,
     match:            row.user_relevance_score ?? row.job?.relevance_score ?? null,
     in_pipeline:      row.in_pipeline,
     pipeline_added_at: row.pipeline_added_at,
@@ -156,7 +160,8 @@ export async function fetchJobsByDate(dateStr) {
       job:normalized_jobs (
         id, job_title, company_name, job_url, location, posted_date,
         description, source, itar_flag, tier, h1b, industry,
-        verdict, relevance_score, boost_tags, employment_type
+        verdict, relevance_score, boost_tags, employment_type,
+        red_flags, legitimacy_tier
       )
     `)
     .eq('user_id', userId)

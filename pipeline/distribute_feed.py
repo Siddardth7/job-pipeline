@@ -98,45 +98,83 @@ def load_users(sb_client):
 def score_job_for_user(job, user):
     """
     Compute a 0–100 relevance score for a (job, user) pair.
-    Returns (score, matched_clusters[]).
+    Returns (score, matched_clusters[], score_breakdown{}).
 
-    Scoring breakdown:
-        Title match:       up to 35 pts × priority weight (max 70 with weight 2)
-        Keyword density:   up to 15 pts per cluster keyword hit in description
-        Entry-level boost: +10 pts if boost_tags present
-        H1B penalty:       -25 pts if user has h1b_filter=True and job h1b != YES
+    6-dimensional breakdown:
+        D1 title_match    0–40  title token hit × priority weight
+        D2 h1b_score      0–20  H1B sponsorship signal
+        D3 itar_clean     0–10  no ITAR flag = full points
+        D4 entry_level    0–15  entry-level boost tags present
+        D5 company_intel  0–10  keyword density in description
+        D6 legitimacy      0–5  legitimacy_tier signal
+    H1B penalty: -25 pts if h1b_filter=True and job h1b != YES (applied after sum)
     """
-    score = 0
-    title_lower = (job.get("job_title") or "").lower()
+    title_lower = (job.get("job_title")   or "").lower()
     desc_lower  = (job.get("description") or "").lower()
     matched_clusters = []
 
+    # D1 — Title match (0–40)
+    d1 = 0
     for target in user["role_targets"]:
         target_title = target["title"].lower()
         cluster      = target["cluster"]
-        # priority 1 → weight 2, priority 2 → weight 1, higher → weight 1
-        priority_w   = max(1, 3 - target.get("priority", 1))
-
+        priority_w   = max(1, 3 - target.get("priority", 1))  # 1→2, 2+→1
         if target_title in title_lower:
-            score += 35 * priority_w
+            d1 = min(d1 + 20 * priority_w, 40)
             if cluster not in matched_clusters:
                 matched_clusters.append(cluster)
 
-    # Keyword density: cluster name words appearing in description
+    # D2 — H1B sponsorship (0–20)
+    h1b_val = (job.get("h1b") or "").upper()
+    if h1b_val == "YES":
+        d2 = 20
+    elif h1b_val in ("LIKELY", "PROBABLE"):
+        d2 = 12
+    elif h1b_val in ("NO", "UNLIKELY"):
+        d2 = 0
+    else:
+        d2 = 6  # unknown / blank — partial credit
+
+    # D3 — ITAR clean (0–10)
+    d3 = 0 if job.get("itar_flag") else 10
+
+    # D4 — Entry-level signal (0–15)
+    d4 = 15 if job.get("boost_tags") else 0
+
+    # D5 — Company intel / keyword density (0–10)
+    d5 = 0
     for target in user["role_targets"]:
         cluster_words = target["cluster"].replace("_", " ").split()
         hits = sum(1 for w in cluster_words if w in desc_lower)
-        score += min(hits * 4, 15)
+        d5 = min(d5 + hits * 2, 10)
 
-    # Entry-level signal boost
-    if job.get("boost_tags"):
-        score += 10
+    # D6 — Legitimacy (0–5)
+    legitimacy_tier = (job.get("legitimacy_tier") or "high")
+    if legitimacy_tier == "high":
+        d6 = 5
+    elif legitimacy_tier == "caution":
+        d6 = 2
+    else:  # suspicious
+        d6 = 0
+
+    raw_score = d1 + d2 + d3 + d4 + d5 + d6  # max = 100
 
     # H1B filter penalty
-    if user["preferences"].get("h1b_filter") and job.get("h1b") != "YES":
-        score -= 25
+    if user["preferences"].get("h1b_filter") and h1b_val != "YES":
+        raw_score -= 25
 
-    return min(max(score, 0), 100), matched_clusters
+    final_score = min(max(raw_score, 0), 100)
+
+    breakdown = {
+        "title_match":  d1,
+        "h1b_score":    d2,
+        "itar_clean":   d3,
+        "entry_level":  d4,
+        "company_intel": d5,
+        "legitimacy":   d6,
+    }
+
+    return final_score, matched_clusters, breakdown
 
 
 # ── Applied-list filter ───────────────────────────────────────────────────────
@@ -257,6 +295,8 @@ def run():
             "relevance_score":  job.get("relevance_score", 50),
             "boost_tags":       job.get("boost_tags") or [],
             "employment_type":  job.get("employment_type", "") or "",
+            "red_flags":        job.get("red_flags", []) or [],
+            "legitimacy_tier":  job.get("legitimacy_tier", "high") or "high",
         })
     upsert_errors = batch_upsert(sb, "normalized_jobs", job_rows, on_conflict="id")
     log.info(f"normalized_jobs upsert complete ({upsert_errors} errors)")
@@ -280,7 +320,7 @@ def run():
             if is_applied(job, applied_set):
                 continue
 
-            score, matched = score_job_for_user(job, user)
+            score, matched, breakdown = score_job_for_user(job, user)
 
             # min_score=0 means "show everything" — bypass threshold
             if min_score > 0 and score < min_score:
@@ -291,6 +331,7 @@ def run():
                 "job_id":               job_id,
                 "user_relevance_score": score,
                 "matched_clusters":     matched,
+                "score_breakdown":      breakdown,
                 "status":               "new",
                 # Force created_at to update on every upsert so the date-based
                 # feed filter in the UI correctly shows all jobs from today's run,

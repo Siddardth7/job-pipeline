@@ -202,6 +202,82 @@ BLACKLISTED_COMPANIES = [
     "aerospace corporation",
 ]
 
+# Red flag detection constants
+STAFFING_FIRMS = [
+    "aerotek", "actalent", "belcan", "kelly engineering", "kelly services",
+    "insight global", "adecco", "modis", "staffmark", "manpower", "randstad",
+    "allegis", "the judge group", "ssi people", "talentally", "dsj global",
+    "jobot", "robert half", "apex systems", "cybercoders", "staffing solutions",
+    "technical staffing", "engineering staffing", "workforce solutions",
+    "talent solutions", "kforce", "teksystems", "experis",
+]
+
+US_PERSON_PATTERNS = re.compile(
+    r'\b(must be a u\.?s\.? citizen|u\.?s\.? person|active (secret|top secret|ts/sci) clearance|'
+    r'us citizen(ship)?|united states citizen|green card holder only|'
+    r'requires u\.?s\.? citizenship|candidates must be u\.?s\.?)\b',
+    re.IGNORECASE,
+)
+
+HIDDEN_CONTRACT_PATTERNS = re.compile(
+    r'\b(contract(-to-hire)?|temporary assignment|temp(-to-hire)?|contingent worker|'
+    r'w2 contract|c2c|corp(-to-corp)?|contract position)\b',
+    re.IGNORECASE,
+)
+
+
+def _detect_red_flags(job: Dict) -> Tuple[List[str], str]:
+    """
+    Detect legitimacy signals in a job that has already passed all hard filters.
+    Returns (flags[], legitimacy_tier).
+
+    Flags:
+        staffing_agency    — company name matches a known staffing firm
+        us_person_required — description requires US citizenship or clearance
+        vague_description  — description is too short to be genuine
+        contract_hidden    — non-contract source but description contains contract language
+
+    Tiers:
+        high       — no flags
+        caution    — 1-2 non-critical flags
+        suspicious — any critical flag OR 3+ flags
+    """
+    flags: List[str] = []
+    company_lower      = (job.get("company_name")  or "").lower()
+    desc_full          = (job.get("description")   or "")
+    source             = (job.get("source")        or "")
+    employment_type    = (job.get("employment_type") or "")
+
+    # Staffing agency check
+    for firm in STAFFING_FIRMS:
+        if firm in company_lower:
+            flags.append("staffing_agency")
+            break
+
+    # US citizenship / clearance requirement
+    if US_PERSON_PATTERNS.search(desc_full):
+        flags.append("us_person_required")
+
+    # Vague description (< 80 chars after strip)
+    if len(desc_full.strip()) < 80:
+        flags.append("vague_description")
+
+    # Hidden contract language in a non-contract posting
+    if employment_type != "Contract" and source not in ("ats_greenhouse", "ats_lever"):
+        if HIDDEN_CONTRACT_PATTERNS.search(desc_full):
+            flags.append("contract_hidden")
+
+    critical_flags = {"us_person_required", "vague_description"}
+    if any(f in critical_flags for f in flags) or len(flags) >= 3:
+        tier = "suspicious"
+    elif flags:
+        tier = "caution"
+    else:
+        tier = "high"
+
+    return flags, tier
+
+
 # Scoring helpers (post-filter only — never used to bypass filters)
 BOOST_TITLE_TOKENS = [
     "entry level", "entry-level", "associate", "engineer i", "engineer ii",
@@ -389,7 +465,9 @@ def _normalize(job: Dict) -> Optional[Dict]:
         "h1b":             str(job.get("h1b", "") or ""),
         "salary":          str(job.get("salary", "") or ""),
         "stable_id":       stable_id,
-        "employment_type": str(job.get("employment_type", "") or ""),
+        "employment_type":  str(job.get("employment_type", "") or ""),
+        "red_flags":        [],
+        "legitimacy_tier":  "high",
     }
 
 
@@ -702,6 +780,12 @@ def _score(job: Dict) -> Dict:
 
     job["relevance_score"] = min(score, 100)
     job["boost_tags"]      = boost_tags
+
+    # Red flag / legitimacy detection
+    red_flags, legitimacy_tier = _detect_red_flags(job)
+    job["red_flags"]       = red_flags
+    job["legitimacy_tier"] = legitimacy_tier
+
     return job
 
 
