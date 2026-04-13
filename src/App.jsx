@@ -170,11 +170,9 @@ export default function JobAgent() {
         ]);
 
         const pipelineJobs = dbJobs.filter(j => j.in_pipeline && j.status !== 'completed');
-        const searchJobs = dbJobs.filter(j => !j.in_pipeline && j.status !== 'completed');
 
         setApps(dbApps);
         setPipeline(pipelineJobs.map(j => ({...j, status: 'active'})));
-        setSearchResults(searchJobs);
         setNetworkingLog(dbNetlog);
         if (dbTemplates.length > 0) setTemplates(dbTemplates);
         if (dbSettings.dark) setDark(dbSettings.dark === 'true');
