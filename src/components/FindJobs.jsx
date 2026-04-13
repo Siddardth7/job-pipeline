@@ -44,7 +44,7 @@ function universalParse(data) {
 }
 
 
-const FILTERS = ["All","Today","Visa Sponsor","Remote","90%+ Match","ITAR-Free"];
+const FILTERS = ["All","Today","Visa Sponsor","Remote","90%+ Match","ITAR-Free","Contract"];
 const SORT_OPTIONS = [
   { value: 'match_desc', label: 'Match: High → Low' },
   { value: 'match_asc',  label: 'Match: Low → High' },
@@ -174,6 +174,7 @@ export default function FindJobs({searchResults, setSearchResults, pipeline, add
     if (activeFilter === "Remote" && !(j.location||"").toLowerCase().includes("remote")) return false;
     if (activeFilter === "90%+ Match" && (j.match||0) < 90) return false;
     if (activeFilter === "ITAR-Free" && j.itar_flag) return false;
+    if (activeFilter === "Contract" && j.employment_type !== "Contract") return false;
     return true;
   });
 
@@ -329,6 +330,7 @@ export default function FindJobs({searchResults, setSearchResults, pipeline, add
                   <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:3}}>
                     <span style={{fontSize:14.5,fontWeight:700,color:t.tx,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{job.role}</span>
                     <StatusBadge status={job.verdict} t={t}/>
+                    {job.employment_type==="Contract" && <span style={{fontSize:10,fontWeight:700,padding:"2px 7px",borderRadius:10,background:"rgba(217,119,6,0.13)",color:"#d97706"}}>CONTRACT</span>}
                     {job.source==="external" && <span style={{fontSize:10,fontWeight:700,padding:"2px 7px",borderRadius:10,background:t.priL,color:t.pri}}>EXTERNAL</span>}
                   </div>
                   <div style={{fontSize:13,color:t.sub}}>{job.company}{job.location?` · ${job.location}`:""}{job.posted?` · ${job.posted}`:""}</div>

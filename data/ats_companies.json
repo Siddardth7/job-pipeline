@@ -1,5 +1,5 @@
 {
-  "_comment": "ATS company registry for ats_scraper.py. Format: {slug: {name, tier, industry, h1b, itar}}. Tier 1=top priority. h1b: YES/LIKELY/NO. itar: YES/Partial/NO. Slugs verified March 2026.",
+  "_comment": "ATS company registry for ats_scraper.py. Format: {slug: {name, tier, industry, h1b, itar}}. Tier 1=top priority. h1b: YES/LIKELY/NO. itar: YES/Partial/NO. Slugs verified/updated April 2026.",
   "greenhouse": {
     "supernal": {
       "name": "Supernal",
@@ -17,7 +17,7 @@
     },
     "astspacemobile": {
       "name": "AST SpaceMobile",
-      "tier": "Tier 2",
+      "tier": "Tier 1",
       "industry": "Aerospace",
       "h1b": "YES",
       "itar": "NO"
@@ -55,7 +55,7 @@
       "tier": "Tier 2",
       "industry": "Aerospace",
       "h1b": "LIKELY",
-      "itar": "NO"
+      "itar": "Partial"
     },
     "flyzipline": {
       "name": "Zipline",
@@ -104,7 +104,7 @@
       "tier": "Tier 1",
       "industry": "Aerospace",
       "h1b": "YES",
-      "itar": "Partial"
+      "itar": "NO"
     },
     "axiom": {
       "name": "Axiom Space",
@@ -136,7 +136,7 @@
     },
     "lucidmotors": {
       "name": "Lucid Motors",
-      "tier": "Tier 2",
+      "tier": "Tier 1",
       "industry": "Automotive",
       "h1b": "YES",
       "itar": "NO"
@@ -188,7 +188,7 @@
       "tier": "Tier 1",
       "industry": "Aerospace",
       "h1b": "YES",
-      "itar": "Partial"
+      "itar": "NO"
     },
     "aptera": {
       "name": "Aptera Motors",
@@ -199,7 +199,7 @@
     },
     "rivian": {
       "name": "Rivian",
-      "tier": "Tier 2",
+      "tier": "Tier 1",
       "industry": "Automotive",
       "h1b": "YES",
       "itar": "NO"
@@ -259,6 +259,20 @@
       "industry": "Manufacturing",
       "h1b": "YES",
       "itar": "NO"
+    },
+    "wisk-aero": {
+      "name": "Wisk Aero",
+      "tier": "Tier 2",
+      "industry": "Aerospace",
+      "h1b": "YES",
+      "itar": "NO"
+    },
+    "eveairmobility": {
+      "name": "Eve Air Mobility",
+      "tier": "Tier 2",
+      "industry": "Aerospace",
+      "h1b": "LIKELY",
+      "itar": "NO"
     }
   },
   "lever": {
@@ -317,6 +331,13 @@
       "industry": "Aerospace",
       "h1b": "LIKELY",
       "itar": "Partial"
+    },
+    "boomsupersonic": {
+      "name": "Boom Supersonic",
+      "tier": "Tier 1",
+      "industry": "Aerospace",
+      "h1b": "LIKELY",
+      "itar": "NO"
     }
   }
 }

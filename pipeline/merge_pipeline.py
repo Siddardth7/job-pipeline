@@ -44,6 +44,7 @@ WHITELISTED_SOURCE_FILES = [
     "jobs_apify.json",
     "jobs_serpapi.json",
     "jobs_adzuna.json",
+    "jobs_contract.json",   # contract_scraper.py output — employment_type=Contract
 ]
 
 
@@ -388,6 +389,7 @@ def _normalize(job: Dict) -> Optional[Dict]:
         "h1b":             str(job.get("h1b", "") or ""),
         "salary":          str(job.get("salary", "") or ""),
         "stable_id":       stable_id,
+        "employment_type": str(job.get("employment_type", "") or ""),
     }
 
 
@@ -442,11 +444,16 @@ def _is_fresh(job: Dict, cutoff: datetime) -> bool:
     Returns True if the job is within the freshness window.
     - ATS sources (ats_greenhouse, ats_lever): unknown dates are accepted as fresh
       because these are live open postings polled directly from employer ATS.
+    - contract_search: contract postings stay live for weeks/months — always accepted as fresh.
     - All other sources: unknown dates are DROPPED — faking freshness overstates the feed.
     """
     posted_date     = job.get("posted_date", "")
     date_confidence = job.get("date_confidence", "actual")
     source          = job.get("source", "")
+
+    # Contract search uses date_posted=month so dates are real but older than 72h — pass through
+    if source == "contract_search":
+        return True
 
     if not posted_date or date_confidence == "unknown":
         # ATS direct sources: open postings are definitionally current

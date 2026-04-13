@@ -256,6 +256,7 @@ def run():
             "verdict":          job.get("verdict", "GREEN"),
             "relevance_score":  job.get("relevance_score", 50),
             "boost_tags":       job.get("boost_tags") or [],
+            "employment_type":  job.get("employment_type", "") or "",
         })
     upsert_errors = batch_upsert(sb, "normalized_jobs", job_rows, on_conflict="id")
     log.info(f"normalized_jobs upsert complete ({upsert_errors} errors)")
