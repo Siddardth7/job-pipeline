@@ -68,6 +68,9 @@ export function hydrateApplication(row) {
 // ── Jobs (reads from user_job_feed ⨯ normalized_jobs) ─────────────────────────
 export async function fetchJobs() {
   const userId = await getUserId();
+  // Limit to last 14 days to avoid hitting Supabase's 1000-row PostgREST default.
+  // Pipeline adds ~54 rows/day — 14 days = ~756 rows max, safely under the limit.
+  const since = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString();
   const { data, error } = await supabase
     .from('user_job_feed')
     .select(`
@@ -80,6 +83,7 @@ export async function fetchJobs() {
       )
     `)
     .eq('user_id', userId)
+    .gte('created_at', since)
     .order('created_at', { ascending: false });
   if (error) throw error;
 

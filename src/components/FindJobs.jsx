@@ -179,10 +179,12 @@ export default function FindJobs({searchResults, setSearchResults, pipeline, add
     setTab("feed");
   };
 
-  const todayStr = new Date().toISOString().slice(0, 10);
   const filtered = searchResults.filter(j => {
     if (query.trim() && !j.role.toLowerCase().includes(query.toLowerCase()) && !j.company.toLowerCase().includes(query.toLowerCase()) && !(j.industry||"").toLowerCase().includes(query.toLowerCase())) return false;
-    if (activeFilter === "Today" && j.feed_date !== todayStr) return false;
+    // "Today" = most recent pipeline run date (feedDates[0]), not UTC clock date.
+    // Using UTC clock here breaks the filter whenever it's past midnight UTC but
+    // still "today" in the user's local timezone.
+    if (activeFilter === "Today" && feedDates.length > 0 && j.feed_date !== feedDates[0]) return false;
     if (activeFilter === "Visa Sponsor" && j.h1b !== "YES") return false;
     if (activeFilter === "Remote" && !(j.location||"").toLowerCase().includes("remote")) return false;
     if (activeFilter === "90%+ Match" && (j.match||0) < 90) return false;
@@ -240,7 +242,13 @@ export default function FindJobs({searchResults, setSearchResults, pipeline, add
             </button>
           </div>
           <div style={{display:"flex",gap:8,marginBottom:16,flexWrap:"wrap"}}>
-            {FILTERS.map(f => <Chip key={f} active={activeFilter===f} onClick={() => setActiveFilter(f)} t={t}>{f}</Chip>)}
+            {FILTERS.map(f => (
+              <Chip key={f} active={activeFilter===f} onClick={() => {
+                setActiveFilter(f);
+                // "Today" snaps the date selector to the most recent pipeline run date
+                if (f === "Today" && feedDates.length > 0) handleDateChange(feedDates[0]);
+              }} t={t}>{f}</Chip>
+            ))}
           </div>
         </div>
       )}

@@ -177,76 +177,6 @@ def score_job_for_user(job, user):
     return final_score, matched_clusters, breakdown
 
 
-# ── Applied-list filter ───────────────────────────────────────────────────────
-
-def build_applied_set(rows: list) -> set:
-    """
-    Convert a list of application rows into a set of normalized tuples.
-    Each tuple is (company_lower, location_lower, role_lower).
-    """
-    result = set()
-    for row in rows:
-        company  = (row.get("company")  or "").lower().strip()
-        location = (row.get("location") or "").lower().strip()
-        role     = (row.get("role")     or "").lower().strip()
-        result.add((company, location, role))
-    return result
-
-
-def is_applied(job: dict, applied_set: set) -> bool:
-    """
-    Return True if this job matches an entry in applied_set.
-
-    Matching rules:
-    - company_name and job_title are always required.
-    - If both the feed job and the applied entry have a location, they must match.
-    - If either side has an empty location, fall back to a 2-field (company+title) match.
-      This handles inconsistent location data across different scrapers.
-    """
-    company  = (job.get("company_name") or "").lower().strip()
-    location = (job.get("location")     or "").lower().strip()
-    title    = (job.get("job_title")    or "").lower().strip()
-
-    if not company or not title:
-        return False
-
-    # Exact 3-field match (fast path)
-    if (company, location, title) in applied_set:
-        return True
-
-    # Location-tolerant fallback:
-    # Trigger only when at least one side has an empty location.
-    if not location:
-        # Feed job has no location — check company+title across all applied entries
-        return any(c == company and t == title for (c, l, t) in applied_set)
-    else:
-        # Feed job has a location — check if applied entry had empty location for same job
-        return (company, "", title) in applied_set
-
-
-def load_applied_by_user(sb_client) -> dict:
-    """
-    Fetch all application rows from Supabase.
-    Returns dict[user_id -> set of (company, location, role) tuples].
-    Fails open: returns empty dict on error.
-    """
-    try:
-        result = sb_client.table("applications").select("user_id, company, location, role").execute()
-        rows   = result.data or []
-    except Exception as exc:
-        log.warning(f"Could not fetch applied jobs — proceeding with empty set: {exc}")
-        return {}
-
-    by_user = {}
-    for row in rows:
-        uid = row.get("user_id")
-        if not uid:
-            continue
-        by_user.setdefault(uid, []).append(row)
-
-    return {uid: build_applied_set(rows) for uid, rows in by_user.items()}
-
-
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def run():
@@ -257,10 +187,6 @@ def run():
 
     jobs  = load_jobs()
     users = load_users(sb)
-
-    # Load applied jobs for all users (used to skip already-applied jobs in feed)
-    applied_by_user = load_applied_by_user(sb)
-    log.info(f"Loaded applied sets for {len(applied_by_user)} users")
 
     if not jobs:
         log.warning("No jobs to distribute. Exiting.")
@@ -313,11 +239,6 @@ def run():
         for job in jobs:
             job_id = job.get("id") or job.get("job_url", "")[:100]
             if not job_id:
-                continue
-
-            # Skip jobs already in the user's Applied list
-            applied_set = applied_by_user.get(user["user_id"], set())
-            if is_applied(job, applied_set):
                 continue
 
             score, matched, breakdown = score_job_for_user(job, user)
