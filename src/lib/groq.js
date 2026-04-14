@@ -387,7 +387,7 @@ ${jobId ? `- Job ID to reference if space allows: ${jobId}` : ''}
 CONNECTION NOTE RULES — ABSOLUTE, NO EXCEPTIONS:
 - CONTEXT ONLY. The only job of this note is to tell the reader WHY you are connecting and WHAT role you are talking about. Nothing else.
 - The "one clause" must reflect THE ANGLE above — different personas get meaningfully different reasons for connecting.
-- ZERO metrics. ZERO numbers. ZERO stats. Not "15% to 3%". Not "2% void content". Not "defect rates". Not "autoclave at 275F". Not "8 hours to 5 minutes". Not any achievement number whatsoever.
+- ZERO metrics. ZERO numbers. ZERO stats. Not "15% to 3%". Not "2,700 lbf". Not "defect rates". Not "autoclave at 275F". Not "8 hours to 5 minutes". Not any achievement number whatsoever.
 - ZERO achievement statements. "At Tata Boeing I reduced..." is FORBIDDEN here. So is any variant of it.
 - The reader decides whether to accept based on your context and intent, not your resume. Save the resume for the follow-up.
 - No subject line. No sign-off. No dashes. No em-dashes. No exclamation marks. No bullets.`,
@@ -398,7 +398,7 @@ HARD LIMIT: 100 words.
 STRUCTURE (4 sentences, natural paragraph):
   S1: Thank you for connecting.
   S2: Why you reached out: Siddardth ${intentSummary}.
-  S3: One relevant stat — choose the best fit: Tata Boeing defect rate 15% to 3% using SPC and 8D, OR SAMPE 24-inch composite fuselage with 2% void content via autoclave at 275F and 40 psi, OR Beckman Institute cure cycle from 8 hours to 5 minutes.
+  S3: One relevant stat — choose the best fit: Tata Boeing defect rate 15% to 3% using SPC and 8D, OR SAMPE 24-inch composite fuselage sustained 2,700 lbf at test (2.7x design requirement) via autoclave at 275F and 40 psi, OR Beckman Institute cure cycle from 8 hours to 5 minutes.
   S4: One specific ask: ${personaAsk}.
 Sign off: Siddardth
 No bullets. No dashes. No jargon.`,
@@ -410,7 +410,7 @@ Subject: [60 chars max — include role or company name, UIUC, and hint of STEM 
 
 BODY — 4 paragraphs, under 150 words total:
 P1: Siddardth Pathipaka. M.S. Aerospace Engineering, UIUC, December 2025. ${intent === 'job_application_ask' ? `Applied for the ${role} position at ${company}.` : `Writing to introduce myself and explore opportunities at ${company}.`}
-P2: Reference their specific work area. Connect to Tata Boeing composites (defect rate 15% to 3%), SAMPE (24-inch fuselage, 2% void content, autoclave at 275F and 40 psi), or ABAQUS/ANSYS structural analysis. Be specific. 2 to 3 sentences.
+P2: Reference their specific work area. Connect to Tata Boeing composites (defect rate 15% to 3%), SAMPE (24-inch fuselage sustained 2,700 lbf at test via autoclave at 275F and 40 psi), or ABAQUS/ANSYS structural analysis. Be specific. 2 to 3 sentences.
 P3: Write this exact sentence verbatim: "I am authorized to work in the US for 3 years under STEM OPT with no sponsorship cost to the employer."
 P4: One clear ask: ${personaAsk}.
 Closing: Thank you for your time.
@@ -425,7 +425,7 @@ CANDIDATE:
 - Degree: M.S. Aerospace Engineering, University of Illinois Urbana-Champaign (UIUC), December 2025
 - Work authorization: STEM OPT, 3 years, zero sponsorship cost to employer
 - Tata Boeing Aerospace: reduced defect rates from 15% to 3% using SPC and 8D methodology
-- SAMPE: led fabrication of a 24-inch composite fuselage, 2% void content via autoclave cure at 275F and 40 psi
+- SAMPE: built 24-inch composite fuselage via prepreg layup and autoclave cure (275F, 40 psi) — part sustained 2,700 lbf at test (2.7x design requirement)
 - Beckman Institute: reduced cure cycle from 8 hours to 5 minutes using novel resin system
 - Tools: ABAQUS, ANSYS, SolidWorks, CATIA, MATLAB, Python
 - Skills: composites manufacturing, quality engineering, GD&T, CMM, Lean, SPC, FMEA, NDT
