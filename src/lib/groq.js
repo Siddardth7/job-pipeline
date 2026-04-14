@@ -67,7 +67,7 @@ async function _generateSummary(jd, variant, keywords, title, apiKey) {
 
 CANDIDATE BACKGROUND (use only these facts, never invent):
 - Degree: MS Aerospace Engineering, UIUC, Dec 2025. Entry level — never claim seniority.
-- Tata Boeing Aerospace: Audited GD&T-based CMM inspection records for 450+ flight-critical components to 0.02 mm accuracy, supporting zero customer escapes on GE and Boeing programs; introduced 8D structured problem-solving into MRB process reducing nonconformance cycle time by 22%; implemented SPC-guided corrective actions (revised CNC tool change intervals) reducing position tolerance defect rate from 15% to under 3%; built FMEA-based engineering justification for supplier nonconformance enabling use-as-is disposition that prevented ~$3,000 in scrap and 4-week lead time delay
+- Tata Boeing Aerospace: Audited GD&T-based CMM inspection records for 450+ flight-critical components to 0.02 mm accuracy, supporting zero customer escapes on GE and Boeing programs; initiated 5 Whys root cause investigation and escalated to 8D structured problem-solving for deeper resolution on GE engine component nonconformances, reducing NCR cycle time by 22%; implemented SPC-guided corrective actions (revised CNC tool change intervals) reducing position tolerance defect rate from 15% to under 3%; built FMEA-based engineering justification for supplier nonconformance enabling use-as-is disposition that prevented ~$3,000 in scrap and 4-week lead time delay
 - SAMPE Competition: Built 24-inch composite fuselage via prepreg layup and autoclave cure (275°F, lab-limited 40 psi) — part sustained 2,700 lbf at test (2.7× design requirement); built pFMEA ranking 5 failure modes (vacuum bag leaks highest, RPN=60 using S=5 O=4 D=3) and standardized pressurized hold test protocol at 20 psi achieving zero process deviations; optimized laminate stacking using Python simulated annealing + ABAQUS FEA achieving 38% deflection reduction vs baseline; redesigned layup to dual-blanket structure (7 inner + 7 outer plies) overnight after ply geometry fit failure
 - Beckman Institute: Developed and validated out-of-autoclave cure method using frontal polymerization — proof-of-concept compression of composite processing cycle from 8+ hours to under 5 minutes in a research setting; predicted cure behavior within 10% velocity accuracy and 3°C of peak temperatures, accelerating process parameter optimization by 94% through computational modeling
 - EQIC Dies & Moulds: Mapped 12-stage die production workflow (CNC machining, EDM, heat treatment, assembly) identifying inter-stage handoff points as primary sources of dimensional tolerance accumulation; verified die component tolerances to ±0.02 mm (GD&T) and confirmed parting surface alignment (>80% contact) on 800-bar HPDC tooling
@@ -127,28 +127,28 @@ export async function analyzeJobWithGroq(jd, variant, apiKey) {
   // Base skilllines per variant — Groq modifies these, never generates from scratch
   const BASE_SKILLLINES = {
     A: [
-      { label: "Certifications:", skills: "Six Sigma Green Belt (CSSC) | Inspection & Quality Control in Manufacturing (NPTEL -- IIT Roorkee)" },
-      { label: "Quality / Analysis:", skills: "pFMEA, SPC, 8D Root Cause Analysis, RCCA, CMM Inspection, GD&T, First Article Inspection, CAPA, MRB Disposition" },
-      { label: "Manufacturing / Process:", skills: "Prepreg Layup, Autoclave Processing, Cure Cycle Development, AS9100, Process Validation, Lean Principles, NADCAP" },
-      { label: "Tools / Software:", skills: "SolidWorks, CATIA, MATLAB, Python, AutoCAD" }
+      { label: "Manufacturing & Tooling:", skills: "Fixture Design, Assembly Sequencing, Tooling Qualification, CNC Machining, GD&T, CMM Inspection, Blueprint Reading, SolidWorks" },
+      { label: "Process & Quality Control:", skills: "pFMEA, SPC, 8D Root Cause Analysis, RCCA, First Article Inspection, MRB Disposition, CAPA, Lean Principles" },
+      { label: "Composite Processing:", skills: "Prepreg Layup, Autoclave Processing, Vacuum Bagging, Cure Cycle Development, Out-of-Autoclave Methods" },
+      { label: "Simulation & Software:", skills: "ABAQUS, FEA, Classical Lamination Theory, MATLAB, Python, AutoCAD" }
     ],
     B: [
-      { label: "Certifications:", skills: "Six Sigma Green Belt (CSSC) | Inspection & Quality Control in Manufacturing (NPTEL -- IIT Roorkee)" },
-      { label: "Quality / Analysis:", skills: "pFMEA, SPC, 8D Root Cause Analysis, RCCA, DMAIC, CAPA, MRB Disposition" },
-      { label: "Process / CI:", skills: "Value Stream Mapping, Poka-Yoke, 5S, OEE, Defect Reduction, Lean Principles, Kaizen, Process Validation, Corrective Action" },
-      { label: "Tools / Software:", skills: "SolidWorks, MATLAB, Python, Minitab, AutoCAD" }
+      { label: "Continuous Improvement:", skills: "pFMEA, SPC, 8D Root Cause Analysis, RCCA, CAPA, Lean Principles, Defect Reduction, Process Repeatability" },
+      { label: "Process Engineering:", skills: "Cure Cycle Development, Workflow Redesign, First Article Inspection, MRB Disposition, GD&T, CMM Inspection, Assembly Optimization" },
+      { label: "Composite Processing:", skills: "Prepreg Layup, Autoclave Processing, Vacuum Bagging, Out-of-Autoclave Methods" },
+      { label: "Simulation & Software:", skills: "ABAQUS, FEA, Classical Lamination Theory, SolidWorks, MATLAB, Python, AutoCAD" }
     ],
     C: [
-      { label: "Certifications:", skills: "Six Sigma Green Belt (CSSC) | Inspection & Quality Control in Manufacturing (NPTEL -- IIT Roorkee)" },
-      { label: "Quality / Analysis:", skills: "pFMEA, SPC, 8D Root Cause Analysis, RCCA, MRB Disposition, CAPA, GD&T, CMM Inspection, First Article Inspection" },
-      { label: "Materials / Process:", skills: "Prepreg Layup, Autoclave Processing, Vacuum Bagging, Cure Cycle Development, Out-of-Autoclave Methods, NDT, AS9100" },
-      { label: "Tools / Software:", skills: "ABAQUS, FEA, Classical Lamination Theory, SolidWorks, MATLAB, Python, AutoCAD" }
+      { label: "Quality Engineering:", skills: "pFMEA, SPC, 8D/A3 Root Cause Analysis, RCCA, CMM Inspection, GD&T, First Article Inspection, MRB Disposition, CAPA" },
+      { label: "Materials & Process Engineering:", skills: "Prepreg Layup, Autoclave Processing, Cure Cycle Development, Out-of-Autoclave Methods, SEM/EDS Analysis, Vickers Hardness (ASTM E384)" },
+      { label: "Simulation & Tools:", skills: "ABAQUS, FEA, Classical Lamination Theory, MATLAB, Python, SolidWorks, AutoCAD" },
+      { label: "Certifications:", skills: "Six Sigma Green Belt (CSSC) | Inspection & Quality Control in Manufacturing" }
     ],
     D: [
-      { label: "Certifications:", skills: "Six Sigma Green Belt (CSSC) | Inspection & Quality Control in Manufacturing (NPTEL -- IIT Roorkee)" },
-      { label: "Quality / Analysis:", skills: "pFMEA, RCCA, CAPA, 8D Root Cause Analysis, SPC, First Article Inspection, CMM Inspection" },
-      { label: "NPI / Tooling:", skills: "DOE, APQP, Process Validation, New Product Introduction, Design Review, Manufacturing Readiness, IQ/OQ/PQ" },
-      { label: "Tools / Software:", skills: "SolidWorks, CATIA, FEA, MATLAB, Python, AutoCAD" }
+      { label: "Equipment & Tooling:", skills: "Tooling Qualification, Autoclave & Cure Equipment, CNC Machining, EDM, HPDC Tooling, GD&T, CMM Inspection, SolidWorks, AutoCAD" },
+      { label: "NPI & Validation:", skills: "pFMEA, First Article Inspection, Process Validation, SPC, RCCA, Build Sequencing, Cure Cycle Development" },
+      { label: "Simulation & Analysis:", skills: "ABAQUS, FEA, Classical Lamination Theory, MATLAB, Python" },
+      { label: "Composite Processing:", skills: "Prepreg Layup, Vacuum Bagging, Out-of-Autoclave Methods" }
     ]
   };
 
