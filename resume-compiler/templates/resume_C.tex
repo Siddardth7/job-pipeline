@@ -41,19 +41,19 @@
 \titleformat{\section}{
   \bfseries\fontsize{11pt}{12pt}\selectfont
 }{}{0em}{}[\vspace{-8pt}\rule{\textwidth}{0.5pt}]
-\titlespacing*{\section}{0pt}{4pt}{1pt}
+\titlespacing*{\section}{0pt}{14pt}{3pt}
 
 \setlist[itemize]{
   leftmargin=0.25in,
   labelsep=0.06in,
-  itemsep=0pt,
+  itemsep=1pt,
   parsep=0pt,
-  topsep=0pt,
+  topsep=2pt,
   label=\textbullet
 }
 
 \newcommand{\expentry}[2]{%
-  \vspace{4pt}%
+  \vspace{5pt}%
   \noindent\begin{tabularx}{\textwidth}{@{}X r@{}}
     {\fontsize{11pt}{13pt}\selectfont\textbf{#1}} & {\fontsize{11pt}{13pt}\selectfont\textbf{#2}}
   \end{tabularx}%
@@ -61,7 +61,7 @@
 }
 
 \newcommand{\eduentry}[2]{%
-  \vspace{2pt}%
+  \vspace{5pt}%
   \noindent\begin{tabularx}{\textwidth}{@{}X r@{}}
     {\fontsize{11pt}{13pt}\selectfont\textbf{#1}} & {\fontsize{11pt}{13pt}\selectfont\textbf{#2}}
   \end{tabularx}%
@@ -137,7 +137,7 @@
 \expentry{\href{https://github.com/Siddardth7/Virtual-Composite-Design-Optimization}{\color{linkblue}\underline{Virtual Composite Laminate Design \& Optimization}}}{Jan 2025 \textbar\ May 2025}
 {\fontsize{10pt}{11pt}\selectfont Implements \textbf{Classical Lamination Theory} with a \textbf{Simulated Annealing} optimizer for composite stacking sequence selection. Validated against \textbf{CalculiX FEA} on IM7/8552 CFRP plate, achieving \textbf{\textless1\% deflection error} and \textbf{\textless3\% stress error}.}
 
-\expentry{SAMPE Composite Fuselage Program \textbar\ Manufacturing Lead, UIUC}{Jan 2025 \textbar\ May 2025}
+\expentry{SAMPE Composite Fuselage Competition \textbar\ Manufacturing Lead, UIUC}{Jan 2025 \textbar\ May 2025}
 {\fontsize{10pt}{11pt}\selectfont Fabricated a \textbf{24-inch composite fuselage} via prepreg layup and autoclave cure (275°F, 40 psi), sustaining \textbf{2,700 lbf at structural test}. Applied \textbf{pFMEA} (RPN=60) and standardized a \textbf{20 psi hold test protocol}, achieving zero process deviations and \textbf{38\% deflection reduction} via optimization.}
 
 \expentry{Study of Microstructure \& Mechanical Properties of Borosilicate-based Glass Ceramic Composites}{Aug 2022 \textbar\ Apr 2023}
