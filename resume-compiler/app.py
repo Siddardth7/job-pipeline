@@ -168,8 +168,6 @@ def generate():
         return jsonify(error="variant is required (A, B, C, or D)"), 400
     if variant not in VALID_VARIANTS:
         return jsonify(error=f"Invalid variant '{variant}'. Must be A, B, C, or D"), 400
-    if not summary:
-        return jsonify(error="summary is required"), 400
     if not skills_latex:
         return jsonify(error="skills_latex is required"), 400
 

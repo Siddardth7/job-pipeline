@@ -212,17 +212,9 @@ Return ONLY this JSON:
     }
   }
 
-  // Call 2: generate summary in isolation — model's only job is 3 sentences
-  const summaryText = await _generateSummary(
-    jd,
-    variant,
-    parsed.top5_jd_skills || [],
-    parsed.summary_title || '',
-    apiKey
-  );
-
-  // Clean and attach summary to parsed result
-  parsed.mod1_summary = summaryText.trim();
+  // Summary disabled — resumes use no summary paragraph
+  parsed.mod1_summary = '';
+  parsed.mod1_summary_latex = '';
 
   return applyQCBarriers(parsed, variant);
 }
