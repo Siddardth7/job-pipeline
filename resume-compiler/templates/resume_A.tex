@@ -41,19 +41,19 @@
 \titleformat{\section}{
   \bfseries\fontsize{11pt}{12pt}\selectfont
 }{}{0em}{}[\vspace{-8pt}\rule{\textwidth}{0.5pt}]
-\titlespacing*{\section}{0pt}{14pt}{3pt}
+\titlespacing*{\section}{0pt}{8pt}{1pt}
 
 \setlist[itemize]{
   leftmargin=0.25in,
   labelsep=0.06in,
-  itemsep=1pt,
+  itemsep=0pt,
   parsep=0pt,
-  topsep=2pt,
+  topsep=0pt,
   label=\textbullet
 }
 
 \newcommand{\expentry}[2]{%
-  \vspace{5pt}%
+  \vspace{4pt}%
   \noindent\begin{tabularx}{\textwidth}{@{}X r@{}}
     {\fontsize{11pt}{13pt}\selectfont\textbf{#1}} & {\fontsize{11pt}{13pt}\selectfont\textbf{#2}}
   \end{tabularx}%
@@ -61,7 +61,7 @@
 }
 
 \newcommand{\eduentry}[2]{%
-  \vspace{5pt}%
+  \vspace{2pt}%
   \noindent\begin{tabularx}{\textwidth}{@{}X r@{}}
     {\fontsize{11pt}{13pt}\selectfont\textbf{#1}} & {\fontsize{11pt}{13pt}\selectfont\textbf{#2}}
   \end{tabularx}%
