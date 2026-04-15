@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Users, Send, Linkedin, Mail, Copy, Check, MessageSquare, Sparkles, RefreshCw, AlertTriangle, Search, Plus, X } from 'lucide-react';
-import { fetchLinkedInContacts, updateLinkedInContactNotes, fetchLinkedInStats } from '../lib/storage.js';
+import { fetchLinkedInContacts, updateLinkedInContactNotes, updateLinkedInContactFields, fetchLinkedInStats } from '../lib/storage.js';
 import { draftMessageWithGroq } from '../lib/groq.js';
 import { supabase } from '../supabase.js';
 
@@ -176,13 +176,14 @@ function ContactDraftSection({contact, currentJob, groqKey, t}) {
 }
 
 // Status configuration
-const STATUS_OPTS = ['Sent', 'Accepted', 'Replied', 'Coffee Chat', 'Referral Secured'];
+const STATUS_OPTS = ['Sent', 'Accepted', 'Replied', 'Coffee Chat', 'Referral Secured', 'Cold'];
 const STATUS_COLORS = {
   'Sent':             { bg: '#f1f5f9', bd: '#cbd5e1', tx: '#64748b' },
   'Accepted':         { bg: '#fef3c7', bd: '#fcd34d', tx: '#d97706' },
   'Replied':          { bg: '#dcfce7', bd: '#86efac', tx: '#16a34a' },
   'Coffee Chat':      { bg: '#ede9fe', bd: '#c4b5fd', tx: '#7c3aed' },
   'Referral Secured': { bg: '#fce7f3', bd: '#f9a8d4', tx: '#db2777' },
+  'Cold':             { bg: '#f0f4f8', bd: '#94a3b8', tx: '#475569' },
 };
 
 function migrateStatus(s) {
@@ -324,6 +325,10 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
   const [dmSearch, setDmSearch]               = useState('');
   const [dmStats, setDmStats]                 = useState(null);
   const [expandedGuidance, setExpandedGuidance] = useState(new Set());
+  const [dmSnooze, setDmSnooze] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('dm_snooze') || '{}'); } catch { return {}; }
+  });
+  const [pocAdded, setPocAdded] = useState(new Set());
 
   useEffect(() => {
     if (currentJob) {
@@ -422,7 +427,40 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
     });
   };
 
-  const getStatusStyle = (status) => STATUS_COLORS[status] || STATUS_COLORS['Pending'];
+  const getStatusStyle = (status) => STATUS_COLORS[status] || STATUS_COLORS['Sent'];
+
+  const handleCloseFollowUp = async (contactId) => {
+    setDmContacts(prev => prev.map(x => x.id === contactId ? {...x, follow_up: false} : x));
+    try { await updateLinkedInContactFields(contactId, { follow_up: false }); }
+    catch(e) { setDmNoteError('Failed to close follow-up: ' + e.message); }
+  };
+
+  const handleFollowedUp = async (contactId) => {
+    const fuDate = new Date(Date.now() + 15 * 86400000).toISOString().split('T')[0];
+    const todayStr = new Date().toISOString().split('T')[0];
+    setDmSnooze(prev => {
+      const next = {...prev, [contactId]: fuDate};
+      localStorage.setItem('dm_snooze', JSON.stringify(next));
+      return next;
+    });
+    try { await updateLinkedInContactFields(contactId, { last_contact: todayStr }); }
+    catch(e) { setDmNoteError('Failed to log follow-up: ' + e.message); }
+  };
+
+  const handleAddToPoc = (c) => {
+    addToNetworkingLog({
+      id: c.id,
+      date: new Date().toLocaleDateString(),
+      name: c.name || 'Unknown',
+      type: c.persona || c.role_type || 'Peer Engineer',
+      company: c.company || '',
+      role: c.position || '',
+      email: c.email || 'NA',
+      linkedinUrl: c.linkedin_url || '',
+    });
+    updateNetlogMeta(c.id, { status: 'Referral Secured', statusChangedAt: new Date().toISOString() });
+    setPocAdded(prev => new Set([...prev, c.id]));
+  };
 
   return (
     <div>
@@ -917,13 +955,14 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
               }
 
               // Left border color by urgency / strength
+              const fuActive = c.follow_up && (!dmSnooze[c.id] || dmSnooze[c.id] <= today);
               let borderColor = undefined;
-              if (c.follow_up_priority === 'urgent') borderColor = '#dc2626';
-              else if (c.follow_up_priority === 'high') borderColor = '#ea580c';
+              if (fuActive && c.follow_up_priority === 'urgent') borderColor = '#dc2626';
+              else if (fuActive && c.follow_up_priority === 'high') borderColor = '#ea580c';
               else if (c.is_confirmed_poc) borderColor = '#db2777';
               else if (c.is_poc_candidate) borderColor = '#e11d63';
               else if (c.conversation_stage === 'Strong Rapport') borderColor = t.green;
-              else if (c.follow_up) borderColor = t.yellow;
+              else if (fuActive) borderColor = t.yellow;
 
               const toggleSummary = () => setExpandedSummaries(prev => {
                 const next = new Set(prev); next.has(c.id) ? next.delete(c.id) : next.add(c.id); return next;
@@ -953,9 +992,14 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
                         {!c.is_confirmed_poc && c.is_poc_candidate && <span title="POC Candidate" style={{fontSize:11,fontWeight:700,padding:"1px 7px",borderRadius:10,background:'#fff1f5',color:'#e11d63'}}>◆ Candidate</span>}
                         {c.referral_secured && <span title="Referral secured" style={{fontSize:11,fontWeight:700,padding:"1px 7px",borderRadius:10,background:'#ecfdf5',color:'#059669'}}>✓ Referred</span>}
                         {c.promise_made && <span title={`Promise: ${c.promise_text||''}`} style={{fontSize:11,fontWeight:700,padding:"1px 7px",borderRadius:10,background:'#fff7ed',color:'#c2410c'}}>Promise</span>}
-                        {c.follow_up && fuPriCl && (
+                        {fuActive && fuPriCl && (
                           <span style={{fontSize:10.5,fontWeight:800,padding:"1px 7px",borderRadius:10,background:fuPriCl.bg,color:fuPriCl.tx,marginLeft:'auto'}}>
                             {c.follow_up_priority === 'urgent' ? '🔴 Urgent' : c.follow_up_priority === 'high' ? '🟠 High' : '🟡 Follow-up'}
+                          </span>
+                        )}
+                        {c.follow_up && !fuActive && (
+                          <span style={{fontSize:10,fontWeight:600,padding:"1px 7px",borderRadius:10,background:t.hover,color:t.muted,marginLeft:'auto'}}>
+                            Snoozed until {dmSnooze[c.id]}
                           </span>
                         )}
                       </div>
@@ -1021,7 +1065,7 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
                       )}
 
                       {/* ── Follow-up guidance ── */}
-                      {c.follow_up && c.follow_up_type && c.follow_up_type !== 'none' && (
+                      {fuActive && c.follow_up_type && c.follow_up_type !== 'none' && (
                         <div style={{marginBottom:8,padding:"6px 10px",borderRadius:6,background: c.follow_up_priority === 'urgent' ? '#fee2e2' : t.yellowL, border:`1px solid ${c.follow_up_priority === 'urgent' ? '#fca5a5' : t.yellowBd}`}}>
                           <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start"}}>
                             <div>
@@ -1043,6 +1087,14 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
                               {c.follow_up_guidance}
                             </div>
                           )}
+                          <div style={{display:"flex",gap:6,marginTop:8,paddingTop:6,borderTop:`1px solid ${c.follow_up_priority === 'urgent' ? '#fca5a5' : t.yellowBd}`}}>
+                            <button onClick={() => handleFollowedUp(c.id)} style={{padding:"4px 10px",borderRadius:6,background:t.greenL,border:`1px solid ${t.greenBd}`,color:t.green,fontSize:11.5,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>
+                              ✓ Followed Up
+                            </button>
+                            <button onClick={() => handleCloseFollowUp(c.id)} style={{padding:"4px 10px",borderRadius:6,background:t.hover,border:`1px solid ${t.border}`,color:t.muted,fontSize:11.5,fontWeight:700,cursor:"pointer",fontFamily:"inherit"}}>
+                              ✕ Close Issue
+                            </button>
+                          </div>
                         </div>
                       )}
 
@@ -1077,6 +1129,16 @@ export default function Networking({currentJob, setCurrentJob, contactResults, s
                           <span style={{fontWeight:700}}>Next: </span>{c.next_action}
                         </div>
                       )}
+
+                      {/* ── Add to POC List ── */}
+                      {(() => {
+                        const alreadyPoc = pocAdded.has(c.id) || networkingLog.some(x => x.id === c.id && migrateStatus(netlogMeta?.[x.id]?.status) === 'Referral Secured');
+                        return alreadyPoc
+                          ? <div style={{fontSize:11.5,fontWeight:700,color:'#db2777',marginBottom:8}}>★ Added to POC List</div>
+                          : <button onClick={() => handleAddToPoc(c)} style={{marginBottom:8,padding:"5px 12px",borderRadius:6,background:'#fce7f3',border:"1px solid #f9a8d4",color:'#db2777',fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit",display:"inline-flex",alignItems:"center",gap:4}}>
+                              <Plus size={11}/> Add to POC List
+                            </button>;
+                      })()}
 
                       {/* ── Notes textarea ── */}
                       <textarea

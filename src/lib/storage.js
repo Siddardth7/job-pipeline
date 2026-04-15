@@ -462,6 +462,17 @@ export async function updateLinkedInContactNotes(id, notes) {
   if (error) throw error;
 }
 
+export async function updateLinkedInContactFields(id, updates) {
+  if (!id) throw new Error('updateLinkedInContactFields: id is required');
+  const userId = await getUserId();
+  const { error } = await supabase
+    .from('linkedin_dm_contacts')
+    .update({ ...updates, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .eq('user_id', userId);
+  if (error) throw error;
+}
+
 export async function fetchLinkedInStats(contacts) {
   // Compute intelligence metrics from the already-fetched contacts array.
   // Accepts the result of fetchLinkedInContacts() so no extra DB round-trip.
