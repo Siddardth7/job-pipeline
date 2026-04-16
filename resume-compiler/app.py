@@ -38,6 +38,18 @@ def sanitize_latex(text: str) -> str:
     return _LATEX_SPECIAL.sub(lambda m: _LATEX_REPLACEMENTS[m.group(0)], text)
 
 
+_CERTIFICATIONS_LINE = re.compile(
+    r"\\skillline\{Certifications:[^}]*\}\{[^}]*\}\s*\n?",
+    re.IGNORECASE,
+)
+
+
+def strip_locked_skills(skills_latex: str) -> str:
+    """Remove skill lines that are hardcoded in the template outside the block.
+    Prevents duplicates when the AI also emits those lines inside skills_latex."""
+    return _CERTIFICATIONS_LINE.sub("", skills_latex)
+
+
 def inject_placeholders(tex: str, summary: str, skills_latex: str) -> str:
     """
     Replace sentinel markers in a .tex template string.
@@ -187,7 +199,7 @@ def generate():
     patched_tex = inject_placeholders(
         base_tex,
         summary=summary,          # already valid LaTeX (\textbf{} etc.) — do NOT sanitize
-        skills_latex=skills_latex,
+        skills_latex=strip_locked_skills(skills_latex),
     )
 
     try:
