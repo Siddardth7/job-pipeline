@@ -751,3 +751,76 @@ export async function loadCustomCompanies() {
   if (error || !data) return [];
   try { return JSON.parse(data.value); } catch { return []; }
 }
+
+// ── Unified Contacts ───────────────────────────────────────────────────────────
+export async function fetchContacts() {
+  const userId = await getUserId();
+  const { data, error } = await supabase
+    .from('contacts')
+    .select('*')
+    .eq('user_id', userId)
+    .order('priority',    { ascending: false })
+    .order('last_contact', { ascending: false, nullsFirst: false });
+  if (error) throw error;
+  return (data || []).map(row => ({
+    ...row,
+    linkedinUrl: row.linkedin_url || null,
+  }));
+}
+
+export async function upsertContact(contact) {
+  if (!contact.id) throw new Error('upsertContact: id is required');
+  const userId = await getUserId();
+  const { error } = await supabase
+    .from('contacts')
+    .upsert({ ...contact, user_id: userId, updated_at: new Date().toISOString() },
+             { onConflict: 'id' });
+  if (error) throw error;
+}
+
+export async function updateContactFields(id, updates) {
+  if (!id) throw new Error('updateContactFields: id is required');
+  const userId = await getUserId();
+  const { error } = await supabase
+    .from('contacts')
+    .update({ ...updates, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .eq('user_id', userId);
+  if (error) throw error;
+}
+
+export async function updateContactNotes(id, notes) {
+  if (!id) throw new Error('updateContactNotes: id is required');
+  const userId = await getUserId();
+  const { error } = await supabase
+    .from('contacts')
+    .update({ notes, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .eq('user_id', userId);
+  if (error) throw error;
+}
+
+export function computeContactStats(contacts) {
+  const c = contacts || [];
+  const outreached    = c.filter(x => x.outreach_sent);
+  const overdue       = outreached.filter(x => {
+    if (!['Accepted','Replied'].includes(x.outreach_status)) return false;
+    const snoozed = x.follow_up_snoozed_until;
+    if (snoozed && new Date(snoozed) >= new Date()) return false;
+    const last = x.last_contact ? new Date(x.last_contact) : null;
+    return last && Math.floor((Date.now() - last) / 86400000) >= 7;
+  });
+  return {
+    total:          c.length,
+    outreached:     outreached.length,
+    overdue:        overdue.length,
+    pocConfirmed:   c.filter(x => x.is_confirmed_poc).length,
+    pocCandidates:  c.filter(x => x.is_poc_candidate && !x.is_confirmed_poc).length,
+    promisesPending:c.filter(x => x.promise_made && x.promise_status !== 'kept').length,
+    newConnections: c.filter(x => {
+      if (x.outreach_status !== 'Accepted') return false;
+      if (!x.outreach_status_changed_at) return false;
+      return Math.floor((Date.now() - new Date(x.outreach_status_changed_at)) / 86400000) <= 7;
+    }).length,
+  };
+}
