@@ -31,7 +31,8 @@ function downloadCSV(rows, headers, filename) {
   URL.revokeObjectURL(url);
 }
 
-export default function Applied({apps, networkingLog, setPage, updateApplicationStatus, t}) {
+export default function Applied({apps, contacts, setPage, updateApplicationStatus, t}) {
+  const networkingLog = (contacts || []).filter(c => c.outreach_sent);
   const [activeTab, setActiveTab] = useState("apps");
   const [dateRange, setDateRange] = useState("all");
   const [search, setSearch] = useState("");
