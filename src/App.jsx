@@ -119,13 +119,12 @@ export default function JobAgent() {
   const [pipeline, setPipeline] = useState([]);
   const [searchResults, setSearchResults] = useState([]);
   const [contactResults, setContactResults] = useState([]);
-  const [networkingLog, setNetworkingLog] = useState([]);
+  const [contacts, setContacts] = useState([]);
   const [currentJob, setCurrentJob] = useState(null);
   const [customCompanies, setCustomCompanies] = useState([]);
   const [templates, setTemplates] = useState(DEFAULT_TEMPLATES);
   const [groqKey, setGroqKey] = useState("");
   const [serperKey, setSerperKey] = useState("");
-  const [netlogMeta, setNetlogMeta] = useState({}); // {contactId: {status, followUpDate}}
 
   const saveTimer = useRef(null);
   const stateRef = useRef({});
@@ -145,7 +144,7 @@ export default function JobAgent() {
 
   // Keep stateRef current
   useEffect(() => {
-    stateRef.current = {apps, pipeline, searchResults, contactResults, networkingLog, dark, currentJob, customCompanies, templates};
+    stateRef.current = {apps, pipeline, searchResults, contactResults, dark, currentJob, customCompanies, templates};
   });
 
   // Load user profile to gate onboarding wizard
@@ -159,10 +158,10 @@ export default function JobAgent() {
     if (!user) return;
     (async () => {
       try {
-        const [dbApps, dbJobs, dbNetlog, dbTemplates, dbSettings, savedJob, savedCompanies] = await Promise.all([
+        const [dbApps, dbJobs, dbContacts, dbTemplates, dbSettings, savedJob, savedCompanies] = await Promise.all([
           Storage.fetchApplications(),
           Storage.fetchJobs(),
-          Storage.fetchNetlog(),
+          Storage.fetchContacts(),
           Storage.fetchTemplates(),
           Storage.fetchSettings(),
           Storage.loadCurrentJob(),
@@ -173,7 +172,7 @@ export default function JobAgent() {
 
         setApps(dbApps);
         setPipeline(pipelineJobs.map(j => ({...j, status: 'active'})));
-        setNetworkingLog(dbNetlog);
+        setContacts(dbContacts);
         if (dbTemplates.length > 0) setTemplates(dbTemplates);
         if (dbSettings.dark) setDark(dbSettings.dark === 'true');
         // Load API keys from per-user integrations table (falls back to settings for migration period)
@@ -186,9 +185,6 @@ export default function JobAgent() {
           if (dbSettings.groq_api_key)   setGroqKey(dbSettings.groq_api_key);
           if (dbSettings.serper_api_key) setSerperKey(dbSettings.serper_api_key);
         });
-        if (dbSettings.netlog_meta) {
-          try { setNetlogMeta(JSON.parse(dbSettings.netlog_meta)); } catch { /* ignore */ }
-        }
         if (savedJob) setCurrentJob(savedJob);
         if (savedCompanies.length > 0) setCustomCompanies(savedCompanies);
       } catch(e) {
@@ -302,25 +298,23 @@ export default function JobAgent() {
     });
   }, [debouncedSave]);
 
-  const updateNetlogMeta = useCallback((contactId, updates) => {
-    setNetlogMeta(prev => {
-      const next = {...prev, [contactId]: {...(prev[contactId]||{}), ...updates}};
-      Storage.saveSetting('netlog_meta', JSON.stringify(next)).catch(e => console.warn('netlog_meta save error:', e));
-      return next;
-    });
+  const updateContact = useCallback(async (id, fields) => {
+    setContacts(prev => prev.map(c => c.id === id ? { ...c, ...fields } : c));
+    try {
+      await Storage.updateContactFields(id, fields);
+    } catch (e) {
+      console.warn('updateContact error:', e);
+    }
   }, []);
 
-  const addToNetworkingLog = useCallback((contact) => {
-    setNetworkingLog(nl => nl.find(x => x.id === contact.id) ? nl : [...nl, contact]);
-    trackSave(Storage.upsertNetlog(contact));
-    const followUpDate = new Date(Date.now() + 5 * 86400000).toISOString().split('T')[0];
-    setNetlogMeta(prev => {
-      if (prev[contact.id]) return prev;
-      const next = {...prev, [contact.id]: {status: 'Pending', followUpDate}};
-      Storage.saveSetting('netlog_meta', JSON.stringify(next)).catch(e => console.warn('netlog_meta save error:', e));
-      return next;
-    });
-  }, [trackSave]);
+  const addContact = useCallback(async (contact) => {
+    setContacts(prev => prev.find(c => c.id === contact.id) ? prev : [contact, ...prev]);
+    try {
+      await Storage.upsertContact(contact);
+    } catch (e) {
+      console.warn('addContact error:', e);
+    }
+  }, []);
 
   const logApplication = useCallback((app) => {
     setApps(p => [...p, app]);
@@ -362,7 +356,7 @@ export default function JobAgent() {
     dashboard: (
       <Dashboard
         apps={apps} pipeline={pipeline} searchResults={searchResults}
-        networkingLog={networkingLog} netlogMeta={netlogMeta} setPage={setPage} t={t}
+        contacts={contacts} setPage={setPage} t={t}
       />
     ),
     search: (
@@ -395,13 +389,12 @@ export default function JobAgent() {
       <Networking
         currentJob={currentJob} setCurrentJob={setCurrentJob}
         contactResults={contactResults} setContactResults={setContactResults}
-        networkingLog={networkingLog} addToNetworkingLog={addToNetworkingLog}
-        netlogMeta={netlogMeta} updateNetlogMeta={updateNetlogMeta}
+        contacts={contacts} addContact={addContact} updateContact={updateContact}
         setPage={setPage} templates={templates} groqKey={groqKey} serperKey={serperKey} t={t}
       />
     ),
     applied: (
-      <Applied apps={apps} networkingLog={networkingLog} setPage={setPage} updateApplicationStatus={updateApplicationStatus} t={t}/>
+      <Applied apps={apps} contacts={contacts} setPage={setPage} updateApplicationStatus={updateApplicationStatus} t={t}/>
     ),
     intel: (
       <CompanyIntel
@@ -477,8 +470,8 @@ export default function JobAgent() {
                     {id === "pipeline" && pendingPipeline > 0 && (
                       <span style={{marginLeft:"auto",fontSize:11,fontWeight:700,padding:"1px 7px",borderRadius:20,background:t.pri+"22",color:t.pri}}>{pendingPipeline}</span>
                     )}
-                    {id === "networking" && networkingLog.length > 0 && (
-                      <span style={{marginLeft:"auto",fontSize:11,fontWeight:700,padding:"1px 7px",borderRadius:20,background:t.green+"22",color:t.green}}>{networkingLog.length}</span>
+                    {id === "networking" && contacts.filter(c => c.outreach_sent).length > 0 && (
+                      <span style={{marginLeft:"auto",fontSize:11,fontWeight:700,padding:"1px 7px",borderRadius:20,background:t.green+"22",color:t.green}}>{contacts.filter(c => c.outreach_sent).length}</span>
                     )}
                   </div>
                 );
