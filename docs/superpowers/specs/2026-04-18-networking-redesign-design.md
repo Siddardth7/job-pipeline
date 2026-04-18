@@ -54,27 +54,47 @@ Networking
 Promote `linkedin_dm_contacts` → `contacts`. Add 5 outreach-tracking columns from `netlog`/`netlog_meta`. Retire both legacy tables.
 
 ```sql
--- Step 1: Rename table
+-- Step 0: Drop legacy search-cache `contacts` table (unused — no storage.js references,
+--         data was cached in React state only). Verify before running:
+--         SELECT count(*) FROM contacts;  -- expect 0 or stale search results
+DROP TABLE IF EXISTS contacts CASCADE;
+
+-- Step 1: Rename table (now safe — no collision)
 ALTER TABLE linkedin_dm_contacts RENAME TO contacts;
 
--- Step 2: Add outreach tracking columns
+-- Step 2: Add outreach tracking columns + snooze field
 ALTER TABLE contacts
   ADD COLUMN source TEXT DEFAULT 'linkedin_import',
   ADD COLUMN outreach_sent BOOLEAN DEFAULT false,
   ADD COLUMN outreach_date DATE,
   ADD COLUMN outreach_status TEXT,
-  ADD COLUMN outreach_status_changed_at TIMESTAMPTZ;
+  ADD COLUMN outreach_status_changed_at TIMESTAMPTZ,
+  ADD COLUMN follow_up_snoozed_until DATE;  -- replaces localStorage snooze
 
--- Step 3: Migrate netlog rows (upsert by id or linkedin_url)
--- source = 'manual' | 'find_contacts', outreach_sent = true
+-- Step 3: Migrate netlog rows with explicit dedupe order:
+--   a) Try exact ID match → update outreach fields on existing contact
+--   b) Try linkedin_url match (case-insensitive) → merge outreach fields in
+--   c) No match → INSERT as new contact (source='manual', outreach_sent=true)
+--   Note: manual-${Date.now()} IDs will always fall through to (c) — that is correct.
+--   Note: normalize outreach_date with TRY_CAST — locale strings ('4/18/2026') must
+--         be parsed via application-layer migration script (not raw SQL CAST) since
+--         toLocaleDateString() format varies by browser locale. Migration script should
+--         use JS Date.parse() or Python dateutil.parser.parse() with fallback to NULL.
 
--- Step 4: Dissolve netlog_meta JSON → write status/statusChangedAt
---         into contacts.outreach_status / outreach_status_changed_at
+-- Step 4: Dissolve netlog_meta JSON from settings table:
+--   Read settings WHERE key LIKE '%:netlog_meta', parse JSON,
+--   for each {contactId: {status, statusChangedAt}} entry:
+--     UPDATE contacts SET
+--       outreach_status = entry.status,
+--       outreach_status_changed_at = entry.statusChangedAt::timestamptz
+--     WHERE id = contactId OR (outreach_sent = true AND id = contactId);
+--   Corrupt/unparseable entries → default outreach_status = 'Sent'
 
--- Step 5: Update storage.js — replace all netlog + linkedin_dm_contacts
---         calls with unified contacts functions
+-- Step 5: Update storage.js + Python scripts (see sections 7 and 4.3)
 
--- Step 6: Retire netlog table + delete netlog_meta settings key
+-- Step 6: Retire legacy tables after verifying row counts match
+DROP TABLE IF EXISTS netlog;
+DELETE FROM settings WHERE key LIKE '%:netlog_meta';
 ```
 
 ### 4.2 Unified `contacts` Schema
@@ -92,15 +112,28 @@ ALTER TABLE contacts
 **Intelligence fields** (preserved from linkedin_dm_contacts):
 - `persona`, `conversation_stage`, `relationship_strength`
 - `poc_score`, `is_poc_candidate`, `is_confirmed_poc`
-- `follow_up`, `follow_up_priority`, `follow_up_type`, `follow_up_reason`, `follow_up_guidance`
+- `follow_up`, `follow_up_priority`, `follow_up_type`, `follow_up_reason`, `follow_up_guidance`, `follow_up_snoozed_until`
 - `promise_made`, `promise_text`, `promise_status`
 - `referral_secured`, `referral_discussed`
 - `tone`, `two_way_conversation`, `total_exchanges`, `message_count`
 - `last_contact`, `days_since`, `notes`, `tags`, `summary`, `crm_summary`, `next_action`
 
-### 4.3 LinkedIn Sync — Zero Script Changes
+### 4.3 LinkedIn Sync — Script Changes Required (3 scripts, ~3 lines each)
 
-The Python sync script already upserts by `id` into `linkedin_dm_contacts`. After table rename, it upserts into `contacts` — no script changes needed. New contacts discovered via sync get `source='linkedin_import'`, `outreach_sent=false` by default. If the sync detects the contact already exists via outreach, the outreach tracking fields (`outreach_sent`, `outreach_date`, `outreach_status`, `outreach_status_changed_at`, `source`) are preserved — the sync upsert only overwrites intelligence fields (persona, stage, strength, poc_score, follow_up, etc.).
+All three Python scripts hardcode `linkedin_dm_contacts` and need the table name updated to `contacts`. Additionally, two scripts have a broken user_id contract that must be fixed before RLS on the new table blocks their writes.
+
+**Required changes per script:**
+
+| Script | Table name change | user_id fix |
+|---|---|---|
+| `linkedin_crm_import.py:115` | `'linkedin_dm_contacts'` → `'contacts'` | None needed (already sets user_id) |
+| `linkedin_messages_import.py:177` | `'linkedin_dm_contacts'` → `'contacts'` | Must add `user_id` to each row before upsert — accept as CLI arg or read from env var `JOBAGENT_USER_ID` |
+| `linkedin_intelligence_v2.py:959,962` | `'linkedin_dm_contacts'` → `'contacts'` | Replace hardcoded UUID with `os.environ['JOBAGENT_USER_ID']` — fail loudly if unset |
+
+**Import contract going forward:**
+- Scripts receive `JOBAGENT_USER_ID` from environment (set once in shell profile / `.env`)
+- Scripts upsert by `id` — intelligence fields are overwritten, outreach tracking fields (`outreach_sent`, `outreach_date`, `outreach_status`, `outreach_status_changed_at`, `source`) are preserved via upsert column exclusion or a `DO UPDATE SET` that skips those columns
+- New contacts from sync get `source='linkedin_import'`, `outreach_sent=false` by default
 
 ---
 
@@ -162,13 +195,13 @@ Sectioned daily queue. Badge on tab shows total pending count.
 
 | Section | Trigger | Completion Button | What It Records |
 |---|---|---|---|
-| 🔴 Overdue Follow-ups | outreach_status in (Accepted, Replied) AND last contact ≥7d | **✓ I Followed Up** | `last_contact = today`, snooze 15d |
+| 🔴 Overdue Follow-ups | `outreach_status IN ('Accepted','Replied') AND (follow_up_snoozed_until IS NULL OR follow_up_snoozed_until < today) AND last_contact < today - 7` | **✓ I Followed Up** | `follow_up_snoozed_until = today + 15`, `last_contact` NOT touched |
 | 🟠 Promises Pending | `promise_made=true AND promise_status != 'kept'` | **✓ Promise Kept** | `promise_status = 'kept'` |
 | ★ POC Candidates | `poc_score ≥7 AND is_confirmed_poc=false` | **★ Confirm as POC** | `is_confirmed_poc=true`, `outreach_status='Referral Secured'` |
 | 🟢 New Connections | `outreach_status='Accepted' AND outreach_status_changed_at > now() - 7 days` | **✓ Message Sent** | `outreach_status='Replied'`, `last_contact=today` |
 | 🔄 LinkedIn Sync | Always shown | **Run Sync** | Shows last run date + contacts updated |
 
-**Dismiss behavior:** Every item also has "✕ Dismiss / Not Yet" which soft-hides for 7 days (stored in `localStorage`) and re-surfaces after.
+**Dismiss behavior:** Every item has "✕ Dismiss / Not Yet" which sets `follow_up_snoozed_until = today + 7` in the database (not localStorage — so it persists across devices and sessions).
 
 ---
 
@@ -189,16 +222,35 @@ fetchContactStats(contacts)        // replaces fetchLinkedInStats()
 
 ---
 
-## 8. App.jsx Changes
+## 8. Files Requiring Changes
 
+### App.jsx
 Remove:
 - `networkingLog` state + `addToNetworkingLog` + `updateNetlogMeta` + `netlogMeta`
 - `netlog_meta` read/write from settings
-- Props passed to Dashboard and Networking for legacy netlog/meta
+- Props passed to Dashboard, Networking, Applied for legacy netlog/meta
+- Nav badge at `App.jsx:480` that counts `networkingLog.length`
 
 Add:
-- `contacts` state loaded from unified `contacts` table
+- `contacts` state loaded from unified `contacts` table via `fetchContacts()`
 - `updateContact(id, fields)` function (replaces both netlogMeta updater and updateLinkedInContactFields)
+- Nav badge updated to count `contacts.filter(c => c.outreach_sent).length`
+
+### Dashboard.jsx
+- Replace `networkingLog` + `netlogMeta` props with `contacts` (unified array)
+- `totalNetworked` → `contacts.filter(c => c.outreach_sent).length`
+- `overdueFollowUps` → computed from contacts using the same trigger logic as Actions tab
+- Spark data (`buildSparkData`) → use `contacts` filtered by `outreach_date`
+
+### dashboard-utils.js
+- `calcStreak(apps, networkingLog)` → `calcStreak(apps, contacts)` — use `outreach_date` field instead of `c.date`
+
+### Applied.jsx
+- Replace `networkingLog` prop with `contacts` filtered to `outreach_sent=true`
+- Count and list rendering unchanged — just swap the data source
+
+### Networking.jsx (the monolith — fully replaced)
+- Deleted and replaced by the new component tree in `src/components/networking/`
 
 ---
 
