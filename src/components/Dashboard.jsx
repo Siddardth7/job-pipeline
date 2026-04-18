@@ -43,7 +43,7 @@ function KpiCard({ label, value, sparkData, color, sub, t }) {
   );
 }
 
-export default function Dashboard({ apps, pipeline, searchResults: _searchResults, networkingLog, netlogMeta, setPage, t }) {
+export default function Dashboard({ apps, pipeline, searchResults: _searchResults, contacts, setPage, t }) {
   // Live clock — ticks every minute so greeting and today-index stay current
   const [now, setNow] = useState(() => new Date());
   useEffect(() => {
@@ -60,8 +60,9 @@ export default function Dashboard({ apps, pipeline, searchResults: _searchResult
   );
 
   const appsSpark  = buildSparkData(apps, 7);
-  const netSpark   = buildSparkData(networkingLog, 7);
-  const streak     = calcStreak(apps, networkingLog);
+  const outreached = (contacts || []).filter(c => c.outreach_sent);
+  const netSpark   = buildSparkData(outreached.map(c => ({ date: c.outreach_date })), 7);
+  const streak     = calcStreak(apps, contacts);
 
   const pipelineSpark = Array.from({ length: 7 }, (_, i) => {
     const d = new Date(today);
@@ -75,21 +76,23 @@ export default function Dashboard({ apps, pipeline, searchResults: _searchResult
 
   const activeP        = pipeline.filter(j => j.status === 'active').length;
   const totalApps      = apps.length;
-  const totalNetworked = networkingLog.length;
+  const totalNetworked = outreached.length;
 
-  const statusCounts = { Pending: 0, Replied: 0, 'Coffee Chat': 0, 'No Response': 0 };
-  networkingLog.forEach(c => {
-    const s = netlogMeta?.[c.id]?.status || 'Pending';
+  const statusCounts = { Sent: 0, Accepted: 0, Replied: 0, 'Coffee Chat': 0, 'Referral Secured': 0, Cold: 0 };
+  outreached.forEach(c => {
+    const s = c.outreach_status || 'Sent';
     statusCounts[s] = (statusCounts[s] || 0) + 1;
   });
   const responseRate = totalNetworked > 0
     ? Math.round(((statusCounts['Replied'] + statusCounts['Coffee Chat']) / totalNetworked) * 100)
     : 0;
 
-  const todayStr = today.toISOString().split('T')[0];
-  const overdueFollowUps = networkingLog.filter(c => {
-    const meta = netlogMeta?.[c.id];
-    return meta?.status === 'Pending' && meta?.followUpDate && meta.followUpDate < todayStr;
+  const overdueFollowUps = outreached.filter(c => {
+    if (!['Accepted','Replied'].includes(c.outreach_status)) return false;
+    const snoozed = c.follow_up_snoozed_until;
+    if (snoozed && new Date(snoozed) >= new Date()) return false;
+    const last = c.last_contact ? new Date(c.last_contact) : null;
+    return last && Math.floor((Date.now() - last) / 86400000) >= 7;
   }).length;
 
   const weekAppsTotal = appsPerDay.slice(0, todayIdx + 1).reduce((s, n) => s + n, 0);
@@ -219,10 +222,10 @@ export default function Dashboard({ apps, pipeline, searchResults: _searchResult
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: overdueFollowUps > 0 ? 12 : 0 }}>
             {[
-              { label: 'Pending',     count: statusCounts['Pending'],     color: t.yellow, Icon: MessageSquare },
-              { label: 'Replied',     count: statusCounts['Replied'],     color: t.green,  Icon: CheckCircle },
-              { label: 'Coffee Chat', count: statusCounts['Coffee Chat'], color: '#a78bfa', Icon: Coffee },
-              { label: 'No Response', count: statusCounts['No Response'], color: t.red,    Icon: Users },
+              { label: 'Sent',             count: statusCounts['Sent'],             color: t.yellow, Icon: MessageSquare },
+              { label: 'Replied',          count: statusCounts['Replied'],          color: t.green,  Icon: CheckCircle },
+              { label: 'Coffee Chat',      count: statusCounts['Coffee Chat'],      color: '#a78bfa', Icon: Coffee },
+              { label: 'Referral Secured', count: statusCounts['Referral Secured'], color: t.green,  Icon: Users },
             ].map(({ label, count, color, Icon }) => (
               <div key={label} style={{ padding: '10px 12px', background: t.hover, borderRadius: 8, border: `1px solid ${t.border}` }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 4 }}>

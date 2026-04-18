@@ -57,10 +57,12 @@ export function getWeekDays() {
 
 /**
  * Calculates the current active streak in days.
- * A day counts if apps or networkingLog has an item whose `date` falls on that day.
+ * A day counts if apps has an item whose `date` falls on that day,
+ * or contacts has an item with outreach_sent + outreach_date on that day.
  * Stops at the first gap (skips today-only gaps only on day 0).
  */
-export function calcStreak(apps, networkingLog) {
+export function calcStreak(apps, contacts) {
+  const outreached = (contacts || []).filter(c => c.outreach_sent && c.outreach_date);
   const today = new Date();
   let count = 0;
   for (let i = 0; i < MAX_STREAK_LOOKBACK_DAYS; i++) {
@@ -68,7 +70,7 @@ export function calcStreak(apps, networkingLog) {
     d.setDate(today.getDate() - i);
     const active =
       apps.some(a => isSameLocalDay(a.date, d)) ||
-      networkingLog.some(c => isSameLocalDay(c.date, d));
+      outreached.some(c => isSameLocalDay(c.outreach_date, d));
     if (active) {
       count++;
     } else if (i > 0) {
