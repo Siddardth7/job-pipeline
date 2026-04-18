@@ -23,6 +23,7 @@ ALTER TABLE linkedin_dm_contacts RENAME TO contacts;
 --   outreach_status_changed_at: timestamp of the last status change
 --   follow_up_snoozed_until: snooze follow-up suggestions until this date (user can dismiss for later)
 ALTER TABLE contacts
+  ADD COLUMN IF NOT EXISTS source TEXT DEFAULT 'linkedin_import',
   ADD COLUMN IF NOT EXISTS outreach_sent BOOLEAN DEFAULT false,
   ADD COLUMN IF NOT EXISTS outreach_date DATE,
   ADD COLUMN IF NOT EXISTS outreach_status TEXT,
