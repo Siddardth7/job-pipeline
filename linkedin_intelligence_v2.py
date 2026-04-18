@@ -32,6 +32,9 @@ load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env.local'))
 SUPABASE_URL = os.getenv('VITE_SUPABASE_URL')
 SUPABASE_KEY = os.getenv('VITE_SUPABASE_ANON_KEY')
 
+if not os.environ.get('JOBAGENT_USER_ID'):
+    raise EnvironmentError('JOBAGENT_USER_ID env var required — add to shell: export JOBAGENT_USER_ID=your-uuid')
+
 # ── Date utilities ─────────────────────────────────────────────────────────────
 
 def parse_date(s: str):
@@ -956,10 +959,10 @@ def main():
         for row in batch:
             r = {k: v for k, v in row.items() if k not in ('company', 'position')}
             r['updated_at'] = datetime.now(timezone.utc).isoformat()
-            r['user_id'] = 'de1bafab-7e76-4b80-a7ed-8de86c6d9bad'
+            r['user_id'] = os.environ['JOBAGENT_USER_ID']
             clean_batch.append(r)
 
-        client.table('linkedin_dm_contacts').upsert(
+        client.table('contacts').upsert(
             clean_batch, on_conflict='id'
         ).execute()
         written += len(batch)

@@ -112,7 +112,7 @@ def main():
         return
 
     # Upsert in one batch (all rows have unique ids)
-    client.table('linkedin_dm_contacts').upsert(rows, on_conflict='id').execute()
+    client.table('contacts').upsert(rows, on_conflict='id').execute()
 
     follow_ups = sum(1 for r in rows if r['follow_up'])
     active = sum(1 for r in rows if r['conv_status'] == 'Opportunity Active')
