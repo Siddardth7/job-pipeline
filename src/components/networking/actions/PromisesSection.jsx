@@ -2,7 +2,7 @@ import { Linkedin } from 'lucide-react';
 import Avatar from '../shared/Avatar.jsx';
 
 export default function PromisesSection({ contacts, updateContact, t }) {
-  const pending = contacts.filter(c => c.promise_made && c.promise_status !== 'kept');
+  const pending = contacts.filter(c => c.promise_made && c.promise_status !== 'kept' && c.promise_status !== 'dismissed');
   if (pending.length === 0) return null;
 
   return (

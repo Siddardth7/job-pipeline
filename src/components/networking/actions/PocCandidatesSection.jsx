@@ -1,7 +1,11 @@
 import Avatar from '../shared/Avatar.jsx';
 
 export default function PocCandidatesSection({ contacts, updateContact, t }) {
-  const candidates = contacts.filter(c => c.poc_score >= 7 && !c.is_confirmed_poc);
+  const today = new Date().toISOString().split('T')[0];
+  const candidates = contacts.filter(c =>
+    c.poc_score >= 7 && !c.is_confirmed_poc &&
+    (!c.follow_up_snoozed_until || c.follow_up_snoozed_until < today)
+  );
   if (candidates.length === 0) return null;
 
   const handleConfirm = (c) => {
@@ -37,7 +41,9 @@ export default function PocCandidatesSection({ contacts, updateContact, t }) {
                 fontSize: 11.5, fontWeight: 700, cursor: 'pointer', border: 'none', fontFamily: 'inherit' }}>
               ★ Confirm as POC
             </button>
-            <button onClick={() => updateContact(c.id, { is_poc_candidate: false })}
+            <button onClick={() => updateContact(c.id, {
+                follow_up_snoozed_until: new Date(Date.now() + 7 * 86400000).toISOString().split('T')[0]
+              })}
               style={{ padding: '5px 10px', borderRadius: 6, background: '#f1f5f9',
                 border: '1px solid #e2e8f0', color: '#64748b', fontSize: 11.5,
                 fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>
