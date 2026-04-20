@@ -15,7 +15,7 @@ const DEFAULT_PROFILE = {
   visaStatus: 'F-1 OPT STEM',
   summary: '',                  // plain text resume summary — required for Railway /generate
   skills_latex: '',             // raw LaTeX skills block — required for Railway /generate
-  railwayUrl: 'https://resume-compiler-production.up.railway.app',
+  compilerUrl: 'https://resume-compiler-1077806152183.us-central1.run.app',
   supabaseUrl: 'https://wefcbqfxzvvgremxhubi.supabase.co',
   supabaseAnonKey: '',
 };

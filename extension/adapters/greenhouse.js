@@ -1,7 +1,7 @@
 // adapters/greenhouse.js — Greenhouse ATS adapter
 //
 // PRE-BUILD VALIDATION RESULTS:
-// CORS on Railway: PASS (https://resume-compiler-production.up.railway.app — access-control-allow-origin: *)
+// CORS on Cloud Run: PASS (https://resume-compiler-1077806152183.us-central1.run.app — access-control-allow-origin: *)
 // DataTransfer works on Greenhouse: NEEDS BROWSER VERIFICATION (see README)
 // If DataTransfer fails on a real page: adapter highlights the file input with a red border so user can upload manually
 

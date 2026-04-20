@@ -2,7 +2,7 @@
 
 An AI-powered job application assistant built for Siddardth Pathipaka — aerospace and manufacturing engineer. JobAgent automates the full job search pipeline: scraping postings daily, scoring them against four resume variants, rewriting resume sections per job, generating cover letters, and tracking the entire pipeline from first contact to offer.
 
-**Live app:** [jobagentweb.netlify.app](https://jobagentweb.netlify.app)
+**Live app:** [jobagent-web.vercel.app](https://jobagent-web.vercel.app)
 
 ---
 
@@ -26,13 +26,13 @@ Siddardth maintains four LaTeX resume variants targeting different role families
 - **Variant D** — Equipment / NPI
 
 ### One-Click PDF Download
-A Python Flask microservice (deployed on Railway) compiles LaTeX templates with Tectonic and returns a PDF. The frontend sends the AI-rewritten content to the compiler and triggers a browser download — no local LaTeX installation required.
+A Python Flask microservice (deployed on Google Cloud Run) compiles LaTeX templates with Tectonic and returns a PDF. The frontend sends the AI-rewritten content to the compiler and triggers a browser download — no local LaTeX installation required.
 
 ### Cover Letter Generator
-AI generates a tailored cover letter for any job. The letter can be downloaded as a PDF via the same Railway compiler service.
+AI generates a tailored cover letter for any job. The letter can be downloaded as a PDF via the same Cloud Run compiler service.
 
 ### Networking CRM
-Track contacts, outreach status, follow-up reminders, and connection analytics. Supports full lifecycle: Identified → Reached Out → Responded → Meeting → Offer Referral.
+Track contacts, outreach status, follow-up reminders, and connection analytics. Unified `contacts` table covers the full lifecycle: Find → Sent → Accepted → Replied → Coffee Chat → Referral Secured.
 
 ### Company Intel
 Research target companies, track cold outreach plans, and store notes. Integrates with the job feed so company data is pre-populated from the enrichment pipeline.
@@ -49,8 +49,8 @@ Browse all previous daily scrape runs in the job feed UI. Each daily commit arch
 
 | Layer | Technology | Deployment |
 |---|---|---|
-| Frontend | React 18 + Vite | Netlify (`jobagentweb.netlify.app`) |
-| Resume / Cover Letter Compiler | Python Flask + Tectonic LaTeX | Railway (`resume-compiler-production.up.railway.app`) |
+| Frontend | React 18 + Vite | Vercel (`jobagent-web.vercel.app`) |
+| Resume / Cover Letter Compiler | Python Flask + Tectonic LaTeX | Google Cloud Run (`resume-compiler-jobagent`) |
 | Database | Supabase (PostgreSQL) | Supabase cloud |
 | Job Scrapers | Python 3.11 | GitHub Actions (daily cron) |
 | AI | Groq API (llama-3.3-70b-versatile) | Groq cloud (key stored in Supabase settings) |
@@ -65,39 +65,24 @@ jobagent-web/
 │   │   ├── JobAnalysis.jsx     # AI scoring + resume rewriting
 │   │   ├── Pipeline.jsx        # Kanban pipeline tracker
 │   │   ├── Applied.jsx         # Applied jobs log
-│   │   ├── Networking.jsx      # Networking CRM
+│   │   ├── Networking.jsx      # Networking CRM (3-tab: Find / My Network / Actions)
 │   │   ├── CompanyIntel.jsx    # Company research + outreach planner
 │   │   └── Settings.jsx        # API key management + preferences
-│   └── supabase.js             # Supabase client + data helpers
-├── resume-compiler/            # Railway microservice
-│   ├── app.py                  # Flask app — /compile endpoint
-│   ├── Dockerfile              # Tectonic LaTeX + Python
+│   └── lib/
+│       ├── storage.js          # Supabase data helpers
+│       └── dashboard-utils.js  # Dashboard stat calculations
+├── resume-compiler/            # Google Cloud Run microservice
+│   ├── app.py                  # Flask app — /generate + /generate-cover-letter endpoints
+│   ├── Dockerfile              # Tectonic LaTeX + Python (build for linux/amd64)
 │   └── templates/              # LaTeX resume templates (variants A–D)
 ├── scrapers/                   # Individual scraper modules
-│   ├── ats_scraper.py          # Direct ATS board scraper
-│   ├── jsearch_scraper.py      # JSearch API scraper
-│   ├── apify_scraper.py        # Apify actor scraper
-│   ├── serpapi_scraper.py      # SerpAPI Google Jobs scraper
-│   └── theirstack_scraper.py   # TheirStack API scraper
-├── pipeline/                   # Post-scrape processing
-│   ├── merge_pipeline.py       # Deduplication + filter stack (F1–F9)
-│   └── company_intelligence.py # H-1B / tier / industry enrichment
+├── pipeline/                   # Post-scrape processing (merge, filter, enrich)
 ├── engine/                     # Orchestration layer
-│   ├── scraper_orchestrator.py # Runs all scrapers in sequence
-│   └── query_engine.py         # Query engine for stored job data
-├── data/                       # Static reference data
-│   ├── ats_companies.json      # ATS board URLs per company
-│   ├── company_database.json   # H-1B / tier / industry lookup
-│   ├── itar_keywords.json      # ITAR keyword blocklist
-│   └── scraper_state.json      # Scraper run state
+├── data/                       # Static reference data (ATS, H-1B, ITAR)
 ├── output/                     # Scraper output (committed by Actions)
 │   └── jobs_clean_latest.json  # Latest clean job feed
-├── .github/workflows/
-│   └── daily_scrape.yml        # Daily cron — scrape → merge → enrich → commit
-├── netlify.toml                # Netlify build + redirect config
-├── vite.config.js              # Vite config
-├── requirements.txt            # Python dependencies for scrapers/pipeline
-└── M628_*.json                 # Siddardth's personal job data exports
+└── .github/workflows/
+    └── daily_scrape.yml        # Daily cron — scrape → merge → enrich → commit
 ```
 
 ---
@@ -107,12 +92,12 @@ jobagent-web/
 ### Frontend (local dev)
 
 1. Clone the repo.
-2. Create a `.env` file at the root:
+2. Create a `.env.local` file at the root:
 
 ```
 VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key
-VITE_COMPILER_URL=https://resume-compiler-production.up.railway.app
+VITE_COMPILER_URL=https://resume-compiler-1077806152183.us-central1.run.app
 ```
 
 3. Install and run:
@@ -122,32 +107,44 @@ npm install
 npm run dev
 ```
 
-> **Note:** `VITE_GROQ_API_KEY` and `SERPER_API_KEY` are intentionally not stored as build-time env vars. They are entered through the Settings page in the app UI and persisted in Supabase — so no API keys live in the repository or in Netlify env vars.
+> **Note:** `VITE_GROQ_API_KEY` and `SERPER_API_KEY` are intentionally not stored as build-time env vars. They are entered through the Settings page in the app UI and persisted in Supabase — so no API keys live in the repository or in Vercel env vars.
 
-### Netlify Deployment
+### Vercel Deployment
 
-Set the following environment variables in Netlify → Site settings → Environment variables:
+Set the following environment variables in Vercel → Project → Settings → Environment Variables:
 
 | Variable | Value |
 |---|---|
 | `VITE_SUPABASE_URL` | Your Supabase project URL |
 | `VITE_SUPABASE_ANON_KEY` | Your Supabase anon key |
-| `VITE_COMPILER_URL` | Railway service URL |
+| `VITE_COMPILER_URL` | `https://resume-compiler-1077806152183.us-central1.run.app` |
 
 Build command: `npm run build`
-Publish directory: `dist`
+Output directory: `dist`
 
-### Resume Compiler (Railway)
+### Resume Compiler (Google Cloud Run)
 
-The `resume-compiler/` directory is a self-contained Flask service:
+The `resume-compiler/` directory is a self-contained Flask service deployed on Google Cloud Run (project: `resume-compiler-jobagent`).
+
+**To redeploy after changes:**
 
 ```bash
 cd resume-compiler
-docker build -t resume-compiler .
-docker run -p 8080:8080 resume-compiler
+docker build --platform linux/amd64 -t gcr.io/resume-compiler-jobagent/resume-compiler:latest .
+docker push gcr.io/resume-compiler-jobagent/resume-compiler:latest
+gcloud run deploy resume-compiler \
+  --image gcr.io/resume-compiler-jobagent/resume-compiler:latest \
+  --platform managed --region us-central1 --allow-unauthenticated \
+  --port 8080 --memory 512Mi --project resume-compiler-jobagent
 ```
 
-For Railway deployment: connect the repo, set the root directory to `resume-compiler/`, and Railway will auto-detect the `Dockerfile`. No additional env vars required — the service is stateless.
+> **Note:** Always build with `--platform linux/amd64` — Cloud Run requires amd64 and the Tectonic binary URL will 404 on ARM builds.
+
+**To run locally:**
+```bash
+docker build --platform linux/amd64 -t resume-compiler .
+docker run -p 8080:8080 resume-compiler
+```
 
 ### GitHub Actions (Scrapers)
 
@@ -162,26 +159,30 @@ The daily scrape runs automatically at 13:00 UTC every day. Configure the follow
 
 To trigger a manual run: GitHub → Actions → Daily Job Scrape → Run workflow.
 
-The workflow:
-1. Runs all scrapers via `engine/scraper_orchestrator.py` — each scraper is isolated so one failure does not block others
-2. Merges and filters results via `pipeline/merge_pipeline.py` (filter stack F1–F9)
-3. Enriches with company data via `pipeline/company_intelligence.py`
-4. Commits the output back to the `output/` directory
-5. Prints a summary of green/yellow job counts and sources
+### LinkedIn Sync Scripts
+
+Three Python scripts sync LinkedIn data into the `contacts` table. All require `JOBAGENT_USER_ID` in your shell environment:
+
+```bash
+export JOBAGENT_USER_ID=de1bafab-7e76-4b80-a7ed-8de86c6d9bad
+```
+
+| Script | Purpose |
+|---|---|
+| `linkedin_crm_import.py` | Import contacts from LinkedIn CSV export |
+| `linkedin_messages_import.py` | Import conversation data from LinkedIn messages export |
+| `linkedin_intelligence_v2.py` | Run AI intelligence scoring on contacts |
 
 ---
 
 ## Supabase Schema
 
-Key tables in `supabase_schema.sql`:
+Key tables:
 
+- `contacts` — unified networking contacts (merged from linkedin_dm_contacts + netlog)
 - `jobs` — scraped job listings
 - `applications` — application tracking
-- `contacts` — networking contacts
-- `netlog` — outreach activity log
-- `templates` — email/cover letter templates
-- `settings` — user preferences
-- `linkedin_dm_contacts` — imported LinkedIn DM conversation contacts
+- `settings` — user preferences + API keys
 
 ---
 
@@ -195,47 +196,6 @@ Key tables in `supabase_schema.sql`:
 | D | Equipment / NPI | Capital equipment, new product introduction |
 
 LaTeX templates live in `resume-compiler/templates/`. The AI analysis step rewrites the summary and skills sections for the best-matching variant before compilation.
-
----
-
-## LinkedIn DM CRM Integration
-
-This app integrates with a local LinkedIn CRM tool that parses your LinkedIn message export and classifies conversations. The output is stored in Supabase and displayed in the Networking → LinkedIn DMs tab.
-
-### Setup
-
-**1. Export your LinkedIn data**
-1. Go to LinkedIn → Settings → Data privacy → Get a copy of your data
-2. Select "Messages" (and optionally Connections)
-3. Download the `.zip` when ready (can take up to 24 hours)
-
-**2. Run the LinkedIn CRM tool**
-```
-cd ~/Desktop/linkedin-crm
-python main.py --input ~/Downloads/Basic_LinkedInDataExport_*.zip
-```
-This produces `output/contacts_export.csv`.
-
-**3. Import contacts to Supabase**
-```
-cd /path/to/jobagent-web
-pip install supabase python-dotenv
-python linkedin_crm_import.py --csv ~/Desktop/linkedin-crm/output/contacts_export.csv
-```
-Output: `Imported N contacts. Y follow-ups. Z active opportunities.`
-
-**4. View in the UI**
-Open the app → Networking → **LinkedIn DMs** tab.
-
-You'll see:
-- Summary stats (total contacts, follow-ups, active opportunities, recruiters)
-- Filterable contact cards with role/status badges and priority scoring
-- Expandable conversation summaries
-- Editable notes (auto-saved on blur)
-- Orange left border + 🔔 for contacts needing follow-up
-
-**5. Re-sync after a new LinkedIn export**
-Re-run step 3. The import is fully idempotent — it upserts by contact ID (name slug + LinkedIn URL hash).
 
 ---
 

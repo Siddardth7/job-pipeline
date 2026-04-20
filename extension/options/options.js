@@ -7,7 +7,7 @@ const DEFAULT_PROFILE = {
   linkedinUrl: '', city: '', state: '',
   workAuth: 'authorized', needsSponsorship: true, visaStatus: 'F-1 OPT STEM',
   summary: '', skills_latex: '',
-  railwayUrl: 'https://resume-compiler-production.up.railway.app',
+  compilerUrl: 'https://resume-compiler-1077806152183.us-central1.run.app',
   supabaseUrl: 'https://wefcbqfxzvvgremxhubi.supabase.co',
   supabaseAnonKey: '',
 };
@@ -16,7 +16,7 @@ const DEFAULT_PROFILE = {
 const TEXT_FIELDS = [
   'firstName', 'lastName', 'email', 'phone', 'linkedinUrl', 'city', 'state',
   'visaStatus', 'summary', 'skills_latex',
-  'railwayUrl', 'supabaseUrl', 'supabaseAnonKey',
+  'compilerUrl', 'supabaseUrl', 'supabaseAnonKey',
 ];
 const SELECT_FIELDS = ['workAuth', 'needsSponsorship'];
 

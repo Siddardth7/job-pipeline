@@ -30,10 +30,10 @@ async function handleFillForm({ job, variant }) {
   }
 
   // Fetch resume PDF via background service worker
-  const railwayUrl = profile.railwayUrl || 'https://resume-compiler-production.up.railway.app';
+  const compilerUrl = profile.compilerUrl || 'https://resume-compiler-1077806152183.us-central1.run.app';
   const pdfResponse = await chrome.runtime.sendMessage({
     type: 'FETCH_PDF',
-    railwayUrl,
+    compilerUrl,
     variant,
     summary: profile.summary || '',
     skills_latex: profile.skills_latex || '',

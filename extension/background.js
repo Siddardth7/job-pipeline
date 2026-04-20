@@ -26,9 +26,9 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 // ── Railway PDF fetch ──────────────────────────────────────────────────────────
 // POST /generate — requires variant (A/B/C/D), summary (plain text), skills_latex (raw LaTeX)
 async function handleFetchPdf(msg, sendResponse) {
-  const { railwayUrl, variant, summary, skills_latex, company, role } = msg;
+  const { compilerUrl, variant, summary, skills_latex, company, role } = msg;
   try {
-    const res = await fetch(`${railwayUrl}/generate`, {
+    const res = await fetch(`${compilerUrl}/generate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ variant, summary, skills_latex, company, role }),
@@ -47,9 +47,9 @@ async function handleFetchPdf(msg, sendResponse) {
 
 // POST /generate-cover-letter — company + role required
 async function handleFetchCoverLetter(msg, sendResponse) {
-  const { railwayUrl, company, role, summary, variant_focus } = msg;
+  const { compilerUrl, company, role, summary, variant_focus } = msg;
   try {
-    const res = await fetch(`${railwayUrl}/generate-cover-letter`, {
+    const res = await fetch(`${compilerUrl}/generate-cover-letter`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ company, role, summary, variant_focus }),
