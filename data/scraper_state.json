@@ -1,14 +1,14 @@
 {
   "jsearch": {
     "queries_today": 10,
-    "queries_this_month": 186
+    "queries_this_month": 196
   },
   "serpapi": {
-    "queries_today": 5
+    "queries_today": 0
   },
   "apify": {
     "runs_today": 1
   },
-  "last_reset": "2026-04-21",
+  "last_reset": "2026-04-22",
   "month_year": "2026-04"
 }
