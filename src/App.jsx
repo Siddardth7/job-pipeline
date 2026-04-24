@@ -284,7 +284,9 @@ export default function JobAgent() {
   }, [trackSave]);
 
   const completePipeline = useCallback((id) => {
-    setPipeline(p => p.map(j => j.id === id ? {...j, status:"completed"} : j));
+    // Set in_pipeline:false in state so any pending debouncedSave (e.g. from
+    // updatePipelineJob) reads the correct value and doesn't re-write in_pipeline:true.
+    setPipeline(p => p.map(j => j.id === id ? {...j, status:"completed", in_pipeline: false} : j));
     const job = stateRef.current.pipeline.find(j => j.id === id);
     if (!job) return;
     trackSave(Storage.upsertJob({...job, status:"completed", in_pipeline: false}));
@@ -329,7 +331,13 @@ export default function JobAgent() {
   const setSearchResultsWithSave = useCallback((updater) => {
     setSearchResults(prev => {
       const next = typeof updater === 'function' ? updater(prev) : updater;
-      debouncedSave(() => Storage.upsertJobs(next.map(j => ({...j, in_pipeline: false}))));
+      // Only save rows that originated from the DB feed (have a _feedId).
+      // External/uploaded jobs have no _feedId and their IDs don't exist in
+      // normalized_jobs, so upsert would fail the FK constraint.
+      const dbJobs = next.filter(j => j._feedId);
+      if (dbJobs.length > 0) {
+        debouncedSave(() => Storage.upsertJobs(dbJobs.map(j => ({...j, in_pipeline: false}))));
+      }
       return next;
     });
   }, [debouncedSave]);

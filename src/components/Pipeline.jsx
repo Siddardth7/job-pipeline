@@ -30,7 +30,7 @@ export default function Pipeline({pipeline, removePipeline, completePipeline, on
     const key = `${job.role}||${job.company}`;
     if (!appKeys.has(key)) {
       onLogApp({
-        id: `app-${Date.now()}`,
+        id: `app-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
         role: job.role,
         company: job.company,
         location: job.location || "",

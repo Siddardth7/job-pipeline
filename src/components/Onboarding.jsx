@@ -183,7 +183,7 @@ export default function Onboarding({ t, onComplete }) {
 
             <label style={labelStyle}>LinkedIn URL (optional)</label>
             <input
-              type="url" value={linkedinUrl} onChange={e => setLinkedinUrl(e.target.value)}
+              type="text" value={linkedinUrl} onChange={e => setLinkedinUrl(e.target.value)}
               style={inputStyle} placeholder="https://linkedin.com/in/yourprofile"
             />
           </>
