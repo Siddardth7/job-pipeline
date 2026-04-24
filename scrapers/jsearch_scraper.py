@@ -89,19 +89,6 @@ class JSearchScraper:
     Tracks monthly quota to prevent exhaustion before month end.
     """
 
-    TITLE_QUERIES = [
-        "Manufacturing Engineer entry level",
-        "Process Engineer entry level",
-        "Composites Engineer manufacturing",
-        "Quality Engineer entry level",
-        "Materials Engineer entry level",
-        "Industrial Engineer entry level",
-        "Tooling Engineer manufacturing",
-        "NPI Engineer manufacturing",
-        "Production Engineer entry level",
-        "Continuous Improvement Engineer manufacturing",
-    ]
-
     MAX_CALLS_PER_DAY   = 10    # hard daily cap
     MONTHLY_LIMIT       = 180   # 200/month free tier − 20 buffer
     RETRY_WAIT          = 10    # seconds before one 429 retry
@@ -110,8 +97,9 @@ class JSearchScraper:
 
     def run(self, queries: Optional[List[Dict]] = None) -> List[Dict]:
         """
-        Called by orchestrator. The `queries` parameter is accepted for interface
-        compatibility but not used — JSearch runs hardcoded title queries.
+        Called by orchestrator. `queries` is the list of dicts from QueryEngine
+        (each dict has 'cluster' and 'query' keys). Extracts the 'query' string
+        from each dict and uses them as JSearch search terms.
         Returns jobs in pipeline schema.
         After returning, `self.calls_made` holds the actual number of API calls fired.
         """
@@ -121,8 +109,19 @@ class JSearchScraper:
             log.warning("[jsearch] JSEARCH_API_KEYS not set — skipping")
             return []
 
+        # Build search terms from query engine output
+        search_terms: List[str] = []
+        if queries:
+            for q in queries:
+                term = q.get("query", "").strip()
+                if term:
+                    search_terms.append(term)
+        if not search_terms:
+            log.warning("[jsearch] No queries supplied — skipping")
+            return []
+
         for key in JSEARCH_API_KEYS:
-            result, calls = self._attempt_run(key)
+            result, calls = self._attempt_run(key, search_terms)
             self.calls_made += calls
             if result is not None:
                 log.info(f"[jsearch] Done. {len(result)} jobs. API calls this run: {self.calls_made}")
@@ -131,7 +130,7 @@ class JSearchScraper:
         log.warning("[jsearch] All JSearch keys quota-exhausted")
         return []
 
-    def _attempt_run(self, key: str) -> tuple:
+    def _attempt_run(self, key: str, search_terms: List[str]) -> tuple:
         """
         Try all queries with one key.
         Returns (job_list, api_calls) on success,
@@ -146,12 +145,12 @@ class JSearchScraper:
         api_calls                   = 0
         consecutive_429s            = 0
 
-        for i, query in enumerate(self.TITLE_QUERIES):
+        for i, query in enumerate(search_terms):
             if api_calls >= self.MAX_CALLS_PER_DAY:
                 log.info(f"[jsearch] Daily cap ({self.MAX_CALLS_PER_DAY}) reached")
                 break
 
-            log.info(f"[jsearch] [{i+1}/{len(self.TITLE_QUERIES)}] Query: {query!r}")
+            log.info(f"[jsearch] [{i+1}/{len(search_terms)}] Query: {query!r}")
             time.sleep(self.QUERY_DELAY)
 
             result = self._single_query(headers, query)
