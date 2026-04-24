@@ -127,10 +127,14 @@ def log_run(run_record: Dict):
 
 def write_run_log(run_record: Dict):
     """Write per-run snapshot to data/run_logs/YYYY-MM-DD.json for audit trail."""
-    today    = str(date.today())
-    log_path = RUN_LOGS_DIR / f"{today}.json"
-    log_path.write_text(json.dumps(run_record, indent=2))
-    log.info(f"[orchestrator] Per-run log written → {log_path}")
+    try:
+        from datetime import datetime as _dt
+        ts       = _dt.utcnow().strftime("%Y-%m-%d_%H%M%S")
+        log_path = RUN_LOGS_DIR / f"{ts}.json"
+        log_path.write_text(json.dumps(run_record, indent=2))
+        log.info(f"[orchestrator] Per-run log written → {log_path}")
+    except Exception as exc:
+        log.warning(f"[orchestrator] write_run_log failed (non-fatal): {exc}")
 
 
 # ── Quota helpers ─────────────────────────────────────────────────────────────
