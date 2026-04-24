@@ -12,7 +12,6 @@ permissions:
 env:
   JSEARCH_API_KEYS:     ${{ secrets.JSEARCH_API_KEY }}
   APIFY_TOKENS:         ${{ secrets.APIFY_TOKEN }}
-  SERPAPI_KEY:          ${{ secrets.SERPAPI_KEY }}
   ADZUNA_APP_IDS:       ${{ secrets.ADZUNA_APP_ID }}
   ADZUNA_APP_KEYS:      ${{ secrets.ADZUNA_APP_KEY }}
   SUPABASE_URL:         ${{ secrets.SUPABASE_URL }}
@@ -49,7 +48,6 @@ jobs:
       # Each scraper isolated in try/except — one failure never blocks others.
       # Outputs written to temp/jobs_*.json for the merge step.
       - name: Run scraper orchestrator
-        continue-on-error: true
         run: python engine/scraper_orchestrator.py
 
       # ── STEP 2: Merge all sources + run hard filter stack (F1–F9) ─────────
@@ -62,7 +60,6 @@ jobs:
       # Reads temp/jobs_clean_intermediate.json, adds tier/H1B/industry data.
       # Output: output/jobs_clean_latest.json
       - name: Run company intelligence
-        continue-on-error: true
         run: python pipeline/company_intelligence.py
 
       # ── STEP 3b: Fallback — if company_intelligence failed, promote intermediate ─
@@ -100,8 +97,11 @@ jobs:
       # Upserts all pipeline jobs into normalized_jobs, then scores and writes
       # user_job_feed rows for each registered user based on their role_targets.
       - name: Distribute feed to users
-        continue-on-error: true
         run: python pipeline/distribute_feed.py
+
+      # ── STEP 3d: Health gate — fails workflow if critical sources errored ────
+      - name: Check pipeline health
+        run: python scripts/check_health.py
 
       # ── STEP 4: Commit results ────────────────────────────────────────────
       - name: Commit and push results
