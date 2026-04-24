@@ -80,26 +80,22 @@ def _coerce_str(v) -> str:
 def _extract_location(raw_location) -> str:
     """
     Extract a human-readable location string from the LinkedIn actor's location field.
-    The harvestapi actor returns location as {"name": "Austin, TX, United States"}.
-    May also be a plain string, a structured dict with city/state/country keys, or None.
-    Returns empty string for unknown/null so blank-location jobs can be detected downstream.
+    Returns 'Unknown' for missing/null so blank-location jobs are trackable downstream.
     """
     if not raw_location:
-        return ""
+        return "Unknown"
     if isinstance(raw_location, str):
-        return raw_location.strip()
+        return raw_location.strip() or "Unknown"
     if isinstance(raw_location, dict):
-        # Structured format: {"city": "Austin", "state": "TX", "country": "US"}
         city    = (raw_location.get("city")    or "").strip()
         state   = (raw_location.get("state")   or "").strip()
         country = (raw_location.get("country") or "").strip()
-        parts = [p for p in [city, state, country] if p]
+        parts   = [p for p in [city, state, country] if p]
         if parts:
             return ", ".join(parts)
-        # harvestapi actor format: {"name": "Austin, TX, United States"}
         name = (raw_location.get("name") or "").strip()
-        return name
-    return ""
+        return name or "Unknown"
+    return "Unknown"
 
 
 class ApifyScraper:
@@ -127,6 +123,8 @@ class ApifyScraper:
         "process_open":               "Process Engineer",
         "startup_manufacturing_open": "NPI Engineer",
         "industrial_open":            "Industrial Engineer",
+        "industrial_operations":      "Operations Engineer",
+        "mechanical_thermal":         "Mechanical Systems Engineer",
     }
 
     def run(self, queries: List[Dict]) -> List[Dict]:
