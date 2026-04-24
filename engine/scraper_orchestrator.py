@@ -51,9 +51,11 @@ DATA_DIR     = ROOT / "data"
 TEMP_DIR     = ROOT / "temp"
 STATE_PATH   = DATA_DIR / "scraper_state.json"
 RUN_LOG_PATH = DATA_DIR / "run_log.json"
+RUN_LOGS_DIR = DATA_DIR / "run_logs"
 
 TEMP_DIR.mkdir(exist_ok=True)
 DATA_DIR.mkdir(exist_ok=True)
+RUN_LOGS_DIR.mkdir(exist_ok=True)
 
 # ── Daily query/run budgets ───────────────────────────────────────────────────
 QUOTAS = {
@@ -121,6 +123,14 @@ def log_run(run_record: Dict):
     records.append(run_record)
     records = records[-90:]
     RUN_LOG_PATH.write_text(json.dumps(records, indent=2))
+
+
+def write_run_log(run_record: Dict):
+    """Write per-run snapshot to data/run_logs/YYYY-MM-DD.json for audit trail."""
+    today    = str(date.today())
+    log_path = RUN_LOGS_DIR / f"{today}.json"
+    log_path.write_text(json.dumps(run_record, indent=2))
+    log.info(f"[orchestrator] Per-run log written → {log_path}")
 
 
 # ── Quota helpers ─────────────────────────────────────────────────────────────
@@ -361,7 +371,17 @@ def run():
     # ── Finalise ──────────────────────────────────────────────────────────────
     save_state(state)
     run_record["run_end_utc"] = datetime.utcnow().isoformat() + "Z"
+
+    # Compute true raw total across all sources for metrics passthrough
+    raw_total = sum(
+        s.get("jobs_found", 0)
+        for s in run_record.get("scrapers", {}).values()
+    )
+    run_record["raw_total"] = raw_total
+    (TEMP_DIR / "raw_total.txt").write_text(str(raw_total))
+
     log_run(run_record)
+    write_run_log(run_record)   # <-- per-run durable log
 
     _print_health_summary(run_record["scrapers"])
 

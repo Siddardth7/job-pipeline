@@ -255,7 +255,12 @@ def _write_output(
     green: List[Dict], yellow: List[Dict],
     stats: Dict, db: Dict
 ):
-    total_scraped = stats.get("total_input", 0)
+    # Read true raw count written by orchestrator; fall back to post-filter count
+    _raw_total_path = Path(__file__).parent.parent / "temp" / "raw_total.txt"
+    try:
+        total_scraped = int(_raw_total_path.read_text().strip())
+    except Exception:
+        total_scraped = stats.get("total_input", 0)
     summary = {
         "run_date": str(date.today()),
         "generated_utc": datetime.utcnow().isoformat() + "Z",
