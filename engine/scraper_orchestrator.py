@@ -44,6 +44,7 @@ from scrapers.jsearch_scraper          import JSearchScraper
 from scrapers.apify_scraper            import ApifyScraper
 from scrapers.usajobs_scraper          import USAJobsScraper
 from scrapers.adzuna_scraper           import AdzunaScraper
+from scrapers.contract_scraper         import ContractScraper
 
 DATA_DIR     = ROOT / "data"
 TEMP_DIR     = ROOT / "temp"
@@ -348,6 +349,31 @@ def run():
             "status": "error", "error": str(exc), "jobs_found": 0
         }
 
+    # ── Step 6: Contract Scraper ──────────────────────────────────────────────
+    log.info("[contract] Running contract scraper...")
+    contract_output = TEMP_DIR / "jobs_contract.json"
+    try:
+        contract_scraper = ContractScraper()
+        contract_jobs    = contract_scraper.run()
+        contract_count   = len(contract_jobs)
+        if contract_count > 0:
+            _write_output(contract_output, "contract", contract_jobs)
+            run_record["scrapers"]["contract"] = {
+                "status": "success", "jobs_found": contract_count
+            }
+        else:
+            _write_empty(contract_output, "contract", "zero_results")
+            run_record["scrapers"]["contract"] = {
+                "status": "zero_results", "jobs_found": 0
+            }
+    except Exception as exc:
+        log.error(f"[contract] Scraper raised an exception: {exc}")
+        log.warning(f"[contract] Full traceback:\n{traceback.format_exc()}")
+        _write_empty(contract_output, "contract", str(exc))
+        run_record["scrapers"]["contract"] = {
+            "status": "error", "error": str(exc), "jobs_found": 0
+        }
+
     # ── Finalise ──────────────────────────────────────────────────────────────
     save_state(state)
     run_record["run_end_utc"] = datetime.utcnow().isoformat() + "Z"
@@ -379,7 +405,7 @@ def _print_health_summary(scrapers: Dict):
     log.info("-" * 48)
 
     any_warning    = False
-    display_order  = ["ats", "jsearch", "apify", "usajobs", "adzuna"]
+    display_order  = ["ats", "jsearch", "apify", "usajobs", "adzuna", "contract"]
 
     for name in display_order:
         info    = scrapers.get(name, {})
