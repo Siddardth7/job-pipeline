@@ -57,6 +57,14 @@ BASE_URL        = "https://api.adzuna.com/v1/api/jobs/us/search/1"
 RESULTS_PER_REQ = 50
 MAX_DAYS_OLD    = 3    # only jobs posted in the last 3 days (matches pipeline F4 72h window)
 REQUEST_DELAY   = 1.5  # seconds between requests
+MAX_RAW_JOBS    = 200  # hard cap on raw output per run to prevent single-source concentration
+
+# Cluster priority order: core target clusters fetched first, expansion clusters second.
+CLUSTER_PRIORITY = [
+    "manufacturing", "quality", "composites", "materials", "process",
+    "tooling_inspection", "startup_manufacturing", "industrial",
+    "industrial_operations", "mechanical_thermal",
+]
 
 # Short natural-language phrases per cluster (Adzuna supports plain keywords,
 # not boolean operators). Covers both existing and new multi-user clusters.
@@ -108,7 +116,21 @@ class AdzunaScraper:
         all_jobs: List[Dict] = []
         seen: set = set()
 
-        for q_dict in queries:
+        # Sort queries by cluster priority to fetch core clusters first
+        def _priority(q_dict):
+            c = q_dict.get("cluster", "")
+            try:
+                return CLUSTER_PRIORITY.index(c)
+            except ValueError:
+                return len(CLUSTER_PRIORITY)
+
+        sorted_queries = sorted(queries, key=_priority)
+
+        for q_dict in sorted_queries:
+            if len(all_jobs) >= MAX_RAW_JOBS:
+                log.info(f"[adzuna] MAX_RAW_JOBS={MAX_RAW_JOBS} reached — stopping early")
+                break
+
             cluster = q_dict.get("cluster", "unknown")
             phrase  = CLUSTER_QUERIES.get(cluster)
 
