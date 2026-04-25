@@ -15,14 +15,14 @@ def test_location_from_string():
     assert _extract_location("San Jose, CA") == "San Jose, CA"
 
 
-def test_location_from_none_returns_empty():
+def test_location_from_none_returns_unknown():
     from scrapers.apify_scraper import _extract_location
-    assert _extract_location(None) == ""
+    assert _extract_location(None) == "Unknown"
 
 
-def test_location_from_empty_dict_returns_empty():
+def test_location_from_empty_dict_returns_unknown():
     from scrapers.apify_scraper import _extract_location
-    assert _extract_location({}) == ""
+    assert _extract_location({}) == "Unknown"
 
 
 def test_location_from_dict_with_only_country():

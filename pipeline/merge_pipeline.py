@@ -49,6 +49,9 @@ WHITELISTED_SOURCE_FILES = [
     "jobs_contract.json",   # contract_scraper.py output — employment_type=Contract
 ]
 
+# Public alias as Path objects — consumed by smoke tests and external tooling.
+SOURCE_FILES = [Path(name) for name in WHITELISTED_SOURCE_FILES]
+
 
 def _load_whitelisted_sources(temp_dir: Path = None) -> Tuple[List[Dict], Dict[str, int]]:
     """Load only from whitelisted scraper output files — never intermediate or stale."""
