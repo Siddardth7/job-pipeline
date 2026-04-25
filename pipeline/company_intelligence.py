@@ -37,6 +37,17 @@ log = logging.getLogger("company_intelligence")
 PROMOTION_THRESHOLD = 3    # appearances in 30 days → promote to GREEN
 PROMOTION_WINDOW_DAYS = 30
 
+# Hard-reject list: staffing and recruiter firms removed from the trusted company DB.
+# Any job from a company matching these names is dropped before scoring.
+_CI_DB_PATH = Path(__file__).parent.parent / "data" / "company_database.json"
+try:
+    _ci_db_raw = json.loads(_CI_DB_PATH.read_text())
+    STAFFING_REJECT: frozenset = frozenset(
+        _ci_db_raw.get("staffing_reject", [])
+    )
+except Exception:
+    STAFFING_REJECT = frozenset()
+
 
 # ── Entry point ───────────────────────────────────────────────────────────────
 
@@ -78,6 +89,12 @@ def run():
             )
             dropped += 1
             continue  # refuse to classify — do not include in any output
+
+        # ── STAFFING_REJECT hard-drop ──────────────────────────────────────────
+        if company.lower().strip() in {name.lower() for name in STAFFING_REJECT}:
+            dropped += 1
+            log.debug(f"  [STAFFING_REJECT DROP] {company!r} — {job_title}")
+            continue
 
         verdict = _classify(company, job.get("description", ""), db)
         job["verdict"] = verdict
@@ -190,6 +207,27 @@ def _classify(company: str, description: str, db: Dict) -> str:
     # Generic engineering companies without clear rejection → YELLOW by default
     # (conservative approach: let the user decide rather than dropping)
     return "YELLOW"
+
+
+def _classify_job(job: Dict, db: Dict):
+    """Classify a single job dict, returning the enriched job or None (hard-drop).
+
+    Hard-drops any job whose company_name matches STAFFING_REJECT before any
+    scoring logic runs.  Returns the job dict with a 'verdict' key on success,
+    or None if the job should be dropped.
+    """
+    # Hard-drop staffing/recruiter companies regardless of job title
+    company_lower = (job.get("company_name") or "").lower().strip()
+    if company_lower in {name.lower() for name in STAFFING_REJECT}:
+        log.debug(f"  [STAFFING_REJECT DROP] {job.get('company_name')!r}")
+        return None
+
+    verdict = _classify(
+        job.get("company_name", ""),
+        job.get("description", ""),
+        db,
+    )
+    return {**job, "verdict": verdict}
 
 
 # ── Promotion logic ───────────────────────────────────────────────────────────
