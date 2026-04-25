@@ -201,11 +201,6 @@
       "industry": "Auto-promoted"
     },
     {
-      "name": "The Pivot Group Network",
-      "domain": "",
-      "industry": "Auto-promoted"
-    },
-    {
       "name": "Beta Technologies",
       "domain": "",
       "industry": "Auto-promoted"
@@ -247,11 +242,6 @@
     },
     {
       "name": "Freudenberg Group",
-      "domain": "",
-      "industry": "Auto-promoted"
-    },
-    {
-      "name": "Actalent",
       "domain": "",
       "industry": "Auto-promoted"
     },
@@ -411,11 +401,6 @@
       "industry": "Auto-promoted"
     },
     {
-      "name": "Jobot",
-      "domain": "",
-      "industry": "Auto-promoted"
-    },
-    {
       "name": "BioSpace",
       "domain": "",
       "industry": "Auto-promoted"
@@ -432,11 +417,6 @@
     },
     {
       "name": "JABIL CIRCUIT, INC",
-      "domain": "",
-      "industry": "Auto-promoted"
-    },
-    {
-      "name": "Jobs via Dice",
       "domain": "",
       "industry": "Auto-promoted"
     },
@@ -521,11 +501,6 @@
       "industry": "Auto-promoted"
     },
     {
-      "name": "The Pivot Group",
-      "domain": "",
-      "industry": "Auto-promoted"
-    },
-    {
       "name": "Jabil",
       "domain": "",
       "industry": "Auto-promoted"
@@ -586,11 +561,6 @@
       "industry": "Auto-promoted"
     },
     {
-      "name": "Motion Recruitment",
-      "domain": "",
-      "industry": "Auto-promoted"
-    },
-    {
       "name": "ASM",
       "domain": "",
       "industry": "Auto-promoted"
@@ -647,11 +617,6 @@
     },
     {
       "name": "Franklin Electric",
-      "domain": "",
-      "industry": "Auto-promoted"
-    },
-    {
-      "name": "Myticas Consulting",
       "domain": "",
       "industry": "Auto-promoted"
     },
@@ -2036,6 +2001,15 @@
       "2026-04-04"
     ]
   },
+  "staffing_reject": [
+    "Actalent",
+    "Jobot",
+    "The Pivot Group Network",
+    "The Pivot Group",
+    "Motion Recruitment",
+    "Myticas Consulting",
+    "Jobs via Dice"
+  ],
   "rejected_companies": [],
   "industry_keywords": [
     "Manufacturing",
