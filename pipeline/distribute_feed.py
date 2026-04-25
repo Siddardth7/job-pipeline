@@ -50,6 +50,44 @@ def _get_supabase_client():
         sys.exit(1)
     return create_client(url, key)
 
+# ── Applied-list filter ───────────────────────────────────────────────────────
+
+def build_applied_set(rows: list) -> set:
+    """Convert application rows into a set of normalized (company, location, role) tuples."""
+    result = set()
+    for row in rows:
+        company  = (row.get("company")  or "").lower().strip()
+        location = (row.get("location") or "").lower().strip()
+        role     = (row.get("role")     or "").lower().strip()
+        result.add((company, location, role))
+    return result
+
+
+def is_applied(job: dict, applied_set: set) -> bool:
+    """
+    Return True if this job matches an entry in applied_set.
+    Triple match (company+location+role) is primary.
+    If either side has an empty location, falls back to two-field match (company+role).
+    """
+    company = (job.get("company_name") or "").lower().strip()
+    location = (job.get("location")    or "").lower().strip()
+    role     = (job.get("job_title")   or "").lower().strip()
+
+    if (company, location, role) in applied_set:
+        return True
+
+    # Two-field fallback when either side has no location
+    if not location:
+        return any(
+            c == company and r == role
+            for c, _loc, r in applied_set
+        )
+    return any(
+        c == company and r == role and not _loc
+        for c, _loc, r in applied_set
+    )
+
+
 # ── Data loading ──────────────────────────────────────────────────────────────
 
 def load_jobs():
