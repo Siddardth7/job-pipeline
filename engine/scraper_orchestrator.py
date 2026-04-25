@@ -44,7 +44,7 @@ from engine.query_engine               import QueryEngine
 from scrapers.ats_scraper              import AtsScraper
 from scrapers.jsearch_scraper          import JSearchScraper
 from scrapers.apify_scraper            import ApifyScraper
-from scrapers.serpapi_scraper          import SerpApiScraper
+from scrapers.usajobs_scraper          import USAJobsScraper
 from scrapers.adzuna_scraper           import AdzunaScraper
 
 DATA_DIR     = ROOT / "data"
@@ -60,7 +60,6 @@ RUN_LOGS_DIR.mkdir(exist_ok=True)
 # ── Daily query/run budgets ───────────────────────────────────────────────────
 QUOTAS = {
     "jsearch": 30,   # daily cap; monthly cap enforced separately (3 accounts × 10)
-    "serpapi":  5,   # orchestrator cap; scraper also alternates days
     "apify":    6,   # actor runs per day (3 accounts × 2)
 }
 
@@ -90,7 +89,6 @@ def load_state() -> Dict:
         # Daily reset
         if state.get("last_reset") != today:
             state["jsearch"].update({"queries_today": 0})
-            state.setdefault("serpapi",    {})["queries_today"]     = 0
             state.setdefault("apify",      {})["runs_today"]        = 0
             state["last_reset"] = today
 
@@ -107,7 +105,6 @@ def load_state() -> Dict:
 def _fresh_state(today: str) -> Dict:
     return {
         "jsearch":    {"queries_today": 0, "queries_this_month": 0},
-        "serpapi":    {"queries_today": 0},
         "apify":      {"runs_today":    0},
         "last_reset": today,
         "month_year": today[:7],
@@ -301,55 +298,30 @@ def run():
                 "status": "error", "error": str(exc), "jobs_found": 0
             }
 
-    # ── Step 4: SerpAPI — check even-day gate before running ─────────────────
-    serpapi_output = TEMP_DIR / "jobs_serpapi.json"
-    serpapi_quota  = available_queries("serpapi", state)
-
-    if SerpApiScraper.is_scheduled_off():
-        today_ord = date.today().toordinal()
-        log.info(
-            f"[serpapi] Even-ordinal day ({today_ord}) — scheduled OFF. "
-            f"Runs on odd days to stay within 100 searches/month. "
-            f"Set SERPAPI_FORCE_RUN=1 to override."
-        )
-        _write_empty(serpapi_output, "serpapi", "scheduled_off")
-        run_record["scrapers"]["serpapi"] = {
-            "status": "skipped", "reason": "scheduled_off", "jobs_found": 0
-        }
-    elif serpapi_quota <= 0:
-        log.warning("[serpapi] Daily quota exhausted — skipping")
-        _write_empty(serpapi_output, "serpapi", "quota_exhausted")
-        run_record["scrapers"]["serpapi"] = {
-            "status": "skipped", "reason": "quota_exhausted", "jobs_found": 0
-        }
-    else:
-        log.info(f"[serpapi] Quota remaining today: {serpapi_quota}")
-        batch = all_queries[:serpapi_quota]
-        try:
-            scraper    = SerpApiScraper()
-            jobs       = scraper.run(batch)
-            jobs_found = len(jobs)
-            _write_output(serpapi_output, "serpapi", jobs)
-            deduct("serpapi", len(batch), state)
-            total_primary_jobs += jobs_found
-
-            if jobs_found == 0:
-                log.warning("[serpapi] ⚠ Ran but returned 0 jobs. Check SERPAPI_KEY and quota.")
-                run_record["scrapers"]["serpapi"] = {
-                    "status": "zero_results", "queries_used": len(batch), "jobs_found": 0
-                }
-            else:
-                log.info(f"[serpapi] ✓ {jobs_found} jobs from {len(batch)} queries")
-                run_record["scrapers"]["serpapi"] = {
-                    "status": "success", "queries_used": len(batch), "jobs_found": jobs_found
-                }
-        except Exception as exc:
-            log.error(f"[serpapi] Scraper raised an exception: {exc}")
-            log.warning(f"[serpapi] Full traceback:\n{traceback.format_exc()}")
-            _write_empty(serpapi_output, "serpapi", str(exc))
-            run_record["scrapers"]["serpapi"] = {
-                "status": "error", "error": str(exc), "jobs_found": 0
+    # ── Step 4: USA Jobs ──────────────────────────────────────────────────────
+    try:
+        usajobs = USAJobsScraper()
+        usajobs_jobs = usajobs.run(queries=all_queries)
+        usajobs_count = len(usajobs_jobs)
+        if usajobs_count > 0:
+            _write_output(TEMP_DIR / "jobs_usajobs.json", "usajobs", usajobs_jobs)
+            run_record["scrapers"]["usajobs"] = {
+                "status": "success",
+                "queries_used": usajobs.calls_made,
+                "jobs_found": usajobs_count,
             }
+        else:
+            _write_empty(TEMP_DIR / "jobs_usajobs.json", "usajobs", "zero_results")
+            run_record["scrapers"]["usajobs"] = {
+                "status": "zero_results",
+                "queries_used": usajobs.calls_made,
+                "jobs_found": 0,
+            }
+    except Exception as exc:
+        log.error(f"[usajobs] Scraper raised an exception: {exc}")
+        run_record["scrapers"]["usajobs"] = {
+            "status": "error", "error": str(exc), "jobs_found": 0
+        }
 
     # ── Step 5: Adzuna — daily always-on (250 req/day free tier) ─────────────
     log.info("[adzuna] Running. Quota: 250 req/day free tier.")
@@ -403,7 +375,7 @@ def _print_health_summary(scrapers: Dict):
     log.info("-" * 48)
 
     any_warning    = False
-    display_order  = ["ats", "jsearch", "apify", "serpapi", "adzuna"]
+    display_order  = ["ats", "jsearch", "apify", "usajobs", "adzuna"]
 
     for name in display_order:
         info    = scrapers.get(name, {})
@@ -432,7 +404,7 @@ def _print_health_summary(scrapers: Dict):
     if any_warning:
         log.warning(
             "  ⚠ One or more scrapers had issues. Check GitHub Secrets:\n"
-            "    JSEARCH_API_KEY, SERPAPI_KEY, APIFY_TOKEN"
+            "    JSEARCH_API_KEY, USAJOBS_API_KEY, APIFY_TOKEN"
         )
     log.info("")
 

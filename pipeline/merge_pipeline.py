@@ -42,7 +42,7 @@ WHITELISTED_SOURCE_FILES = [
     "jobs_ats.json",
     "jobs_jsearch.json",
     "jobs_apify.json",
-    "jobs_serpapi.json",
+    "jobs_usajobs.json",
     "jobs_adzuna.json",
     "jobs_contract.json",   # contract_scraper.py output — employment_type=Contract
 ]
