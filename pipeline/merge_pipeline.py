@@ -3,9 +3,9 @@
 pipeline/merge_pipeline.py — JobAgent v4 Merge & Hard Filter Pipeline
 
 Reads all temp/jobs_*.json files, normalises fields, then runs every
-job through the nine mandatory hard filters in strict order.
+job through the eleven mandatory hard filters in strict order.
 
-Hard Filter Stack (all nine must pass before Company Intelligence):
+Hard Filter Stack (all eleven must pass before Company Intelligence):
   F1  Schema Completeness     — job_title, company_name, job_url required
   F2  URL Validity            — must be http/https with valid domain
   F3  Aggregator Rejection    — rejects known aggregator domains
@@ -15,6 +15,8 @@ Hard Filter Stack (all nine must pass before Company Intelligence):
   F7  Role Relevance          — title must match a target role cluster
   F8  ITAR / Export Control   — HARD DROP — any ITAR flag → reject immediately
   F9  Blacklisted Companies   — named defence/weapons contractors → reject
+  F10 Internship Filter       — rejects intern/internship/co-op titles
+  F11 Location Filter         — rejects recognisable non-US locations
 
 A job that fails ANY filter is permanently dropped and never reaches
 Company Intelligence.
@@ -158,12 +160,36 @@ ROLE_RELEVANCE_TOKENS = [
     # Startup / NPI
     "build engineer", "npi engineer", "scale-up engineer",
     "prototype engineer",
-    # Numbered engineer levels (entry-level signal in title)
-    r"engineer i\b", r"engineer ii\b", r"engineer 1\b", r"engineer 2\b",
     # Explicit entry-level modifier in title
     "associate engineer", "entry level engineer", "entry-level engineer",
     "junior engineer", "early career engineer",
 ]
+
+# F10 — Internship filter: drop intern / internship / co-op titles
+INTERNSHIP_PATTERN = re.compile(
+    r"\b(intern(ship)?|co[-\s]?op|coop)\b", re.IGNORECASE
+)
+
+# F11 — Location filter: drop recognisable non-US locations. Blank/Unknown pass.
+NON_US_LOCATION_PATTERN = re.compile(
+    r"\b("
+    r"abu dhabi|dubai|uae|united arab emirates"
+    r"|uk|united kingdom|england|scotland|wales"
+    r"|canada|ontario|toronto|vancouver|alberta|british columbia"
+    r"|australia|sydney|melbourne|brisbane"
+    r"|india|bangalore|mumbai|delhi|hyderabad|chennai|pune"
+    r"|germany|berlin|munich|hamburg"
+    r"|france|paris"
+    r"|china|beijing|shanghai|shenzhen"
+    r"|singapore|hong kong"
+    r"|mexico|mexico city|monterrey"
+    r"|brazil|são paulo|sao paulo"
+    r"|netherlands|amsterdam"
+    r"|sweden|stockholm"
+    r"|ireland|dublin"
+    r")\b",
+    re.IGNORECASE,
+)
 
 # F8 — ITAR / export control keywords (hard drop — no exceptions)
 # Loaded from data/itar_keywords.json (see block above).
@@ -330,9 +356,11 @@ def run():
     after_f7, f7_rejected = _filter_role_relevance(after_f6)   # F7
     after_f8, f8_rejected = _filter_itar(after_f7)             # F8 — HARD DROP
     after_f9, f9_rejected = _filter_blacklist(after_f8)        # F9
+    after_f10, f10_rejected = _filter_internship(after_f9)     # F10
+    after_f11, f11_rejected = _filter_location(after_f10)      # F11
 
     # Step 10 — Score surviving jobs
-    scored = [_score(j) for j in after_f9]
+    scored = [_score(j) for j in after_f11]
     scored.sort(key=lambda j: -j["relevance_score"])
 
     # Step 11 — Print filter report
@@ -346,6 +374,8 @@ def run():
         f7_rejected=f7_rejected,
         f8_rejected=f8_rejected,
         f9_rejected=f9_rejected,
+        f10_rejected=len(f10_rejected),
+        f11_rejected=len(f11_rejected),
         final_passed=len(scored),
     )
 
@@ -353,16 +383,18 @@ def run():
     OUTPUT_PATH.write_text(json.dumps({
         "generated_utc": datetime.utcnow().isoformat() + "Z",
         "stats": {
-            "total_raw":       total_raw,
-            "schema_rejected": schema_rejected,
-            "f3_aggregator":   f3_rejected,
-            "f4_age":          f4_rejected,
-            "f5_duplicates":   len(f5_rejected),
-            "f6_seniority":    f6_rejected,
-            "f7_role":         f7_rejected,
-            "f8_itar":         f8_rejected,
-            "f9_blacklist":    f9_rejected,
-            "final_count":     len(scored),
+            "total_raw":              total_raw,
+            "schema_rejected":        schema_rejected,
+            "f3_aggregator":          f3_rejected,
+            "f4_age":                 f4_rejected,
+            "f5_duplicates":          len(f5_rejected),
+            "f6_seniority":           f6_rejected,
+            "f7_role":                f7_rejected,
+            "f8_itar":                f8_rejected,
+            "f9_blacklist":           f9_rejected,
+            "F10_internship_dropped": len(f10_rejected),
+            "F11_location_dropped":   len(f11_rejected),
+            "final_count":            len(scored),
         },
         "jobs": scored,
     }, indent=2))
@@ -748,6 +780,38 @@ def _filter_blacklist(jobs: List[Dict]) -> Tuple[List[Dict], int]:
     return passed, rejected
 
 
+# ── F10 — Internship filter ───────────────────────────────────────────────────
+
+def _filter_internship(jobs: List[Dict]) -> Tuple[List[Dict], List[Dict]]:
+    """F10 — Drop intern / internship / co-op titles."""
+    kept, dropped = [], []
+    for j in jobs:
+        title = j.get("job_title", "") or ""
+        if INTERNSHIP_PATTERN.search(title):
+            log.debug(f"  [F10 DROP] Internship title — {title!r}")
+            dropped.append(j)
+        else:
+            kept.append(j)
+    log.info(f"F10 internship filter: {len(kept)} kept, {len(dropped)} dropped")
+    return kept, dropped
+
+
+# ── F11 — Location filter ─────────────────────────────────────────────────────
+
+def _filter_location(jobs: List[Dict]) -> Tuple[List[Dict], List[Dict]]:
+    """F11 — Drop jobs with recognisable non-US locations. Blank/Unknown pass through."""
+    kept, dropped = [], []
+    for j in jobs:
+        loc = (j.get("location") or "").strip()
+        if loc and loc.lower() not in ("unknown", "") and NON_US_LOCATION_PATTERN.search(loc):
+            log.debug(f"  [F11 DROP] Non-US location — {loc!r}")
+            dropped.append(j)
+        else:
+            kept.append(j)
+    log.info(f"F11 location filter: {len(kept)} kept, {len(dropped)} dropped")
+    return kept, dropped
+
+
 # ── Scoring (post-filter — never used to bypass filters) ─────────────────────
 
 def _score(job: Dict) -> Dict:
@@ -805,6 +869,8 @@ def _print_filter_report(**kw):
     log.info(f"  {'F7  Role mismatch rejected':<32}: {kw['f7_rejected']:>5}")
     log.info(f"  {'F8  ITAR rejected (HARD DROP)':<32}: {kw['f8_rejected']:>5}")
     log.info(f"  {'F9  Blacklist rejected':<32}: {kw['f9_rejected']:>5}")
+    log.info(f"  {'F10 Internship rejected':<32}: {kw['f10_rejected']:>5}")
+    log.info(f"  {'F11 Non-US location rejected':<32}: {kw['f11_rejected']:>5}")
     log.info(f"  {'-'*38}")
     log.info(f"  {'Total dropped':<32}: {total_dropped:>5}")
     log.info(f"  {'Final passed to classifier':<32}: {kw['final_passed']:>5}")
@@ -827,5 +893,5 @@ if __name__ == "__main__":
     result = run()
     print(
         f"\n✓ Merge + filter complete. "
-        f"{len(result)} jobs passed all nine hard filters and are ready for classification."
+        f"{len(result)} jobs passed all eleven hard filters and are ready for classification."
     )
