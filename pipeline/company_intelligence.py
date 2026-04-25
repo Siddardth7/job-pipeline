@@ -90,19 +90,17 @@ def run():
             dropped += 1
             continue  # refuse to classify — do not include in any output
 
-        # ── STAFFING_REJECT hard-drop ──────────────────────────────────────────
-        if company.lower().strip() in {name.lower() for name in STAFFING_REJECT}:
+        result = _classify_job(job, db)
+        if result is None:
             dropped += 1
-            log.debug(f"  [STAFFING_REJECT DROP] {company!r} — {job_title}")
             continue
 
-        verdict = _classify(company, job.get("description", ""), db)
-        job["verdict"] = verdict
+        verdict = result["verdict"]
 
         if verdict == "GREEN":
-            green_jobs.append(job)
+            green_jobs.append(result)
         elif verdict == "YELLOW":
-            yellow_jobs.append(job)
+            yellow_jobs.append(result)
         else:  # RED — drop
             dropped += 1
             log.debug(f"  DROP [{verdict}]: {company} — {job_title}")
