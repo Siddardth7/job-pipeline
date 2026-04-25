@@ -9,7 +9,7 @@ An AI-powered job application assistant built for Siddardth Pathipaka — aerosp
 ## What It Does
 
 ### Job Feed Aggregator
-Scrapers pull from multiple sources (ATS boards, JSearch, Apify, SerpAPI, TheirStack) every day via GitHub Actions. Results are deduplicated, filtered through a nine-stage hard-filter stack (ITAR flags, location, experience level, company tier, etc.), enriched with company intelligence (H-1B sponsorship history, industry classification, tier rating), and stored as `output/jobs_clean_latest.json` — the canonical feed the frontend reads.
+Scrapers pull from multiple sources (ATS boards, JSearch, Apify, USA Jobs, Adzuna, Contract roles) every day via GitHub Actions. Results are deduplicated, filtered through an 11-stage hard-filter stack (schema, URL validity, aggregator rejection, age, deduplication, seniority, role relevance, ITAR, company blacklist, internship, location), enriched with company intelligence (H-1B sponsorship history, industry classification, tier rating), and stored as `output/jobs_clean_latest.json` — the canonical feed the frontend reads.
 
 ### AI Job Analysis (Groq LLaMA)
 Each job can be analyzed by an LLM (llama-3.3-70b-versatile via Groq). The analysis produces:
@@ -45,6 +45,39 @@ Browse all previous daily scrape runs in the job feed UI. Each daily commit arch
 
 ---
 
+## Data Sources
+
+Sources (in pipeline execution order):
+
+1. **ATS** (Greenhouse + Lever) — direct employer APIs, no quota
+2. **JSearch** (RapidAPI) — query-engine-driven, 200 req/month
+3. **Apify** (LinkedIn) — harvestapi actor, ~$0.20/month
+4. **USA Jobs** — federal + contractor roles, free, no API key
+5. **Adzuna** — broad US job index, capped 200 raw/run
+6. **Contract** (JSearch) — contract roles, shares JSearch quota
+
+---
+
+## Filters
+
+The pipeline applies 11 sequential hard filters to remove low-quality, irrelevant, or prohibited jobs:
+
+| Filter | Description |
+|--------|-------------|
+| F1 | Schema completeness — required fields present |
+| F2 | URL validity — job URL resolves and is not an aggregator |
+| F3 | Aggregator rejection — no duplicate listings from Indeed, LinkedIn, etc. |
+| F4 | Age window — jobs ≤72h old (non-ATS) or ≤30d (ATS) |
+| F5 | Deduplication — identical jobs from multiple sources merged |
+| F6 | Seniority rejection — excludes C-suite, director+, and intern roles |
+| F7 | Role relevance — only aerospace/manufacturing/equipment engineering |
+| F8 | ITAR / export control — flags defense primes, aerospace suppliers |
+| F9 | Company blacklist — excludes defense-primary contractors |
+| F10 | Internship exclusion — no intern, graduate, or entry-level programs |
+| F11 | Non-US location exclusion — requires US-based or remote-OK role |
+
+---
+
 ## Architecture
 
 | Layer | Technology | Deployment |
@@ -54,7 +87,6 @@ Browse all previous daily scrape runs in the job feed UI. Each daily commit arch
 | Database | Supabase (PostgreSQL) | Supabase cloud |
 | Job Scrapers | Python 3.11 | GitHub Actions (daily cron) |
 | AI | Groq API (llama-3.3-70b-versatile) | Groq cloud (key stored in Supabase settings) |
-| Job Search | Serper API | Serper cloud (key stored in Supabase settings) |
 
 ```
 jobagent-web/
@@ -153,11 +185,10 @@ The daily scrape runs automatically at 13:00 UTC every day. Configure the follow
 | Secret | Purpose |
 |---|---|
 | `JSEARCH_API_KEY` | JSearch RapidAPI key |
-| `APIFY_TOKEN` | Apify personal access token |
-| `SERPAPI_KEY` | SerpAPI key |
-| `THEIRSTACK_API_KEY` | TheirStack API key |
+| `APIFY_TOKEN` | Apify personal access token (3 accounts for LinkedIn scraping) |
+| `ADZUNA_API_KEY` | Adzuna API key |
 
-To trigger a manual run: GitHub → Actions → Daily Job Scrape → Run workflow.
+USA Jobs uses no API key (public endpoint). To trigger a manual run: GitHub → Actions → Daily Job Scrape → Run workflow.
 
 ### LinkedIn Sync Scripts
 

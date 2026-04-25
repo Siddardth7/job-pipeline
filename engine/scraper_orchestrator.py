@@ -1,30 +1,26 @@
 #!/usr/bin/env python3
 """
-engine/scraper_orchestrator.py — JobAgent v4.3
+engine/scraper_orchestrator.py — JobAgent v4.5
 Scraper Orchestrator
 
 Coordinates query generation, quota management, and sequential execution
-of all scrapers. Continues if any individual scraper fails.
+of all scrapers. A scraper exception is recorded in run_record but does NOT
+stop the pipeline — merge_pipeline handles missing source files gracefully.
 
 Scraper stack (in execution order):
     1. ats_scraper       — Direct Greenhouse + Lever APIs (no quota, FREE, priority)
-    2. jsearch_scraper   — JSearch/RapidAPI broad search (200 req/month)
-    3. apify_scraper     — LinkedIn via harvestapi actor (Pay-per-event, ~$0.20/mo)
-    4. usajobs_scraper   — USA Jobs federal roles (free)
-    5. adzuna_scraper    — Adzuna US job index (250 req/day free)
+    2. jsearch_scraper   — JSearch/RapidAPI, query-engine-driven (200 req/month)
+    3. apify_scraper     — LinkedIn via harvestapi actor (~$0.20/mo)
+    4. usajobs_scraper   — USA Jobs public API (free, no key, daily)
+    5. adzuna_scraper    — Adzuna US job index (250 req/day free, capped at 200 raw/run)
+    6. contract_scraper  — JSearch contract roles (shares JSearch quota, 5 req/run)
 
 Quota notes:
-    jsearch:    1 account × (200 free − 20 buffer) = 180 req/month
-    apify:      2 actor runs/day. Each run passes ALL distinct job title phrases
-                (not limited to 2 queries) to maximise jobs per run.
-    usajobs:    Free tier. Runs daily on all queries. Federal role aggregator.
-    adzuna:     250 req/day free tier. Runs daily on all queries. Genuine aggregator
-                index — different results from Apify. No alternation needed.
-
-Changes from v4.2:
-    - Added industrial_operations and mechanical_thermal query clusters (query_engine)
-    - Added 12 industrial/thermal ATS companies to ats_companies.json
-    - Version bumped to v4.3
+    jsearch:    1 account × (200 free − 20 buffer) = 180 req/month. Hard ceiling 180.
+    apify:      6 actor runs/day (3 accounts × 2).
+    usajobs:    Free, no key. 20 calls/run max. Daily.
+    adzuna:     250 req/day free tier. Capped at MAX_RAW_JOBS=200 output per run.
+    contract:   MAX_CALLS_PER_RUN=5, shares JSearch quota pool.
 """
 
 import json
