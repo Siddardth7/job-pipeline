@@ -14,8 +14,7 @@ Scraper stack (in execution order):
     5. adzuna_scraper    — Adzuna US job index (250 req/day free)
 
 Quota notes:
-    jsearch:    200 req/month → 6/day budget. Monthly cap tracked in state file
-                to prevent mid-month exhaustion. Hard monthly ceiling: 180.
+    jsearch:    1 account × (200 free − 20 buffer) = 180 req/month
     apify:      2 actor runs/day. Each run passes ALL distinct job title phrases
                 (not limited to 2 queries) to maximise jobs per run.
     usajobs:    Free tier. Runs daily on all queries. Federal role aggregator.
@@ -297,20 +296,24 @@ def run():
                 "status": "error", "error": str(exc), "jobs_found": 0
             }
 
-    # ── Step 4: USA Jobs ──────────────────────────────────────────────────────
+    # ── Step 4: USA Jobs — free tier, daily always-on ─────────────────────────
+    log.info("[usajobs] Running. Free tier, daily always-on.")
+    usajobs_output = TEMP_DIR / "jobs_usajobs.json"
     try:
         usajobs = USAJobsScraper()
         usajobs_jobs = usajobs.run(queries=all_queries)
         usajobs_count = len(usajobs_jobs)
         if usajobs_count > 0:
-            _write_output(TEMP_DIR / "jobs_usajobs.json", "usajobs", usajobs_jobs)
+            _write_output(usajobs_output, "usajobs", usajobs_jobs)
+            total_primary_jobs += usajobs_count
+            log.info(f"[usajobs] ✓ {usajobs_count} jobs from {usajobs.calls_made} queries")
             run_record["scrapers"]["usajobs"] = {
                 "status": "success",
                 "queries_used": usajobs.calls_made,
                 "jobs_found": usajobs_count,
             }
         else:
-            _write_empty(TEMP_DIR / "jobs_usajobs.json", "usajobs", "zero_results")
+            _write_empty(usajobs_output, "usajobs", "zero_results")
             run_record["scrapers"]["usajobs"] = {
                 "status": "zero_results",
                 "queries_used": usajobs.calls_made,
@@ -318,6 +321,8 @@ def run():
             }
     except Exception as exc:
         log.error(f"[usajobs] Scraper raised an exception: {exc}")
+        log.warning(f"[usajobs] Full traceback:\n{traceback.format_exc()}")
+        _write_empty(usajobs_output, "usajobs", str(exc))
         run_record["scrapers"]["usajobs"] = {
             "status": "error", "error": str(exc), "jobs_found": 0
         }
