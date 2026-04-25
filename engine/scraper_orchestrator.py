@@ -10,7 +10,7 @@ Scraper stack (in execution order):
     1. ats_scraper       — Direct Greenhouse + Lever APIs (no quota, FREE, priority)
     2. jsearch_scraper   — JSearch/RapidAPI broad search (200 req/month)
     3. apify_scraper     — LinkedIn via harvestapi actor (Pay-per-event, ~$0.20/mo)
-    4. serpapi_scraper   — Google Jobs via SerpAPI (100 searches/month, alternate days)
+    4. usajobs_scraper   — USA Jobs federal roles (free)
     5. adzuna_scraper    — Adzuna US job index (250 req/day free)
 
 Quota notes:
@@ -18,10 +18,9 @@ Quota notes:
                 to prevent mid-month exhaustion. Hard monthly ceiling: 180.
     apify:      2 actor runs/day. Each run passes ALL distinct job title phrases
                 (not limited to 2 queries) to maximise jobs per run.
-    serpapi:    100 searches/month. 5/day; scraper internally alternates days.
-                Even-day skips are logged as 'skipped', not 'zero_results'.
+    usajobs:    Free tier. Runs daily on all queries. Federal role aggregator.
     adzuna:     250 req/day free tier. Runs daily on all queries. Genuine aggregator
-                index — different results from SerpAPI/Apify. No alternation needed.
+                index — different results from Apify. No alternation needed.
 
 Changes from v4.2:
     - Added industrial_operations and mechanical_thermal query clusters (query_engine)
@@ -64,7 +63,7 @@ QUOTAS = {
 }
 
 # JSearch monthly hard ceiling — 3 accounts × (200 free tier − 20 buffer)
-JSEARCH_MONTHLY_LIMIT = 540
+JSEARCH_MONTHLY_LIMIT = 180   # single account: 200 free tier − 20 buffer
 
 logging.basicConfig(
     level=logging.INFO,

@@ -291,7 +291,7 @@ SOURCE_PRIORITY: Dict[str, int] = {
     "ats_lever":       1,
     "jsearch":         3,
     "apify":           4,
-    "serpapi":         4,
+    "usajobs":         4,
     "adzuna":          5,
     "unknown":         9,
 }
