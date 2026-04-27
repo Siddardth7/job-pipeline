@@ -1,0 +1,159 @@
+%-------------------------
+% Resume - Dynamic Jinja2 Template
+% Replaces static A/B/C/D variants
+%-------------------------
+\documentclass[letterpaper,10pt]{extarticle}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{fontspec}
+\usepackage{tabularx}
+
+\geometry{
+  letterpaper,
+  left=0.47in,
+  right=0.47in,
+  top=0.20in,
+  bottom=0.15in,
+  noheadfoot
+}
+
+\setmainfont{Carlito}[
+  BoldFont=Carlito Bold,
+  ItalicFont=Carlito Italic,
+  BoldItalicFont=Carlito Bold Italic
+]
+
+\pagestyle{empty}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor={rgb:red,5;green,99;blue,193},
+  urlcolor={rgb:red,5;green,99;blue,193},
+}
+\definecolor{linkblue}{RGB}{5,99,193}
+
+\titleformat{\section}{
+  \bfseries\fontsize{11pt}{12pt}\selectfont
+}{}{0em}{}[\vspace{-8pt}\rule{\textwidth}{0.5pt}]
+\titlespacing*{\section}{0pt}{8pt}{1pt}
+
+\setlist[itemize]{
+  leftmargin=0.25in,
+  labelsep=0.06in,
+  itemsep=0pt,
+  parsep=0pt,
+  topsep=0pt,
+  label=\textbullet
+}
+
+\newcommand{\expentry}[2]{%
+  \vspace{4pt}%
+  \noindent\begin{tabularx}{\textwidth}{@{}X r@{}}
+    {\fontsize{11pt}{13pt}\selectfont\textbf{#1}} & {\fontsize{11pt}{13pt}\selectfont\textbf{#2}}
+  \end{tabularx}%
+  \vspace{4pt}%
+}
+
+\newcommand{\eduentry}[2]{%
+  \vspace{2pt}%
+  \noindent\begin{tabularx}{\textwidth}{@{}X r@{}}
+    {\fontsize{11pt}{13pt}\selectfont\textbf{#1}} & {\fontsize{11pt}{13pt}\selectfont\textbf{#2}}
+  \end{tabularx}%
+}
+
+\newcommand{\skillline}[2]{%
+  \noindent{\fontsize{10pt}{11pt}\selectfont\textbf{#1} #2}\par\vspace{1pt}%
+}
+
+% --- resume* macros used by the dynamic template body ---
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-2pt}}
+\newcommand{\resumeItem}[1]{\item\small{#1}}
+\newcommand{\resumeSubheading}[4]{%
+  \vspace{-2pt}\item
+  \begin{tabular*}{\textwidth}[t]{l@{\extracolsep{\fill}}r}
+    \textbf{#1} & #2 \\
+    \textit{\small#3} & \textit{\small #4} \\
+  \end{tabular*}\vspace{-7pt}%
+}
+
+\begin{document}
+
+%----------HEADER----------
+\begin{center}
+    {\Huge \textbf{<< candidate_name >>}} \\[4pt]
+    \small
+    << contact.get('phone', '') >>
+    \textbar\ \href{mailto:<< contact.get('email', '') >>}{<< contact.get('email', '') >>}
+    \textbar\ \href{<< contact.get('linkedin', '') >>}{LinkedIn}
+    \textbar\ << contact.get('location', '') >>
+\end{center}
+\vspace{-4pt}
+\noindent\rule{\textwidth}{0.5pt}
+
+<% for section in section_order %>
+
+  <% if section == 'summary' and include_summary and mod1_summary %>
+  %----------SUMMARY----------
+  \section*{Summary}
+  \vspace{-6pt}
+  \small << mod1_summary >>
+  \vspace{4pt}
+
+  <% elif section == 'skills' %>
+  %----------SKILLS----------
+  \section*{Technical Skills}
+  \vspace{-6pt}
+  \begin{itemize}[leftmargin=0.12in, label={}]
+    \small
+    <% for line in mod2_skilllines %>
+    \item{\textbf{<< line.category >>:} << line.items >>}
+    <% endfor %>
+    <% if certifications %>
+    \item{\textbf{Certifications:} << certifications | join(', ') >>}
+    <% endif %>
+  \end{itemize}
+  \vspace{-8pt}
+
+  <% elif section == 'experience' %>
+  %----------EXPERIENCE----------
+  \section*{Experience}
+  \vspace{-6pt}
+  \resumeSubHeadingListStart
+  <% for exp in experience %>
+    \resumeSubheading
+      {<< exp.company >>}{<< exp.date_range >>}
+      {<< exp.role >>}{<< exp.location >>}
+      \resumeItemListStart
+      <% for bullet in exp.bullets %>
+        \resumeItem{<< bullet >>}
+      <% endfor %>
+      \resumeItemListEnd
+  <% endfor %>
+  \resumeSubHeadingListEnd
+  \vspace{-8pt}
+
+  <% elif section == 'education' %>
+  %----------EDUCATION----------
+  \section*{Education}
+  \vspace{-6pt}
+  \resumeSubHeadingListStart
+  <% for edu in education %>
+    \resumeSubheading
+      {<< edu.school >>}{<< edu.date_range >>}
+      {<< edu.degree >>}{<< edu.get('location', '') >>}
+  <% endfor %>
+  \resumeSubHeadingListEnd
+
+  <% endif %>
+<% endfor %>
+
+\end{document}
