@@ -62,7 +62,7 @@ export function getWeekDays() {
  * Stops at the first gap (skips today-only gaps only on day 0).
  */
 export function calcStreak(apps, contacts) {
-  const outreached = (contacts || []).filter(c => c.outreach_sent && c.outreach_date);
+  const contactList = contacts || [];
   const today = new Date();
   let count = 0;
   for (let i = 0; i < MAX_STREAK_LOOKBACK_DAYS; i++) {
@@ -70,7 +70,10 @@ export function calcStreak(apps, contacts) {
     d.setDate(today.getDate() - i);
     const active =
       apps.some(a => isSameLocalDay(a.date, d)) ||
-      outreached.some(c => isSameLocalDay(c.outreach_date, d));
+      contactList.some(c =>
+        isSameLocalDay(c.outreach_date || c.date, d) &&
+        (c.outreach_sent !== undefined ? c.outreach_sent : true)
+      );
     if (active) {
       count++;
     } else if (i > 0) {
