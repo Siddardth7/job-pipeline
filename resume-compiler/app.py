@@ -1,10 +1,48 @@
 import os
 import re
 import uuid
+import json
+import hmac
+import hashlib
+import base64
 import subprocess
 import shutil
 from io import BytesIO
+from functools import wraps
 from flask import Flask, request, send_file, jsonify
+
+SUPABASE_JWT_SECRET = os.environ.get("SUPABASE_JWT_SECRET", "")
+
+
+def _verify_supabase_jwt(token: str) -> bool:
+    try:
+        parts = token.split('.')
+        if len(parts) != 3:
+            return False
+        header_b64, payload_b64, sig_b64 = parts
+        def pad(s): return s + '=' * (-len(s) % 4)
+        message = f"{header_b64}.{payload_b64}".encode()
+        sig = base64.urlsafe_b64decode(pad(sig_b64))
+        expected = hmac.new(SUPABASE_JWT_SECRET.encode(), message, hashlib.sha256).digest()
+        return hmac.compare_digest(sig, expected)
+    except Exception:
+        return False
+
+
+def require_auth(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not SUPABASE_JWT_SECRET:
+            return f(*args, **kwargs)
+        auth = request.headers.get('Authorization', '')
+        if not auth.startswith('Bearer '):
+            return jsonify(error='Unauthorized'), 401
+        token = auth[7:]
+        if not _verify_supabase_jwt(token):
+            return jsonify(error='Unauthorized'), 401
+        return f(*args, **kwargs)
+    return decorated
+
 
 app = Flask(__name__)
 
@@ -168,6 +206,108 @@ def health():
     return "ok", 200
 
 
+@app.route("/parse", methods=["OPTIONS"])
+def parse_preflight():
+    return "", 204
+
+
+@app.route("/parse", methods=["POST"])
+@require_auth
+def parse_resume():
+    from parser import parse_tex
+
+    content_type = request.content_type or ''
+    if 'text/plain' not in content_type and 'application/octet-stream' not in content_type:
+        return jsonify(error="Content-Type must be text/plain"), 400
+
+    tex_source = request.get_data(as_text=True)
+    if not tex_source or not tex_source.strip():
+        return jsonify(error="Empty .tex source"), 400
+
+    if len(tex_source) > 500_000:
+        return jsonify(error="File too large (max 500KB)"), 400
+
+    result = parse_tex(tex_source)
+    return jsonify(result), 200
+
+
+@app.route("/compile", methods=["OPTIONS"])
+def compile_preflight():
+    return "", 204
+
+
+@app.route("/compile", methods=["POST"])
+@require_auth
+def compile_resume():
+    from jinja2 import Environment, FileSystemLoader, select_autoescape
+
+    data = request.get_json(silent=True) or {}
+
+    structured = data.get("structured_sections", {})
+    groq_out   = data.get("groq_output", {})
+    include_summary = bool(data.get("include_summary", False))
+    candidate_name  = sanitize_latex(data.get("candidate_name", "Candidate"))
+    contact = data.get("contact", {})
+
+    if not structured.get("skills"):
+        return jsonify(error="structured_sections.skills is required"), 400
+    if not groq_out.get("mod2_skilllines"):
+        return jsonify(error="groq_output.mod2_skilllines is required"), 400
+
+    section_order = structured.get("section_order", ["skills", "experience", "education"])
+    mod1_summary  = groq_out.get("mod1_summary", "").strip() if include_summary else ""
+    certifications = structured.get("certifications", [])
+
+    env = Environment(
+        loader=FileSystemLoader(TEMPLATES_DIR),
+        autoescape=select_autoescape([]),
+        block_start_string='<%',
+        block_end_string='%>',
+        variable_start_string='<<',
+        variable_end_string='>>',
+        comment_start_string='<#',
+        comment_end_string='#>',
+    )
+
+    try:
+        template = env.get_template("resume_dynamic.tex")
+    except Exception as e:
+        return jsonify(error=f"Template not found: {e}"), 500
+
+    try:
+        rendered = template.render(
+            candidate_name=candidate_name,
+            contact={k: sanitize_latex(v or '') for k, v in contact.items()},
+            section_order=section_order,
+            include_summary=include_summary,
+            mod1_summary=sanitize_latex(mod1_summary),
+            mod2_skilllines=groq_out.get("mod2_skilllines", []),
+            certifications=certifications,
+            experience=structured.get("experience", []),
+            education=structured.get("education", []),
+        )
+    except Exception as e:
+        return jsonify(error=f"Template render error: {e}"), 500
+
+    try:
+        pdf_bytes = _compile_tex(rendered)
+    except subprocess.TimeoutExpired:
+        return jsonify(error="Compilation timed out (60s)."), 504
+    except RuntimeError as e:
+        return jsonify(error="LaTeX compilation failed", log=str(e)), 500
+
+    company  = _safe_filename_part(data.get("company", "Company"))
+    role     = _safe_filename_part(data.get("role", "Role"))
+    filename = f"Resume_{candidate_name.split()[0]}_{company}_{role}.pdf"
+
+    return send_file(
+        BytesIO(pdf_bytes),
+        mimetype="application/pdf",
+        as_attachment=True,
+        download_name=filename,
+    )
+
+
 @app.route("/generate", methods=["POST"])
 def generate():
     data = request.get_json(silent=True) or {}
@@ -228,7 +368,14 @@ def generate_cover_letter():
     company = data.get("company", "").strip()
     role = data.get("role", "").strip()
     variant_focus = data.get("variant_focus", "").strip()
-    summary = data.get("summary", "").strip()
+    summary       = data.get("summary", "").strip()
+    primary_cat   = sanitize_latex(data.get("primary_category", "Engineering").strip())
+    if not summary:
+        summary = (
+            f"As a {primary_cat}-focused Aerospace Engineering graduate from the University "
+            f"of Illinois Urbana-Champaign, I am confident that my technical background and "
+            f"hands-on experience make me a strong candidate for this role."
+        )
 
     if not company or not role:
         return jsonify(error="company and role are required"), 400
