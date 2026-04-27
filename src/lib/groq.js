@@ -7,6 +7,60 @@ import { supabase } from '../supabase.js';
 
 const MODEL = 'llama-3.3-70b-versatile';
 
+// ─── Dynamic Context Builders ──────────────────────────────────────────────────
+
+export function buildCandidateContext(ss) {
+  const lines = [];
+
+  if (ss.education?.length) {
+    const edu = ss.education[0];
+    lines.push(`Education: ${edu.degree}, ${edu.school}, ${edu.date_range}`);
+  }
+
+  if (ss.experience?.length) {
+    lines.push('\nExperience:');
+    for (const exp of ss.experience) {
+      lines.push(`- ${exp.company} | ${exp.role} | ${exp.date_range}`);
+      for (const b of (exp.bullets || [])) {
+        lines.push(`  • ${b}`);
+      }
+    }
+  }
+
+  if (ss.skills?.length) {
+    lines.push('\nSkills:');
+    for (const s of ss.skills) {
+      lines.push(`  ${s.category}: ${(s.items || []).join(', ')}`);
+    }
+  }
+
+  return lines.join('\n');
+}
+
+export function buildSkillLinesPrompt(skills) {
+  return skills.map(s => ({
+    category: s.category,
+    items: (s.items || []).join(', '),
+  }));
+}
+
+export function resolvePrimaryCategory(primaryCategory, skills) {
+  if (!primaryCategory || !skills?.length) return skills?.[0]?.category ?? '';
+  const cats = skills.map(s => s.category);
+  // 1. Exact match
+  if (cats.includes(primaryCategory)) return primaryCategory;
+  // 2. Case-insensitive
+  const lower = primaryCategory.toLowerCase();
+  const ci = cats.find(c => c.toLowerCase() === lower);
+  if (ci) return ci;
+  // 3. Substring
+  const sub = cats.find(c => c.toLowerCase().includes(lower) || lower.includes(c.toLowerCase()));
+  if (sub) { console.warn(`[groq] primary_category fuzzy match: "${primaryCategory}" → "${sub}"`); return sub; }
+  // 4. Fallback to first
+  console.warn(`[groq] primary_category no match for "${primaryCategory}", using "${cats[0]}"`);
+  return cats[0];
+}
+
 export async function callGroq(systemPrompt, userPrompt, apiKey, maxTokens = 1000) {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session?.access_token) {
@@ -42,40 +96,23 @@ export async function callGroq(systemPrompt, userPrompt, apiKey, maxTokens = 100
 // ─── Summary Generation — focused separate call ───────────────────────────────
 // Receives pre-extracted keywords + title from the data call so the model
 // only has ONE job: write 3 sentences. No JSON, no competing fields.
-async function _generateSummary(jd, variant, keywords, title, apiKey) {
-  const VARIANT_LENS = {
-    A: {
-      description: "Manufacturing & Plant Ops",
-      angle: "The role needs someone who can make parts, hold tolerances, and keep a production line moving. Anchor sentence 1 to shop-floor fabrication or hardware inspection — the candidate has been on the floor building real aerospace hardware, not studying it."
-    },
-    B: {
-      description: "Process & Continuous Improvement",
-      angle: "The role needs someone who can look at a broken process, find the variable that is causing the problem, and move the numbers. Anchor sentence 1 to a specific outcome where the candidate measured a problem and changed the result."
-    },
-    C: {
-      description: "Quality & Materials",
-      angle: "The role needs someone who can accept or reject hardware with confidence — inspection, root cause, materials knowledge. Anchor sentence 1 to a disposition or inspection decision the candidate made on real aerospace flight hardware."
-    },
-    D: {
-      description: "Equipment & NPI",
-      angle: "The role needs someone who can build a manufacturing process that does not exist yet — develop the steps, qualify the hardware, validate first article. Anchor sentence 1 to a first-time process build the candidate created from scratch."
-    }
-  };
-  const lens = VARIANT_LENS[variant] || VARIANT_LENS.A;
+async function _generateSummary(jd, primaryCategory, keywords, title, structuredSections, apiKey) {
+  const candidateContext = buildCandidateContext(structuredSections);
 
-  const system = `You are writing a 3-sentence resume summary. Output ONLY the 3 sentences as plain text — no JSON, no labels, no explanation, no formatting markers.
+  const system = `You are writing a 3-sentence resume summary. Output ONLY the 3 sentences as plain text — no JSON, no labels, no formatting markers.
 
 CANDIDATE BACKGROUND (use only these facts, never invent):
-- Degree: MS Aerospace Engineering, UIUC, Dec 2025. Entry level — never claim seniority.
-- Tata Boeing Aerospace: Audited GD&T-based CMM inspection records for 450+ flight-critical components to 0.02 mm accuracy, supporting zero customer escapes on GE and Boeing programs; initiated 5 Whys root cause investigation and escalated to 8D structured problem-solving for deeper resolution on GE engine component nonconformances, reducing NCR cycle time by 22%; implemented SPC-guided corrective actions (revised CNC tool change intervals) reducing position tolerance defect rate from 15% to under 3%; built FMEA-based engineering justification for supplier nonconformance enabling use-as-is disposition that prevented ~$3,000 in scrap and 4-week lead time delay
-- SAMPE Competition: Built 24-inch composite fuselage via prepreg layup and autoclave cure (275°F, lab-limited 40 psi) — part sustained 2,700 lbf at test (2.7× design requirement); built pFMEA ranking 5 failure modes (vacuum bag leaks highest, RPN=60 using S=5 O=4 D=3) and standardized pressurized hold test protocol at 20 psi achieving zero process deviations; optimized laminate stacking using Python simulated annealing + ABAQUS FEA achieving 38% deflection reduction vs baseline; redesigned layup to dual-blanket structure (7 inner + 7 outer plies) overnight after ply geometry fit failure
-- Beckman Institute: Developed and validated out-of-autoclave cure method using frontal polymerization — proof-of-concept compression of composite processing cycle from 8+ hours to under 5 minutes in a research setting; predicted cure behavior within 10% velocity accuracy and 3°C of peak temperatures, accelerating process parameter optimization by 94% through computational modeling
-- EQIC Dies & Moulds: Mapped 12-stage die production workflow (CNC machining, EDM, heat treatment, assembly) identifying inter-stage handoff points as primary sources of dimensional tolerance accumulation; verified die component tolerances to ±0.02 mm (GD&T) and confirmed parting surface alignment (>80% contact) on 800-bar HPDC tooling
-- FMEA Risk Prioritization Tool (Project): Deployed Python/Streamlit tool implementing AIAG FMEA-4 standards — RPN scoring, Pareto 80/20 risk ranking, criticality flagging, PDF/Excel export; validated with 61 unit tests on aerospace CFRP composite panel dataset
-- Virtual Composite Laminate Design & Optimization (Project): Classical Laminate Theory engine with Simulated Annealing stacking sequence optimizer, validated against CalculiX FEA achieving <1% deflection error and <3% stress error on IM7/8552 CFRP plate
+${candidateContext}
 
-RESUME VARIANT: ${variant} — ${lens.description}
-VARIANT LENS: ${lens.angle}`;
+RESUME ANGLE: ${primaryCategory}
+
+First derive in one sentence what this role most needs from the JD and how the candidate's background answers it. Then write the 3 sentences using that as your lens.
+
+SENTENCE 1 — Identity + role fit (25–35 words): Position the candidate as a graduate targeting this role. Open with who they are in relation to the role.
+SENTENCE 2 — Proof for the keywords (20–30 words): Use 2–3 JD keywords, each attached to a specific experience and outcome.
+SENTENCE 3 — What the candidate brings as a person (12–18 words): Write a BEHAVIOR, not an output.
+
+BANNED words: passionate, motivated, results-driven, dynamic, fast-paced, team player, leveraging, (Learning)`;
 
   const user = `TARGET ROLE: ${title}
 JD KEYWORDS TO USE (already extracted — do not re-extract): ${keywords.join(', ')}
@@ -85,117 +122,48 @@ ${jd.slice(0, 1200)}
 
 ---
 
-WRITE EXACTLY 3 SENTENCES using the logic below. Plain text only. No bold, no dashes as bullet points, no labels like "Sentence 1:".
-
-SENTENCE 1 — Identity + role fit (25–35 words):
-Position the candidate as a fresh Aerospace Engineering graduate targeting this role — do NOT use "MS" as the opener, it sounds like a credential list. Open with who they are in relation to the role.
-
-Good opener patterns (pick the one that fits the JD's environment and role most naturally):
-- "Aerospace Engineering graduate with [domain expertise] experience across [programs/environments], targeting [role] in aerospace manufacturing."
-- "Aerospace Engineering graduate who [key accomplishment tied to this role's primary need] — directly aligned for [role]."
-- "[Manufacturing/Quality/Process]-focused Aerospace Engineering graduate with production floor experience in [relevant domain], targeting [role] in [composites/NPI/CI] environments."
-- "Aerospace Engineering graduate with a foundation in [relevant domain 1], [relevant domain 2], and [relevant domain 3] — built for entry-level [role] in manufacturing."
-
-After establishing identity, attach the ONE proof point that most directly answers what this role needs (use the VARIANT LENS above).
-The environment and product of the JD matter — composites company gets composites reference, CI-heavy role gets a process result, NPI role gets a first-time build.
-The sentence ends when a recruiter reading it would think: this person has done the core of this job before, even as a grad.
-
-SENTENCE 2 — Proof for the keywords (20–30 words):
-Use 2–3 of the JD keywords listed above. For each, state where or how it was applied — from the candidate background only.
-The sentence must flow as one clause, not a keyword list. Each keyword earns its place by being attached to a place and an outcome.
-Do NOT dangle a tool at the end: "...using SPC" is weak. Show SPC mid-sentence with context: "SPC flagged the CNC tool wear that was driving..."
-
-SENTENCE 3 — What the candidate brings as a person (12–18 words):
-Read the JD for what this company values non-technically: precision? ownership? problem-solving instinct? rigor?
-Write a BEHAVIOR, not an output. These work: "Digs into the process until the variance disappears." / "Shows up to make parts right, not to report that they were wrong." / "Takes the accept/reject call seriously because the hardware is flying."
-These do NOT work: anything starting with Delivers / Brings / Offers / Provides / Demonstrates.
-These are banned: passionate, motivated, results-driven, dynamic, fast-paced, team player, leveraging, precision solutions.
-
-The 3 sentences must flow together — sentence 2 should feel like evidence for sentence 1's claim, and sentence 3 should feel like the natural conclusion about who this person is.`;
+WRITE EXACTLY 3 SENTENCES using the logic below. Plain text only. No bold, no dashes as bullet points, no labels like "Sentence 1:".`;
 
   return callGroq(system, user, apiKey, 300);
 }
 
-export async function analyzeJobWithGroq(jd, variant, apiKey) {
-  const RESUMES = {
-    A: { name: "Manufacturing & Plant Ops" },
-    B: { name: "Process & CI" },
-    C: { name: "Quality & Materials" },
-    D: { name: "Equipment & NPI" }
-  };
+export async function analyzeJobWithGroq(jd, structuredSections, apiKey) {
+  const candidateContext = buildCandidateContext(structuredSections);
+  const baseSkillLines = buildSkillLinesPrompt(structuredSections.skills || []);
+  const baseLinesJson = JSON.stringify(baseSkillLines, null, 2);
 
-  // Base skilllines per variant — Groq modifies these, never generates from scratch
-  const BASE_SKILLLINES = {
-    A: [
-      { label: "Manufacturing & Tooling:", skills: "Fixture Design, Assembly Sequencing, Tooling Qualification, CNC Machining, GD&T, CMM Inspection, Blueprint Reading, SolidWorks" },
-      { label: "Process & Quality Control:", skills: "pFMEA, SPC, 8D Root Cause Analysis, RCCA, First Article Inspection, MRB Disposition, CAPA, Lean Principles" },
-      { label: "Composite Processing:", skills: "Prepreg Layup, Autoclave Processing, Vacuum Bagging, Cure Cycle Development, Out-of-Autoclave Methods" },
-      { label: "Simulation & Software:", skills: "ABAQUS, FEA, Classical Lamination Theory, MATLAB, Python, AutoCAD" }
-    ],
-    B: [
-      { label: "Continuous Improvement:", skills: "pFMEA, SPC, 8D Root Cause Analysis, RCCA, CAPA, Lean Principles, Defect Reduction, Process Repeatability" },
-      { label: "Process Engineering:", skills: "Cure Cycle Development, Workflow Redesign, First Article Inspection, MRB Disposition, GD&T, CMM Inspection, Assembly Optimization" },
-      { label: "Composite Processing:", skills: "Prepreg Layup, Autoclave Processing, Vacuum Bagging, Out-of-Autoclave Methods" },
-      { label: "Simulation & Software:", skills: "ABAQUS, FEA, Classical Lamination Theory, SolidWorks, MATLAB, Python, AutoCAD" }
-    ],
-    C: [
-      { label: "Quality Engineering:", skills: "pFMEA, SPC, 8D/A3 Root Cause Analysis, RCCA, CMM Inspection, GD&T, First Article Inspection, MRB Disposition, CAPA" },
-      { label: "Materials & Process Engineering:", skills: "Prepreg Layup, Autoclave Processing, Cure Cycle Development, Out-of-Autoclave Methods, SEM/EDS Analysis, Vickers Hardness (ASTM E384)" },
-      { label: "Simulation & Tools:", skills: "ABAQUS, FEA, Classical Lamination Theory, MATLAB, Python, SolidWorks, AutoCAD" },
-      { label: "Certifications:", skills: "Six Sigma Green Belt (CSSC) | Inspection & Quality Control in Manufacturing" }
-    ],
-    D: [
-      { label: "Equipment & Tooling:", skills: "Tooling Qualification, Autoclave & Cure Equipment, CNC Machining, EDM, HPDC Tooling, GD&T, CMM Inspection, SolidWorks, AutoCAD" },
-      { label: "NPI & Validation:", skills: "pFMEA, First Article Inspection, Process Validation, SPC, RCCA, Build Sequencing, Cure Cycle Development" },
-      { label: "Simulation & Analysis:", skills: "ABAQUS, FEA, Classical Lamination Theory, MATLAB, Python" },
-      { label: "Composite Processing:", skills: "Prepreg Layup, Vacuum Bagging, Out-of-Autoclave Methods" }
-    ]
-  };
+  const system = `You are a resume data extractor helping tailor a resume to a job description.
 
-  const baseLines = BASE_SKILLLINES[variant] || BASE_SKILLLINES.A;
-  const baseLinesJson = JSON.stringify(baseLines, null, 2);
-
-  const system = `You are a resume data extractor for Siddardth Pathipaka (MS Aerospace Engineering, UIUC Dec 2025).
-Resume variant: ${variant} — ${RESUMES[variant]?.name}
+CANDIDATE BACKGROUND (use only these facts, never invent):
+${candidateContext}
 
 OUTPUT RULES:
-1. Return valid JSON only — no markdown fences, no extra text before or after
-2. top5_jd_skills: all 5 must be DIFFERENT from each other — no duplicates
-3. Skill lines are reordered only — never add new skills not in the base list
+1. Return valid JSON only — no markdown fences, no extra text
+2. top5_jd_skills: exactly 5 DIFFERENT specific technical terms (no soft skills)
+3. primary_category: must be EXACTLY one of the category names from the base skill lines below
+4. mod2_skilllines: reorder items within each category to match JD — never add new skills, never rename categories
+5. Remove (Learning) — never output this tag`;
 
-KEYWORD QUALITY — extract SPECIFIC technical terms only:
-  GOOD: "SPC", "FMEA", "autoclave processing", "GD&T", "CMM inspection", "lean manufacturing",
-        "defect reduction", "AS9100", "NADCAP", "NDT", "CAPA", "PFMEA", "APQP", "DMAIC", "8D root cause"
-  BAD — never extract: "problem solving", "communication", "computer skills", "teamwork",
-        "attention to detail", "years of experience", "fast learner", "process improvements"`;
-
-  const user = `JD:
+  const user = `JD (first 3500 chars):
 ${jd.slice(0, 3500)}
 
-BASE SKILLLINES FOR RESUME ${variant}:
+BASE SKILL CATEGORIES (reorder items only — do not rename categories or add new skills):
 ${baseLinesJson}
 
 Return ONLY this JSON:
 {
-  "top5_jd_skills": ["kw1", "kw2", "kw3", "kw4", "kw5"],
-  "summary_title": "exact job title from JD",
-  "summary_structure_used": ${variant === 'A' ? 1 : variant === 'B' ? 2 : variant === 'C' ? 5 : 4},
+  "top5_jd_skills": ["kw1","kw2","kw3","kw4","kw5"],
+  "primary_category": "exact category name from base skill lines that best fits this JD",
   "mod2_skilllines": [
-    {"label": "same label as base line 1", "skills": "reordered skills, add (Learning) tag if skill is weak"},
-    {"label": "same label as base line 2", "skills": "reordered skills"},
-    {"label": "same label as base line 3", "skills": "reordered skills"},
-    {"label": "same label as base line 4", "skills": "reordered skills"}
+    {"category":"same label as base","items":"reordered items string"}
   ],
-  "missing_keywords": ["kw1", "kw2", "kw3", "kw4", "kw5"],
+  "missing_keywords": ["kw1","kw2"],
   "ats_coverage": "XX%",
-  "composites_visible": true,
-  "quantification_check": "Metrics present or Add metrics",
-  "resumeReason": "One sentence why Resume ${variant} is best for this role",
-  "top_matches": ["kw1", "kw2", "kw3"],
-  "ai_insights": "3 to 5 specific actionable recommendations: what to emphasize in interview, red flags, sponsorship notes, or strategic tips for this specific JD"
+  "resumeReason": "one sentence why this category ordering fits the JD",
+  "top_matches": ["kw1","kw2","kw3"],
+  "ai_insights": "3-5 actionable tips for this specific JD"
 }`;
 
-  // Call 1: extract structured data (keywords, title, skilllines, ATS metrics)
   const dataText = await callGroq(system, user, apiKey, 1400);
 
   let parsed;
@@ -206,17 +174,45 @@ Return ONLY this JSON:
     const match = dataText.match(/\{[\s\S]*\}/);
     if (match) {
       try { parsed = JSON.parse(match[0]); }
-      catch { throw new Error('Could not parse Groq response. Try again.'); }
+      catch { throw new Error('Groq returned unparseable JSON. Try again.'); }
     } else {
-      throw new Error('Could not parse Groq response. Try again.');
+      throw new Error('Groq returned no JSON. Try again.');
     }
   }
 
-  // Summary disabled — resumes use no summary paragraph
+  // Strict validation
+  if (!Array.isArray(parsed.mod2_skilllines) || parsed.mod2_skilllines.length === 0) {
+    throw new Error('Groq output missing mod2_skilllines. Try again.');
+  }
+  for (const line of parsed.mod2_skilllines) {
+    if (typeof line.category !== 'string' || typeof line.items !== 'string') {
+      throw new Error('Groq output has malformed skillline. Try again.');
+    }
+  }
+  if (!Array.isArray(parsed.top5_jd_skills) || new Set(parsed.top5_jd_skills).size < 5) {
+    throw new Error('Groq output has fewer than 5 distinct JD skills. Try again.');
+  }
+  if (!/^\d+%$/.test(parsed.ats_coverage || '')) {
+    parsed.ats_coverage = '—';
+  }
+
+  // Resolve primary_category with fuzzy fallback
+  parsed.primary_category = resolvePrimaryCategory(parsed.primary_category, structuredSections.skills);
+
+  // Build mod2_skills LaTeX string for compiler
+  parsed.mod2_skills = parsed.mod2_skilllines
+    .map(row => {
+      const label = (row.category || '').replace(/&/g, '\\&');
+      const skills = (row.items || '').replace(/&/g, '\\&');
+      return `\\skillline{${label}:}{${skills}}`;
+    })
+    .join('\n');
+
+  // Summary disabled by default — caller enables via separate _generateSummary call
   parsed.mod1_summary = '';
   parsed.mod1_summary_latex = '';
 
-  return applyQCBarriers(parsed, variant);
+  return parsed;
 }
 
 // ── QC BARRIER — applied to every parsed Groq result ────────────────────────
