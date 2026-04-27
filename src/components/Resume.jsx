@@ -103,7 +103,7 @@ function ResumeList({ resumes, onNew, onEdit, onDelete, onSetPrimary, onReport, 
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
         {resumes.map(r => {
-          const score = r.analysis_report?.overall_score;
+          const score = r.analysis_report?.score;
           const scoreColor = score === 'A' ? t.green : score === 'B' ? t.pri : score === 'C' ? t.yellow : score === 'D' ? t.red : t.muted;
           const scoreBg   = score === 'A' ? t.greenL : score === 'B' ? t.priL : score === 'C' ? t.yellowL : score === 'D' ? t.redL : 'transparent';
           const scoreBd   = score === 'A' ? t.greenBd : score === 'B' ? t.priBd : score === 'C' ? t.yellowBd : score === 'D' ? t.redBd : t.border;
@@ -339,7 +339,7 @@ function AnalysisReport({ resume, onBack, t }) {
   const report = resume?.analysis_report;
   if (!report) return <div style={{ color: t.muted, padding: 40, textAlign: 'center' }}>No analysis report available.</div>;
 
-  const score = report.overall_score;
+  const score = report.score;
   const scoreColor = score === 'A' ? t.green : score === 'B' ? t.pri : score === 'C' ? t.yellow : t.red;
   const scoreBg    = score === 'A' ? t.greenL : score === 'B' ? t.priL : score === 'C' ? t.yellowL : t.redL;
 
@@ -398,7 +398,7 @@ function AnalysisReport({ resume, onBack, t }) {
                 <div key={i} style={{ background: t.priL, border: `1px solid ${t.priBd}`, borderRadius: 8, padding: '10px 14px', marginBottom: 8 }}>
                   <div style={{ fontWeight: 700, color: t.tx, fontSize: 13.5, marginBottom: 4 }}>{issue.problem}</div>
                   {issue.why && <div style={{ color: t.sub, fontSize: 13, marginBottom: 3 }}><strong>Why:</strong> {issue.why}</div>}
-                  {issue.fix && <div style={{ color: t.sub, fontSize: 13 }}><strong>Fix:</strong> {issue.fix}</div>}
+                  {issue.suggestion && <div style={{ color: t.sub, fontSize: 13 }}><strong>Fix:</strong> {issue.suggestion}</div>}
                 </div>
               ))}
             </div>

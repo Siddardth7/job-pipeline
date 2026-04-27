@@ -196,7 +196,10 @@ export default function JobAgent() {
 
   // Debounced save helper
   const debouncedSave = useCallback((saveFn) => {
-    if (saveTimer.current) clearTimeout(saveTimer.current);
+    if (saveTimer.current) {
+      clearTimeout(saveTimer.current);
+      setPendingSaves(n => Math.max(0, n - 1));
+    }
     setPendingSaves(n => n + 1);
     setSaveError(null);
     saveTimer.current = setTimeout(async () => {
@@ -280,7 +283,7 @@ export default function JobAgent() {
 
   const removePipeline = useCallback((id) => {
     setPipeline(p => p.filter(j => j.id !== id));
-    trackSave(Storage.deleteJob(id));
+    trackSave(Storage.softRemoveJob(id));
   }, [trackSave]);
 
   const completePipeline = useCallback((id) => {

@@ -70,6 +70,7 @@ export default function FindJobs({searchResults, setSearchResults, pipeline, add
   const [extIntel, setExtIntel] = useState({industry:"",h1b:"LIKELY",itar:"NO"});
   const fileRef = useRef(null);
   const allFeedJobsRef = useRef([]); // full fetch cache — avoids re-querying on date switch
+  const HIDDEN_STATUSES = new Set(['completed', 'removed']);
   const pipeIds = new Set(pipeline.map(j => j.id));
 
   const handleRefresh = async () => {
@@ -96,8 +97,8 @@ export default function FindJobs({searchResults, setSearchResults, pipeline, add
       const firstDate = dates[0] || '';
       setSelectedDate(firstDate);
       const visible = firstDate
-        ? allJobs.filter(j => j.feed_date === firstDate && !j.in_pipeline)
-        : allJobs.filter(j => !j.in_pipeline);
+        ? allJobs.filter(j => j.feed_date === firstDate && !j.in_pipeline && !HIDDEN_STATUSES.has(j.status))
+        : allJobs.filter(j => !j.in_pipeline && !HIDDEN_STATUSES.has(j.status));
       setSearchResults(visible);
       setLastUpdated(new Date().toISOString());
     } catch(e) {
@@ -113,7 +114,7 @@ export default function FindJobs({searchResults, setSearchResults, pipeline, add
   const handleDateChange = (dateStr) => {
     setSelectedDate(dateStr);
     // Filter client-side from the already-loaded allFeedJobsRef — instant, no re-fetch
-    const jobs = allFeedJobsRef.current.filter(j => j.feed_date === dateStr && !j.in_pipeline);
+    const jobs = allFeedJobsRef.current.filter(j => j.feed_date === dateStr && !j.in_pipeline && !HIDDEN_STATUSES.has(j.status));
     setSearchResults(jobs);
   };
 

@@ -675,7 +675,7 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
         <div>
           {result.aiPowered && (
             <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:12,fontSize:12.5,color:t.green,fontWeight:700}}>
-              <Sparkles size={13}/> AI-powered analysis by Groq (llama-3.3-70b)
+              <Sparkles size={13}/> AI-powered analysis by Groq (llama-3.3-70b-versatile)
             </div>
           )}
           {/* Recommended Resume */}

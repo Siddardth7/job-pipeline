@@ -44,6 +44,15 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'No Groq API key — add it in Settings.' });
   }
 
+  // ── Model allowlist + token cap ──────────────────────────────────────────────
+  const ALLOWED_MODELS = ['llama-3.3-70b-versatile'];
+  const MAX_TOKENS_CAP = 1600;
+
+  if (!ALLOWED_MODELS.includes(req.body.model)) {
+    return res.status(400).json({ error: 'Model not allowed' });
+  }
+  req.body.max_tokens = Math.min(req.body.max_tokens ?? 1000, MAX_TOKENS_CAP);
+
   // ── Forward to Groq (apiKey from body is intentionally ignored) ─────────────
   const { apiKey: _ignored, ...groqBody } = req.body || {};
 
