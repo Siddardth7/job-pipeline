@@ -68,62 +68,69 @@ export function hydrateApplication(row) {
 // ── Jobs (reads from user_job_feed ⨯ normalized_jobs) ─────────────────────────
 export async function fetchJobs() {
   const userId = await getUserId();
-  // Limit to last 14 days to avoid hitting Supabase's 1000-row PostgREST default.
-  // Pipeline adds ~54 rows/day — 14 days = ~756 rows max, safely under the limit.
   const since = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString();
-  const { data, error } = await supabase
-    .from('user_job_feed')
-    .select(`
-      *,
-      job:normalized_jobs (
-        id, job_title, company_name, job_url, location, posted_date,
-        description, source, itar_flag, tier, h1b, industry,
-        verdict, relevance_score, boost_tags, employment_type,
-        red_flags, legitimacy_tier
-      )
-    `)
-    .eq('user_id', userId)
-    .gte('created_at', since)
-    .order('created_at', { ascending: false });
-  if (error) throw error;
 
-  return (data || []).map(row => ({
-    // Core identity
+  const selectShape = `
+    *,
+    job:normalized_jobs (
+      id, job_title, company_name, job_url, location, posted_date,
+      description, source, itar_flag, tier, h1b, industry,
+      verdict, relevance_score, boost_tags, employment_type,
+      red_flags, legitimacy_tier
+    )
+  `;
+
+  const [feedResult, pipelineResult] = await Promise.all([
+    supabase
+      .from('user_job_feed')
+      .select(selectShape)
+      .eq('user_id', userId)
+      .gte('created_at', since)
+      .order('created_at', { ascending: false }),
+    supabase
+      .from('user_job_feed')
+      .select(selectShape)
+      .eq('user_id', userId)
+      .eq('in_pipeline', true)
+      .order('created_at', { ascending: false }),
+  ]);
+
+  if (feedResult.error) throw feedResult.error;
+  if (pipelineResult.error) throw pipelineResult.error;
+
+  // Merge and deduplicate by row id — pipeline rows take priority
+  const seen = new Set();
+  const merged = [...(pipelineResult.data || []), ...(feedResult.data || [])].filter(row => {
+    if (seen.has(row.id)) return false;
+    seen.add(row.id);
+    return true;
+  });
+
+  return merged.map(row => ({
     id:               row.job_id,
-    // Normalized job fields — remapped to legacy UI shape
     role:             row.job?.job_title       ?? null,
     company:          row.job?.company_name    ?? null,
     link:             row.job?.job_url         ?? null,
     location:         row.job?.location        ?? null,
     posted:           row.job?.posted_date     ?? null,
-    jd:               row.job?.description     ?? null,
+    description:      row.job?.description     ?? null,
     source:           row.job?.source          ?? null,
-    itar_flag:        row.job?.itar_flag       ?? false,
+    itar:             row.job?.itar_flag       ?? false,
     tier:             row.job?.tier            ?? null,
     h1b:              row.job?.h1b             ?? null,
     industry:         row.job?.industry        ?? null,
     verdict:          row.job?.verdict         ?? null,
-    employment_type:  row.job?.employment_type  ?? null,
-    red_flags:        row.job?.red_flags        ?? [],
-    legitimacy_tier:  row.job?.legitimacy_tier  ?? 'high',
-    // Per-user feed fields
-    score_breakdown:  row.score_breakdown       ?? null,
-    match:            row.user_relevance_score ?? row.job?.relevance_score ?? null,
+    score:            row.relevance_score      ?? row.job?.relevance_score ?? 0,
+    boost_tags:       row.job?.boost_tags      ?? [],
+    employment_type:  row.job?.employment_type ?? null,
+    red_flags:        row.job?.red_flags       ?? [],
+    legitimacy_tier:  row.job?.legitimacy_tier ?? null,
     in_pipeline:      row.in_pipeline,
-    pipeline_added_at: row.pipeline_added_at,
-    analysis_result:  row.analysis_result,
-    analysisResult:   row.analysis_result,
-    resume_variant:   row.resume_variant,
-    resumeVariant:    row.resume_variant,
     status:           row.status,
-    feed_date:        row.created_at ? row.created_at.slice(0, 10) : null,
-    locationType: (() => {
-      const loc = (row.job?.location || '').toLowerCase();
-      if (loc.includes('remote')) return 'Remote';
-      if (loc.includes('hybrid')) return 'Hybrid';
-      return 'Onsite';
-    })(),
-    _feedId:          row.id,   // internal — feed row PK for targeted updates
+    feed_date:        row.feed_date,
+    notes:            row.notes,
+    resumeVariant:    row.resume_variant,
+    resume_variant:   row.resume_variant,
   }));
 }
 
@@ -246,6 +253,18 @@ export async function deleteJob(id) {
     .delete()
     .eq('user_id', userId)
     .eq('job_id', id);
+  if (error) throw error;
+}
+
+// Soft-removes a job by setting status='removed' and in_pipeline=false.
+// Preserves the row for audit/history — does not delete it.
+export async function softRemoveJob(id) {
+  const userId = await getUserId();
+  const { error } = await supabase
+    .from('user_job_feed')
+    .update({ status: 'removed', in_pipeline: false })
+    .eq('id', id)
+    .eq('user_id', userId);
   if (error) throw error;
 }
 
