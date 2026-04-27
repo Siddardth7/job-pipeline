@@ -41,13 +41,17 @@ ONBOARDING (one-time)
                                     ▼
                        Supabase: resumes.structured_sections
                        {
+                         schema_version: 1,
                          summary: "text" | null,
                          section_order: ["skills","experience","education"],
-                         skills: [{ category, items }],
-                         experience: [{ company, role, date_range, bullets }],
+                         skills: [{ category, items: string[] }],
+                         experience: [{ company, role, date_range, bullets: string[] }],
                          education: [{ school, degree, date_range }],
-                         certifications: [...]
+                         certifications: string[],
+                         contact: { email, phone, linkedin, location }
                        }
+                       NOTE: contact is populated from user_profiles table,
+                       NOT from the resume parse step.
 
 JOB ANALYSIS (every run)
   1. fetchPrimaryResume() → structured_sections
@@ -96,6 +100,9 @@ PIPELINE FIXES
 New endpoint: `POST /parse`
 - Input: raw `.tex` source as `text/plain`
 - Output: `structured_sections` JSON
+- **Auth:** requires Supabase JWT in `Authorization: Bearer <token>` header — same guard as `/api/groq`. Unauthenticated requests return 401.
+- **GCR cold start:** Cloud Run service is configured with `min-instances: 1` to keep one instance warm. Onboarding must not be the first request to cold-start the service. The frontend shows a loading state ("Parsing resume…") with a 15-second timeout and a user-friendly retry prompt if exceeded.
+- **`section_order` fallback:** if no recognisable `\section{}` commands are found, defaults to `["skills", "experience", "education"]`.
 
 **Parser passes (deterministic regex):**
 
@@ -123,10 +130,13 @@ SECTION_MAP = {
 ### 4.3 Resume Parser — Groq Fallback (`api/parse-resume.js`)
 
 New Vercel function for PDF uploads only.
-- Receives PDF as base64
+- **Client-side guard:** reject files over 5MB before upload — show "File too large. Max 5MB." error.
+- **Text extraction:** PDF is not sent as raw binary. The frontend extracts text from the PDF using `pdfjs-dist` (already available via npm) before calling the API. Only the extracted text string is sent — not the binary.
+- **Truncation:** extracted text is truncated to 8000 characters before sending to Groq to stay within token budget.
+- Requires Supabase JWT in `Authorization` header — 401 if missing.
 - Calls Groq with `response_format: { type: "json_object" }`
-- Prompt instructs Groq to return exactly the `structured_sections` shape
-- Validates output has at minimum `skills` and `experience` arrays before returning
+- Prompt instructs Groq to return exactly the `structured_sections` shape including `schema_version: 1`
+- Validates output has at minimum `skills` (array, length > 0) and `experience` (array) before returning
 - If validation fails, returns `{ parse_error: "incomplete_parse" }`
 
 ### 4.4 Job Analysis AI (`src/lib/groq.js`)
@@ -153,7 +163,17 @@ New helpers:
 }
 ```
 
-`primary_category` replaces `variant` — it is one of the user's actual skill category names, not A/B/C/D.
+`primary_category` replaces `variant` — it must be one of the user's actual skill category names, not A/B/C/D.
+
+**`primary_category` validation + fuzzy fallback:**
+After receiving Groq output, validate that `primary_category` exactly matches one of the category names in `structured_sections.skills`. If it doesn't match exactly:
+1. Try case-insensitive match
+2. Try partial substring match (e.g. Groq returns "Process Engineering", user has "Process & CI" → match)
+3. If still no match → fall back to `structured_sections.skills[0].category` (first category)
+Log a warning when fallback is used so it can be monitored.
+
+**Groq prompt constraint for skill reordering:**
+The prompt explicitly states: "Reorder items within each category from the user's base list only — never add new skills not already present. Do not rename categories." This preserves the same constraint as the old `BASE_SKILLLINES` approach, now applied to user-derived categories.
 
 **Strict output validation (replaces `applyQCBarriers`):**
 - `mod2_skilllines` must be array with at least 1 entry, each having `category` (string) + `items` (string)
@@ -161,7 +181,11 @@ New helpers:
 - `ats_coverage` must match `/^\d+%$/`
 - Any failure: throw with specific message — no silent fallback to local scoring
 
-**`_generateSummary()`:** updated to receive `structured_sections` context instead of hardcoded candidate block. The `VARIANT_LENS` map is replaced by a dynamic lens: the system uses `primary_category` (from Groq output) as the role angle, and the user's first two experience role+bullets as the proof points. The system prompt becomes: "You are writing for a candidate targeting [primary_category] roles. Their strongest proof point is [first experience role + top 2 bullets]. Write 3 sentences using the same structure as the current prompt." This works for any user's resume without hardcoding.
+**`_generateSummary()`:** updated to receive `structured_sections` + Groq output context instead of hardcoded candidate block. The static `VARIANT_LENS` map is replaced by a Groq-derived dynamic lens:
+
+- **Lens generation:** before writing the summary, the system prompt instructs Groq to first derive the role angle from the JD + `primary_category` + the user's top two experience roles and their strongest bullets. Groq produces a one-sentence lens ("This role needs someone who can X — anchor the summary to Y") then writes the 3-sentence summary using that lens.
+- **Proof points:** the user's `structured_sections.experience` entries are passed in full so Groq selects the most relevant bullets rather than blindly using the first two.
+- **Constraints unchanged:** same 3-sentence structure, same banned words list, same per-sentence word count targets as the current prompt.
 
 **`(Learning)` tags:** instruction removed from all prompts. Never outputs this string again.
 
@@ -170,10 +194,11 @@ New helpers:
 ### 4.5 Job Analysis UI (`src/components/JobAnalysis.jsx`)
 
 - Fetches primary resume from Supabase on mount
-- If no primary resume found: shows "Upload your resume in the Resume tab to enable AI analysis" state — Analyze button disabled
+- If no primary resume found: shows "Upload your resume in the Resume tab to enable AI analysis" state — Analyze button disabled. Does not crash.
 - `variant` prop and hardcoded `RESUMES` map removed
+- **Primary category display:** after analysis, shows `primary_category` name (e.g. "Quality Engineering") as the active resume angle — replaces the old "Variant A / Manufacturing & Plant Ops" label. Shown as a badge: "Resume angle: [primary_category]"
 - Summary toggle: visible only if `structured_sections.summary !== null`; when ON, fires `_generateSummary()` after main analysis
-- Download payload updated to new compiler shape
+- Download payload updated to new compiler shape — contact fields sourced from `user_profiles` table at download time
 - Model label updated to `llama-3.3-70b-versatile` (exact match to code)
 
 ### 4.6 Dynamic Compiler Template (`resume-compiler/templates/resume_dynamic.tex`)
@@ -196,7 +221,7 @@ Jinja2 template. Replaces `resume_A.tex` through `resume_D.tex`.
 ```
 
 - Skills renders however many categories the user has — not exactly 4
-- Certifications rendered as last item in Skills block from `structured_sections.certifications`
+- Certifications: `structured_sections.certifications` is `string[]` — each entry is one certification name. Rendered as a comma-joined line at the end of the Skills block: `\textbf{Certifications:} Six Sigma Green Belt, ...`. If the array is empty, the Certifications line is omitted entirely.
 - Experience bullets locked — come from `structured_sections`, never from Groq
 - Education position determined by `section_order`
 - `strip_locked_skills()` function removed from `app.py`
@@ -220,6 +245,8 @@ Updated `/compile` payload shape:
 ```
 
 Uses `Jinja2` to render `resume_dynamic.tex` with the payload data instead of string injection.
+
+**Contact fields:** at compile time, the frontend fetches the user's profile from `user_profiles` (name, email, phone, linkedin, location) and includes it in the compile payload. The `/compile` endpoint does not read from Supabase directly — contact data is always caller-supplied.
 
 ---
 
@@ -274,39 +301,59 @@ No DB schema changes required. `resumes.structured_sections` already exists with
 
 ---
 
-## 7. Out of Scope
+## 7. Cover Letter Fallback
 
-- Cover letter template changes — `cover_letter.tex` unchanged
+`cover_letter.tex` is not redesigned. One targeted change only:
+
+The cover letter template currently uses `mod1_summary` as its opening paragraph. When summary toggle is OFF, `mod1_summary` is an empty string — leaving the cover letter opener blank.
+
+**Fix:** the cover letter template gets a conditional fallback opener:
+- If `mod1_summary` is non-empty → use it as the intro paragraph (current behaviour)
+- If `mod1_summary` is empty → render a generic opener using `primary_category` + company name: "I am writing to express my interest in the [job_title] role at [company]. As an [primary_category]-focused Aerospace Engineering graduate, I am eager to contribute to your team."
+
+This fallback is a template-level change in `cover_letter.tex` only — no prompt or Groq change.
+
+---
+
+## 8. Out of Scope
+
 - Projects section in resume — parsed and stored in `structured_sections` if present, but not yet rendered in the dynamic template (future)
 - Two-stage AI (Groq extractor + Claude prose) — deferred; can layer on later
 - Multi-user pipeline scraping — separate plan (`2026-03-27-multi-user-jobagent-architecture.md`)
 
 ---
 
-## 8. Files Changed
+## 9. Files Changed
 
 | File | Change |
 |------|--------|
-| `src/components/Onboarding.jsx` | Add Step 4 resume upload |
-| `src/components/JobAnalysis.jsx` | Remove variant, fetch primary resume, summary toggle |
+| `src/components/Onboarding.jsx` | Add Step 4 resume upload (tex + PDF, skippable) |
+| `src/components/JobAnalysis.jsx` | Remove variant, fetch primary resume, primary_category badge, summary toggle, contact from user_profiles |
 | `src/components/Resume.jsx` | Fix schema drift (score/suggestion fields) |
 | `src/components/FindJobs.jsx` | Fix completed/removed jobs filter |
-| `src/lib/groq.js` | Remove hardcoded block, dynamic context builders, strict validation, remove (Learning) |
+| `src/lib/groq.js` | Remove hardcoded block, dynamic context builders, primary_category fuzzy match, strict validation, remove (Learning) |
 | `src/lib/storage.js` | Fix 14-day cap, add softRemoveJob(), fix fetchJobs merge |
 | `src/App.jsx` | Fix debounce counter, call softRemoveJob |
 | `api/groq.js` | Model allowlist + token cap |
-| `api/parse-resume.js` | New — Groq PDF parser |
-| `resume-compiler/app.py` | Add /parse endpoint, update /compile payload, remove strip_locked_skills |
+| `api/parse-resume.js` | New — PDF text extraction + Groq parser (JWT-gated, 5MB guard, 8000-char truncation) |
+| `scripts/seed_primary_resume.js` | New — one-time seeder for Siddardth's existing data |
+| `resume-compiler/app.py` | Add JWT-gated /parse endpoint, update /compile payload, remove strip_locked_skills, min-instances config |
 | `resume-compiler/templates/resume_dynamic.tex` | New dynamic Jinja2 template |
+| `resume-compiler/templates/cover_letter.tex` | Add fallback opener when mod1_summary is empty |
 | `resume-compiler/templates/resume_A–D.tex` | Removed from active routing (kept for reference) |
 
 ---
 
-## 9. Success Criteria
+## 10. Success Criteria
 
 - Any new user can sign up, upload their `.tex` resume, and run Job Analysis against a real job description — no hardcoded data in the loop
+- Siddardth's existing account works without interruption after seeder runs
+- Onboarding never fails due to a parse error — always completes, parse failures are non-blocking toasts
 - Completed jobs never reappear in Find Jobs
 - Active pipeline items are visible regardless of when they were added
 - Groq output failures surface as explicit errors — never silently fall back to local keyword scoring
 - Resume PDF section order matches the user's uploaded resume layout
 - `(Learning)` never appears in a generated resume
+- `/parse` endpoint rejects unauthenticated requests with 401
+- Cover letter has a meaningful opener even when summary toggle is OFF
+- `primary_category` badge is visible in Job Analysis UI after every analysis run
