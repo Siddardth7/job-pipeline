@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { BarChart2, CheckCircle, Users, Copy, Check, Briefcase, Zap, SlidersHorizontal, Edit3, Sparkles, FileText, Download, RefreshCw, ChevronDown, ChevronUp, MessageSquare } from 'lucide-react';
 import { analyzeJob } from '../lib/scoring.js';
-import { analyzeJobWithGroq, generateCoverLetterWithGroq, answerApplicationQuestion } from '../lib/groq.js';
+import { analyzeJobWithGroq, generateCoverLetterWithGroq, answerApplicationQuestion, generateSummary } from '../lib/groq.js';
 import { buildCoverLetterPayload } from '../lib/coverLetter.js';
+import * as Storage from '../lib/storage.js';
+import { supabase } from '../supabase.js';
 
 const RESUMES = {
   A: {name:"Manufacturing & Plant Ops", skills:"GD&T, CMM, Fixtures"},
@@ -388,6 +390,31 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
   const [showRaw2, setShowRaw2] = useState(false);
   const [genLoading, setGenLoading] = useState(null); // null | "resume" | "coverletter"
   const [genError, setGenError] = useState(null);
+  const [primaryResume, setPrimaryResume] = useState(null);
+  const [resumeLoading, setResumeLoading] = useState(true);
+  const [includeSummary, setIncludeSummary] = useState(false);
+
+  // Fetch primary resume from DB on mount
+  useEffect(() => {
+    if (typeof Storage.fetchResumes === 'function') {
+      Storage.fetchResumes().then(resumes => {
+        const primary = resumes.find(r => r.is_primary) || null;
+        if (primary?.id && typeof Storage.fetchResume === 'function') {
+          Storage.fetchResume(primary.id).then(full => {
+            setPrimaryResume(full);
+            setResumeLoading(false);
+          }).catch(() => setResumeLoading(false));
+        } else if (primary) {
+          setPrimaryResume(primary);
+          setResumeLoading(false);
+        } else {
+          setResumeLoading(false);
+        }
+      }).catch(() => setResumeLoading(false));
+    } else {
+      setResumeLoading(false);
+    }
+  }, []);
 
   // Sync from currentJob whenever the active job changes
   useEffect(() => {
@@ -433,15 +460,15 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
     try {
       let analysisResult;
 
-      if (groqKey) {
-        // Use Groq AI for tailored analysis — picks variant first via local scoring, then enriches
-        const localResult = analyzeJob(jd, res);
-        const chosenVariant = res || localResult.recommendedResume;
-        const groqResult = await analyzeJobWithGroq(jd, chosenVariant, groqKey);
+      if (groqKey && primaryResume?.structured_sections) {
+        // Use Groq AI for tailored analysis using primary resume structured sections
+        const groqResult = await analyzeJobWithGroq(
+          currentJob?.description || currentJob?.jd || jd,
+          primaryResume.structured_sections,
+          groqKey
+        );
         analysisResult = {
-          ...localResult,
           ...groqResult,
-          recommendedResume: chosenVariant,
           aiPowered: true,
         };
       } else {
@@ -515,23 +542,80 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
       .replace(/[^a-zA-Z0-9_]/g, '') || 'Engineer';
   };
 
-  const downloadResume = useCallback(() => {
-    if (!result) return;
+  const downloadResume = useCallback(async () => {
+    if (!result || !primaryResume?.structured_sections) return;
     const companySlug = toFileSlug(co) || 'Company';
     const roleSlug = toRoleSlug(role);
-    downloadFile(
-      "/generate",
-      {
-        variant: result.recommendedResume,
-        summary: result.mod1_summary_latex ?? result.mod1_summary?.replace(/\*\*/g, ''),
-        skills_latex: result.mod2_skills,
+
+    setGenLoading("resume");
+    setGenError(null);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const profile = await Storage.fetchUserProfile();
+
+      // If summary toggled on, generate it first
+      let mod1Summary = '';
+      if (includeSummary && primaryResume?.structured_sections?.summary !== null) {
+        mod1Summary = await generateSummary(
+          currentJob?.description || currentJob?.jd || jd,
+          result.primary_category,
+          result.top5_jd_skills || [],
+          role,
+          primaryResume.structured_sections,
+          groqKey
+        );
+      }
+
+      const compilePayload = {
+        structured_sections: primaryResume.structured_sections,
+        groq_output: {
+          mod2_skilllines: result.mod2_skilllines,
+          primary_category: result.primary_category,
+          mod1_summary: mod1Summary,
+        },
+        include_summary: includeSummary && !!mod1Summary,
+        candidate_name: profile?.full_name || 'Candidate',
+        contact: {
+          email: profile?.email || '',
+          phone: profile?.phone || '',
+          linkedin: profile?.linkedin_url || '',
+          location: profile?.location || '',
+        },
         company: co,
         role: role,
-      },
-      `Siddardth_Pathipaka_${roleSlug}_${companySlug}.pdf`,
-      "resume"
-    );
-  }, [result, co, role, downloadFile]);
+      };
+
+      const response = await fetch(`${COMPILER_URL}/compile`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token || ''}`,
+        },
+        body: JSON.stringify(compilePayload),
+      });
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.error ?? `HTTP ${response.status}`);
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      const cd = response.headers.get('Content-Disposition') ?? '';
+      const nameMatch = cd.match(/filename="?([^";\n]+)"?/);
+      a.download = nameMatch ? nameMatch[1] : `Siddardth_Pathipaka_${roleSlug}_${companySlug}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      setGenError(err.message);
+    } finally {
+      setGenLoading(null);
+    }
+  }, [result, co, role, primaryResume, includeSummary, currentJob, jd, groqKey]);
 
   const downloadCoverLetter = useCallback(() => {
     if (!result) return;
@@ -608,6 +692,12 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
         </Card>
       )}
 
+      {!resumeLoading && !primaryResume && (
+        <div style={{background:'#fffbe6', border:'1px solid #ffe58f', borderRadius:8, padding:'10px 14px', marginBottom:14, fontSize:13, color:'#7c5c00'}}>
+          No resume found. Go to the <strong>Resume</strong> tab and upload your .tex or PDF to enable AI analysis.
+        </div>
+      )}
+
       {(currentJob?.role || co) && (
         <Card t={t} style={{marginBottom:16}}>
           <SectionLabel t={t}>Job Details</SectionLabel>
@@ -626,7 +716,7 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
             multiline rows={8} t={t}
           />
           <div style={{display:"flex",gap:10,alignItems:"center",flexWrap:"wrap"}}>
-            <Btn onClick={analyze} disabled={loading||!jd.trim()} t={t}>
+            <Btn onClick={analyze} disabled={loading || resumeLoading || !primaryResume || !jd.trim()} title={!primaryResume ? 'Upload your resume in the Resume tab first' : undefined} t={t}>
               {groqKey && <Sparkles size={13}/>}
               {loading ? "Analyzing..." : groqKey ? "Run AI Analysis" : "Run Resume Analysis"}
             </Btn>
@@ -676,6 +766,20 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
           {result.aiPowered && (
             <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:12,fontSize:12.5,color:t.green,fontWeight:700}}>
               <Sparkles size={13}/> AI-powered analysis by Groq (llama-3.3-70b-versatile)
+            </div>
+          )}
+          {result?.primary_category && (
+            <div style={{display:'inline-flex', alignItems:'center', gap:6, padding:'4px 12px', borderRadius:20, background:'#f0f5ff', border:'1px solid #adc6ff', fontSize:12, fontWeight:700, color:'#1d4ed8', marginBottom:10}}>
+              Resume angle: {result.primary_category}
+            </div>
+          )}
+          {result && primaryResume?.structured_sections?.summary !== null && primaryResume?.structured_sections?.summary !== undefined && (
+            <div style={{display:'flex', alignItems:'center', gap:10, marginBottom:14}}>
+              <input type="checkbox" id="summary-toggle" checked={includeSummary}
+                onChange={e => setIncludeSummary(e.target.checked)} />
+              <label htmlFor="summary-toggle" style={{fontSize:13, color:'#666', cursor:'pointer'}}>
+                Include tailored summary paragraph
+              </label>
             </div>
           )}
           {/* Recommended Resume */}

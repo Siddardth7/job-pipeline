@@ -96,7 +96,7 @@ export async function callGroq(systemPrompt, userPrompt, apiKey, maxTokens = 100
 // ─── Summary Generation — focused separate call ───────────────────────────────
 // Receives pre-extracted keywords + title from the data call so the model
 // only has ONE job: write 3 sentences. No JSON, no competing fields.
-async function _generateSummary(jd, primaryCategory, keywords, title, structuredSections, apiKey) {
+export async function generateSummary(jd, primaryCategory, keywords, title, structuredSections, apiKey) {
   const candidateContext = buildCandidateContext(structuredSections);
 
   const system = `You are writing a 3-sentence resume summary. Output ONLY the 3 sentences as plain text — no JSON, no labels, no formatting markers.
