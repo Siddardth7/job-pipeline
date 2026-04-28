@@ -1,5 +1,12 @@
 import { useState } from 'react';
 import * as Storage from '../lib/storage.js';
+import { supabase } from '../supabase.js';
+import * as pdfjsLib from 'pdfjs-dist';
+pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url
+).toString();
+
+const COMPILER_URL = import.meta.env.VITE_COMPILER_URL || 'https://resume-compiler-1077806152183.us-central1.run.app';
 
 const DOMAIN_OPTIONS = [
   { value: 'aerospace_manufacturing', label: 'Aerospace & Manufacturing' },
@@ -32,7 +39,7 @@ const DOMAIN_ROLE_SUGGESTIONS = {
   ],
 };
 
-const STEPS = ['Profile', 'Target Roles', 'API Keys'];
+const STEPS = ['Profile', 'Target Roles', 'API Keys', 'Resume'];
 
 export default function Onboarding({ t, onComplete }) {
   const [step, setStep] = useState(0);
@@ -56,6 +63,13 @@ export default function Onboarding({ t, onComplete }) {
   const [groqKey, setGroqKey] = useState('');
   const [serperKey, setSerperKey] = useState('');
 
+  // Step 3 — Resume Upload
+  const [resumeFile, setResumeFile] = useState(null);
+  const [resumeText, setResumeText] = useState('');
+  const [resumeType, setResumeType] = useState('');  // 'tex' | 'pdf'
+  const [parseError, setParseError] = useState('');
+  const [parsePending, setParsePending] = useState(false);
+
   const labelStyle = { display: 'block', color: t.sub, fontSize: 12, fontWeight: 600, marginBottom: 6 };
   const inputStyle = {
     width: '100%', padding: '10px 12px', borderRadius: 8,
@@ -78,6 +92,38 @@ export default function Onboarding({ t, onComplete }) {
     if (!newRoleTitle.trim()) return;
     setRoleTargets(r => [...r, { title: newRoleTitle.trim(), cluster: domain, priority: 3 }]);
     setNewRoleTitle('');
+  }
+
+  async function handleFileSelect(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    setParseError('');
+
+    if (file.size > 5 * 1024 * 1024) {
+      setParseError('File too large. Max 5MB.');
+      return;
+    }
+
+    if (file.name.endsWith('.tex')) {
+      const text = await file.text();
+      setResumeFile(file);
+      setResumeText(text);
+      setResumeType('tex');
+    } else if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
+      setResumeFile(file);
+      setResumeType('pdf');
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      let fullText = '';
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const content = await page.getTextContent();
+        fullText += content.items.map(item => item.str).join(' ') + '\n';
+      }
+      setResumeText(fullText.slice(0, 8000));
+    } else {
+      setParseError('Please upload a .tex or .pdf file.');
+    }
   }
 
   async function handleFinish() {
@@ -107,6 +153,51 @@ export default function Onboarding({ t, onComplete }) {
 
       if (groqKey.trim())   await Storage.saveUserIntegration('groq', groqKey.trim());
       if (serperKey.trim()) await Storage.saveUserIntegration('serper', serperKey.trim());
+
+      // Parse and save resume if provided (non-blocking — onboarding completes regardless)
+      if (resumeFile && resumeText) {
+        setParsePending(true);
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          let structuredSections = null;
+
+          if (resumeType === 'tex') {
+            const res = await fetch(`${COMPILER_URL}/parse`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'text/plain',
+                'Authorization': `Bearer ${session.access_token}`,
+              },
+              body: resumeText,
+              signal: AbortSignal.timeout(15000),
+            });
+            if (res.ok) structuredSections = await res.json();
+          } else {
+            const res = await fetch('/api/parse-resume', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${session.access_token}`,
+              },
+              body: JSON.stringify({ text: resumeText }),
+              signal: AbortSignal.timeout(20000),
+            });
+            if (res.ok) structuredSections = await res.json();
+          }
+
+          if (structuredSections && !structuredSections.parse_error) {
+            await Storage.upsertResume({
+              name: 'Primary Resume',
+              is_primary: true,
+              structured_sections: structuredSections,
+            });
+          }
+        } catch (err) {
+          console.warn('Resume parse failed (non-blocking):', err.message);
+        } finally {
+          setParsePending(false);
+        }
+      }
 
       onComplete();
     } catch (err) {
@@ -250,6 +341,43 @@ export default function Onboarding({ t, onComplete }) {
             <p style={{ color: t.muted, fontSize: 11, margin: '4px 0 16px' }}>
               Keys are stored per-user in your Supabase account and never shared.
             </p>
+          </>
+        )}
+
+        {/* Step 3: Resume Upload */}
+        {step === 3 && (
+          <>
+            <p style={{color: t.sub, fontSize: 13, margin: '0 0 16px'}}>
+              Upload your Overleaf .tex file or resume PDF so AI analysis uses your real experience. Optional — you can skip and upload later from the Resume tab.
+            </p>
+
+            <label style={{
+              display: 'flex', flexDirection: 'column', alignItems: 'center',
+              justifyContent: 'center', border: `2px dashed ${t.border}`,
+              borderRadius: 10, padding: '24px 16px', cursor: 'pointer',
+              background: t.bg, marginBottom: 14,
+            }}>
+              <span style={{fontSize: 13, color: t.sub, marginBottom: 8}}>
+                {resumeFile ? resumeFile.name : 'Click to upload .tex or .pdf'}
+              </span>
+              <span style={{fontSize: 11, color: t.muted}}>Max 5MB</span>
+              <input type="file" accept=".tex,.pdf" onChange={handleFileSelect}
+                style={{display: 'none'}} />
+            </label>
+
+            {parseError && <p style={{color: t.red, fontSize: 13, margin: '0 0 12px'}}>{parseError}</p>}
+            {resumeFile && !parseError && (
+              <p style={{color: '#16a34a', fontSize: 12, margin: '0 0 12px'}}>
+                ✓ {resumeType === 'tex' ? 'LaTeX file ready' : 'PDF text extracted'} — will be parsed on finish
+              </p>
+            )}
+
+            <button onClick={() => onComplete()} style={{
+              width: '100%', padding: 8, background: 'none',
+              border: 'none', color: t.muted, fontSize: 12, cursor: 'pointer',
+            }}>
+              Skip for now
+            </button>
           </>
         )}
 
