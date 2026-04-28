@@ -27,7 +27,10 @@ describe('calcStreak', () => {
   const ds = (offsetDays) => {
     const d = new Date(today);
     d.setDate(today.getDate() - offsetDays);
-    return d.toISOString().split('T')[0];
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
   };
 
   it('returns 0 when no activity', () => {
@@ -61,7 +64,10 @@ describe('buildSparkData', () => {
   const ds = (offsetDays) => {
     const d = new Date(today);
     d.setDate(today.getDate() - offsetDays);
-    return d.toISOString().split('T')[0];
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
   };
 
   it('returns an array of length 7', () => {
