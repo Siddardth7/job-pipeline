@@ -128,6 +128,9 @@ WRITE EXACTLY 3 SENTENCES using the logic below. Plain text only. No bold, no da
 }
 
 export async function analyzeJobWithGroq(jd, structuredSections, apiKey) {
+  if (!structuredSections || typeof structuredSections !== 'object') {
+    throw new Error('structuredSections is required for job analysis.');
+  }
   const candidateContext = buildCandidateContext(structuredSections);
   const baseSkillLines = buildSkillLinesPrompt(structuredSections.skills || []);
   const baseLinesJson = JSON.stringify(baseSkillLines, null, 2);
@@ -211,93 +214,6 @@ Return ONLY this JSON:
   // Summary disabled by default — caller enables via separate _generateSummary call
   parsed.mod1_summary = '';
   parsed.mod1_summary_latex = '';
-
-  return parsed;
-}
-
-// ── QC BARRIER — applied to every parsed Groq result ────────────────────────
-// Bold is applied HERE deterministically — never trusted from Groq output.
-// Groq writes plain text. We bold the title + all 5 keywords reliably.
-function applyQCBarriers(parsed, variant) {
-  if (parsed.mod2_skilllines && Array.isArray(parsed.mod2_skilllines)) {
-    parsed.mod2_skills = parsed.mod2_skilllines
-      .map(row => {
-        const label = row.label.replace(/&/g, '\\&');
-        const skills = row.skills.replace(/&/g, '\\&');
-        return `\\skillline{${label}}{${skills}}`;
-      })
-      .join('\n');
-  }
-
-  if (parsed.mod1_summary) {
-    let s = parsed.mod1_summary;
-
-    // 1. Nuclear strip — Groq may output \textbf{} with unescaped backslash in JSON,
-    //    which JSON.parse turns into [TAB]extbf{} (\t = tab). Handle both variants.
-    s = s.replace(/\\[a-zA-Z]+\{([^}]*)\}/g, '$1');   // proper \cmd{content} → content
-    s = s.replace(/\t[a-zA-Z]+\{([^}]*)\}/g, '$1');   // tab-corrupted [TAB]cmd{content} → content
-    s = s.replace(/\*\*([^*]+)\*\*/g, '$1');            // **bold** → plain
-    s = s.replace(/\*\*/g, '');                         // orphaned **
-    s = s.replace(/[{}\\]/g, '');                       // remaining LaTeX chars
-    s = s.replace(/\t/g, ' ').replace(/\s+/g, ' ').trim(); // normalize whitespace
-
-    // 2. Enforce max 3 sentences
-    const sentences = s.match(/[^.!?]+[.!?]+/g) || [s];
-    if (sentences.length > 3) s = sentences.slice(0, 3).join(' ');
-
-    // 3. Hard word cap: 95 words
-    const words = s.split(/\s+/).filter(Boolean);
-    if (words.length > 95) {
-      s = words.slice(0, 95).join(' ').replace(/[,\s]+$/, '') + '.';
-    }
-
-    // 4. Clean up spacing
-    s = s.replace(/ {2,}/g, ' ').replace(/ ,/g, ',').trim();
-
-    // 5. Deterministic bold — sort by length descending to avoid partial overlaps
-    const GENERIC_TITLES = new Set(['intern', 'engineer', 'technician', 'specialist', 'analyst', 'associate', 'coordinator']);
-    const VARIANT_TITLES = { A: 'Manufacturing Engineer', B: 'Process Engineer', C: 'Quality Engineer', D: 'Equipment Engineer' };
-    const rawTitle = (parsed.summary_title || '').trim();
-    let title = rawTitle;
-    if (!title || GENERIC_TITLES.has(title.toLowerCase()) || title.split(/\s+/).length < 2) {
-      title = VARIANT_TITLES[variant] || 'Manufacturing Engineer';
-      parsed.summary_title = title;
-      // Replace old generic title at start of summary with corrected title
-      if (rawTitle) {
-        const escOld = rawTitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        s = s.replace(new RegExp(`^${escOld}\\b`, 'i'), title);
-      }
-    }
-    const keywords = [...(parsed.top5_jd_skills || [])].sort((a, b) => b.length - a.length);
-
-    // Bold the title (first occurrence only)
-    if (title) {
-      const esc = title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      s = s.replace(new RegExp(esc, 'i'), `**${title}**`);
-    }
-
-    // Bold each keyword (first occurrence, skip if already inside **)
-    for (const kw of keywords) {
-      if (!kw) continue;
-      const esc = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      // Only match if not already wrapped in **
-      s = s.replace(new RegExp(`(?<!\\*)\\b${esc}\\b(?!\\*)`, 'i'), `**${kw}**`);
-    }
-
-    // 6. Final safety check — if any LaTeX chars survived, strip them
-    if (/[{}\\]/.test(s)) {
-      s = s.replace(/[{}\\]/g, '').replace(/\s+/g, ' ').trim();
-    }
-
-    // 7. Build LaTeX version: **text** -> \textbf{text}, then escape LaTeX special chars
-    parsed.mod1_summary_latex = s
-      .replace(/\*\*([^*]+)\*\*/g, '\\textbf{$1}')
-      .replace(/%/g, '\\%')
-      .replace(/&/g, '\\&')
-      .replace(/\$/g, '\\$')
-      .replace(/#/g, '\\#');
-    parsed.mod1_summary = s;
-  }
 
   return parsed;
 }
