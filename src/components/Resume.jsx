@@ -1,7 +1,12 @@
-import { useState, useEffect } from 'react';
-import { Plus, Star, Trash2, Edit3, BarChart2, ChevronLeft, Loader, CheckCircle, AlertCircle, X } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Plus, Star, Trash2, Edit3, BarChart2, ChevronLeft, Loader, CheckCircle, AlertCircle, X, Upload } from 'lucide-react';
 import { fetchResumes, fetchResume, upsertResume, deleteResume, setPrimaryResume, saveResumeAnalysis } from '../lib/storage.js';
 import { analyzeResumeWithGroq } from '../lib/groq.js';
+import { supabase } from '../supabase.js';
+import * as pdfjsLib from 'pdfjs-dist';
+pdfjsLib.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString();
+
+const COMPILER_URL = import.meta.env.VITE_COMPILER_URL || 'https://resume-compiler-1077806152183.us-central1.run.app';
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 function emptyResume(profile) {
@@ -71,8 +76,49 @@ function Textarea({ value, onChange, placeholder, rows = 4, t, style: xs }) {
   );
 }
 
+// ── Upload helper ─────────────────────────────────────────────────────────────
+async function parseUploadedResume(file) {
+  if (file.size > 5 * 1024 * 1024) throw new Error('File too large. Max 5MB.');
+
+  const { data: { session } } = await supabase.auth.getSession();
+
+  if (file.name.endsWith('.tex')) {
+    const text = await file.text();
+    const res = await fetch(`${COMPILER_URL}/parse`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain', 'Authorization': `Bearer ${session.access_token}` },
+      body: text,
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!res.ok) throw new Error(`Parse failed: ${res.status}`);
+    return await res.json();
+  }
+
+  if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    let fullText = '';
+    for (let i = 1; i <= pdf.numPages; i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      fullText += content.items.map(item => item.str).join(' ') + '\n';
+    }
+    const res = await fetch('/api/parse-resume', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
+      body: JSON.stringify({ text: fullText.slice(0, 8000) }),
+      signal: AbortSignal.timeout(20000),
+    });
+    if (!res.ok) throw new Error(`Parse failed: ${res.status}`);
+    return await res.json();
+  }
+
+  throw new Error('Please upload a .tex or .pdf file.');
+}
+
 // ── View 1: Resume List ───────────────────────────────────────────────────────
-function ResumeList({ resumes, onNew, onEdit, onDelete, onSetPrimary, onReport, loading, t }) {
+function ResumeList({ resumes, onNew, onUpload, onEdit, onDelete, onSetPrimary, onReport, uploading, loading, t }) {
+  const fileInputRef = useRef(null);
   const count = resumes.length;
 
   if (!loading && count === 0) {
@@ -81,8 +127,15 @@ function ResumeList({ resumes, onNew, onEdit, onDelete, onSetPrimary, onReport, 
         <Card t={t} style={{ textAlign: 'center', padding: '48px 40px', maxWidth: 420 }}>
           <div style={{ fontSize: 40, marginBottom: 16 }}>📄</div>
           <div style={{ fontWeight: 700, fontSize: 18, color: t.tx, marginBottom: 8 }}>No resumes yet</div>
-          <div style={{ color: t.muted, fontSize: 13.5, marginBottom: 24 }}>Create your first resume to get started with AI-powered job analysis.</div>
-          <Btn onClick={onNew} t={t}><Plus size={15} /> New Resume</Btn>
+          <div style={{ color: t.muted, fontSize: 13.5, marginBottom: 24 }}>Upload your .tex or PDF, or build one from scratch.</div>
+          <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+            <Btn variant="secondary" onClick={() => fileInputRef.current?.click()} disabled={uploading} t={t}>
+              {uploading ? <><Loader size={14} /> Parsing…</> : <><Upload size={14} /> Upload .tex / PDF</>}
+            </Btn>
+            <Btn onClick={onNew} t={t}><Plus size={15} /> New Resume</Btn>
+          </div>
+          <input ref={fileInputRef} type="file" accept=".tex,.pdf" style={{ display: 'none' }}
+            onChange={e => { onUpload(e.target.files[0]); e.target.value = ''; }} />
         </Card>
       </div>
     );
@@ -96,7 +149,14 @@ function ResumeList({ resumes, onNew, onEdit, onDelete, onSetPrimary, onReport, 
           <h2 style={{ margin: 0, color: t.tx, fontWeight: 700, fontSize: 20 }}>Resumes</h2>
           <div style={{ color: t.muted, fontSize: 13, marginTop: 3 }}>{count}/5 resumes · Primary is used in Job Analysis</div>
         </div>
-        <Btn onClick={onNew} disabled={count >= 5} t={t}><Plus size={15} /> New Resume</Btn>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <Btn variant="secondary" onClick={() => fileInputRef.current?.click()} disabled={count >= 5 || uploading} t={t}>
+            {uploading ? <><Loader size={14} /> Parsing…</> : <><Upload size={14} /> Upload</>}
+          </Btn>
+          <Btn onClick={onNew} disabled={count >= 5} t={t}><Plus size={15} /> New</Btn>
+          <input ref={fileInputRef} type="file" accept=".tex,.pdf" style={{ display: 'none' }}
+            onChange={e => { onUpload(e.target.files[0]); e.target.value = ''; }} />
+        </div>
       </div>
 
       {loading && <div style={{ color: t.muted, textAlign: 'center', padding: 40 }}><Loader size={20} /></div>}
@@ -416,6 +476,7 @@ export default function Resume({ profile, groqKey, t }) {
   const [activeResume, setActiveResume] = useState(null);
   const [loading, setLoading] = useState(true);
   const [analyzing, setAnalyzing] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
 
   const loadResumes = async () => {
@@ -481,6 +542,27 @@ export default function Resume({ profile, groqKey, t }) {
     }
   };
 
+  const handleUpload = async (file) => {
+    if (!file) return;
+    setUploading(true);
+    setError('');
+    try {
+      const sections = await parseUploadedResume(file);
+      if (sections.parse_error) throw new Error(sections.parse_error);
+      const baseName = file.name.replace(/\.(tex|pdf)$/i, '');
+      await upsertResume({
+        name: baseName || 'Uploaded Resume',
+        is_primary: resumes.length === 0,
+        structured_sections: sections,
+      });
+      await loadResumes();
+    } catch (e) {
+      setError('Upload failed: ' + e.message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleDelete = async (id) => {
     if (!confirm('Delete this resume? This cannot be undone.')) return;
     try {
@@ -534,7 +616,9 @@ export default function Resume({ profile, groqKey, t }) {
         <ResumeList
           resumes={resumes}
           loading={loading}
+          uploading={uploading}
           onNew={createNew}
+          onUpload={handleUpload}
           onEdit={openEditor}
           onDelete={handleDelete}
           onSetPrimary={handleSetPrimary}
