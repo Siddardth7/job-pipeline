@@ -1774,5 +1774,43 @@
     },
     "run_end_utc": "2026-04-29T15:15:55.076411Z",
     "raw_total": 403
+  },
+  {
+    "version": "4.3",
+    "run_date": "2026-04-30",
+    "run_start_utc": "2026-04-30T15:09:54.006842Z",
+    "queries_generated": 15,
+    "scrapers": {
+      "ats": {
+        "status": "success",
+        "jobs_found": 114
+      },
+      "jsearch": {
+        "status": "skipped",
+        "reason": "quota_exhausted",
+        "jobs_found": 0
+      },
+      "apify": {
+        "status": "success",
+        "queries_used": 15,
+        "jobs_found": 97
+      },
+      "usajobs": {
+        "status": "zero_results",
+        "queries_used": 15,
+        "jobs_found": 0
+      },
+      "adzuna": {
+        "status": "success",
+        "jobs_found": 143,
+        "queries_used": 15
+      },
+      "contract": {
+        "status": "zero_results",
+        "jobs_found": 0
+      }
+    },
+    "run_end_utc": "2026-04-30T15:12:52.819252Z",
+    "raw_total": 354
   }
 ]
