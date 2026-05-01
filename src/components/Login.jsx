@@ -3,6 +3,9 @@ import { signIn, signUp, sendPasswordReset } from '../lib/auth.js';
 
 function friendlyError(err, mode) {
   const msg = err?.message || '';
+  if (msg.toLowerCase().includes('rate limit') || msg.toLowerCase().includes('too many')) {
+    return { text: 'Too many attempts — please wait a few minutes before trying again.' };
+  }
   if (msg.includes('User already registered') || msg.includes('already been registered')) {
     return { text: 'An account with this email already exists.', hint: 'signin' };
   }
