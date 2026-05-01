@@ -19,9 +19,11 @@ export async function signOut() {
 }
 
 export async function sendPasswordReset(email) {
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: window.location.origin + '/',
-  });
+  // Always redirect to production — localhost links break when not running locally
+  const redirectTo = import.meta.env.VITE_APP_URL
+    ? import.meta.env.VITE_APP_URL + '/'
+    : 'https://jobagent-web.vercel.app/';
+  const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
   if (error) throw error;
 }
 
