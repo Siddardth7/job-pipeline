@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { Plus, Star, Trash2, Edit3, BarChart2, ChevronLeft, Loader, CheckCircle, AlertCircle, X, Upload } from 'lucide-react';
 import { fetchResumes, fetchResume, upsertResume, deleteResume, setPrimaryResume, saveResumeAnalysis } from '../lib/storage.js';
-import { analyzeResumeWithGroq } from '../lib/groq.js';
+import { analyzeResumeWithGroq, parseResumeTextWithGroq } from '../lib/groq.js';
 import { supabase } from '../supabase.js';
 import * as pdfjsLib from 'pdfjs-dist';
-pdfjsLib.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).toString();
+pdfjsLib.GlobalWorkerOptions.workerSrc = new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url).href;
 
 const COMPILER_URL = import.meta.env.VITE_COMPILER_URL || 'https://resume-compiler-1077806152183.us-central1.run.app';
 
@@ -76,13 +76,44 @@ function Textarea({ value, onChange, placeholder, rows = 4, t, style: xs }) {
   );
 }
 
+// ── Normalize sections from any parse source into editor-compatible shape ─────
+function normalizeParsedSections(raw) {
+  return {
+    summary: raw.summary || '',
+    experience: (raw.experience || []).map((exp, i) => ({
+      id: `exp-${i}`,
+      company:    exp.company    || '',
+      role:       exp.role       || '',
+      location:   exp.location   || '',
+      start_date: exp.start_date || exp.date_range || '',
+      end_date:   exp.end_date   || '',
+      current:    false,
+      bullets:    exp.bullets    || [],
+    })),
+    education: (raw.education || []).map((edu, i) => ({
+      id:         `edu-${i}`,
+      school:     edu.school     || '',
+      degree:     edu.degree     || '',
+      field:      edu.field      || '',
+      start_date: edu.start_date || edu.date_range || '',
+      end_date:   edu.end_date   || '',
+      gpa:        edu.gpa        || '',
+    })),
+    skills: (raw.skills || []).map((sk, i) => ({
+      id:       `sk-${i}`,
+      category: sk.category || '',
+      items:    sk.items    || [],
+    })),
+  };
+}
+
 // ── Upload helper ─────────────────────────────────────────────────────────────
 async function parseUploadedResume(file) {
   if (file.size > 5 * 1024 * 1024) throw new Error('File too large. Max 5MB.');
 
-  const { data: { session } } = await supabase.auth.getSession();
-
   if (file.name.endsWith('.tex')) {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.access_token) throw new Error('Not signed in.');
     const text = await file.text();
     const res = await fetch(`${COMPILER_URL}/parse`, {
       method: 'POST',
@@ -90,8 +121,9 @@ async function parseUploadedResume(file) {
       body: text,
       signal: AbortSignal.timeout(15000),
     });
-    if (!res.ok) throw new Error(`Parse failed: ${res.status}`);
-    return await res.json();
+    if (!res.ok) throw new Error(`LaTeX parse failed: ${res.status}`);
+    const data = await res.json();
+    return normalizeParsedSections(data);
   }
 
   if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
@@ -103,14 +135,9 @@ async function parseUploadedResume(file) {
       const content = await page.getTextContent();
       fullText += content.items.map(item => item.str).join(' ') + '\n';
     }
-    const res = await fetch('/api/parse-resume', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.access_token}` },
-      body: JSON.stringify({ text: fullText.slice(0, 8000) }),
-      signal: AbortSignal.timeout(20000),
-    });
-    if (!res.ok) throw new Error(`Parse failed: ${res.status}`);
-    return await res.json();
+    if (!fullText.trim()) throw new Error('Could not extract text from PDF. Try uploading as .tex.');
+    const raw = await parseResumeTextWithGroq(fullText);
+    return normalizeParsedSections(raw);
   }
 
   throw new Error('Please upload a .tex or .pdf file.');

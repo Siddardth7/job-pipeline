@@ -46,7 +46,7 @@ export default async function handler(req, res) {
 
   // ── Model allowlist + token cap ──────────────────────────────────────────────
   const ALLOWED_MODELS = ['llama-3.3-70b-versatile'];
-  const MAX_TOKENS_CAP = 1600;
+  const MAX_TOKENS_CAP = 2500;
 
   if (!ALLOWED_MODELS.includes(req.body.model)) {
     return res.status(400).json({ error: 'Model not allowed' });

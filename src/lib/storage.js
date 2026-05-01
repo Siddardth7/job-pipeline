@@ -660,6 +660,20 @@ export async function fetchResumes() {
   return data || [];
 }
 
+// Fetches all resumes including structured_sections — used by JobAnalysis for
+// dynamic resume selection. Primary resume is sorted first.
+export async function fetchAllResumesWithSections() {
+  const userId = await getUserId();
+  const { data, error } = await supabase
+    .from('resumes')
+    .select('id, name, is_primary, target_roles, structured_sections')
+    .eq('user_id', userId)
+    .order('is_primary', { ascending: false })
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return data || [];
+}
+
 export async function fetchResume(id) {
   const userId = await getUserId();
   const { data, error } = await supabase

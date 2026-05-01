@@ -544,3 +544,30 @@ Evaluate this resume.`;
     throw new Error('Resume analysis returned invalid JSON from Groq. Try again.');
   }
 }
+
+// ─── Resume Parsing ───────────────────────────────────────────────────────────
+// Parses plain text extracted from a PDF into structured_sections via /api/groq.
+export async function parseResumeTextWithGroq(text) {
+  const system = `You are a resume parser. Extract the resume into structured JSON.
+Return ONLY valid JSON matching this schema exactly — no markdown fences, no extra text:
+{
+  "summary": "professional summary text or null",
+  "skills": [{"category": "Category Name", "items": ["skill1", "skill2"]}],
+  "experience": [{"company": "...", "role": "...", "date_range": "...", "location": "...", "bullets": ["..."]}],
+  "education": [{"school": "...", "degree": "...", "field": "...", "date_range": "...", "gpa": ""}],
+  "certifications": ["cert1", "cert2"]
+}`;
+
+  const user = `RESUME TEXT:\n${text.slice(0, 8000)}`;
+
+  const raw = await callGroq(system, user, null, 2000);
+  const cleaned = raw.replace(/^```json\s*/i, '').replace(/\s*```$/, '').trim();
+  let parsed;
+  try { parsed = JSON.parse(cleaned); }
+  catch { throw new Error('Could not parse resume — try uploading as .tex or re-exporting the PDF.'); }
+
+  if (!Array.isArray(parsed.skills) || !Array.isArray(parsed.experience)) {
+    throw new Error('Resume parsing returned incomplete data. Try uploading as .tex instead.');
+  }
+  return parsed;
+}

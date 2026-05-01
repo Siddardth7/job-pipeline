@@ -51,61 +51,81 @@ const TEMPLATE_SKILLS = {
 \\skillline{Tools / Software:}{SolidWorks, CATIA, FEA, MATLAB, Python, AutoCAD}`,
 };
 
-export function analyzeJob(jdText, selectedVariant = null) {
+/**
+ * Pick the uploaded resume that best matches a JD by skill keyword overlap.
+ * Falls back to primary or first resume if no keywords match.
+ * resumes must include structured_sections (use fetchAllResumesWithSections).
+ */
+export function selectBestResume(resumes, jdText) {
+  if (!resumes?.length) return null;
   const text = jdText.toLowerCase();
-
-  // Score each variant
-  const scores = {};
-  for (const [key, variant] of Object.entries(VARIANT_KEYWORDS)) {
-    let hits = 0;
-    const totalPossible = (variant.primary.length * 2) + variant.secondary.length;
-
-    for (const kw of variant.primary) {
-      if (text.includes(kw)) hits += 2;
-    }
-    for (const kw of variant.secondary) {
-      if (text.includes(kw)) hits += 1;
-    }
-
-    scores[key] = totalPossible > 0 ? (hits / totalPossible) * 100 : 0;
+  let best = null, bestScore = -1;
+  for (const resume of resumes) {
+    const keywords = (resume.structured_sections?.skills || [])
+      .flatMap(s => s.items || [])
+      .map(k => k.toLowerCase().trim())
+      .filter(Boolean);
+    const hits = keywords.filter(k => text.includes(k)).length;
+    if (hits > bestScore) { bestScore = hits; best = resume; }
   }
+  return best || resumes.find(r => r.is_primary) || resumes[0];
+}
 
-  // Pick best variant (or use override)
-  let recommended = selectedVariant;
-  if (!recommended || !['A','B','C','D'].includes(recommended)) {
-    recommended = Object.entries(scores).sort((a,b) => b[1]-a[1])[0][0];
-  }
-
-  const variant = VARIANT_KEYWORDS[recommended];
-  const rawScore = scores[recommended];
-  const atsCoverage = Math.min(92, Math.max(25, Math.round(rawScore))) + '%';
-
-  // Missing keywords: top 5 primary from recommended not in JD
-  const missing_keywords = variant.primary
-    .filter(kw => !text.includes(kw))
-    .slice(0, 5);
-
-  // Composites visible
+/**
+ * Local keyword analysis. When a resume is provided its skill items are used
+ * directly; otherwise falls back to the hardcoded VARIANT_KEYWORDS profiles.
+ */
+export function analyzeJob(jdText, resume = null) {
+  const text = jdText.toLowerCase();
   const compositeTerms = ['composites','cfrp','prepreg','autoclave','layup','carbon fiber'];
   const composites_visible = compositeTerms.some(t => text.includes(t));
-
-  // Quantification check
   const hasMetrics = /\d+%|\d+\s*(years?|months?|units?|parts?|%)/i.test(jdText);
   const quantification_check = hasMetrics ? "Metrics present" : "Add metrics";
 
-  // Top matches
-  const top_matches = variant.primary.filter(kw => text.includes(kw)).slice(0, 8);
+  if (resume?.structured_sections) {
+    const allKeywords = (resume.structured_sections.skills || [])
+      .flatMap(s => s.items || [])
+      .map(k => k.toLowerCase().trim())
+      .filter(Boolean);
+    const top_matches = allKeywords.filter(k => text.includes(k)).slice(0, 8);
+    const missing_keywords = allKeywords.filter(k => !text.includes(k)).slice(0, 5);
+    const rawScore = allKeywords.length > 0 ? (top_matches.length / allKeywords.length) * 100 : 0;
+    return {
+      recommendedResume: resume.name,
+      recommendedResumeId: resume.id,
+      resumeReason: `Best skill overlap with "${resume.name}" (${Math.round(rawScore)}% keyword match)`,
+      ats_coverage: Math.min(92, Math.max(25, Math.round(rawScore))) + '%',
+      missing_keywords,
+      composites_visible,
+      quantification_check,
+      mod1_summary: '',
+      mod2_skills: '',
+      top_matches,
+    };
+  }
 
+  // Legacy fallback — no resume uploaded yet
+  const scores = {};
+  for (const [key, variant] of Object.entries(VARIANT_KEYWORDS)) {
+    let hits = 0;
+    const total = (variant.primary.length * 2) + variant.secondary.length;
+    for (const kw of variant.primary)   if (text.includes(kw)) hits += 2;
+    for (const kw of variant.secondary) if (text.includes(kw)) hits += 1;
+    scores[key] = total > 0 ? (hits / total) * 100 : 0;
+  }
+  const recommended = Object.entries(scores).sort((a, b) => b[1] - a[1])[0][0];
+  const variant = VARIANT_KEYWORDS[recommended];
+  const rawScore = scores[recommended];
   return {
-    recommendedResume: recommended,
-    resumeReason: `Highest keyword alignment with ${VARIANT_KEYWORDS[recommended].name} profile (${Math.round(rawScore)}% match)`,
-    ats_coverage: atsCoverage,
-    missing_keywords,
+    recommendedResume: variant.name,
+    resumeReason: `Keyword match with ${variant.name} profile (${Math.round(rawScore)}%)`,
+    ats_coverage: Math.min(92, Math.max(25, Math.round(rawScore))) + '%',
+    missing_keywords: variant.primary.filter(kw => !text.includes(kw)).slice(0, 5),
     composites_visible,
     quantification_check,
     mod1_summary: TEMPLATE_SUMMARIES[recommended],
     mod2_skills: TEMPLATE_SKILLS[recommended],
-    top_matches
+    top_matches: variant.primary.filter(kw => text.includes(kw)).slice(0, 8),
   };
 }
 

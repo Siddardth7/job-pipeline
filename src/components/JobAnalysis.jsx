@@ -1,17 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { BarChart2, CheckCircle, Users, Copy, Check, Briefcase, Zap, SlidersHorizontal, Edit3, Sparkles, FileText, Download, RefreshCw, ChevronDown, ChevronUp, MessageSquare } from 'lucide-react';
-import { analyzeJob } from '../lib/scoring.js';
+import { analyzeJob, selectBestResume } from '../lib/scoring.js';
 import { analyzeJobWithGroq, generateCoverLetterWithGroq, answerApplicationQuestion, generateSummary } from '../lib/groq.js';
 import { buildCoverLetterPayload } from '../lib/coverLetter.js';
 import * as Storage from '../lib/storage.js';
 import { supabase } from '../supabase.js';
-
-const RESUMES = {
-  A: {name:"Manufacturing & Plant Ops", skills:"GD&T, CMM, Fixtures"},
-  B: {name:"Process & CI", skills:"FMEA, SPC, 8D, Lean"},
-  C: {name:"Quality & Materials", skills:"CMM, MRB, Composites"},
-  D: {name:"Equipment & NPI", skills:"Tooling, PFMEA, DOE"}
-};
 
 const COMPILER_URL = import.meta.env.VITE_COMPILER_URL ?? "http://localhost:8080";
 
@@ -388,32 +381,19 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
   const [checks, setChecks] = useState(null);
   const [copied, setCopied] = useState("");
   const [showRaw2, setShowRaw2] = useState(false);
-  const [genLoading, setGenLoading] = useState(null); // null | "resume" | "coverletter"
+  const [genLoading, setGenLoading] = useState(null);
   const [genError, setGenError] = useState(null);
-  const [primaryResume, setPrimaryResume] = useState(null);
+  const [allResumes, setAllResumes] = useState([]);
+  const [selectedResume, setSelectedResume] = useState(null);
   const [resumeLoading, setResumeLoading] = useState(true);
   const [includeSummary, setIncludeSummary] = useState(false);
 
-  // Fetch primary resume from DB on mount
+  // Fetch all resumes with structured_sections on mount
   useEffect(() => {
-    if (typeof Storage.fetchResumes === 'function') {
-      Storage.fetchResumes().then(resumes => {
-        const primary = resumes.find(r => r.is_primary) || null;
-        if (primary?.id && typeof Storage.fetchResume === 'function') {
-          Storage.fetchResume(primary.id).then(full => {
-            setPrimaryResume(full);
-            setResumeLoading(false);
-          }).catch(() => setResumeLoading(false));
-        } else if (primary) {
-          setPrimaryResume(primary);
-          setResumeLoading(false);
-        } else {
-          setResumeLoading(false);
-        }
-      }).catch(() => setResumeLoading(false));
-    } else {
-      setResumeLoading(false);
-    }
+    Storage.fetchAllResumesWithSections()
+      .then(resumes => { setAllResumes(resumes); })
+      .catch(() => {})
+      .finally(() => setResumeLoading(false));
   }, []);
 
   // Sync from currentJob whenever the active job changes
@@ -457,23 +437,23 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
     if (!jd.trim()) return;
     setLoading(true);
 
+    const jdText = currentJob?.description || currentJob?.jd || jd;
+    const bestResume = selectBestResume(allResumes, jdText);
+    if (bestResume) setSelectedResume(bestResume);
+
     try {
       let analysisResult;
 
-      if (groqKey && primaryResume?.structured_sections) {
-        // Use Groq AI for tailored analysis using primary resume structured sections
-        const groqResult = await analyzeJobWithGroq(
-          currentJob?.description || currentJob?.jd || jd,
-          primaryResume.structured_sections,
-          groqKey
-        );
+      if (groqKey && bestResume?.structured_sections) {
+        const groqResult = await analyzeJobWithGroq(jdText, bestResume.structured_sections, groqKey);
         analysisResult = {
           ...groqResult,
+          recommendedResume: bestResume.name,
+          recommendedResumeId: bestResume.id,
           aiPowered: true,
         };
       } else {
-        // Fallback: local keyword scoring
-        analysisResult = analyzeJob(jd, res);
+        analysisResult = analyzeJob(jdText, bestResume);
       }
 
       setResult(analysisResult);
@@ -482,8 +462,7 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
         updatePipelineJob(currentJob.id, { analysisResult, jd, company: co, role, location: loc, link });
       }
     } catch (e) {
-      // If Groq fails, fall back to local
-      const analysisResult = analyzeJob(jd, res);
+      const analysisResult = analyzeJob(jdText, bestResume);
       setResult({ ...analysisResult, aiError: e.message });
       syncToParent({ analysisResult, jd });
     }
@@ -543,7 +522,8 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
   };
 
   const downloadResume = useCallback(async () => {
-    if (!result || !primaryResume?.structured_sections) return;
+    const activeResume = selectedResume || allResumes.find(r => r.is_primary) || allResumes[0];
+    if (!result || !activeResume?.structured_sections) return;
     const companySlug = toFileSlug(co) || 'Company';
     const roleSlug = toRoleSlug(role);
 
@@ -555,19 +535,19 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
 
       // If summary toggled on, generate it first
       let mod1Summary = '';
-      if (includeSummary && primaryResume?.structured_sections?.summary !== null) {
+      if (includeSummary && activeResume?.structured_sections?.summary !== null) {
         mod1Summary = await generateSummary(
           currentJob?.description || currentJob?.jd || jd,
           result.primary_category,
           result.top5_jd_skills || [],
           role,
-          primaryResume.structured_sections,
+          activeResume.structured_sections,
           groqKey
         );
       }
 
       const compilePayload = {
-        structured_sections: primaryResume.structured_sections,
+        structured_sections: activeResume.structured_sections,
         groq_output: {
           mod2_skilllines: result.mod2_skilllines,
           primary_category: result.primary_category,
@@ -615,7 +595,7 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
     } finally {
       setGenLoading(null);
     }
-  }, [result, co, role, primaryResume, includeSummary, currentJob, jd, groqKey]);
+  }, [result, co, role, selectedResume, allResumes, includeSummary, currentJob, jd, groqKey]);
 
   const downloadCoverLetter = useCallback(() => {
     if (!result) return;
@@ -692,7 +672,7 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
         </Card>
       )}
 
-      {!resumeLoading && !primaryResume && (
+      {!resumeLoading && allResumes.length === 0 && (
         <div style={{background:'#fffbe6', border:'1px solid #ffe58f', borderRadius:8, padding:'10px 14px', marginBottom:14, fontSize:13, color:'#7c5c00'}}>
           No resume found. Go to the <strong>Resume</strong> tab and upload your .tex or PDF to enable AI analysis.
         </div>
@@ -716,26 +696,30 @@ export default function JobAnalysis({currentJob, updatePipelineJob, completePipe
             multiline rows={8} t={t}
           />
           <div style={{display:"flex",gap:10,alignItems:"center",flexWrap:"wrap"}}>
-            <Btn onClick={analyze} disabled={loading || resumeLoading || !primaryResume || !jd.trim()} title={!primaryResume ? 'Upload your resume in the Resume tab first' : undefined} t={t}>
+            <Btn onClick={analyze} disabled={loading || resumeLoading || allResumes.length === 0 || !jd.trim()} title={allResumes.length === 0 ? 'Upload your resume in the Resume tab first' : undefined} t={t}>
               {groqKey && <Sparkles size={13}/>}
               {loading ? "Analyzing..." : groqKey ? "Run AI Analysis" : "Run Resume Analysis"}
             </Btn>
             {groqKey && <span style={{fontSize:11,color:t.green,fontWeight:700}}>✦ Groq AI active</span>}
             {!groqKey && <span style={{fontSize:11,color:t.muted}}>Add Groq key in Settings for AI-tailored output</span>}
-            <span style={{fontSize:12,color:t.muted}}>Override resume:</span>
-            {["Auto","A","B","C","D"].map(k => {
-              const active = k === "Auto" ? res === null : res === k;
-              return (
-                <button key={k}
-                  onClick={() => setRes(k === "Auto" ? null : (res === k ? null : k))}
-                  style={{padding:"8px 14px",borderRadius:8,fontSize:12.5,fontWeight:700,cursor:"pointer",fontFamily:"inherit",
-                    background:active?t.pri+"18":"transparent",
-                    border:`1px solid ${active?t.pri:t.border}`,
-                    color:active?t.pri:t.sub}}>
-                  {k === "Auto" ? "Auto-detect" : `Resume ${k}`}
-                </button>
-              );
-            })}
+            {allResumes.length > 1 && (
+              <>
+                <span style={{fontSize:12,color:t.muted}}>Resume:</span>
+                {[{id: null, name: 'Auto'}, ...allResumes].map(r => {
+                  const active = r.id === null ? res === null : res === r.id;
+                  return (
+                    <button key={r.id ?? 'auto'}
+                      onClick={() => setRes(r.id === null ? null : (res === r.id ? null : r.id))}
+                      style={{padding:"6px 12px",borderRadius:8,fontSize:12,fontWeight:700,cursor:"pointer",fontFamily:"inherit",
+                        background:active?t.pri+"18":"transparent",
+                        border:`1px solid ${active?t.pri:t.border}`,
+                        color:active?t.pri:t.sub,whiteSpace:"nowrap",maxWidth:120,overflow:"hidden",textOverflow:"ellipsis"}}>
+                      {r.name}
+                    </button>
+                  );
+                })}
+              </>
+            )}
           </div>
         </Card>
       )}
