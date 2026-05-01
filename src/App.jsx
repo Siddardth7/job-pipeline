@@ -8,7 +8,9 @@ import { M628, ITAR_KEYWORDS, BLACKLIST } from "./data/m628.js";
 import * as Storage from "./lib/storage.js";
 import { DEFAULT_TEMPLATES } from "./lib/templates.js";
 import { useAuth, signOut } from "./lib/auth.js";
+import { supabase } from "./supabase.js";
 import Login from "./components/Login.jsx";
+import ResetPassword from "./components/ResetPassword.jsx";
 import Onboarding from "./components/Onboarding.jsx";
 
 import Dashboard from "./components/Dashboard.jsx";
@@ -108,6 +110,7 @@ function normalizeJob(j, idx) {
 export default function JobAgent() {
   const { user, loading: authLoading } = useAuth();
   const [profile, setProfile] = useState(undefined); // undefined=not loaded, null=no profile, object=loaded
+  const [passwordRecovery, setPasswordRecovery] = useState(false);
   const [dark, setDark] = useState(false);
   const t = dark ? DARK : LIGHT;
   const [pendingSaves, setPendingSaves] = useState(0);
@@ -146,6 +149,14 @@ export default function JobAgent() {
   useEffect(() => {
     stateRef.current = {apps, pipeline, searchResults, contactResults, dark, currentJob, customCompanies, templates};
   });
+
+  // Catch PASSWORD_RECOVERY event from Supabase reset-link redirect
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'PASSWORD_RECOVERY') setPasswordRecovery(true);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   // Load user profile to gate onboarding wizard
   useEffect(() => {
@@ -435,6 +446,7 @@ export default function JobAgent() {
       <span style={{color:t.sub,fontSize:14}}>Loading…</span>
     </div>
   );
+  if (passwordRecovery) return <ResetPassword t={t} onDone={() => setPasswordRecovery(false)} />;
   if (!user) return <Login t={t} />;
   if (profile === null) return <Onboarding t={t} onComplete={() => Storage.fetchUserProfile().then(p => setProfile(p))} />;
 
